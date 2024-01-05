@@ -1,0 +1,248 @@
+@mixin prefix($property, $value, $prefixes: webkit ms moz) {
+    @each $prefix in $prefixes {
+        #{'-' + $prefix + '-' + $property}: $value;
+    }
+
+    #{$property}: $value;
+}
+
+@mixin animation($name) {
+    @keyframes #{$name} {
+        @content;
+    }
+
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+}
+
+@mixin font($font-family, $url, $font-display) {
+    @font-face {
+        font-family: $font-family;
+        src: url($url + '.eot');
+        src: url($url + '.eot?#iefix') format('embedded-opentype'),
+            url($url + '.woff') format('woff'),
+            url($url + '.ttf') format('truetype'),
+            url($url + '.svg#' + $font-family) format('svg');
+        font-weight: normal;
+        font-style: normal;
+
+        @if($font-display) {
+            font-display: $font-display;
+        }
+    }
+}
+
+@mixin button-before() {
+    &:before {
+        content: '';
+        background-color: currentColor;
+        border-radius: inherit;
+        bottom: 0;
+        opacity: 0;
+        left: 0;
+        top: 0;
+        right: 0;
+        color: inherit;
+        pointer-events: none;
+        position: absolute;
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+    }
+}
+
+@mixin force-sizes($value,
+    $properties: min-width max-width min-height max-height) {
+    @each $property in $properties {
+        #{$property}: $value;
+    }
+}
+
+@mixin e-field-outlined() {
+    &.e-field--is-disabled {
+        .e-field__slot {
+            border-style: dashed;
+        }
+    }
+
+    &.e-field--is-hovered,
+    &.e-field--is-hovered,
+    &.e-field--is-focused,
+    &.e-field--retain-color,
+    &.e-field--has-error {
+        z-index: 1;
+
+        .e-field__slot {
+            border-color: currentColor;
+        }
+    }
+
+    .e-field__slot {
+        border-style: solid;
+        border-width: 1px;
+        border-color: var(--input-border);
+    }
+}
+
+
+//grid
+@mixin _xs {
+    @media (max-width: #{map-get($breakpoint,'xs')}) {
+        @content;
+    }
+}
+
+@mixin _sm {
+    @media (min-width: #{map-get($breakpoint,'xs') + 1px}) and (max-width: #{map-get($breakpoint,'sm')}) {
+        @content;
+    }
+}
+
+@mixin _md {
+    @media (min-width: #{map-get($breakpoint,'sm') + 1px}) and (max-width: #{map-get($breakpoint,'md')}) {
+        @content;
+    }
+}
+
+@mixin _lg {
+    @media (min-width: #{map-get($breakpoint,'md') + 1px}) and (max-width: #{map-get($breakpoint,'lg')}) {
+        @content;
+    }
+}
+
+@mixin _xl {
+    @media (min-width: #{map-get($breakpoint,'lg') + 1px}) {
+        @content;
+    }
+}
+
+@mixin _from_sm {
+    @media only screen and (min-width: #{map-get($breakpoint,'xs') + 1px}) {
+        @content;
+    }
+}
+
+@mixin _from_md {
+    @media only screen and (min-width: #{map-get($breakpoint,'sm') + 1px}) {
+        @content;
+    }
+}
+
+@mixin _from_lg {
+    @media only screen and (min-width: #{map-get($breakpoint,'md') + 1px}) {
+        @content;
+    }
+}
+
+@mixin _from_xl {
+    @media only screen and (min-width: #{map-get($breakpoint,'lg') + 1px}) {
+        @content;
+    }
+}
+
+@function col-percent($i, $extra_px) {
+    $base: calc(#{$i} / #{$grid-cols} * 100%);
+    $result: calc(#{$base} + #{$extra_px});
+    @return $result;
+}
+
+@mixin grid-generator-by-breakpoint($breakpoint_key, $extra_px: 0px) {
+    @for $i from 1 through $grid-cols {
+        $_col_percent: col-percent($i, $extra_px);
+
+        &#{$breakpoint_key}#{$i} {
+            @if ($breakpoint_key =="-") {
+                flex: 0 0 $_col_percent;
+                max-width: $_col_percent;
+            }
+
+            @else if ($breakpoint_key =="-sm-") {
+                @include _from_sm {
+                    flex: 0 0 $_col_percent;
+                    max-width: $_col_percent;
+                }
+            }
+
+            @else if ($breakpoint_key =="-md-") {
+                @include _from_md {
+                    flex: 0 0 $_col_percent;
+                    max-width: $_col_percent;
+                }
+            }
+
+            @else if ($breakpoint_key =="-lg-") {
+                @include _from_lg {
+                    flex: 0 0 $_col_percent;
+                    max-width: $_col_percent;
+                }
+            }
+
+            @else if ($breakpoint_key =="-xl-") {
+                @include _from_xl {
+                    flex: 0 0 $_col_percent;
+                    max-width: $_col_percent;
+                }
+            }
+        }
+    }
+}
+
+@mixin grid-generator-dynamic-property($breakpoint_key, $suffix, $property, $value) {
+
+    &#{$breakpoint_key}#{$suffix} {
+        @if ($breakpoint_key =="-sm-") {
+            @include _from_sm {
+                flex-basis: 0;
+                flex-grow: 1;
+                max-width: 100%;
+                #{$property}: $value;
+            }
+        }
+
+        @else if ($breakpoint_key =="-md-") {
+            @include _from_md {
+                flex-basis: 0;
+                flex-grow: 1;
+                max-width: 100%;
+                #{$property}: $value;
+            }
+        }
+
+        @else if ($breakpoint_key =="-lg-") {
+            @include _from_lg {
+                flex-basis: 0;
+                flex-grow: 1;
+                max-width: 100%;
+                #{$property}: $value;
+            }
+        }
+
+        @else if ($breakpoint_key =="-xl-") {
+            @include _from_xl {
+                flex-basis: 0;
+                flex-grow: 1;
+                max-width: 100%;
+                #{$property}: $value;
+            }
+        }
+    }
+}
+
+$breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
+
+@mixin grid-generator($extra_px: 0px) {
+    padding: $space-base;
+    flex-basis: 0;
+    flex-grow: 1;
+    max-width: 100%;
+
+    @each $key in $breakpoint_keys {
+        @include grid-generator-by-breakpoint($key, $extra_px);
+
+        @if($key !='-') {
+            @include grid-generator-dynamic-property($key, 'auto', 'max-width', 100%);
+            @include grid-generator-dynamic-property($key, 'min-content', 'flex-grow', 0);
+        }
+    }
+}
+
+//end

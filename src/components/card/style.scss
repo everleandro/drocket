@@ -1,0 +1,32 @@
+.e-card {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+  background-color: white;
+  box-shadow: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%),
+    0 1px 5px 0 rgb(0 0 0 / 12%);
+
+  &--depressed {
+    box-shadow: none;
+  }
+
+  &__container {
+    padding: $space-base;
+    flex: 1;
+  }
+
+  &__footer {
+    flex: 1;
+
+    &-content {
+      padding: $space-base;
+      flex: 1;
+    }
+  }
+
+  & > .e-avatar {
+    &__wrapper {
+      padding: $space-base;
+    }
+  }
+}

@@ -1,0 +1,107 @@
+$transition-duration: 0.3s;
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity $transition-duration ;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.scale-enter-active,
+.scale-leave-active {
+    transition-property: transform, opacity;
+    transition-duration: $transition-duration;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+}
+
+.tab-transition-leave-to {
+    transform: translateX(-100%);
+}
+
+
+.tab-transition-leave-active {
+    position: absolute;
+}
+
+.tab-transition-enter-active {
+    transform: translatex(100%);
+}
+
+.tab-transition-enter-to {
+    transform: translateX(0);
+}
+
+
+.tab-reverse-transition-leave-to {
+    transform: translateX(100%);
+}
+
+
+.tab-reverse-transition-leave-active {
+    position: absolute;
+}
+
+.tab-reverse-transition-enter-active {
+    transform: translatex(-100%);
+}
+
+.tab-reverse-transition-enter-to {
+    transform: translateX(0);
+}
+
+
+
+.picker-transition-leave-to {
+    transform: translateY(-100%);
+}
+
+
+.picker-transition-leave-active {
+    position: absolute !important;
+}
+
+
+.picker-transition-enter-active {
+    transform: translateY(100%);
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) !important;
+}
+
+.picker-transition-enter-to {
+    transform: translateY(0);
+}
+
+
+.picker-transition-reverse-leave-to {
+    transform: translateY(100%);
+}
+
+
+.picker-transition-reverse-leave-active {
+    position: absolute !important;
+}
+
+
+.picker-transition-reverse-enter-active {
+    transform: translateY(-100%);
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) !important;
+}
+
+.picker-transition-reverse-enter-to {
+    transform: translateY(0);
+}
+
+.tab-reverse-transition-enter-active,
+.tab-reverse-transition-leave-active,
+.tab-transition-enter-active,
+.tab-transition-leave-active {
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+}

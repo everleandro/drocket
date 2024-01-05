@@ -1,0 +1,36 @@
+.e-menu-container {
+  box-sizing: border-box;
+  position: absolute;
+  display: inline-block;
+  z-index: 3;
+
+  &__wrapper {
+    box-shadow: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%),
+      0 1px 5px 0 rgb(0 0 0 / 12%);
+    z-index: 3;
+    transition-duration: 300ms;
+    position: relative;
+  }
+}
+
+.e-menu {
+  height: 1px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+
+  &__content {
+    position: absolute;
+    display: inline-block;
+    max-width: 80%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    contain: content;
+    box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%),
+      0 3px 14px 2px rgb(0 0 0 / 12%);
+    max-height: 304px;
+    min-width: 100%;
+    transform-origin: left top;
+    z-index: 8;
+  }
+}

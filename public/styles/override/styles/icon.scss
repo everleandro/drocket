@@ -1,0 +1,12 @@
+.e-icon {
+  @each $key, $value in $icon-font-sizes {
+    &--size-#{$key} {
+      font-size: $value;
+
+      .e-icon__svg {
+        height: $value;
+        width: $value;
+      }
+    }
+  }
+}

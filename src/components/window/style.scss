@@ -1,0 +1,20 @@
+.e-window {
+  &:has(.tab-reverse-transition-enter-active),
+  &:has(.tab-reverse-transition-leave-active),
+  &:has(.tab-transition-enter-active),
+  &:has(.tab-transition-leave-active) {
+    overflow: hidden;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    height: inherit;
+    position: relative;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  }
+
+  &-item {
+    min-width: 100%;
+  }
+}

@@ -1,0 +1,114 @@
+
+$alignments: flex-start, center, flex-end, space-around, space-between;
+$displays: block, flex, table, none;
+$text-aligment: right, left, center;
+
+
+$spaces-states: (
+  "pa": "padding",
+  "pr": "padding-right",
+  "pb": "padding-bottom",
+  "pl": "padding-left",
+  "pt": "padding-top",
+  "ma": "margin",
+  "mr": "margin-right",
+  "mt": "margin-top",
+  "mb": "margin-bottom",
+  "ml": "margin-left",
+);
+
+@each $key, $value in $spaces-states {
+  .#{$key} {
+    @for $i from 0 through $space-amount {
+      &-#{$i} {
+        #{$value}: $i * $space-step !important;
+      }
+
+      &-n#{$i} {
+        #{$value}: -$i * $space-step !important;
+      }
+    }
+  }
+}
+
+$breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
+
+@each $b_key in $breakpoint_keys {
+  @each $display_value in $displays {
+    .d#{$b_key}#{$display_value} {
+      @if ($b_key == "-") {
+        display: $display_value;
+      } @else if ($b_key == "-sm-") {
+        @include _from_sm {
+          display: $display_value;
+        }
+      } @else if ($b_key == "-md-") {
+        @include _from_md {
+          display: $display_value;
+        }
+      } @else if ($b_key == "-lg-") {
+        @include _from_lg {
+          display: $display_value;
+        }
+      } @else if ($b_key == "-xl-") {
+        @include _from_xl {
+          display: $display_value;
+        }
+      }
+    }
+  }
+}
+
+@each $value in $text-aligment {
+  .text-#{$value} {
+    text-align: $value;
+  }
+}
+
+@for $i from 0 through $space-amount {
+  .mx-#{$i} {
+    margin-right: calc(#{$i} * #{$space-step}) !important;
+    margin-left: calc(#{$i} * #{$space-step}) !important;
+  }
+
+  .mx-n#{$i} {
+    margin-right: calc(#{$i} * #{$space-step} * -1) !important;
+    margin-left: calc(#{$i} * #{$space-step} * -1) !important;
+  }
+
+  .my-#{$i} {
+    margin-top: calc(#{$i} * #{$space-step}) !important;
+    margin-bottom: calc(#{$i} * #{$space-step}) !important;
+  }
+
+  .px-#{$i} {
+    padding-right: calc(#{$i} * #{$space-step}) !important;
+    padding-left: calc(#{$i} * #{$space-step}) !important;
+  }
+
+  .py-#{$i} {
+    padding-top: calc(#{$i} * #{$space-step}) !important;
+    padding-bottom: calc(#{$i} * #{$space-step}) !important;
+  }
+}
+
+@each $value in $alignments {
+  .justify-#{$value} {
+    justify-content: $value;
+  }
+
+  .align-#{$value} {
+    align-items: $value;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}

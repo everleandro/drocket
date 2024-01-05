@@ -1,0 +1,152 @@
+.e-btn {
+  border: none;
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  outline: 0;
+  position: relative;
+  cursor: pointer;
+  padding: 0 1em;
+  min-width: 4em;
+  box-shadow: 0 3px 1px -2px rgb(0, 0, 0, 0.2), 0 2px 2px 0 rgb(0, 0, 0, 0.14),
+    0 1px 5px 0 rgb(0, 0, 0, 0.12);
+  height: var(--btn-height, unset);
+  font-size: var(--btn-font-size, inherit);
+
+  .e-icon__svg {
+    fill: currentColor;
+  }
+
+  &__content {
+    line-height: initial;
+    flex-direction: column;
+  }
+
+  @include prefix(user-select, none);
+  text-decoration: none;
+  transition-property: box-shadow,
+  transform,
+  opacity,
+  background-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  vertical-align: middle;
+  white-space: nowrap;
+
+  @include button-before();
+
+  &:focus,
+  &:active {
+    text-decoration: none;
+  }
+
+  &.e-btn {
+
+    &--icon,
+    &--fab {
+      padding: 0;
+      min-width: 0;
+      border-radius: 50%;
+    }
+  }
+
+  &--depressed,
+  &--disabled,
+  &--text {
+    box-shadow: none;
+  }
+
+  &--text {
+    background-color: transparent;
+  }
+
+  &--block {
+    &:not(.e-btn--fab):not(.e-btn--icon) {
+      display: flex;
+      flex: 1 0 auto;
+      min-width: 100% !important;
+    }
+  }
+
+  &__prepend {
+    margin-right: 0.5rem;
+  }
+
+  &__append {
+    margin-left: 0.5rem;
+  }
+
+  &--stacked {
+    flex-direction: column;
+
+    .e-btn {
+      &__prepend {
+        margin: 0 0 0.25rem 0;
+      }
+
+      &__append {
+        margin: 0.25rem 0 0 0;
+      }
+    }
+  }
+
+  &--icon {
+    background-color: transparent;
+    padding: 0;
+    width: var(--btn-height, unset);
+  }
+
+  &--fab {
+    border-radius: 100%;
+    width: var(--btn-height, unset);
+  }
+
+  &--fab,
+  &--icon {
+    width: var(--btn-height-responsive, var(--btn-height, unset));
+
+    .e-icon {
+      width: var(--btn-height, unset);
+
+      .e-icon__svg {
+        width: var(--btn-font-size, inherit);
+        height: var(--btn-font-size, inherit);
+      }
+    }
+
+    .e-btn__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
+  &--loading {
+    pointer-events: none;
+
+    .e-btn {
+
+      &__content,
+      &__append,
+      &__prepend {
+        opacity: 0;
+      }
+    }
+  }
+
+  &--disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  &__loader {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}

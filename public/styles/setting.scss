@@ -1,0 +1,45 @@
+@import "./mixins";
+$border-radius-root: 0 !default;
+$root-font-size: 1rem !default;
+$space-base: 12px !default;
+$grid-cols: 24 !default;
+$root-font-family: "Roboto", sans-serif !default;
+
+$icon-close-font-size: 24px !default;
+$icon-class: "mdi" !default;
+$icon-prefix: "mdi-" !default;
+
+$space-amount: 24 !default;
+$space-step: 4px !default;
+
+//colors
+
+$colors: map-merge(("primary": #00af67,
+      "secondary": #4c5f68,
+      "input": #4f636b,
+      "grey": #91a0a8,
+      "disabled": rgba(0, 0, 0, 0.38),
+      "error": #f44336,
+      "white": white,
+      "black": black,
+      "success": #66bb6a,
+      "red": #f44336,
+    ),
+    ()) !default;
+
+$contrast-colors: map-merge(("white": black,
+    ),
+    ()) !default;
+
+$breakpoint: (
+  "xs": 600px,
+  "sm": 960px,
+  "md": 1264px,
+  "lg": 1904px,
+  ) !default;
+
+@import "./override/variables/bar.scss";
+@import "./override/variables/button.scss";
+@import "./override/variables/expansion.scss";
+@import "./override/variables/icon.scss";
+@import "./override/variables/schedule.scss";

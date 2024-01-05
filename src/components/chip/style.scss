@@ -1,0 +1,68 @@
+.e-chip {
+  align-items: center;
+  cursor: default;
+  display: inline-flex;
+  font-weight: 400;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  // border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+  border-style: solid;
+  border-width: 0;
+  border-radius: 9999px;
+
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+  &--size-default {
+    --v-chip-size: 0.875rem;
+    --v-chip-height: 32px;
+    font-size: 0.875rem;
+    padding: 0px 12px;
+    height: 32px;
+  }
+
+  &__underlay {
+    opacity: 0.12;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    pointer-events: none;
+    background: currentcolor;
+    border-radius: inherit;
+  }
+
+  &--text {
+    .e-chip__underlay {
+      display: none;
+    }
+  }
+
+  &__prepend,
+  &__append,
+  &__close {
+    align-items: center;
+    display: inline-flex;
+  }
+
+  &__prepend {
+    transform: translateX(-8px);
+  }
+
+  &__close {
+    transform: translateX(8px);
+
+    button {
+      height: 24px;
+      width: 24px;
+
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+}

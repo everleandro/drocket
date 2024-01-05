@@ -1,0 +1,17 @@
+.e-card {
+  &__container {
+    padding: $space-base;
+  }
+
+  &__footer {
+    &-content {
+      padding: $space-base;
+    }
+  }
+
+  & > .e-avatar {
+    &__wrapper {
+      padding: $space-base;
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "es": {
+        "start": 1,
+        "months": ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"],
+        "weekdaysMin": ["do","Lu","ma","mi","ju","vi","sá"],
+        "monthsShort": ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"],
+        "weekdaysShort":[ "dom","Lun","mar","mié","jue","vie","sáb"],
+        "weekdays": ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"]
+    }
+}

@@ -1,0 +1,9 @@
+.e-container {
+  @include _lg {
+    max-width: 1185px;
+  }
+
+  @include _md {
+    max-width: 900px;
+  }
+}

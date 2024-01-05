@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&display=swap");
+
+h1 {
+  +p {
+    font-size: 1.25rem;
+    font-weight: 300;
+  }
+}
+
+p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.heading {
+  font-size: 56px;
+}
+
+.code {
+  font-size: 17px;
+  letter-spacing: -1px;
+}
+
+.text-body {
+  font-size: 1.125rem;
+}
+
+.title {
+  font-size: 1.37rem;
+  margin-top: 0;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  overflow: hidden;
+  height: 1.5em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dialog-title {
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 0;
+  text-transform: capitalize;
+
+  +p {
+    margin-bottom: 20px;
+    margin-top: 0;
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 300;
+  }
+}
+
+.text {
+  &-h3 {
+    font-size: 3rem !important;
+    font-weight: 400;
+    line-height: 3.125rem;
+    letter-spacing: normal !important;
+
+    text-transform: none !important;
+  }
+
+  &-h4 {
+    font-size: 2.125rem !important;
+    font-weight: 400;
+    line-height: 2.5rem;
+    text-transform: none !important;
+  }
+}

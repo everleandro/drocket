@@ -1,0 +1,48 @@
+@include animation('v-ripple') {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@include animation('scale') {
+  from {}
+
+  50% {
+    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+}
+
+@include animation('progress-circular-rotate') {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@include animation('progress-circular-dash') {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0px;
+  }
+
+  50% {
+    stroke-dasharray: 100, 200;
+    stroke-dashoffset: -15px;
+  }
+
+  to {
+    stroke-dasharray: 100, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+
+@include animation('fadeIn') {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

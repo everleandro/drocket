@@ -1,0 +1,33 @@
+@include _xs {
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+}
+
+@include _sm {
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+}
+
+@include _md {
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .title {
+    font-size: 1.3rem;
+  }
+}
+
+body {
+  font-family: $root-font-family;
+}

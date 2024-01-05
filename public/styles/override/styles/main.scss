@@ -1,0 +1,6 @@
+.e-main {
+  @include _from_lg {
+    padding-top: 75px;
+    padding-left: 256px;
+  }
+}

@@ -1,0 +1,111 @@
+.e-schedule {
+
+  padding-top: $header-col-height;
+  background: $schedule-bg;
+
+  &__body {
+    min-width: calc(100% - $hour-column-width);
+  }
+
+  &__event {
+    &-container {
+      color: $schedule-bg;
+    }
+  }
+
+  [role="cell"] {
+    border-bottom: $schedule-border-width solid $schedule-border-color;
+
+    &:not(:last-child) {
+      border-bottom: $schedule-border-width solid $schedule-border-color;
+    }
+  }
+
+  &__header {
+    &[role="cell"] {
+      &>span {
+        height: $header-col-height;
+        background-color: $schedule-bg;
+      }
+    }
+  }
+
+  div[role="col"] {
+    background-color: $schedule-bg;
+
+    &:not(:last-child) {
+      border-right: $schedule-border-width solid $schedule-border-color;
+    }
+
+    &.col-hour-info {
+      max-width: $hour-column-width;
+      min-width: $hour-column-width;
+    }
+  }
+
+  &:has(.tab-reverse-transition-leave-active),
+  &:has(.tab-transition-leave-active) {
+    .e-schedule__body {
+      top: $header-col-height;
+    }
+  }
+
+  @include _xs {
+    div[role="col"] {
+      &.col-hour-info {
+        max-width: $hour-column-width-xs;
+        min-width: $hour-column-width-xs;
+      }
+    }
+
+    &__body {
+      min-width: calc(100% - $hour-column-width-xs);
+    }
+  }
+
+  @include _xs {
+    .e-schedule {
+      &__header[role="cell"] [data-day-of-week="true"] {
+        font-size: 11px;
+        text-transform: capitalize;
+      }
+
+      &__empty-slot {
+        &.e-btn {
+          min-width: unset;
+          padding: 0 4px;
+          font-size: 12px;
+        }
+      }
+
+      &-btn--day {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+      }
+
+      &__event-container {
+        .event {
+          &-name {
+            overflow: hidden;
+            font-size: 11px;
+            line-height: 11px;
+          }
+
+          &-subtitle,
+          &-footer {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .hour-label {
+      &:after {
+        content: unset;
+      }
+
+      padding-right: 0;
+    }
+  }
+}

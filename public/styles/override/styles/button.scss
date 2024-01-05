@@ -1,0 +1,84 @@
+.e-btn {
+  font-weight: $btn-font-weight;
+  letter-spacing: $btn-letter-spacing;
+  color: map-get($colors, "black");
+  border-color: map-get($colors, "black");
+  text-indent: $btn-letter-spacing;
+  text-transform: $btn-text-transform;
+  transition-duration: $btn-transition-duration;
+  border-radius: $btn-border-radius;
+  font-family: $root-font-family;
+
+  +.e-btn {
+    margin-left: $space-base;
+  }
+
+  &--rounded {
+    border-radius: $btn-rounded-border-radius;
+  }
+
+  &--text {
+    @each $key, $value in $colors {
+      &.e-btn--#{$key} {
+        color: $value;
+        background-color: transparent;
+      }
+    }
+  }
+
+  @each $key, $value in $colors {
+    &--#{$key} {
+      color: map-get($contrast-colors, $key) or white;
+      background-color: $value;
+
+      &.e-btn--icon {
+        color: $value;
+        background-color: transparent;
+      }
+    }
+  }
+
+  @each $key, $value in $btn-states {
+    &:#{$key}:before {
+      opacity: $value;
+    }
+  }
+
+  @each $key, $value in $btn-font-sizes {
+    &--size-#{$key} {
+      --btn-font-size: #{$value};
+      --btn-height: #{map-get($btn-height, $key)};
+
+      &.e-btn--icon {
+        --btn-font-size: #{map-get($icon-font-sizes, $key)};
+      }
+
+      &.e-btn--fab {
+        --btn-height: #{map-get($fab-height, $key)};
+        --btn-font-size: #{map-get($fab-font-sizes, $key)};
+      }
+
+      &.e-btn--stacked {
+        --btn-height: #{map-get($stacked-height, $key)};
+      }
+    }
+  }
+
+  &--outlined {
+    border: $btn-border-width $btn-border-style;
+
+    @each $key, $value in $colors {
+      &.e-btn--#{$key}:not(.e-btn--disabled) {
+        border-color: $value;
+        color: $value;
+      }
+    }
+
+    background-color: transparent;
+  }
+
+  &--disabled {
+    color: map-get($contrast-colors, "disabled") or white;
+    background-color: map-get($colors, "disabled");
+  }
+}

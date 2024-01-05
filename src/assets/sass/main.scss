@@ -1,0 +1,123 @@
+@import "animations";
+@import "field";
+@import "reset.scss";
+@import "transitions.scss";
+@import "typography.scss";
+
+.v-ripple-element {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  .v-ripple {
+    border-radius: 50%;
+    opacity: 0.7;
+    position: absolute;
+    transform: scale(0);
+    animation: v-ripple linear;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.v-ripple-element {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  .v-ripple {
+    border-radius: 50%;
+    opacity: 0.7;
+    position: absolute;
+    transform: scale(0);
+    animation: v-ripple linear;
+  }
+}
+
+.outlined {
+  border: thin solid rgba(0, 0, 0, 0.12);
+}
+
+.e-overlay {
+  z-index: 3;
+  align-items: center;
+  border-radius: inherit;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), z-index 1ms;
+
+  &--active {
+    background-color: rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+  }
+
+  &--inactive {
+    background-color: transparent;
+  }
+}
+
+.e-progress-circular {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  justify-content: center;
+  align-items: center;
+}
+
+.e-progress-circular--indeterminate>svg {
+  -webkit-animation: progress-circular-rotate 1.4s linear infinite;
+  animation: progress-circular-rotate 1.4s linear infinite;
+  transform-origin: center center;
+  transition: all 0.2s ease-in-out;
+}
+
+.e-progress-circular>svg {
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+}
+
+.e-progress-circular--indeterminate .e-progress-circular__overlay {
+  -webkit-animation: progress-circular-dash 1.4s ease-in-out infinite;
+  animation: progress-circular-dash 1.4s ease-in-out infinite;
+  stroke-linecap: round;
+  stroke-dasharray: 80, 200;
+  stroke-dashoffset: 0px;
+}
+
+.e-progress-circular__overlay {
+  stroke: currentColor;
+  z-index: 2;
+  transition: all 0.6s ease-in-out;
+}
+
+.tab__container {
+
+  &:has(.tab-reverse-transition-leave-active),
+  &:has(.tab-transition-leave-active) {
+    overflow: hidden;
+    position: relative;
+  }
+}

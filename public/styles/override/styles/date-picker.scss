@@ -1,0 +1,12 @@
+.e-picker {
+  $date-picker-border-radius: $border-radius-root !default;
+
+  .e-picker {
+    border-radius: $date-picker-border-radius;
+
+    &__title {
+      border-top-left-radius: $date-picker-border-radius;
+      border-top-right-radius: $date-picker-border-radius;
+    }
+  }
+}

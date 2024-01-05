@@ -1,0 +1,44 @@
+.e-form {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+
+  &--readonly {
+    pointer-events: none;
+  }
+
+  &.no-gutters {
+    padding: 0 0.5px 0.5px 0;
+    margin: 0;
+
+    .e-field__slot {
+      background-color: white;
+    }
+  }
+
+  &--outlined {
+    .e-field {
+      @include e-field-outlined;
+
+      .e-field__line {
+        display: none;
+      }
+    }
+
+    &.e-form--disabled {
+      .e-field__slot {
+        border-style: dashed;
+      }
+    }
+  }
+
+  &--disabled {
+    .e-field {
+      pointer-events: none;
+
+      &__line::before {
+        border-style: dashed;
+      }
+    }
+  }
+}
