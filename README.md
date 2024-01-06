@@ -126,7 +126,7 @@ $colors: (
 );
 
 // This is mandatory
-@import "@import "drocket/setting.scss";
+@import "drocket/setting.scss";
 ```
 
 # Contribute
