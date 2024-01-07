@@ -46,7 +46,7 @@
     "preview": "vite preview",
     "test": "exit 0"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "peerDependency": {
     "vue": "^3.3.11"
   },

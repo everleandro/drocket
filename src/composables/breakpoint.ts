@@ -20,6 +20,7 @@ export default function () {
     md.value = integerFromKey("--md");
     lg.value = integerFromKey("--lg");
     observeBreakpoint();
+    if (typeof window === "undefined") return;
     window?.addEventListener("resize", observeBreakpoint);
   });
 

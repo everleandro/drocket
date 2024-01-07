@@ -10,7 +10,7 @@ import {
   ComputedRef,
   watch,
 } from "vue";
-export default function useField(useFormInjection = true) {
+export function useField(useFormInjection = true) {
   const props = ref(getCurrentInstance()?.props);
   const mounted = ref(false);
   const dirty = ref(false);

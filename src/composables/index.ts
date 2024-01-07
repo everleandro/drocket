@@ -1,2 +1,2 @@
-export { default as UseBreakpoint } from "./breakpoint";
-export { default as useField } from "./field";
+export { default as useBreakpoint } from "./breakpoint";
+export { useField } from "./field";
