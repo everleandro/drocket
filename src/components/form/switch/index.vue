@@ -12,17 +12,20 @@
                     <div :class="['e-field--selection-controls__ripple', switchColor]"></div>
                     <div :class="['e-field-switch__track', switchColor]"></div>
                     <div class="e-field-switch__thumb">
-                        <div v-show="loading" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                            class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
-                            style="height: 16px; width: 16px">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                viewBox="22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715"
-                                style="transform: rotate(0deg)">
-                                <circle fill="transparent" cx="45.714285714285715" cy="45.714285714285715" r="20"
-                                    stroke-width="5.714285714285714" stroke-dasharray="125.664"
-                                    stroke-dashoffset="125.66370614359172px" class="e-progress-circular__overlay"></circle>
-                            </svg>
-                        </div>
+                        <template v-if="mounted">
+                            <div v-show="loading" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                                class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
+                                style="height: 16px; width: 16px">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715"
+                                    style="transform: rotate(0deg)">
+                                    <circle fill="transparent" cx="45.714285714285715" cy="45.714285714285715" r="20"
+                                        stroke-width="5.714285714285714" stroke-dasharray="125.664"
+                                        stroke-dashoffset="125.66370614359172px" class="e-progress-circular__overlay">
+                                    </circle>
+                                </svg>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
