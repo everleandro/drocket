@@ -1,5 +1,5 @@
 <template>
-    <component :is="tagResult" v-ripple :active-class="activeClass" tabindex="0" role="option" aria-selected="true"
+    <component v-ripple :is="tagResult" :active-class="activeClass" tabindex="0" role="option" aria-selected="true"
         :class="listItemCLass" @click="handleItemClick">
         <div v-if="hasPrepend" class="e-list-item__prepend">
             <slot name="prepend">
@@ -16,8 +16,10 @@
 <script lang="ts" setup>
 import { IconPath } from '@/types'
 import EIcon from '@/components/icon/index.vue';
+import { ripple } from '@/directives'
 import EAvatar from '@/components/avatar.vue';
 import { computed, useAttrs, useSlots } from 'vue';
+const vRipple = { ...ripple }
 
 export interface Props {
     disabled?: boolean
@@ -53,7 +55,7 @@ const active = (): boolean => {
 
 const listItemCLass = computed((): Array<string> => {
     const defaultClass = attrs.class ? `${attrs.class}` : ''
-    const classes = ['e-list-item', defaultClass]
+    const classes = ['e-list-item v-ripple-element', defaultClass]
     props.color && classes.push(`${props.color}--text`)
     props.disabled && classes.push('"e-list-item--disabled"')
     typeLink() && classes.push('e-list-item--link')
