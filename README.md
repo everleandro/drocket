@@ -85,13 +85,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 // nuxt.config.ts
 
 export default defineNuxtConfig({
-  css: [
-    "drocket/styles.css",
-    "drocket/framework.scss",
-  ],
-   ...
+  css: ["drocket/styles.css", "drocket/framework.scss"],
   vite: {
-   ...
     css: {
       preprocessorOptions: {
         scss: {

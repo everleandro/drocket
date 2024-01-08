@@ -10,14 +10,19 @@
 }
 
 .e-field--radio-group {
-  > .e-field__control > .e-field__slot {
-    > label {
+
+  >.e-field__control>.e-field__slot {
+    >label {
       padding-right: 8px;
-      display: none;
     }
   }
 
   &--column {
+    >.e-field__control>.e-field__slot>label {
+      margin-top: -20px;
+      position: absolute;
+    }
+
     .e-field__slot {
       height: auto;
     }
@@ -43,8 +48,12 @@
   }
 
   &--row {
-    > .e-field__control > .e-field__slot {
-      > label {
+    .e-field--selection-controls__field {
+      margin-top: 12px;
+    }
+
+    >.e-field__control>.e-field__slot {
+      >label {
         display: block;
         flex: 1 1 100%;
       }

@@ -2,14 +2,14 @@
     <div :class="radioGroupClass" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
         <div class="e-field__control">
             <div class="e-field__slot ">
-                <div class="e-field__overlay"></div>
+                <div v-if="!hideOverlay" class="e-field__overlay"></div>
                 <label :class="[textColor, 'e-label']" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
                 <div role="radiogroup" :aria-labelledby="id" class="e-field--radio-group__field">
                     <slot></slot>
                 </div>
-                <div v-if="!outlined" class="e-field__line"></div>
+                <div v-if="!outlined && !flat" class="e-field__line"></div>
             </div>
             <EDetails :details="details" :modelValue="modelValue" :textColor="textColor" :showDetails="showDetails" />
         </div>
@@ -24,9 +24,9 @@ import EDetails from '@/components/form/details.vue'
 
 export interface Props {
     mandatory?: boolean, modelValue: radioType, row?: boolean, label?: string,
-    labelMinWidth?: string, disabled?: boolean, color?: string, retainColor?: boolean;
+    labelMinWidth?: string, disabled?: boolean, color?: string, retainColor?: boolean; hideOverlay?: boolean;
     readonly?: boolean, outlined?: boolean, dense?: boolean; inputReadonly?: boolean
-    labelInline?: boolean; detail?: string; detailErrors?: Array<string>;
+    labelInline?: boolean; detail?: string; detailErrors?: Array<string>; flat?: boolean;
     detailsOnMessageOnly?: boolean; rules?: Array<(param: any) => string | boolean>;
     cols?: string | number; xs?: string | number; sm?: string | number;
     md?: string | number; lg?: string | number; xl?: string | number;
