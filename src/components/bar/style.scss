@@ -12,6 +12,7 @@
   right: 0;
   left: 0;
   position: relative;
+  height: 64px;
 
   &--outlined,
   &--depressed {
@@ -28,7 +29,6 @@
   }
 
   &--app {
-    height: 64px;
     background-color: #f5f5f5;
     position: absolute;
     left: 0;
@@ -46,7 +46,7 @@
   }
 
   &--dense {
-    .e-bar {
+    &.e-bar {
       height: 48px;
     }
   }

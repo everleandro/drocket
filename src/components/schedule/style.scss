@@ -6,6 +6,10 @@
     height: 100%;
   }
 
+  &-container {
+    flex: 1;
+  }
+
   &__body {
     display: flex;
     flex: 1 1 100%;
@@ -17,11 +21,13 @@
   }
 
   &-btn--day {
-    padding: 0;
-    min-width: unset;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    &.e-btn {
+      padding: 0;
+      min-width: unset;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
   }
 
   &-btn--space {
@@ -66,6 +72,7 @@
       }
 
       .event {
+
         &-name,
         &-subtitle,
         &-footer {
@@ -105,7 +112,7 @@
     background-color: transparent;
 
     &:not(.e-schedule__header) {
-      height: var(--row-height);
+      height: calc(var(--row-height) + 10px);
     }
   }
 
@@ -113,9 +120,9 @@
     color: var(--label);
 
     &[role="cell"] {
-      height: 10px;
+      height: 0;
 
-      & > span {
+      &>span {
         display: block;
         width: 100%;
         margin: auto;
@@ -149,7 +156,7 @@
   }
 
   div[role="col"] {
-    flex: 1; 
+    flex: 1;
 
     &.col-hour-info {
       z-index: 1;
@@ -230,5 +237,5 @@
     z-index: 3;
   }
 
-  
+
 }

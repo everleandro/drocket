@@ -1,5 +1,5 @@
 <template>
-    <div :class="progressClass" role="progressbar" aria-hidden="false" aria-valuemin="0" aria-valuemax="100"
+    <div v-if="mounted" :class="progressClass" role="progressbar" aria-hidden="false" aria-valuemin="0" aria-valuemax="100"
         :style="progressStyle">
         <div class="e-progress-linear__background" style="width: 100%;"></div>
         <div class="e-progress-linear__indeterminate">
@@ -9,8 +9,8 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { computed } from 'vue';
-
+import { computed, onMounted, ref } from 'vue';
+const mounted = ref(false);
 export interface Props {
     indeterminate?: boolean
     height?: string | number
@@ -22,6 +22,10 @@ const progressClass = computed(() => {
     classes.push(`${props.color}--text`)
     return classes
 })
+
+onMounted(() => {
+    mounted.value = true;
+});
 const progressStyle = computed(() => ({ '--e-progress-linear-height': `${props.height}px` }))
 </script>
 <style lang="scss" src="./style.scss"></style>

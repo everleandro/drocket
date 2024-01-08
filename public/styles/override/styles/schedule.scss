@@ -24,7 +24,8 @@
   &__header {
     &[role="cell"] {
       &>span {
-        height: $header-col-height;
+        height: calc($header-col-height + 10px);
+        padding-top: 10px;
         background-color: $schedule-bg;
       }
     }

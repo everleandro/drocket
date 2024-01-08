@@ -22,3 +22,6 @@ export type {
 } from "./date-picker";
 
 export { datePickerViewType } from "./date-picker";
+
+export type { Space, SlotEvent, ScheduleEvent, Point } from "./schedule";
+export { Mode as scheduleMode } from "./schedule";
