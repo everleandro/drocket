@@ -2,7 +2,7 @@
     <div :class="swithcClass" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
         <div class="e-field__control">
             <div class="e-field__slot" @click="change">
-                <div class="e-field__overlay"></div>
+                <div v-if="!hideOverlay" class="e-field__overlay"></div>
                 <label v-if="mounted" :class="[textColor, 'e-label']" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
@@ -44,7 +44,7 @@ export interface Props {
     labelInline?: boolean; detail?: string; outlined?: boolean; label?: string | number;
     detailErrors?: Array<string>; detailsOnMessageOnly?: boolean; appendIcon?: string; retainColor?: boolean;
     labelMinWidth?: string; prependIcon?: string; rules?: Array<(param: any) => string | boolean>;
-    cols?: string | number; xs?: string | number; sm?: string | number; md?: string | number;
+    cols?: string | number; xs?: string | number; sm?: string | number; md?: string | number; hideOverlay?: boolean;
     lg?: string | number; xl?: string | number; modelValue: string | number | boolean;
     trueValue?: boolean | string | number, falseValue?: boolean | string | number
 }

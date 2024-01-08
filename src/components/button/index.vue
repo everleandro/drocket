@@ -90,7 +90,7 @@ const availableRootClasses: Record<ButtonClassKeys, string> = {
 const tag = computed(() => attrs.to ? 'RouterLink' : 'Button')
 
 const btnClass = (): Array<string> => {
-    const classes = ['e-btn']
+    const classes = ['e-btn,v-ripple-element']
     const defaultSize = !(props.small || props.xSmall || props.large || props.xLarge);
     if (configuration.hovered && props.hoverColor)
         classes.push(`e-btn--${props.hoverColor}`)
