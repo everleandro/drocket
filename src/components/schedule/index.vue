@@ -290,6 +290,7 @@ const eventStyle = (point: Point): Record<string, string> => {
     const to = secondsByDate(new UtilDate(end).date);
     const displacement = ((to - from) / props.step)
     const height = parseInt(props.rowHeight) * (displacement == 0 ? 0 : displacement);
+
     const fillPercent = (from % props.step) / props.step;
     const top = parseInt(props.rowHeight) * fillPercent - 1;
     const backgroundColor = (color || '').indexOf('#') == -1 ? '' : color;
