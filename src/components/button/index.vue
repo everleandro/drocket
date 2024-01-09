@@ -1,6 +1,6 @@
 <template>
-    <component v-ripple :is="tag" :class="btnClass()" :type="type || 'button'" :style="style()"
-        @mouseover="handleHover(true)" @mouseleave="handleHover(false)">
+    <component v-ripple :is="tag" v-bind="isExteranlLinkAttributes" :class="btnClass()" :type="type || 'button'"
+        :style="style()" @mouseover="handleHover(true)" @mouseleave="handleHover(false)">
         <span v-show="props.loading" class="e-btn__loader">
             <slot name="loading">
                 <span role="progressbar" aria-valuemin="0" aria-valuemax="100"
@@ -87,7 +87,19 @@ const availableRootClasses: Record<ButtonClassKeys, string> = {
     xLarge: 'e-btn--size-x-large'
 };
 
-const tag = computed(() => attrs.to ? 'RouterLink' : 'Button')
+
+const tag = computed(() => {
+    const { to } = attrs
+    if ((typeof to === 'string') && to.startsWith('http')) return 'a'
+    if (to) return 'router-link'
+    return 'button'
+})
+
+const isExteranlLinkAttributes = computed(() => {
+    const { to } = attrs
+    if ((typeof to === 'string') && to.startsWith('http')) return { href: to }
+    return {}
+})
 
 const btnClass = (): Array<string> => {
     const classes = ['e-btn v-ripple-element']
