@@ -1,5 +1,5 @@
 <template>
-    <i ref="iconElement" v-cloak aria-hidden="true" :class="iconClass">
+    <i v-if="mounted" ref="iconElement" v-cloak aria-hidden="true" :class="iconClass">
         <slot>
             <svg v-if="isPath" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox" role="img" aria-hidden="true"
                 class="e-icon__svg">
@@ -10,9 +10,10 @@
 </template>
 <script lang="ts" setup>
 import type { IconPath, IconProps, IconClassKeys } from '@/types';
-import { ComputedRef, computed, ref, useAttrs } from 'vue';
+import { ComputedRef, computed, ref, useAttrs, onMounted } from 'vue';
 import { useUtils } from "@/composables/utils"
 const { isObject } = useUtils()
+const mounted = ref(false)
 
 const attrs = useAttrs()
 
@@ -72,6 +73,10 @@ const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     ).map(key => availableRootClasses[key]);
     return [...classes, ...classes2]
 })
+
+onMounted(() => {
+    mounted.value = true;
+});
 
 </script>
 <style lang="scss" src="./style.scss"></style>

@@ -16,11 +16,11 @@ export default {
 </script>
 <script setup lang="ts">
 import { Ref, nextTick, onMounted, provide, reactive, ref, watch } from 'vue';
-import { Target } from './types'
+import { MenuTypeTarget } from '@/types'
 
 const configuration: Record<string, any> = reactive({
     absolute: false,
-    target: <Target>null,
+    target: <MenuTypeTarget>null,
     dataId: '',
     closeOnContentClick: false,
     attrs: {},

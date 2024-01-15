@@ -84,7 +84,7 @@
 
 import { Lng as Lnguage } from '@/locales/index';
 import { DatesConfiguration, datePickerViewType, Day, Month, Year, DatePickerProps } from "@/types"
-import { ContainerMenuInterface } from '../menu/types';
+import { ContainerMenuInterface } from '@/types';
 
 import { EDIalog } from '@/components/dialog/index.vue';
 import EButton from '@/components/button/index.vue'

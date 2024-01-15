@@ -1,6 +1,6 @@
 
 <template>
-    <transition name="fade">
+    <transition v-if="mounted" name="fade">
         <div v-show="store.active" role="dialog" aria-modal="true" :class="contentClass" tabindex="0" @click.self="close()">
             <transition name="scale">
                 <div v-show="store.active" :class="dialogClass" :style="style">
@@ -14,9 +14,10 @@
 export default { name: 'EDialog' }
 </script>
 <script lang="ts" setup>
-import { computed, onMounted, provide, reactive, watch } from 'vue'
-
-
+import { computed, onMounted, provide, reactive, watch, ref } from 'vue'
+export interface EDIalog {
+    close: (forece?: boolean) => void
+}
 export interface Props {
     fullscreen?: boolean
     modelValue?: boolean
@@ -24,9 +25,7 @@ export interface Props {
     persistent?: boolean
     maxWidth?: string | number
 }
-export interface EDIalog {
-    close: (forece?: boolean) => void
-}
+const mounted = ref(false);
 
 const availableRootClasses = {
     fullscreen: "e-dialog--fullscreen",
@@ -73,7 +72,7 @@ const contentClass = computed(() => {
 })
 
 
-onMounted(() => store.active = props.modelValue)
+onMounted(() => { store.active = props.modelValue; mounted.value = true })
 
 
 const handleExcListener = ({ key }: KeyboardEvent): void => {

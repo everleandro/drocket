@@ -1,9 +1,9 @@
-export interface Space {
+export interface ScheduleSpace {
   label: string;
   id: string | number;
 }
 
-export interface SlotEvent {
+export interface ScheduleSlotEvent {
   name: string;
   entityId: number | string;
   start: Date | string;
@@ -11,7 +11,7 @@ export interface SlotEvent {
   color: string;
 }
 
-export interface ScheduleEvent extends SlotEvent {
+export interface ScheduleEvent extends ScheduleSlotEvent {
   footer?: string | number | null;
   subtitle?: string | number | null;
 }
@@ -20,7 +20,7 @@ export interface Point {
   x: number;
   y: number;
 }
-export enum Mode {
+export enum ScheduleMode {
   day,
   week,
   month,

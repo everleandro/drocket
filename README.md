@@ -5,13 +5,18 @@ A comprehensive collection of reusable Vue.js UI components to streamline your d
 ## You can read the full documentation [here](https://drocket-doc.vercel.app/).
 
 - [Get Started](https://drocket-doc.vercel.app/)
-- [Buttons](https://drocket-doc.vercel.app/buttons)
-- [Icons](https://drocket-doc.vercel.app/icons)
-- [Date Pickers](https://drocket-doc.vercel.app/date-picker)
 - Forms & Inputs
   - [form](https://drocket-doc.vercel.app/form)
   - [Text Fields](https://drocket-doc.vercel.app/form/text-fields)
   - [Selects](https://drocket-doc.vercel.app/form/selects)
+  - [Checkboxes](https://drocket-doc.vercel.app/form/checkboxes)
+  - [Switches](https://drocket-doc.vercel.app/form/switches)
+  - [Radio Buttons](https://drocket-doc.vercel.app/form/radio-buttons)
+- Containment
+  - [Buttons](https://drocket-doc.vercel.app/buttons)
+  - [schedule](https://drocket-doc.vercel.app/schedule)
+  - [Icons](https://drocket-doc.vercel.app/icons)
+  - [Date Pickers](https://drocket-doc.vercel.app/date-picker)
 
 # Instalation and basic setup
 

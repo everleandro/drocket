@@ -40,3 +40,4 @@ export { default as EContainer } from "./container.vue";
 export { default as EDivider } from "./divider.vue";
 export { default as EMain } from "./main.vue";
 export { default as ESpacer } from "./spacer.vue";
+export { default as ETimePicker } from "./form/time-picker/index.vue";

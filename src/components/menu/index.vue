@@ -8,12 +8,12 @@ export default {
 }
 </script>
 <script  lang="ts" setup>
-
+import type { MenuTypeTarget, ContainerMenuInterface } from '@/types'
 export interface Props {
     absolute?: boolean
     closeOnContentClick?: boolean
     fullWidth?: boolean
-    activator?: Target
+    activator?: MenuTypeTarget
     holdFocus?: boolean
     disableMenu?: boolean
     checkOffset?: boolean
@@ -27,10 +27,9 @@ export interface Props {
 }
 
 import EMenuContainer from './container.vue'
-import { ContainerMenuInterface } from './types'
+
 import { Ref, VNode, createApp, defineComponent, h, nextTick, onMounted, onUnmounted, onUpdated, ref, useAttrs, useSlots, watch } from 'vue'
 import { ripple, clickOutside } from '@/directives'
-import { Target } from "./types"
 
 const id = `${Math.floor(Math.random() * 999999)}-e-menu`
 const props = withDefaults(defineProps<Props>(), { origin: 'bottom left', transition: 'fade', offsetX: 0, offsetY: 0 })
