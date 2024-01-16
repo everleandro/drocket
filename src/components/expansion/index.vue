@@ -1,8 +1,8 @@
 <template>
   <div :class="expansionClass">
     <div class="e-expansion__header">
-      <button class="e-btn e-btn--block e-btn--text">
-        <span class="e-expansion__header-content" @click="changeValue(!opened)">
+      <button class="e-btn e-btn--block e-btn--text" @click="changeValue(!opened)">
+        <span class="e-expansion__header-content">
           <slot name="header">
             {{ headerTitle }}
           </slot>

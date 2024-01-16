@@ -1,12 +1,17 @@
 .e-expansion {
   &-panels {
+    width: 100%;
+    flex: 1 1 auto;
+
     .e-expansion {
       box-shadow: none;
+
       &:not(:last-child) {
         border-bottom: thin solid rgba(0, 0, 0, 0.12);
       }
     }
   }
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -16,6 +21,7 @@
     user-select: none;
     position: relative;
     padding: 0;
+
     .e-btn {
       color: inherit;
       font-size: 0.9375rem;

@@ -130,10 +130,11 @@
   }
 
   .e-label {
-    text-transform: capitalize;
+    // text-transform: capitalize;
     font-weight: 400;
     line-height: 18px;
-    margin-top: 0.875rem;
+    // margin-top: 0.875rem;
+    margin-top: 15px;
     margin-bottom: 0;
     align-self: flex-start;
   }
@@ -248,7 +249,7 @@
         width: 100%;
       }
 
-      & + .e-label {
+      &+.e-label {
         left: 0px;
         right: auto;
         position: relative;
@@ -393,6 +394,7 @@
   &--is-hovered,
   &--retain-color,
   &--is-focused {
+
     ::-webkit-input-placeholder,
     :-ms-input-placeholder,
     ::placeholder {
