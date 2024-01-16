@@ -30,7 +30,7 @@
   "main": "./dist/drocket.umd.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/everleandro/drocket"
+    "url": "git+https://github.com/everleandro/drocket.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
