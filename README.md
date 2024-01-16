@@ -1,4 +1,4 @@
-# DRocket Vue UI Components Library
+# Drocket Vue UI Components Library
 
 A comprehensive collection of reusable Vue.js UI components to streamline your development process. It contains frequently used components, adaptable to your needs. You can use each of the proposed components or just use the one you need.
 
