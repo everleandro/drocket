@@ -1,6 +1,7 @@
 {
   "name": "drocket",
   "type": "module",
+  "version": "1.0.9",
   "files": [
     "dist"
   ],
@@ -57,7 +58,6 @@
     "preview": "vite preview",
     "test": "exit 0"
   },
-  "version": "1.0.8",
   "peerDependency": {
     "vue": "^3.3.11"
   },

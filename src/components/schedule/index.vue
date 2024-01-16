@@ -105,7 +105,7 @@ export interface Props {
 }
 const props = withDefaults(defineProps<Props>(),
     {
-        lng: 'es', color: 'primary', rowHeight: '97',
+        lng: 'en', color: 'primary', rowHeight: '97',
         step: 60 * 60, start: 0, events: () => [], stickyTopHeader: 0,
         end: 60 * 60 * 24, spaces: () => []
     })
@@ -209,10 +209,14 @@ const setLocalEvents = (): void => {
         ({ start }: ScheduleEvent) => new UtilDate(start).date > dateFrom && new UtilDate(start).date < dateTo
     );
 
-
-    if (modeDay.value || computedMode.value === ScheduleMode.schedule) {
+    if (modeDay.value) {
         events = events.filter(
             ({ start, entityId }: ScheduleEvent) => (new UtilDate(start).date.getDay() == dateFrom.getDay()) && (entityId === computedSelectedSpace.value?.id)
+
+        );
+    } else if (computedMode.value === ScheduleMode.schedule) {
+        events = events.filter(
+            ({ start }: ScheduleEvent) => new UtilDate(start).date.getDay() == dateFrom.getDay()
         );
     } else if (computedMode.value === ScheduleMode.week) {
         events = events.filter(
@@ -224,7 +228,8 @@ const setLocalEvents = (): void => {
         const day = props.modelValue.getDay();
         event.subtitle ??= new UtilDate(event.start).format('hour-hh:minutes-mm') + ' - ' + new UtilDate(event.end).format('hour-hh:minutes-mm');
         let y = -1;
-        if (computedMode.value === ScheduleMode.day || computedMode.value === ScheduleMode.schedule) {
+        if (modeDay.value) y = 0;
+        else if (computedMode.value === ScheduleMode.schedule) {
             y = props.spaces.findIndex(({ id }) => id == event.entityId);
         } else if (computedMode.value === ScheduleMode.week) {
             y = new UtilDate(event.start).date.getDay();
@@ -242,6 +247,7 @@ const setLocalEvents = (): void => {
             }
         }
     });
+
     local.events = result;
 }
 
@@ -258,7 +264,7 @@ const getEmptySlotData = ({ x, y }: Point): ScheduleSlotEvent => {
     const endHours: number = Math.floor((timestamp + props.step) / 60 / 60);
     const endMinutes: number =
         Math.floor((timestamp + props.step) / 60) - endHours * 60;
-    const selectedDate: Date = modeDay.value
+    const selectedDate: Date = modeDay.value || computedMode.value === ScheduleMode.schedule
         ? props.modelValue
         : new UtilDate(props.modelValue).add(y, 'days').date;
 
@@ -269,7 +275,8 @@ const getEmptySlotData = ({ x, y }: Point): ScheduleSlotEvent => {
         .set(endHours, 'hours')
         .set(endMinutes, 'minutes').date;
 
-    const space: ScheduleSpace = modeDay.value
+    // const space: ScheduleSpace = (computedSelectedSpace.value as ScheduleSpace);
+    const space: ScheduleSpace = computedMode.value === ScheduleMode.schedule
         ? props.spaces[y]
         : (computedSelectedSpace.value as ScheduleSpace);
     return {
@@ -295,7 +302,7 @@ const eventStyle = (point: Point): Record<string, string> => {
     const top = parseInt(props.rowHeight) * fillPercent - 1;
     const backgroundColor = (color || '').indexOf('#') == -1 ? '' : color;
 
-    return { height: `${height}px`, top: `${top}px`, backgroundColor, marginTop: '1px' };
+    return { height: `${height}px`, top: `${top}px`, backgroundColor, marginTop: '0' };
 }
 
 const handleEventClick = (event: ScheduleEvent, nativeEvent: MouseEvent): void => {

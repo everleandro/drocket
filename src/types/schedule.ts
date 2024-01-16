@@ -14,6 +14,7 @@ export interface ScheduleSlotEvent {
 export interface ScheduleEvent extends ScheduleSlotEvent {
   footer?: string | number | null;
   subtitle?: string | number | null;
+  id: string | number;
 }
 
 export interface Point {
