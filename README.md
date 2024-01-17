@@ -19,7 +19,8 @@ A comprehensive collection of reusable Vue.js UI components to streamline your d
   - [Date Pickers](https://drocket-doc.vercel.app/date-picker)
   - [Expansion Panel](https://drocket-doc.vercel.app/expansion-panel)
   - [Menu](https://drocket-doc.vercel.app/menu)
-  - [Chips  ](https://drocket-doc.vercel.app/chips)
+  - [Chips ](https://drocket-doc.vercel.app/chips)
+  - [Dialog ](https://drocket-doc.vercel.app/dialog)
 
 # Instalation and basic setup
 
