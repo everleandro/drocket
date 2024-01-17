@@ -16,7 +16,8 @@
             </slot>
         </span>
         <span v-if="closable" class="e-chip__close" aria-label="Close">
-            <button v-ripple="{ center: true }" type="button" class="e-btn e-btn--icon e-btn--size-small"
+            <button v-ripple="{ center: true }" type="button"
+                :class="['e-btn e-btn--icon e-btn--text e-btn--size-small', `e-btn--${props.color}`]"
                 @click="handleClickClose">
                 <EIcon :icon="icon.clear" />
             </button>
