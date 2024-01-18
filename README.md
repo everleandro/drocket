@@ -21,6 +21,7 @@ A comprehensive collection of reusable Vue.js UI components to streamline your d
   - [Menu](https://drocket-doc.vercel.app/menu)
   - [Chips ](https://drocket-doc.vercel.app/chips)
   - [Dialog ](https://drocket-doc.vercel.app/dialog)
+  - [Tabs ](https://drocket-doc.vercel.app/tabs)
 
 # Instalation and basic setup
 
