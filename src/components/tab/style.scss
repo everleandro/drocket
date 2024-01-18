@@ -7,20 +7,26 @@
     --e-tabs-height: 3rem;
   }
 
-  .e-btn + .e-btn {
+  .e-btn+.e-btn {
     margin: 0;
   }
 
   &--align-tabs {
     &-start {
       .e-tab {
-        justify-content: start;
+        justify-content: flex-start;
       }
     }
 
     &-center {
       .e-tab {
         justify-content: center;
+      }
+    }
+
+    &-end {
+      .e-tab {
+        justify-content: flex-end;
       }
     }
   }
@@ -59,6 +65,7 @@
     flex-direction: column;
 
     .e-slide-group {
+
       &__container,
       &__content {
         flex-direction: column;
@@ -69,6 +76,12 @@
       top: 0;
       height: 100%;
       width: 2px;
+    }
+  }
+
+  &--grow {
+    .e-tab {
+      flex: 1 1 auto;
     }
   }
 
@@ -86,7 +99,7 @@
     transition: 0.2s all cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
 
-    & > * {
+    &>* {
       white-space: initial;
     }
   }

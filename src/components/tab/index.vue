@@ -1,8 +1,8 @@
 <template>
     <slot name="activator" :attrs="activatorAttrs()">
-        <EButton :class="['e-tab',
-            { 'e-slide-group-item--active e-tab--selected': active }]" :color="color" text tabindex="0" role="tab"
-            :aria-selected="active" :value="value" @click="changeGroupValue">
+        <EButton v-bind="buttonProps" :class="['e-tab',
+            { 'e-slide-group-item--active e-tab--selected': active }]" tabindex="0" role="tab" :aria-selected="active"
+            :value="value" @click="changeGroupValue" :icon="icon">
             <slot></slot>
             <div class="e-tab__slider" :style="sliderStyle"></div>
         </EButton>
@@ -11,11 +11,12 @@
 <script lang="ts" setup>
 import { computed, inject, reactive } from "vue";
 import { TabGroup } from "./group.vue"
-
-export interface Props {
+import EButton from "@/components/button/index.vue";
+import { ButtonProps } from "@/components/button/index.vue";
+export interface Props extends ButtonProps {
     value: string | number
 }
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 const Group = inject<Partial<TabGroup> | undefined>("TabGroup", undefined);
 const sliderStyle = reactive<Record<string, string>>({})
 const active = computed(() => Group?.modelValue?.value === props.value)
@@ -25,7 +26,15 @@ const changeGroupValue = (): void => {
 }
 
 const color = computed((): string => {
-    return active.value ? (Group?.color?.value || 'primary') : (Group?.inactiveColor?.value || 'secondary')
+    return active.value ? (props.color || Group?.color?.value || 'primary') : (Group?.inactiveColor?.value || 'secondary')
+})
+const buttonProps = computed((): Partial<ButtonProps> => {
+    const propsResult: ButtonProps = {
+        ...props,
+        color: color.value,
+        text: true
+    }
+    return propsResult;
 })
 const activatorAttrs = () => {
     const attrs: Record<string, any> = {}

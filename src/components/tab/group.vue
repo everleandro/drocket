@@ -19,14 +19,22 @@ export interface TabGroup {
 <script lang="ts" setup>
 import { ComputedRef, computed, provide } from 'vue';
 
-export interface Props { modelValue?: string | number, color?: string, inactiveColor?: 'secondary', direction?: string, tabAlign?: string }
+export interface Props {
+    modelValue?: string | number,
+    color?: string,
+    inactiveColor?: string,
+    vertical?: boolean,
+    grow?: boolean,
+    tabAlign?: string
+}
 const props = withDefaults(defineProps<Props>(), { color: 'primary', inactiveColor: 'secondary', tabAlign: 'center', direction: 'horizontal' })
 const emit = defineEmits<{ (e: 'update:modelValue', value: number | string): void }>()
 
 const changeValue = (value: string | number): void => emit('update:modelValue', value)
 const tabGroupCLass = computed(() => {
     const classes = ['e-slide-group e-tabs e-tabs--density-default']
-    if (props.direction === 'vertical') classes.push('e-slide-group--vertical e-tabs--vertical')
+    if (props.vertical) classes.push('e-slide-group--vertical e-tabs--vertical')
+    if (props.grow) classes.push('e-slide-group--grow')
     classes.push(`e-tabs--align-tabs-${props.tabAlign}`)
     return classes;
 })
