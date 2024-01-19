@@ -15,16 +15,18 @@ $space-step: 4px !default;
 //colors
 
 $colors: map-merge(("primary": #00af67,
+      "blue": #00d3ee,
       "secondary": #4c5f68,
+      "warning": #ffa21a,
+      "purple": #AF2CC5,
       "input": #4f636b,
       "grey": #91a0a8,
       "disabled": rgba(0, 0, 0, 0.38),
-      "error": #f44336,
+      "error": #f55a4e,
       "white": white,
       "black": black,
-      "success": #66bb6a,
-      "red": #f44336,
-    ),
+      "success": #5cb860,
+      "red": #f44336),
     ()) !default;
 
 $contrast-colors: map-merge(("white": black,
@@ -43,3 +45,4 @@ $breakpoint: (
 @import "./override/variables/expansion.scss";
 @import "./override/variables/icon.scss";
 @import "./override/variables/schedule.scss";
+@import "./override/variables/list.scss";

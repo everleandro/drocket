@@ -80,11 +80,9 @@
                             <e-list :color="color" :style="listStyle">
                                 <template v-for="(item, index) in items">
                                     <slot name="item" :attrs="slotItemAttrs(item, index)" :item="item">
-                                        <e-list-item :class="{ 'e-list-item--active': active(item) }"
-                                            @click="handleItemClick(item)" :key="index">
-                                            <slot name="item-text">
-                                                {{ displayedText(item) }}
-                                            </slot>
+                                        <e-list-item active-class="e-list-item--active" :isActive="active(item)"
+                                            @click="handleItemClick(item)" :key="index" :value="item[itemValue] || item">
+                                            {{ displayedText(item) }}
                                         </e-list-item>
                                     </slot>
                                 </template>

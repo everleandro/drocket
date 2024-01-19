@@ -1,8 +1,9 @@
 export const ripple = {
   mounted: function (el: any, binding: Record<string, any>) {
-    if (!el.classList.contains("v-ripple-element"))
-      el.classList.add("v-ripple-element");
-    if (!(binding?.value?.disabled === true))
+    if (!(binding?.value?.disabled === true)) {
+      if (!el.classList.contains("v-ripple-element"))
+        el.classList.add("v-ripple-element");
+
       el.addEventListener("mousedown", function (e: MouseEvent) {
         if (!el.classList.contains("v-ripple-element"))
           el.classList.add("v-ripple-element");
@@ -32,10 +33,11 @@ export const ripple = {
           if (circle) el.removeChild(circle);
         }, 500);
       });
+    }
   },
-  updated: function (el: any) {
-    if (!el.classList.contains("v-ripple-element"))
-      el.classList.add("v-ripple-element");
-  },
+  // updated: function (el: any) {
+  // if (!el.classList.contains("v-ripple-element"))
+  //   el.classList.add("v-ripple-element");
+  // },
 };
 export default ripple;

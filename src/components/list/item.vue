@@ -1,65 +1,98 @@
 <template>
-    <component v-ripple :is="tagResult" :active-class="activeClass" tabindex="0" role="option" aria-selected="true"
-        :class="listItemCLass" @click="handleItemClick">
+    <component ref="node" v-ripple="{ disabled: !clickeableType() }" :is="tagResult" :active-class="activeClass"
+        v-bind="liBindingOptions" :class="listItemCLass" @click="handleItemClick">
         <div v-if="hasPrepend" class="e-list-item__prepend">
             <slot name="prepend">
                 <EIcon v-if="prependIcon" :icon="prependIcon"></EIcon>
-                <EAvatar v-if="prependAvatar" size="34" :src="prependAvatar"></EAvatar>
+                <EAvatar v-else-if="prependAvatar" size="34" :src="prependAvatar"></EAvatar>
             </slot>
         </div>
         <div class="e-list-item__content">
+            <span v-if="title" class="e-list-item-title">{{ title }}</span>
+            <span v-if="subtitle" class="e-list-item-subtitle">{{ subtitle }}</span>
             <slot></slot>
+        </div>
+        <div v-if="hasAppend" class="e-list-item__append">
+            <slot name="prepend">
+                <EIcon v-if="appendIcon" :icon="appendIcon"></EIcon>
+                <EAvatar v-else-if="appendAvatar" size="34" :src="appendAvatar"></EAvatar>
+            </slot>
         </div>
     </component>
 </template>
   
 <script lang="ts" setup>
-import { IconPath } from '@/types'
+import { IconPath, EListInjection } from '@/types'
 import EIcon from '@/components/icon/index.vue';
 import { ripple } from '@/directives'
 import EAvatar from '@/components/avatar.vue';
-import { computed, useAttrs, useSlots } from 'vue';
+import { computed, useAttrs, useSlots, inject, ref } from 'vue';
 const vRipple = { ...ripple }
 
 export interface Props {
     disabled?: boolean
     ripple?: boolean
     prependIcon?: string | IconPath | Array<IconPath>
+    appendIcon?: string | IconPath | Array<IconPath>
     prependAvatar?: string
+    appendAvatar?: string
     isActive?: boolean
     activeClass?: string
+    title?: string
+    subtitle?: string
     tag?: string
     color?: string
-    value?: Record<string, any> | string | number
+    value?: string | number | undefined
 }
 
 const props = defineProps<Props>()
 const slots = useSlots()
 const attrs = useAttrs()
+const parentList = inject<Partial<EListInjection> | undefined>("EList", undefined);
+const node = ref<HTMLElement | null>(null)
+
+const active = computed((): boolean => {
+    if (props.isActive) return props.isActive
+    if (typeof parentList !== "undefined" && props.value !== undefined) {
+        if (Array.isArray(parentList?.modelValue?.value)) {
+            return parentList?.modelValue.value?.includes(props.value)
+        } else {
+            return parentList?.modelValue?.value === props.value
+        }
+    }
+    return false
+})
 
 const emit = defineEmits<{
     (e: 'click:item', value: MouseEvent): void
 }>()
+const liBindingOptions = computed((): Record<string, any> => {
+    const options: Record<string, any> = {}
+    if (clickeableType()) {
+        options['tabindex'] = 0
+        options['role'] = 'option'
+        options['aria-selected'] = active.value
+    }
+    return options
+})
 const availableRootClasses = {
     disabled: "e-list-item--disabled",
+    clickeable: "e-list-item--clickeable",
+    root: "e-list-item",
+    ripple: "v-ripple-element",
+    active: "e-list-item--active",
 };
 
-const isIntoItemGroup = (): boolean => {
-    return false
-    //   return getCurrentInstance()?.parent?.exposed as ComponentInternalInstance;
-}
-
-const active = (): boolean => {
-    return props.isActive;
-}
-
-const listItemCLass = computed((): Array<string> => {
-    const defaultClass = attrs.class ? `${attrs.class}` : ''
-    const classes = ['e-list-item v-ripple-element', defaultClass]
+const listItemCLass = computed((): Array<unknown> => {
+    const classes = [availableRootClasses.root, attrs.class || '']
     props.color && classes.push(`${props.color}--text`)
-    props.disabled && classes.push('"e-list-item--disabled"')
-    typeLink() && classes.push('e-list-item--link')
-    active() && classes.push('"e-list-item--active"')
+    props.disabled && classes.push(availableRootClasses.disabled)
+    if (clickeableType()) {
+        classes.push([availableRootClasses.clickeable, availableRootClasses.ripple].join(' '))
+    }
+    if (active.value) {
+        (classes.push(availableRootClasses.active) && classes.push(props.activeClass || ''))
+    }
     return classes;
 })
 
@@ -67,18 +100,27 @@ const hasPrepend = computed((): boolean => {
     return !!slots.prepend || !!props.prependAvatar || !!props.prependIcon;
 })
 
+const hasAppend = computed((): boolean => {
+    return !!slots.append || !!props.appendAvatar || !!props.appendIcon;
+})
+
 const tagResult = computed((): string => {
     if (props.tag)
         return props.tag
     return attrs.to ? "router-link" : "li"
 });
+const isActivator = computed((): boolean => {
+    return !!attrs['data-activator-node']
+})
 
 const handleItemClick = (evt: MouseEvent): void => {
     emit('click:item', evt)
+    if (typeof props.value !== 'undefined' && !isActivator.value)
+        parentList?.changeModelValue?.(props.value)
 }
 
-const typeLink = (): boolean => {
-    return !!attrs.to || props.value !== undefined;
+const clickeableType = (): boolean => {
+    return !!attrs.to || props.value !== undefined || isActivator.value;
 }
 </script>
   

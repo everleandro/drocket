@@ -1,7 +1,32 @@
 .e-list {
+  --root-indent: #{$space-base};
+  --list-item-prepend-width: calc(#{$space-base} + #{$list-prepend-width});
+  --padding-inline: #{$space-base};
+
   &-item {
+    padding-inline: var(--padding-inline);
+
     &__prepend {
-      margin-right: $space-base;
+      width: var(--list-item-prepend-width);
+    }
+
+  }
+
+  &-group:has(> .e-list-item > .e-list-item__prepend) {
+    .e-list-group__content {
+      --padding-inline: calc(var(--list-item-prepend-width) + var(--root-indent));
     }
   }
+
+  &:has(> .e-list-item > .e-list-item__prepend) {
+    >.e-list-group:not(:has(> .e-list-item > .e-list-item__prepend)) {
+      --padding-inline: calc(var(--root-indent) + var(--list-item-prepend-width));
+    }
+
+    >.e-list-item:not(:has(> .e-list-item__prepend)) {
+      --padding-inline: calc(var(--root-indent) + var(--list-item-prepend-width));
+    }
+  }
+
+
 }

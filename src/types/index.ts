@@ -30,5 +30,5 @@ export type {
   Point,
 } from "./schedule";
 export { ScheduleMode } from "./schedule";
-
+export type { EListInjection, ListModelProp } from "./list";
 export type { Menu, ContainerMenuInterface, MenuTypeTarget } from "./menu";
