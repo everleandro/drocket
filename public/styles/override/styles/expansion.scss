@@ -1,8 +1,18 @@
 .e-expansion {
   box-shadow: $expansion-box-shadow;
+  border-radius: $border-radius-root;
 
   &-panels {
     box-shadow: $expansion-box-shadow;
+    border-radius: $border-radius-root;
+
+    .e-expansion {
+      border-radius: 0;
+
+      &__header>.e-btn {
+        border-radius: 0;
+      }
+    }
   }
 
   &__header {

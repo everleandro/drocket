@@ -4,12 +4,22 @@
   --padding-inline: #{$space-base};
 
   &-item {
-    padding-inline: var(--padding-inline);
+    padding-inline: calc(var(--padding-inline, #{$space-base}) + var(--group-inline-padding, 0px));
 
     &__prepend {
-      width: var(--list-item-prepend-width);
+      width: var(--list-item-prepend-width, calc(#{$space-base} + #{$list-prepend-width}));
     }
 
+  }
+
+  &-group {
+    &__content {
+      --group-inline-padding:#{$space-base};
+    }
+
+    &:not(:last-child):not(:only-child) {
+      margin-bottom: #{$space-step};
+    }
   }
 
   &-group:has(> .e-list-item > .e-list-item__prepend) {
@@ -27,6 +37,18 @@
       --padding-inline: calc(var(--root-indent) + var(--list-item-prepend-width));
     }
   }
+}
 
+.e-drawer {
+  .e-list {
+    padding-inline: calc(#{$space-step} * 2);
 
+    &-item {
+      border-radius: #{$border-radius-root};
+
+      &:not(:only-child):not(:last-child) {
+        margin-bottom: #{$space-step};
+      }
+    }
+  }
 }

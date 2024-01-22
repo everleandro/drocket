@@ -13,16 +13,18 @@ A comprehensive collection of reusable Vue.js UI components to streamline your d
   - [Switches](https://drocket-doc.vercel.app/form/switches)
   - [Radio Buttons](https://drocket-doc.vercel.app/form/radio-buttons)
 - Containment
-  - [Buttons](https://drocket-doc.vercel.app/buttons)
-  - [schedule](https://drocket-doc.vercel.app/schedule)
-  - [Icons](https://drocket-doc.vercel.app/icons)
-  - [Date Pickers](https://drocket-doc.vercel.app/date-picker)
-  - [Expansion Panel](https://drocket-doc.vercel.app/expansion-panel)
-  - [Menu](https://drocket-doc.vercel.app/menu)
-  - [Chips](https://drocket-doc.vercel.app/chips)
-  - [Dialog](https://drocket-doc.vercel.app/dialog)
-  - [Tabs](https://drocket-doc.vercel.app/tabs)
-  - [Lists](https://drocket-doc.vercel.app/lists)
+  - [Buttons](https://drocket-doc.vercel.app/containment/buttons)
+  - [schedule](https://drocket-doc.vercel.app/containment/schedule)
+  - [Icons](https://drocket-doc.vercel.app/containment/icons)
+  - [Date Pickers](https://drocket-doc.vercel.app/containment/date-picker)
+  - [Expansion Panel](https://drocket-doc.vercel.app/containment/expansion-panel)
+  - [Menu](https://drocket-doc.vercel.app/containment/menu)
+  - [Chips](https://drocket-doc.vercel.app/containment/chips)
+  - [Dialog](https://drocket-doc.vercel.app/containment/dialog)
+  - [Tabs](https://drocket-doc.vercel.app/containment/tabs)
+  - [Lists](https://drocket-doc.vercel.app/containment/lists)
+- Layout
+  - [Drawer](https://drocket-doc.vercel.app/layout/drawer)
 
 # Instalation and basic setup
 

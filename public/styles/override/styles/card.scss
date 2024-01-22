@@ -1,4 +1,6 @@
 .e-card {
+  border-radius: $border-radius-root;
+
   &__container {
     padding: $space-base;
   }
@@ -9,7 +11,7 @@
     }
   }
 
-  & > .e-avatar {
+  &>.e-avatar {
     &__wrapper {
       padding: $space-base;
     }

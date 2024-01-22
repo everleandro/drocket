@@ -3,6 +3,7 @@
   padding: 8px 0;
   position: static;
   transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --before-opacity: 0.13;
 
   &--elevated {
     box-shadow: 0 3px 1px -2px rgb(0 0 0 / 20%), 0 2px 2px 0 rgb(0 0 0 / 14%),
@@ -31,6 +32,18 @@
     position: relative;
     text-decoration: none;
     color: var(--list-color);
+
+    &:hover:before {
+      --before-opacity: 0.1;
+    }
+
+    &:active:before {
+      --before-opacity: 0.13;
+    }
+
+    &:focus:before {
+      --before-opacity: 0.13;
+    }
 
     &--active,
     &.router-link-active {
@@ -82,7 +95,7 @@
     &.router-link-active:hover:before,
     &--active:hover:before,
     &:focus:before {
-      opacity: 0.12;
+      opacity: var(--before-opacity);
     }
 
     &__content {
@@ -104,7 +117,7 @@
         }
 
         &:before {
-          opacity: 0.12;
+          opacity: var(--before-opacity);
         }
       }
 

@@ -101,8 +101,10 @@
 export default { name: "Select" }
 </script>
 <script lang="ts" setup>
+import { clickOutside } from '@/directives'
 import { IconPath } from '@/types';
 import icon from '@/utils/icons';
+const vClickOutside = { ...clickOutside }
 
 import { useGrid } from "@/composables/grid"
 import { useField } from "@/composables/field"
@@ -237,6 +239,7 @@ const empty = computed((): boolean => {
 const slotItemAttrs = (item: itemType, index: number): Record<string, any> => {
     const attrs: Record<string, any> = {}
     attrs.class = { 'e-list-item--active': active(item) }
+    attrs.value = isObject(item) ? (item as Record<string, string>)[props.itemValue] : item;
     attrs.onClick = () => handleItemClick(item)
     attrs.key = index
     return attrs;

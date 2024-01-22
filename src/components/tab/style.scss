@@ -7,8 +7,12 @@
     --e-tabs-height: 3rem;
   }
 
-  .e-btn+.e-btn {
-    margin: 0;
+  .e-btn {
+    border-radius: 0;
+
+    &+.e-btn {
+      margin: 0;
+    }
   }
 
   &--align-tabs {
