@@ -3,14 +3,17 @@
         <div class="e-bar__content">
             <slot></slot>
         </div>
+        <div v-if="slots.append" class="e-bar__append">
+            <slot name="append"></slot>
+        </div>
     </header>
 </template>
 <script lang="ts" setup>
-import { ComputedRef, Ref, computed, onMounted, ref, watch, nextTick } from 'vue'
+import { ComputedRef, Ref, computed, onMounted, ref, watch, useSlots, nextTick } from 'vue'
 import { BarProps, BarClassKeys } from '@/types'
 
 let el: Ref<HTMLHeadElement | null> = ref(null)
-
+const slots = useSlots()
 const props = defineProps<BarProps>()
 
 const availableRootClasses = {
