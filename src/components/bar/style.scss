@@ -1,6 +1,6 @@
 .e-bar {
   flex-grow: 1;
-  display: block; 
+  display: block;
   contain: layout;
   display: block;
   flex: 1 1 auto;
@@ -17,7 +17,7 @@
 
   &--outlined,
   &--depressed {
-    box-shadow: none;
+    box-shadow: none !important;
   }
 
   &__content {
@@ -47,12 +47,6 @@
     z-index: 12;
     left: 0 !important;
     right: 0 !important;
-  }
-
-  &--dense {
-    &.e-bar {
-      height: 48px;
-    }
   }
 
   &--fixed {
