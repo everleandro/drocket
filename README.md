@@ -25,6 +25,7 @@ A comprehensive collection of reusable Vue.js UI components to streamline your d
   - [Lists](https://drocket-doc.vercel.app/containment/lists)
 - Layout
   - [Drawer](https://drocket-doc.vercel.app/layout/drawer)
+  - [Bar](https://drocket-doc.vercel.app/layout/bar)
 
 # Instalation and basic setup
 

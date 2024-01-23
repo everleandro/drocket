@@ -1,5 +1,24 @@
 .e-bar {
+  margin-bottom: $space-base * 4;
+  box-shadow: $e-bar-box-shadow;
+  height: $e-bar-heigth;
+
   .e-bar__content {
     padding: $e-bar-padding-y $e-bar-padding-x;
+  }
+
+  &--dense {
+    &.e-bar {
+      height: $e-bar-heigth--dense;
+    }
+  }
+
+  @each $key, $value in $colors {
+    .#{$key} {
+      color: map-get($contrast-colors, $key) or white;
+      // &--outlined {
+      //   border-color: map-get($contrast-colors, $key )
+      // }
+    }
   }
 }

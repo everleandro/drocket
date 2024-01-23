@@ -6,8 +6,9 @@
     </header>
 </template>
 <script lang="ts" setup>
-import { ComputedRef, Ref, computed, onMounted, ref, watch } from 'vue'
+import { ComputedRef, Ref, computed, onMounted, ref, watch, nextTick } from 'vue'
 import { BarProps, BarClassKeys } from '@/types'
+
 let el: Ref<HTMLHeadElement | null> = ref(null)
 
 const props = defineProps<BarProps>()
@@ -18,11 +19,19 @@ const availableRootClasses = {
     clipped: 'e-bar--clipped',
     depressed: 'e-bar--depressed',
     app: 'e-bar--app',
-    outlined: 'outlined'
+    absolute: 'e-bar--absolute',
+    outlined: 'e-bar--outlined'
 };
 
-watch(() => props.clipped, () => {
-    refreshLayoutStyle();
+watch(() => [props.clipped, props.fixed, props.absoulute, props.app], () => {
+    refreshLayoutStyle()
+});
+
+watch(() => props.dense, () => {
+    nextTick(() => {
+        console.log('computedHeight.value', computedHeight.value)
+        refreshLayoutStyle(props.dense ? 48 : 64)
+    })
 });
 
 onMounted(() => {
@@ -40,15 +49,28 @@ const barClass: ComputedRef<Array<string>> = computed((): Array<string> => {
 
     return [...classes, ...classes2]
 })
+const computedHeight = computed(() => {
+    if (typeof props.height === 'number') {
+        return `${props.height}px`
+    } else if (typeof props.height === 'string' && props.height.length === parseInt(props.height, 10).toString().length) {
+        return `${props.height}px`
+    }
+    return props.dense ? '48px' : '64px'
+})
 
 const style = computed((): Record<string, string> => {
-    return props.height ? { height: `${props.height}px !important;` } : {};
+    if (props.height) {
+        return {
+            height: computedHeight.value
+        }
+    }
+    return {};
 
 })
 
-const refreshLayoutStyle = (): void => {
+const refreshLayoutStyle = (_height?: number): void => {
     if (props.app) {
-        const height = el.value && el.value.getBoundingClientRect().height || 0
+        const height = _height || el.value && el.value.getBoundingClientRect().height || 0
         const eMainNode = document.querySelector('.e-main[data-layout="true"]') as HTMLElement
         const eDrawerNode = document.querySelector('.e-drawer[data-layout="true"]') as HTMLElement
 
