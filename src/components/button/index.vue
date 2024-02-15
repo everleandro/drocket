@@ -40,6 +40,7 @@ const vRipple = { ...ripple }
 
 export interface ButtonProps {
     disabled?: boolean;
+    link?: boolean;
     appendIcon?: Array<IconPath> | IconPath | string;
     prependIcon?: Array<IconPath> | IconPath | string;
     ripple?: boolean;
@@ -89,6 +90,7 @@ const availableRootClasses: Record<ButtonClassKeys, string> = {
 
 
 const tag = computed(() => {
+    if (props.link) return 'a'
     const { to } = attrs
     if ((typeof to === 'string') && to.startsWith('http')) return 'a'
     if (to) return 'router-link'

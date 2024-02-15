@@ -5,7 +5,7 @@ export interface BarProps {
   absoulute?: boolean;
   app?: boolean;
   outlined?: boolean;
-  height?: string;
+  height?: string | number;
   fixed?: boolean;
   depressed?: boolean;
   color?: string;

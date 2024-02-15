@@ -52,7 +52,7 @@ const parentList = inject<Partial<EListInjection> | undefined>("EList", undefine
 const node = ref<HTMLElement | null>(null)
 
 const active = computed((): boolean => {
-    if (props.isActive) return props.isActive
+    if (typeof props.isActive !== "undefined") return props.isActive
     if (typeof parentList !== "undefined" && props.value !== undefined) {
         if (Array.isArray(parentList?.modelValue?.value)) {
             return parentList?.modelValue.value?.includes(props.value)
