@@ -17,7 +17,7 @@
                     </div>
 
                     <input ref="input" :id="id" :value="modelValue" :readonly="inputReadonly" class="input--text"
-                        :maxlength="limit" :style="inputStyle" :type="type" :placeholder="placeholder"
+                        :maxlength="limit" :style="inputStyle" :type="type" :placeholder="placeholder" :name="name"
                         :autocomplete="autocomplete" @blur="handleBlur" @input="changeValue($event, true)"
                         @focus="handleFocus" />
 
@@ -59,7 +59,7 @@ import EDetails from '@/components/form/details.vue'
 import { computed } from 'vue';
 
 export interface Props {
-    iconClear?: Array<IconPath> | IconPath | string; retainColor?: boolean;
+    iconClear?: Array<IconPath> | IconPath | string; retainColor?: boolean; name?: string;
     disabled?: boolean; dense?: boolean; readonly?: boolean; counter?: boolean; clearable?: boolean;
     labelInline?: boolean; detail?: string; outlined?: boolean; label?: string | number;
     modelValue?: string | number | null; placeholder?: string; suffix?: string; autocomplete?: string;
