@@ -1,76 +1,83 @@
 .e-drawer {
+  height: 100%;
+  left: 0;
+  max-width: 100%;
+  background-color: #fff;
+  overflow: hidden;
+  pointer-events: auto;
+  top: 0;
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: transform, visibility, width;
+  position: fixed;
+  z-index: 11;
+
+  &__body {
+    flex: 0 1 auto;
     height: 100%;
-    left: 0;
-    max-width: 100%;
-    background-color: #fff;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  &--close {
+    visibility: hidden;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__prepend,
+  &__append {
+    flex: none;
     overflow: hidden;
-    pointer-events: auto;
-    top: 0;
-    transition-duration: 0.2s;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-property: transform, visibility, width;
+  }
+
+  &--absolute {
+    position: absolute;
+
+    &.e-drawer--open {
+      box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2),
+        0 16px 24px 2px rgb(0, 0, 0, 0.4), 0 6px 30px 5px rgb(0, 0, 0, 0.2);
+    }
+  }
+
+  &--fixed {
     position: fixed;
-    z-index: 11;
+  }
 
-    &__body {
-        flex: 0 1 auto;
-        height: 100%;
-        overflow-y: auto;
-        overflow-x: hidden;
+  &__content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100%;
+  }
+
+  &--right {
+    left: auto;
+    right: 0;
+
+    .e-drawer__border {
+      left: 0;
+      right: auto;
+      top: 0;
     }
+  }
 
-    &--close {
-        visibility: hidden;
+  &__border {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    border-left: 1px solid #0000001f;
+  }
+  &--floating {
+    .e-drawer__content {
+      box-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f;
+      height: calc(100% - 24px);
+      margin: 24px;
     }
-
-    &__content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    &__prepend,
-    &__append {
-        flex: none;
-        overflow: hidden;
-    }
-
-    &--absolute {
-        position: absolute;
-
-        &.e-drawer--open {
-            box-shadow: 0 8px 10px -5px rgba(0, 0, 0, 0.2),
-                0 16px 24px 2px rgb(0, 0, 0, 0.4), 0 6px 30px 5px rgb(0, 0, 0, 0.2);
-        }
-    }
-
-    &--fixed {
-        position: fixed;
-    }
-
-    &__content {
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: 100%;
-    }
-
-    &--right {
-        left: auto;
-        right: 0;
-
-        .e-drawer__border {
-            left: 0;
-            right: auto;
-            top: 0;
-        }
-    }
-
-    &__border {
-        position: absolute;
-        right: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        border-left: 1px solid #0000001f;
-    }
+  }
 }

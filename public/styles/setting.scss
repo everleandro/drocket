@@ -12,33 +12,41 @@ $icon-prefix: "mdi-" !default;
 $space-amount: 24 !default;
 $space-step: 4px !default;
 
+$card-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f !default;
 //colors
 
-$colors: map-merge(("primary": #00af67,
-      "blue": #00d3ee,
-      "secondary": #4c5f68,
-      "warning": #ffa21a,
-      "purple": #AF2CC5,
-      "input": #4f636b,
-      "grey": #91a0a8,
-      "disabled": rgba(0, 0, 0, 0.38),
-      "error": #f55a4e,
-      "white": white,
-      "black": black,
-      "success": #5cb860,
-      "red": #f44336),
-    ()) !default;
+$colors: map-merge(
+  (
+    "primary": #00af67,
+    "blue": #00d3ee,
+    "secondary": #4c5f68,
+    "warning": #ffa21a,
+    "purple": #af2cc5,
+    "input": #4f636b,
+    "grey": #91a0a8,
+    "disabled": rgba(0, 0, 0, 0.38),
+    "error": #f55a4e,
+    "white": white,
+    "black": black,
+    "success": #5cb860,
+    "red": #f44336,
+  ),
+  ()
+) !default;
 
-$contrast-colors: map-merge(("white": black,
-    ),
-    ()) !default;
+$contrast-colors: map-merge(
+  (
+    "white": black,
+  ),
+  ()
+) !default;
 
 $breakpoint: (
   "xs": 600px,
   "sm": 960px,
   "md": 1264px,
   "lg": 1904px,
-  ) !default;
+) !default;
 
 @import "./override/variables/bar.scss";
 @import "./override/variables/button.scss";
