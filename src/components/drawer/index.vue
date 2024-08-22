@@ -117,15 +117,16 @@ const drawerClass = computed((): Array<string> => {
   return [...classes, ...classes2];
 });
 const computedWidth = computed(() => {
+  let result = props.width;
   if (typeof props.width === "number") {
-    return `${props.width}${props.widthUnit}`;
+    result = `${props.width}${props.widthUnit}`;
   } else if (
     props.width.length === parseInt(props.width, 10).toString().length
   ) {
-    return `${props.width}${props.widthUnit}`;
+    result = `${props.width}${props.widthUnit}`;
   }
 
-  return props.floating ? `calc(${props.width} - 24px)` : props.width;
+  return props.floating ? `calc(${result} - 24px)` : result;
 });
 
 watch(
