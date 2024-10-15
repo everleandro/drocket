@@ -8,6 +8,11 @@
         </slot>
     </i>
 </template>
+<script lang="ts">
+export default {
+    name: 'e-icon',
+}
+</script>
 <script lang="ts" setup>
 import type { IconPath, IconProps, IconClassKeys } from '@/types';
 import { ComputedRef, computed, ref, useAttrs, onMounted } from 'vue';
@@ -53,18 +58,19 @@ const isPath = computed(() => {
 })
 
 const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
-    let iconClass = 'mdi';
-    let iconPreffix = 'mdi-'
+    let iconClass = 'icon';
+    let iconPreffix = 'icon-'
     if (typeof window !== 'undefined') {
         const rootVar = window.getComputedStyle(document.documentElement);
-        iconClass = rootVar.getPropertyValue('--icon-class');
-        iconPreffix = rootVar.getPropertyValue('--icon-prefix');
+        iconClass = rootVar.getPropertyValue('--icon-class') || iconClass;
+        iconPreffix = rootVar.getPropertyValue('--icon-prefix') || iconPreffix;
     }
     const defaultClass = attrs.class ? `${attrs.class}` : ''
     let classes = ['e-icon', iconClass, defaultClass];
     const defaultSize = !(props.small || props.xSmall || props.large || props.xLarge);
     defaultSize && classes.push("e-icon--size-default")
-    !isPath && classes.push(`${(props.preffix || iconPreffix).trim()}${(props.icon as string).trim()}`);
+
+    !isPath.value && classes.push(`${(props.preffix || iconPreffix).trim()}${(props.icon as string).trim()}`);
     props.color && (classes.push(`${props.color}--text`));
 
     const availableRootClassKeys = Object.keys(availableRootClasses) as Array<IconClassKeys>
@@ -80,4 +86,3 @@ onMounted(() => {
 
 </script>
 <style lang="scss" src="./style.scss"></style>
-  

@@ -1,1 +1,17 @@
 $list-prepend-width: 34px;
+
+$list-item-font-sizes: map-merge(("x-small": 0.625rem,
+            "small": 0.75rem,
+            "default": 0.875rem,
+            "large": 0.875rem,
+            "x-large": 1rem,
+        ),
+        ()) !default;
+
+$list-item-height: map-merge(("x-small": 2.187rem,
+            "small": 2.5rem,
+            "default": 3rem,
+            "large": 3.62rem,
+            "x-large": 4rem,
+        ),
+        ()) !default;

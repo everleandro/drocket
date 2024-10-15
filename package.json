@@ -51,6 +51,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && vue-tsc --emitDeclarationOnly && move ./dist/src ./dist/types",
+    "build-linux": "vite build && vue-tsc --emitDeclarationOnly && mv ./dist/src ./dist/types",
     "preserve": "vite build",
     "serve": "vite preview --port 5050",
     "typecheck": "vue-tsc --noEmit",

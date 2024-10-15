@@ -26,7 +26,7 @@
     display: flex;
     flex: 1 1 100%;
     letter-spacing: normal;
-    min-height: 48px;
+    min-height: var(--list-item-height, 48px);
     outline: none;
     // padding: 0 16px;
     position: relative;
@@ -103,6 +103,7 @@
       flex: 1 1;
       overflow: hidden;
       padding: 12px 0;
+      font-size: var(--list-item-font-size);
     }
 
     &--clickeable {

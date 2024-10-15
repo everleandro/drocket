@@ -3,7 +3,7 @@
         v-bind="liBindingOptions" :class="listItemCLass" @click="handleItemClick">
         <div v-if="hasPrepend" class="e-list-item__prepend">
             <slot name="prepend">
-                <EIcon v-if="prependIcon" :icon="prependIcon"></EIcon>
+                <EIcon v-if="prependIcon" :icon="prependIcon" v-bind="iconSize"></EIcon>
                 <EAvatar v-else-if="prependAvatar" size="34" :src="prependAvatar"></EAvatar>
             </slot>
         </div>
@@ -14,19 +14,20 @@
         </div>
         <div v-if="hasAppend" class="e-list-item__append">
             <slot name="prepend">
-                <EIcon v-if="appendIcon" :icon="appendIcon"></EIcon>
+                <EIcon v-if="appendIcon" :icon="appendIcon" v-bind="iconSize"></EIcon>
                 <EAvatar v-else-if="appendAvatar" size="34" :src="appendAvatar"></EAvatar>
             </slot>
         </div>
     </component>
 </template>
-  
+
 <script lang="ts" setup>
-import { IconPath, EListInjection } from '@/types'
+import { IconPath, EListInjection, ListSizeClassKeys } from '@/types'
 import EIcon from '@/components/icon/index.vue';
 import { ripple } from '@/directives'
 import EAvatar from '@/components/avatar.vue';
 import { computed, useAttrs, useSlots, inject, ref } from 'vue';
+
 const vRipple = { ...ripple }
 
 export interface Props {
@@ -43,6 +44,10 @@ export interface Props {
     tag?: string
     color?: string
     value?: string | number | undefined
+    small?: boolean
+    xSmall?: boolean
+    large?: boolean
+    xLarge?: boolean
 }
 
 const props = defineProps<Props>()
@@ -83,6 +88,19 @@ const availableRootClasses = {
     active: "e-list-item--active",
 };
 
+const sizeClasses = {
+    xSmall: 'e-list-item--size-x-small',
+    small: 'e-list-item--size-small',
+    default: 'e-list-item--size-default',
+    large: 'e-list-item--size-large',
+    xLarge: 'e-list-item--size-x-large'
+}
+const iconSize = computed(() => {
+    if (props.small) return { small: true }
+    if (props.xSmall) return { xSmall: true }
+    if (props.large) return { large: true }
+    if (props.xLarge) return { xLarge: true }
+})
 const listItemCLass = computed((): Array<unknown> => {
     const classes = [availableRootClasses.root, attrs.class || '']
     props.color && classes.push(`${props.color}--text`)
@@ -93,7 +111,12 @@ const listItemCLass = computed((): Array<unknown> => {
     if (active.value) {
         (classes.push(availableRootClasses.active) && classes.push(props.activeClass || ''))
     }
-    return classes;
+    const availableSizeClassKeys = Object.keys(sizeClasses) as Array<ListSizeClassKeys>
+    const sizeClass = availableSizeClassKeys.filter(
+        (key) => !!props[key]
+    ).map(key => sizeClasses[key]);
+    if (sizeClass.length == 0) classes.push(sizeClasses.default)
+    return [...classes, ...sizeClass];
 })
 
 const hasPrepend = computed((): boolean => {
@@ -123,4 +146,3 @@ const clickeableType = (): boolean => {
     return !!attrs.to || props.value !== undefined || isActivator.value;
 }
 </script>
-  

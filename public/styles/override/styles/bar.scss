@@ -14,7 +14,7 @@
   }
 
   @each $key, $value in $colors {
-    .#{$key} {
+    &.#{$key} {
       color: map-get($contrast-colors, $key) or white;
       // &--outlined {
       //   border-color: map-get($contrast-colors, $key )

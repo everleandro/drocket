@@ -6,7 +6,12 @@
     data-layout="true"
     :style="style"
   >
-    <div class="e-drawer__content" :style="{ width: `${computedWidth}` }">
+    <div
+      class="e-drawer__content"
+      :style="{
+        width: props.floating ? `calc(${computedWidth} - 24px)` : computedWidth,
+      }"
+    >
       <div v-if="right" class="e-drawer__border"></div>
       <div v-if="slots.prepend" class="e-drawer__prepend">
         <slot name="prepend"></slot>
@@ -126,7 +131,7 @@ const computedWidth = computed(() => {
     result = `${props.width}${props.widthUnit}`;
   }
 
-  return props.floating ? `calc(${result} - 24px)` : result;
+  return result;
 });
 
 watch(

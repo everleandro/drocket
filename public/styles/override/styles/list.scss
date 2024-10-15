@@ -10,6 +10,13 @@
       width: var(--list-item-prepend-width, calc(#{$space-base} + #{$list-prepend-width}));
     }
 
+    @each $key, $value in $list-item-font-sizes {
+      &--size-#{$key} {
+        --list-item-font-size: #{$value};
+        --list-item-height: #{map-get($list-item-height, $key)};
+        --icon-font-size: #{map-get($icon-font-sizes, $key)};
+      }
+    }
   }
 
   &-group {

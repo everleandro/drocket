@@ -1,17 +1,20 @@
 .e-form {
   margin: -$space-base;
 
-  & > .e-field {
+  &>.e-field {
     @include grid-generator();
   }
 
   &.no-gutters {
-    & > .e-field {
+    &>.e-field {
       @include grid-generator(1px);
-      padding: 0;
-      margin: -0.5px;
-      flex: 0 0 100%;
-      max-width: 100%;
+
+      & {
+        padding: 0;
+        margin: -0.5px;
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
     }
   }
 }
