@@ -1,5 +1,4 @@
-
-$alignments: flex-start, center, flex-end, space-around, space-between;
+$alignments: flex-start, center, flex-end, space-around, space-between, baseline;
 $displays: block, flex, table, none;
 $text-aligment: right, left, center;
 
@@ -36,21 +35,29 @@ $breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
 @each $b_key in $breakpoint_keys {
   @each $display_value in $displays {
     .d#{$b_key}#{$display_value} {
-      @if ($b_key == "-") {
+      @if ($b_key =="-") {
         display: $display_value;
-      } @else if ($b_key == "-sm-") {
+      }
+
+      @else if ($b_key =="-sm-") {
         @include _from_sm {
           display: $display_value;
         }
-      } @else if ($b_key == "-md-") {
+      }
+
+      @else if ($b_key =="-md-") {
         @include _from_md {
           display: $display_value;
         }
-      } @else if ($b_key == "-lg-") {
+      }
+
+      @else if ($b_key =="-lg-") {
         @include _from_lg {
           display: $display_value;
         }
-      } @else if ($b_key == "-xl-") {
+      }
+
+      @else if ($b_key =="-xl-") {
         @include _from_xl {
           display: $display_value;
         }
@@ -109,6 +116,7 @@ $breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
 .full-height {
   height: 100%;
 }
+
 .flex-wrap {
   flex-wrap: wrap;
 }
