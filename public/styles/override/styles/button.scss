@@ -67,7 +67,7 @@
     }
   }
 
-  &--outlined {
+  &.e-btn--outlined {
     border: setting.$btn-border-width setting.$btn-border-style;
 
     @each $key, $value in setting.$colors {

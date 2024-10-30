@@ -1,5 +1,5 @@
 <template>
-    <slot name="activator" :attrs="activatorAttrs()">
+    <slot name="activator" :attrs="activatorAttrs">
         <EButton v-bind="buttonProps" :class="['e-tab',
             { 'e-slide-group-item--active e-tab--selected': active }]" tabindex="0" role="tab" :aria-selected="active"
             :value="value" @click="changeGroupValue" :icon="icon">
@@ -20,10 +20,16 @@ export interface Props extends ButtonProps {
 const props = defineProps<Props>();
 const Group = inject<Partial<TabGroup> | undefined>("TabGroup", undefined);
 const sliderStyle = reactive<Record<string, string>>({})
+
+const emit = defineEmits<{
+    (e: 'click', value: Event): void
+}>()
+
 const active = computed(() => Group?.modelValue?.value === props.value && props.value !== undefined)
 
-const changeGroupValue = (): void => {
+const changeGroupValue = (evt: Event): void => {
     Group?.changeValue?.(props.value)
+    emit('click', evt)
 }
 
 const color = computed((): string => {
@@ -39,9 +45,9 @@ const buttonProps = computed((): Partial<ButtonProps> => {
     }
     return propsResult;
 })
-const activatorAttrs = () => {
+const activatorAttrs = (evt: Event) => {
     const attrs: Record<string, any> = {}
-    attrs['onClick'] = () => changeGroupValue()
+    attrs['onClick'] = () => changeGroupValue(evt)
     return attrs;
 }
 
