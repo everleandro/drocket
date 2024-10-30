@@ -1,25 +1,24 @@
-@import "setting.scss";
-@import "mixins";
-@import "helper.scss";
+@use "helper.scss";
 
 //style
-@import "./override/styles/icon.scss";
-@import "./override/styles/button.scss";
-@import "./override/styles/date-picker.scss";
-@import "./override/styles/bar.scss";
-@import "./override/styles/dialog.scss";
-@import "./override/styles/menu.scss";
-@import "./override/styles/card.scss";
-@import "./override/styles/chip.scss";
-@import "./override/styles/expansion.scss";
-@import "./override/styles/select.scss";
-@import "./override/styles/form.scss";
-@import "./override/styles/grid.scss";
-@import "./override/styles/list.scss";
-@import "./override/styles/schedule.scss";
-@import "./override/styles/container.scss";
-@import "./override/styles/main.scss";
-@import "./override/styles/typography.scss";
+@use "override/styles/icon.scss";
+@use "override/styles/button.scss";
+@use "override/styles/date-picker.scss";
+@use "override/styles/bar.scss";
+@use "override/styles/dialog.scss";
+@use "override/styles/menu.scss";
+@use "override/styles/card.scss";
+@use "override/styles/chip.scss";
+@use "override/styles/expansion.scss";
+@use "override/styles/select.scss";
+@use "override/styles/form.scss";
+@use "override/styles/grid.scss";
+@use "override/styles/list.scss";
+@use "override/styles/schedule.scss";
+@use "override/styles/container.scss";
+@use "override/styles/main.scss";
+@use "override/styles/typography.scss";
+@use './override/variables/index' as *;
 
 @each $color, $value in $colors {
   .#{$color} {

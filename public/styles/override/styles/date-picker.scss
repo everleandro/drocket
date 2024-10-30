@@ -1,5 +1,7 @@
+@use "../variables/index.scss" as setting;
+
 .e-picker {
-  $date-picker-border-radius: $border-radius-root !default;
+  $date-picker-border-radius: setting.$border-radius-root !default;
 
   .e-picker {
     border-radius: $date-picker-border-radius;

@@ -1,3 +1,5 @@
+@use '~/public/styles/_mixins.scss' as *;
+
 .e-dialog {
   margin: 8px;
   overflow-y: auto;

@@ -1,3 +1,5 @@
+@use "../variables/index.scss" as setting;
+
 .e-dialog {
-  border-radius: $border-radius-root;
+  border-radius: setting.$border-radius-root;
 }

@@ -13,7 +13,7 @@
             <slot></slot>
         </div>
         <div v-if="hasAppend" class="e-list-item__append">
-            <slot name="prepend">
+            <slot name="append">
                 <EIcon v-if="appendIcon" :icon="appendIcon" v-bind="iconSize"></EIcon>
                 <EAvatar v-else-if="appendAvatar" size="34" :src="appendAvatar"></EAvatar>
             </slot>
@@ -95,12 +95,14 @@ const sizeClasses = {
     large: 'e-list-item--size-large',
     xLarge: 'e-list-item--size-x-large'
 }
+
 const iconSize = computed(() => {
     if (props.small) return { small: true }
     if (props.xSmall) return { xSmall: true }
     if (props.large) return { large: true }
     if (props.xLarge) return { xLarge: true }
 })
+
 const listItemCLass = computed((): Array<unknown> => {
     const classes = [availableRootClasses.root, attrs.class || '']
     props.color && classes.push(`${props.color}--text`)

@@ -1,3 +1,5 @@
+@use '~/public/styles/_mixins.scss' as *;
+
 @include animation('v-ripple') {
   to {
     transform: scale(2.5);

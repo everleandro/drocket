@@ -1,0 +1,156 @@
+@use "sass:map";
+$border-radius-root: 4px !default;
+$root-font-size: 1rem !default;
+$space-base: 12px !default;
+$grid-cols: 24 !default;
+$root-font-family: "Roboto", sans-serif !default;
+
+$icon-close-font-size: 24px !default;
+$icon-class: "icon" !default;
+$icon-prefix: "icon-" !default;
+
+$space-amount: 24 !default;
+$space-step: 4px !default;
+
+$card-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f !default;
+//colors
+
+$colors: map.merge(("primary": #00af67,
+      "blue": #00d3ee,
+      "secondary": #4c5f68,
+      "warning": #ffa21a,
+      "purple": #af2cc5,
+      "input": #4f636b,
+      "grey": #91a0a8,
+      "disabled": rgba(0, 0, 0, 0.38),
+      "error": #f55a4e,
+      "white": white,
+      "black": black,
+      "success": #5cb860,
+      "red": #f44336,
+    ),
+    ()) !default;
+
+$contrast-colors: map.merge(("white": black,
+    ),
+    ()) !default;
+
+$breakpoint: (
+  "xs": 600px,
+  "sm": 960px,
+  "md": 1264px,
+  "lg": 1904px,
+  ) !default;
+
+
+// bar
+$e-bar-padding-y: 0px !default;
+$e-bar-padding-x: 16px !default;
+$e-bar-heigth: 64px !default;
+$e-bar-heigth--dense: 48px !default;
+$e-bar-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+  0px 4px 5px 0px rgb(0 0 0 / 14%),
+  0px 1px 10px 0px rgb(0 0 0 / 12%) !default;
+
+// icon
+$icon-font-sizes: (
+  "x-small": 18px,
+  "small": 20px,
+  "default": 24px,
+  "large": 28px,
+  "x-large": 32px,
+  ) !default;
+
+
+//button
+
+$btn-border-radius: 4px !default;
+$btn-font-weight: 500 !default;
+$btn-letter-spacing: 0.089em !default;
+$btn-border-style: solid !default;
+$btn-border-width: 1px !default;
+$btn-rounded-border-radius: 28px !default;
+$btn-text-transform: uppercase !default;
+$btn-transition-duration: 0.28s !default;
+
+$btn-states: map.merge(("focus": 0.05,
+      "hover": 0.1,
+      "active": 0.3,
+    ),
+    ()) !default;
+
+$btn-font-sizes: map.merge(("x-small": 0.625rem,
+      "small": 0.75rem,
+      "default": 0.875rem,
+      "large": 0.875rem,
+      "x-large": 1rem,
+    ),
+    ()) !default;
+
+$fab-font-sizes: map.merge(("x-small": 1.25rem,
+      "small": 1.25rem,
+      "default": 1.5rem,
+      "large": 0.714rem,
+      "x-large": 2rem,
+    ),
+    ()) !default;
+
+$fab-height: map.merge(("x-small": 2em,
+      "small": 2.5em,
+      "default": 3.5em,
+      "large": 4em,
+      "x-large": 4.5em,
+    ),
+    ()) !default;
+
+$stacked-height: map.merge(("x-small": 2em,
+      "small": 2.5em,
+      "default": 4.5em,
+      "large": 5.5em,
+      "x-large": 8em,
+    ),
+    ()) !default;
+
+$btn-height: map.merge(("x-small": 2.187rem,
+      "small": 2.5rem,
+      "default": 3rem,
+      "large": 3.125rem,
+      "x-large": 3.4375rem,
+    ),
+    ()) !default;
+
+
+// expansion
+$expansion-header-height: 3rem !default;
+$icon-expand-font-size: 24px !default;
+$expansion-box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0 2px 2px 0 rgba(0, 0, 0, 0.14),
+  0 1px 5px 0 rgba(0, 0, 0, 0.12) !default;
+
+//list
+
+$list-prepend-width: 34px;
+
+$list-item-font-sizes: map.merge(("x-small": 0.625rem,
+      "small": 0.75rem,
+      "default": 0.875rem,
+      "large": 0.875rem,
+      "x-large": 1rem,
+    ),
+    ()) !default;
+
+$list-item-height: map.merge(("x-small": 2.187rem,
+      "small": 2.5rem,
+      "default": 3rem,
+      "large": 3.62rem,
+      "x-large": 4rem,
+    ),
+    ()) !default;
+
+// schedule
+$schedule-border-color: rgb(218, 220, 224) !default;
+$schedule-border-width: 1px !default;
+$hour-column-width: 65px !default;
+$hour-column-width-xs: calc($hour-column-width - 19px) !default;
+$header-col-height: 65px !default;
+$schedule-bg: white !default;

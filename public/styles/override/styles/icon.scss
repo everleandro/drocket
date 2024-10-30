@@ -1,5 +1,7 @@
+@use "../variables/index.scss" as setting;
+
 .e-icon {
-  @each $key, $value in $icon-font-sizes {
+  @each $key, $value in setting.$icon-font-sizes {
     &--size-#{$key} {
       font-size: $value;
 

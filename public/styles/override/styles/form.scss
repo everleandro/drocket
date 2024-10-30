@@ -1,14 +1,17 @@
+@use "../../mixins";
+@use "../variables/index.scss" as setting;
+
 .e-form {
-  margin: -$space-base;
+  margin: -(setting.$space-base);
 
   &>.e-field {
-    @include grid-generator();
+    @include mixins.grid-generator();
   }
 
 
 
   &.no-gutters>.e-field {
-    @include grid-generator(1px);
+    @include mixins.grid-generator(1px);
   }
 
   &.no-gutters>.e-field {

@@ -1,9 +1,11 @@
+@use "../../mixins";
+
 .e-container {
-  @include _lg {
+  @include mixins.lg {
     max-width: 1185px;
   }
 
-  @include _md {
+  @include mixins.md {
     max-width: 900px;
   }
 }

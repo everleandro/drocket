@@ -17,24 +17,26 @@
             </slot>
         </span>
         <span v-if="prependIcon" class="e-btn__prepend">
-            <EIcon :icon="prependIcon" />
+            <EIcon v-bind="iconSize" :icon="prependIcon" />
         </span>
         <span class="e-btn__content">
             <slot name="default">
                 <template v-if="icon || fab">
-                    <EIcon :icon="icon" />
+                    <EIcon v-bind="iconSize" :icon="icon" />
                 </template>
             </slot>
         </span>
         <span v-if="appendIcon" class="e-btn__append">
-            <EIcon :icon="appendIcon" />
+            <EIcon v-bind="iconSize" :icon="appendIcon" />
         </span>
     </component>
 </template>
 <script lang="ts" setup>
-import { ButtonClassKeys, IconPath } from '@/types'
+import { ButtonClassKeys, IconProps, IconPath } from '@/types'
 import { ripple } from '@/directives'
 import EIcon from '@/components/icon/index.vue'
+
+
 import { reactive, useAttrs, computed } from 'vue'
 const vRipple = { ...ripple }
 
@@ -88,7 +90,14 @@ const availableRootClasses: Record<ButtonClassKeys, string> = {
     xLarge: 'e-btn--size-x-large'
 };
 
-
+const iconSize = computed((): Partial<IconProps> => {
+    return {
+        xSmall: props.xSmall,
+        small: props.small,
+        large: props.large,
+        xLarge: props.xLarge
+    }
+})
 const tag = computed(() => {
     if (props.link) return 'a'
     const { to } = attrs
@@ -131,4 +140,3 @@ const style = (): Record<string, string> => {
 </script>
 
 <style lang="scss" src="./style.scss"></style>
-  

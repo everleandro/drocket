@@ -5,6 +5,8 @@
 </template>
 
 <style lang="scss">
+@use '~/public/styles/_mixins.scss' as *;
+@use '~/public/styles/override/variables/index' as *;
 .e-container {
   margin-right: auto;
   margin-left: auto;

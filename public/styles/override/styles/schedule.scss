@@ -1,70 +1,73 @@
+@use "../../mixins";
+@use "../variables/index.scss" as setting;
+
 .e-schedule {
 
-  padding-top: $header-col-height;
-  background: $schedule-bg;
+  padding-top: setting.$header-col-height;
+  background: setting.$schedule-bg;
 
   &__body {
-    min-width: calc(100% - $hour-column-width);
+    min-width: calc(100% - setting.$hour-column-width);
   }
 
   &__event {
     &-container {
-      color: $schedule-bg;
+      color: setting.$schedule-bg;
     }
   }
 
   [role="cell"] {
-    border-bottom: $schedule-border-width solid $schedule-border-color;
+    border-bottom: setting.$schedule-border-width solid setting.$schedule-border-color;
 
     &:not(:last-child) {
-      border-bottom: $schedule-border-width solid $schedule-border-color;
+      border-bottom: setting.$schedule-border-width solid setting.$schedule-border-color;
     }
   }
 
   &__header {
     &[role="cell"] {
       &>span {
-        height: calc($header-col-height + 10px);
+        height: calc(setting.$header-col-height + 10px);
         padding-top: 10px;
-        background-color: $schedule-bg;
+        background-color: setting.$schedule-bg;
       }
     }
   }
 
   div[role="col"] {
-    background-color: $schedule-bg;
+    background-color: setting.$schedule-bg;
 
     &:not(:last-child) {
-      border-right: $schedule-border-width solid $schedule-border-color;
+      border-right: setting.$schedule-border-width solid setting.$schedule-border-color;
     }
 
     &.col-hour-info {
-      max-width: $hour-column-width;
-      min-width: $hour-column-width;
+      max-width: setting.$hour-column-width;
+      min-width: setting.$hour-column-width;
     }
   }
 
   &:has(.tab-reverse-transition-leave-active),
   &:has(.tab-transition-leave-active) {
     .e-schedule__body {
-      top: $header-col-height;
+      top: setting.$header-col-height;
     }
   }
 
-  @include _xs {
+  @include mixins.xs {
     div[role="col"] {
       &.col-hour-info {
-        max-width: $hour-column-width-xs;
-        min-width: $hour-column-width-xs;
+        max-width: setting.$hour-column-width-xs;
+        min-width: setting.$hour-column-width-xs;
       }
     }
 
     &__body {
-      min-width: calc(100% - $hour-column-width-xs);
+      min-width: calc(100% - setting.$hour-column-width-xs);
     }
   }
 
-  @include _xs {
+  @include mixins.xs {
     .e-schedule {
       &__header[role="cell"] [data-day-of-week="true"] {
         font-size: 11px;

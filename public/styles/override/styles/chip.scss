@@ -1,5 +1,7 @@
+@use "../variables/index.scss" as setting;
+
 .e-chip {
   + .e-chip {
-    margin-left: $space-base;
+    margin-left: setting.$space-base;
   }
 }

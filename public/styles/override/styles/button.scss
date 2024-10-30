@@ -1,24 +1,27 @@
+@use "sass:map";
+@use "../variables/index.scss" as setting;
+
 .e-btn {
-  font-weight: $btn-font-weight;
-  letter-spacing: $btn-letter-spacing;
-  color: map-get($colors, "black");
-  border-color: map-get($colors, "black");
-  text-indent: $btn-letter-spacing;
-  text-transform: $btn-text-transform;
-  transition-duration: $btn-transition-duration;
-  border-radius: $btn-border-radius;
-  font-family: $root-font-family;
+  font-weight: setting.$btn-font-weight;
+  letter-spacing: setting.$btn-letter-spacing;
+  color: map.get(setting.$colors, "black");
+  border-color: map.get(setting.$colors, "black");
+  text-indent: setting.$btn-letter-spacing;
+  text-transform: setting.$btn-text-transform;
+  transition-duration: setting.$btn-transition-duration;
+  border-radius: setting.$btn-border-radius;
+  font-family: setting.$root-font-family;
 
   +.e-btn {
-    margin-left: $space-base;
+    margin-left: setting.$space-base;
   }
 
   &--rounded {
-    border-radius: $btn-rounded-border-radius;
+    border-radius: setting.$btn-rounded-border-radius;
   }
 
   &--text {
-    @each $key, $value in $colors {
+    @each $key, $value in setting.$colors {
       &.e-btn--#{$key} {
         color: $value;
         background-color: transparent;
@@ -26,9 +29,9 @@
     }
   }
 
-  @each $key, $value in $colors {
+  @each $key, $value in setting.$colors {
     &--#{$key} {
-      color: map-get($contrast-colors, $key) or white;
+      color: map.get(setting.$contrast-colors, $key) or white;
       background-color: $value;
 
       &.e-btn--icon {
@@ -38,36 +41,36 @@
     }
   }
 
-  @each $key, $value in $btn-states {
+  @each $key, $value in setting.$btn-states {
     &:#{$key}:before {
       opacity: $value;
     }
   }
 
-  @each $key, $value in $btn-font-sizes {
+  @each $key, $value in setting.$btn-font-sizes {
     &--size-#{$key} {
       --btn-font-size: #{$value};
-      --btn-height: #{map-get($btn-height, $key)};
+      --btn-height: #{map.get(setting.$btn-height, $key)};
 
       &.e-btn--icon {
-        --btn-font-size: #{map-get($icon-font-sizes, $key)};
+        --btn-font-size: #{map.get(setting.$icon-font-sizes, $key)};
       }
 
       &.e-btn--fab {
-        --btn-height: #{map-get($fab-height, $key)};
-        --btn-font-size: #{map-get($fab-font-sizes, $key)};
+        --btn-height: #{map.get(setting.$fab-height, $key)};
+        --btn-font-size: #{map.get(setting.$fab-font-sizes, $key)};
       }
 
       &.e-btn--stacked {
-        --btn-height: #{map-get($stacked-height, $key)};
+        --btn-height: #{map.get(setting.$stacked-height, $key)};
       }
     }
   }
 
   &--outlined {
-    border: $btn-border-width $btn-border-style;
+    border: setting.$btn-border-width setting.$btn-border-style;
 
-    @each $key, $value in $colors {
+    @each $key, $value in setting.$colors {
       &.e-btn--#{$key}:not(.e-btn--disabled) {
         border-color: $value;
         color: $value;
@@ -78,7 +81,7 @@
   }
 
   &--disabled {
-    color: map-get($contrast-colors, "disabled") or white;
-    background-color: map-get($colors, "disabled");
+    color: map.get(setting.$contrast-colors, "disabled") or white;
+    background-color: map.get(setting.$colors, "disabled");
   }
 }

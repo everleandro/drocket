@@ -1,4 +1,7 @@
-@include _xs {
+@use "../../mixins";
+@use "../variables/index.scss" as setting;
+
+@include mixins.xs {
   h1 {
     font-size: 1.4rem;
   }
@@ -8,7 +11,7 @@
   }
 }
 
-@include _sm {
+@include mixins.sm {
   h1 {
     font-size: 1.6rem;
   }
@@ -18,7 +21,7 @@
   }
 }
 
-@include _md {
+@include mixins.md {
   h1 {
     font-size: 1.8rem;
   }
@@ -29,5 +32,5 @@
 }
 
 body {
-  font-family: $root-font-family;
+  font-family: setting.$root-font-family;
 }

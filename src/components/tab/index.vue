@@ -15,24 +15,27 @@ import EButton from "@/components/button/index.vue";
 import { ButtonProps } from "@/components/button/index.vue";
 export interface Props extends ButtonProps {
     value: string | number
+    to: any
 }
 const props = defineProps<Props>();
 const Group = inject<Partial<TabGroup> | undefined>("TabGroup", undefined);
 const sliderStyle = reactive<Record<string, string>>({})
-const active = computed(() => Group?.modelValue?.value === props.value)
+const active = computed(() => Group?.modelValue?.value === props.value && props.value !== undefined)
 
 const changeGroupValue = (): void => {
     Group?.changeValue?.(props.value)
 }
 
 const color = computed((): string => {
+    if (props.value === undefined)
+        return props.color || 'primary'
     return active.value ? (props.color || Group?.color?.value || 'primary') : (Group?.inactiveColor?.value || 'secondary')
 })
 const buttonProps = computed((): Partial<ButtonProps> => {
     const propsResult: ButtonProps = {
         ...props,
         color: color.value,
-        text: true
+        text: props.text || true,
     }
     return propsResult;
 })

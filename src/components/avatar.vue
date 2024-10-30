@@ -34,6 +34,8 @@ const style = computed(() => {
 </script>
 
 <style lang="scss">
+@use '~/public/styles/_mixins.scss' as *;
+
 .e-avatar {
     &__container {
         flex: none;

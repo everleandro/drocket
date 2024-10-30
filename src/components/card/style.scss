@@ -1,3 +1,5 @@
+@use '~/public/styles/override/variables/index' as *;
+
 .e-card {
   display: flex;
   flex-wrap: wrap;
@@ -24,7 +26,7 @@
     }
   }
 
-  & > .e-avatar {
+  &>.e-avatar {
     &__wrapper {
       padding: $space-base;
     }

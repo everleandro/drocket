@@ -1,21 +1,24 @@
+@use "sass:map";
+@use "../variables/index.scss" as setting;
+
 .e-bar {
-  margin-bottom: $space-base * 4;
-  box-shadow: $e-bar-box-shadow;
-  height: $e-bar-heigth;
+  margin-bottom: setting.$space-base * 4;
+  box-shadow: setting.$e-bar-box-shadow;
+  height: setting.$e-bar-heigth;
 
   .e-bar__content {
-    padding: $e-bar-padding-y $e-bar-padding-x;
+    padding: setting.$e-bar-padding-y setting.$e-bar-padding-x;
   }
 
   &--dense {
     &.e-bar {
-      height: $e-bar-heigth--dense;
+      height: setting.$e-bar-heigth--dense;
     }
   }
 
-  @each $key, $value in $colors {
-    &.#{$key} {
-      color: map-get($contrast-colors, $key) or white;
+  @each $key, $value in setting.$colors {
+    &.#{$key}>* {
+      color: map.get(setting.$contrast-colors, $key) or white;
       // &--outlined {
       //   border-color: map-get($contrast-colors, $key )
       // }

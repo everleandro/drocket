@@ -10,17 +10,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@/": new URL("./src/", import.meta.url).pathname,
+      "~": new URL("./", import.meta.url).pathname,
     },
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `
-          @import "./public/styles/setting.scss";
-        `,
-      },
-    },
-  },
+
   define: {
     // enable hydration mismatch details in production build
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,

@@ -1,6 +1,7 @@
 .e-tabs {
   display: flex;
   height: var(--e-tabs-height);
+  --before-opacity: 0.13;
 
   &.e-slide-group--vertical {
     height: auto;
@@ -45,6 +46,13 @@
     .e-tab__slider {
       opacity: 1;
     }
+  }
+
+  &.router-link-active:before,
+  &.router-link-active:hover:before,
+  &--active:hover:before,
+  &:focus:before {
+    opacity: var(--before-opacity);
   }
 
   &__slider {

@@ -1,6 +1,8 @@
 $alignments: flex-start, center, flex-end, space-around, space-between, baseline;
 $displays: block, flex, table, none;
 $text-aligment: right, left, center;
+@use './override/variables/index' as *;
+@use './_mixins.scss' as *;
 
 
 $spaces-states: (
@@ -40,25 +42,25 @@ $breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
       }
 
       @else if ($b_key =="-sm-") {
-        @include _from_sm {
+        @include from_sm {
           display: $display_value;
         }
       }
 
       @else if ($b_key =="-md-") {
-        @include _from_md {
+        @include from_md {
           display: $display_value;
         }
       }
 
       @else if ($b_key =="-lg-") {
-        @include _from_lg {
+        @include from_lg {
           display: $display_value;
         }
       }
 
       @else if ($b_key =="-xl-") {
-        @include _from_xl {
+        @include from_xl {
           display: $display_value;
         }
       }

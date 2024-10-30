@@ -32,7 +32,6 @@ watch(() => [props.clipped, props.fixed, props.absoulute, props.app], () => {
 
 watch(() => props.dense, () => {
     nextTick(() => {
-        console.log('computedHeight.value', computedHeight.value)
         refreshLayoutStyle(props.dense ? 48 : 64)
     })
 });

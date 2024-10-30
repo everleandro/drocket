@@ -1,3 +1,6 @@
+@use "sass:map";
+@use './override/variables/index.scss' as *;
+
 @mixin prefix($property, $value, $prefixes: webkit ms moz) {
     @each $prefix in $prefixes {
         #{'-' + $prefix + '-' + $property}: $value;
@@ -85,56 +88,56 @@
 
 
 //grid
-@mixin _xs {
-    @media (max-width: #{map-get($breakpoint,'xs')}) {
+@mixin xs {
+    @media (max-width: #{map.get($breakpoint,'xs')}) {
         @content;
     }
 }
 
-@mixin _sm {
-    @media (min-width: #{map-get($breakpoint,'xs') + 1px}) and (max-width: #{map-get($breakpoint,'sm')}) {
+@mixin sm {
+    @media (min-width: #{map.get($breakpoint,'xs') + 1px}) and (max-width: #{map.get($breakpoint,'sm')}) {
         @content;
     }
 }
 
-@mixin _md {
-    @media (min-width: #{map-get($breakpoint,'sm') + 1px}) and (max-width: #{map-get($breakpoint,'md')}) {
+@mixin md {
+    @media (min-width: #{map.get($breakpoint,'sm') + 1px}) and (max-width: #{map.get($breakpoint,'md')}) {
         @content;
     }
 }
 
-@mixin _lg {
-    @media (min-width: #{map-get($breakpoint,'md') + 1px}) and (max-width: #{map-get($breakpoint,'lg')}) {
+@mixin lg {
+    @media (min-width: #{map.get($breakpoint,'md') + 1px}) and (max-width: #{map.get($breakpoint,'lg')}) {
         @content;
     }
 }
 
 @mixin _xl {
-    @media (min-width: #{map-get($breakpoint,'lg') + 1px}) {
+    @media (min-width: #{map.get($breakpoint,'lg') + 1px}) {
         @content;
     }
 }
 
-@mixin _from_sm {
-    @media only screen and (min-width: #{map-get($breakpoint,'xs') + 1px}) {
+@mixin from_sm {
+    @media only screen and (min-width: #{map.get($breakpoint,'xs') + 1px}) {
         @content;
     }
 }
 
-@mixin _from_md {
-    @media only screen and (min-width: #{map-get($breakpoint,'sm') + 1px}) {
+@mixin from_md {
+    @media only screen and (min-width: #{map.get($breakpoint,'sm') + 1px}) {
         @content;
     }
 }
 
-@mixin _from_lg {
-    @media only screen and (min-width: #{map-get($breakpoint,'md') + 1px}) {
+@mixin from_lg {
+    @media only screen and (min-width: #{map.get($breakpoint,'md') + 1px}) {
         @content;
     }
 }
 
-@mixin _from_xl {
-    @media only screen and (min-width: #{map-get($breakpoint,'lg') + 1px}) {
+@mixin from_xl {
+    @media only screen and (min-width: #{map.get($breakpoint,'lg') + 1px}) {
         @content;
     }
 }
@@ -156,28 +159,28 @@
             }
 
             @else if ($breakpoint_key =="-sm-") {
-                @include _from_sm {
+                @include from_sm {
                     flex: 0 0 $_col_percent;
                     max-width: $_col_percent;
                 }
             }
 
             @else if ($breakpoint_key =="-md-") {
-                @include _from_md {
+                @include from_md {
                     flex: 0 0 $_col_percent;
                     max-width: $_col_percent;
                 }
             }
 
             @else if ($breakpoint_key =="-lg-") {
-                @include _from_lg {
+                @include from_lg {
                     flex: 0 0 $_col_percent;
                     max-width: $_col_percent;
                 }
             }
 
             @else if ($breakpoint_key =="-xl-") {
-                @include _from_xl {
+                @include from_xl {
                     flex: 0 0 $_col_percent;
                     max-width: $_col_percent;
                 }
@@ -190,7 +193,7 @@
 
     &#{$breakpoint_key}#{$suffix} {
         @if ($breakpoint_key =="-sm-") {
-            @include _from_sm {
+            @include from_sm {
                 flex-basis: 0;
                 flex-grow: 1;
                 max-width: 100%;
@@ -199,7 +202,7 @@
         }
 
         @else if ($breakpoint_key =="-md-") {
-            @include _from_md {
+            @include from_md {
                 flex-basis: 0;
                 flex-grow: 1;
                 max-width: 100%;
@@ -208,7 +211,7 @@
         }
 
         @else if ($breakpoint_key =="-lg-") {
-            @include _from_lg {
+            @include from_lg {
                 flex-basis: 0;
                 flex-grow: 1;
                 max-width: 100%;
@@ -217,7 +220,7 @@
         }
 
         @else if ($breakpoint_key =="-xl-") {
-            @include _from_xl {
+            @include from_xl {
                 flex-basis: 0;
                 flex-grow: 1;
                 max-width: 100%;

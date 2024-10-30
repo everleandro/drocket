@@ -1,6 +1,9 @@
+@use "../../mixins";
+@use "../variables/index.scss" as setting;
+
 .e-row {
-  margin: -$space-base;
+  margin: -(setting.$space-base);
   .e-col {
-    @include grid-generator;
+    @include mixins.grid-generator;
   }
 }

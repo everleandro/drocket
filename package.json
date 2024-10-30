@@ -22,8 +22,12 @@
       "require": "./dist/index.css"
     },
     "./setting.scss": {
-      "import": "./dist/styles/setting.scss",
-      "require": "./dist/styles/setting.scss"
+      "import": "./dist/styles/override/variables/index.scss",
+      "require": "./dist/styles/override/variables/index.scss"
+    },
+    "./mixin.scss": {
+      "import": "./dist/styles/_mixins.scss",
+      "require": "./dist/styles/_mixins.scss"
     }
   },
   "types": "./dist/types/index.d.ts",
