@@ -1,4 +1,3 @@
-
 <template>
     <div :class="radioClass" @click="changeModelValue(true)">
         <div :class="['e-field--selection-controls__field']" :data-focused="controlFocused">
@@ -31,6 +30,7 @@ import { useField } from "@/composables/field"
 
 export interface Props {
     retainColor?: boolean;
+    isActive?: boolean;
     disabled?: boolean; readonly?: boolean; label?: string | number;
     modelValue: radioType; color?: string; labelMinWidth?: string;
 }
@@ -49,7 +49,10 @@ const radioColor = computed(() => {
     return textColor.value || color ? `${color}--text` : ''
 })
 
-const active = computed(() => radioGroup?.modelValue?.value === props.modelValue)
+const active = computed(() => {
+    if (props.isActive !== undefined) return props.isActive;
+    return radioGroup?.modelValue?.value === props.modelValue
+})
 
 const changeModelValue = (forceFocus = false): void => {
     forceFocus && input.value?.focus();
