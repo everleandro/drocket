@@ -4,7 +4,7 @@
         <div v-if="hasPrepend" class="e-list-item__prepend">
             <slot name="prepend">
                 <EIcon v-if="prependIcon" :icon="prependIcon" v-bind="iconSize"></EIcon>
-                <EAvatar v-else-if="prependAvatar" size="34" :src="prependAvatar"></EAvatar>
+                <EAvatar v-else-if="prependAvatar" :size="avatarSize" :src="prependAvatar"></EAvatar>
             </slot>
         </div>
         <div class="e-list-item__content">
@@ -15,7 +15,7 @@
         <div v-if="hasAppend" class="e-list-item__append">
             <slot name="append">
                 <EIcon v-if="appendIcon" :icon="appendIcon" v-bind="iconSize"></EIcon>
-                <EAvatar v-else-if="appendAvatar" size="34" :src="appendAvatar"></EAvatar>
+                <EAvatar v-else-if="appendAvatar" :size="avatarSize" :src="appendAvatar"></EAvatar>
             </slot>
         </div>
     </component>
@@ -27,6 +27,7 @@ import EIcon from '@/components/icon/index.vue';
 import { ripple } from '@/directives'
 import EAvatar from '@/components/avatar.vue';
 import { computed, useAttrs, useSlots, inject, ref } from 'vue';
+import { parse } from 'path';
 
 const vRipple = { ...ripple }
 
@@ -44,6 +45,7 @@ export interface Props {
     tag?: string
     color?: string
     value?: string | number | undefined
+    avatarSize?: string | number | undefined
     small?: boolean
     xSmall?: boolean
     large?: boolean
@@ -119,6 +121,15 @@ const listItemCLass = computed((): Array<unknown> => {
     ).map(key => sizeClasses[key]);
     if (sizeClass.length == 0) classes.push(sizeClasses.default)
     return [...classes, ...sizeClass];
+})
+
+const avatarSize = computed((): number => {
+    if (props.avatarSize) return parseInt(props.avatarSize as string)
+    if (props.xSmall) return 26
+    if (props.small) return 20
+    if (props.large) return 38
+    if (props.xLarge) return 42
+    return 34
 })
 
 const hasPrepend = computed((): boolean => {
