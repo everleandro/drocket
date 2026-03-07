@@ -23,3 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 !vite-env.d.ts
+
+# VitePress local cache
+docs/.vitepress/cache/
