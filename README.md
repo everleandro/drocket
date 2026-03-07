@@ -4,6 +4,15 @@ A comprehensive collection of reusable Vue.js UI components to streamline your d
 
 ## You can read the full documentation [here](https://drocket-doc.vercel.app/).
 
+## Local documentation
+
+You can also browse and maintain local markdown docs in this repository:
+
+- [Docs index](./docs/index.md)
+- [Getting started](./docs/getting-started.md)
+- [Theming](./docs/theming.md)
+- [Components](./docs/components/README.md)
+
 - [Get Started](https://drocket-doc.vercel.app/)
 - Forms & Inputs
   - [form](https://drocket-doc.vercel.app/form)
