@@ -32,3 +32,5 @@ export type {
 export { ScheduleMode } from "./schedule";
 export type { EListInjection, ListModelProp, ListSizeClassKeys } from "./list";
 export type { Menu, ContainerMenuInterface, MenuTypeTarget } from "./menu";
+export type { ElevationLevel, ElevationProps } from "./elevation";
+export type { Size, SizeProps } from "./size";

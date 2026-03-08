@@ -25,11 +25,7 @@ const attrs = useAttrs()
 const props = withDefaults(defineProps<IconProps>(), { viewBox: '0 0 24 24' })
 
 const availableRootClasses = {
-    xSmall: 'e-icon--size-x-small',
-    small: 'e-icon--size-small',
-    disabled: 'e-icon--disabled',
-    large: 'e-icon--size-large',
-    xLarge: 'e-icon--size-x-large'
+    disabled: 'e-icon--disabled'
 };
 const paths = computed((): Array<IconPath> => {
     if (!isPath) {
@@ -62,13 +58,19 @@ const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     let iconPreffix = 'icon-'
     if (typeof window !== 'undefined') {
         const rootVar = window.getComputedStyle(document.documentElement);
-        iconClass = rootVar.getPropertyValue('--icon-class') || iconClass;
-        iconPreffix = rootVar.getPropertyValue('--icon-prefix') || iconPreffix;
+        iconClass =
+            rootVar.getPropertyValue('--e-icon-class') ||
+            iconClass;
+        iconPreffix =
+            rootVar.getPropertyValue('--e-icon-prefix') ||
+            iconPreffix;
     }
     const defaultClass = attrs.class ? `${attrs.class}` : ''
     let classes = ['e-icon', iconClass, defaultClass];
-    const defaultSize = !(props.small || props.xSmall || props.large || props.xLarge);
-    defaultSize && classes.push("e-icon--size-default")
+    
+    // Handle size
+    const currentSize = props.size || 'default';
+    classes.push(`e-icon--size-${currentSize}`);
 
     !isPath.value && classes.push(`${(props.preffix || iconPreffix).trim()}${(props.icon as string).trim()}`);
     props.color && (classes.push(`${props.color}--text`));

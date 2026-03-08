@@ -1,21 +1,23 @@
 @use "../variables/index.scss" as setting;
 
 .e-card {
-  border-radius: setting.$border-radius-root;
+  border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
+  background-color: var(--e-color-surface-1);
+  color: var(--e-contrast-surface-1);
 
   &__container {
-    padding: setting.$space-base;
+    padding: var(--e-space-base, #{setting.$space-base});
   }
 
   &__footer {
     &-content {
-      padding: setting.$space-base;
+      padding: var(--e-space-base, #{setting.$space-base});
     }
   }
 
   &>.e-avatar {
     &__wrapper {
-      padding: setting.$space-base;
+      padding: var(--e-space-base, #{setting.$space-base});
     }
   }
 }

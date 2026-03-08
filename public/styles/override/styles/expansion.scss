@@ -1,12 +1,12 @@
 @use "../variables/index.scss" as setting;
 
 .e-expansion {
-  box-shadow: setting.$expansion-box-shadow;
-  border-radius: setting.$border-radius-root;
+  box-shadow: var(--e-expansion-box-shadow, #{setting.$expansion-box-shadow});
+  border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 
   &-panels {
-    box-shadow: setting.$expansion-box-shadow;
-    border-radius: setting.$border-radius-root;
+    box-shadow: var(--e-expansion-box-shadow, #{setting.$expansion-box-shadow});
+    border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 
     .e-expansion {
       border-radius: 0;
@@ -20,20 +20,20 @@
   &__header {
     &-actions {
       >* {
-        max-height: setting.$expansion-header-height !important;
-        min-height: setting.$expansion-header-height !important;
-        height: setting.$expansion-header-height !important;
+        max-height: var(--e-expansion-header-height, #{setting.$expansion-header-height}) !important;
+        min-height: var(--e-expansion-header-height, #{setting.$expansion-header-height}) !important;
+        height: var(--e-expansion-header-height, #{setting.$expansion-header-height}) !important;
       }
     }
 
     i {
-      font-size: setting.$icon-expand-font-size;
+      font-size: var(--e-icon-expand-font-size, #{setting.$icon-expand-font-size});
     }
 
     &-content {
-      max-height: setting.$expansion-header-height;
-      min-height: setting.$expansion-header-height;
-      height: setting.$expansion-header-height;
+      max-height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
+      min-height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
+      height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
     }
   }
 }

@@ -2,86 +2,75 @@
 @use "../variables/index.scss" as setting;
 
 .e-btn {
-  font-weight: setting.$btn-font-weight;
-  letter-spacing: setting.$btn-letter-spacing;
-  color: map.get(setting.$colors, "black");
-  border-color: map.get(setting.$colors, "black");
-  text-indent: setting.$btn-letter-spacing;
-  text-transform: setting.$btn-text-transform;
-  transition-duration: setting.$btn-transition-duration;
-  border-radius: setting.$btn-border-radius;
-  font-family: setting.$root-font-family;
+  font-weight: var(--e-btn-font-weight, #{setting.$btn-font-weight});
+  letter-spacing: var(--e-btn-letter-spacing, #{setting.$btn-letter-spacing});
+  text-indent: var(--e-btn-letter-spacing, #{setting.$btn-letter-spacing});
+  text-transform: var(--e-btn-text-transform, #{setting.$btn-text-transform});
+  transition-duration: var(--e-btn-transition-duration, #{setting.$btn-transition-duration});
+  border-radius: var(--e-btn-border-radius, #{setting.$btn-border-radius});
+  font-family: var(--e-root-font-family, #{setting.$root-font-family});
+
+  // CSS variables for dynamic theming (can be overridden via inline style)
+  --btn-bg: var(--e-color-primary, #{map.get(setting.$colors-light, "primary")});
+  --btn-text: var(--e-contrast-primary, white);
+
+  color: var(--btn-text);
+  background-color: var(--btn-bg);
+  border-color: var(--btn-bg);
 
   +.e-btn {
-    margin-left: setting.$space-base;
+    margin-left: var(--e-space-base, #{setting.$space-base});
   }
 
   &--rounded {
-    border-radius: setting.$btn-rounded-border-radius;
+    border-radius: var(--e-btn-rounded-border-radius, #{setting.$btn-rounded-border-radius});
   }
 
   &--text {
-    @each $key, $value in setting.$colors {
-      &.e-btn--#{$key} {
-        color: $value;
-        background-color: transparent;
-      }
-    }
+    background-color: transparent;
+    color: var(--btn-bg);
   }
 
-  @each $key, $value in setting.$colors {
-    &--#{$key} {
-      color: map.get(setting.$contrast-colors, $key) or white;
-      background-color: $value;
-
-      &.e-btn--icon {
-        color: $value;
-        background-color: transparent;
-      }
-    }
+  &--icon {
+    color: var(--btn-text);
+    background-color: transparent;
   }
 
   @each $key, $value in setting.$btn-states {
     &:#{$key}:before {
-      opacity: $value;
+      opacity: var(--e-btn-state-#{$key}, #{$value});
     }
   }
 
   @each $key, $value in setting.$btn-font-sizes {
     &--size-#{$key} {
-      --btn-font-size: #{$value};
-      --btn-height: #{map.get(setting.$btn-height, $key)};
+      --btn-font-size: var(--e-btn-font-size-#{$key}, #{$value});
+      --btn-height: var(--e-btn-height-#{$key}, #{map.get(setting.$btn-height, $key)});
 
       &.e-btn--icon {
-        --btn-font-size: #{map.get(setting.$icon-font-sizes, $key)};
+        --btn-font-size: var(--e-icon-size-#{$key}, #{map.get(setting.$icon-font-sizes, $key)});
       }
 
       &.e-btn--fab {
-        --btn-height: #{map.get(setting.$fab-height, $key)};
-        --btn-font-size: #{map.get(setting.$fab-font-sizes, $key)};
+        --btn-height: var(--e-fab-height-#{$key}, #{map.get(setting.$fab-height, $key)});
+        --btn-font-size: var(--e-fab-font-size-#{$key}, #{map.get(setting.$fab-font-sizes, $key)});
       }
 
       &.e-btn--stacked {
-        --btn-height: #{map.get(setting.$stacked-height, $key)};
+        --btn-height: var(--e-stacked-height-#{$key}, #{map.get(setting.$stacked-height, $key)});
       }
     }
   }
 
   &.e-btn--outlined {
-    border: setting.$btn-border-width setting.$btn-border-style;
-
-    @each $key, $value in setting.$colors {
-      &.e-btn--#{$key}:not(.e-btn--disabled) {
-        border-color: $value;
-        color: $value;
-      }
-    }
-
-    background-color: transparent;
+    border: var(--e-btn-border-width, #{setting.$btn-border-width}) var(--e-btn-border-style, #{setting.$btn-border-style});
+    background-color: var(--btn-text);
+    border-color: var(--btn-bg);
+    color: var(--btn-bg);
   }
 
   &--disabled {
-    color: map.get(setting.$contrast-colors, "disabled") or white;
-    background-color: map.get(setting.$colors, "disabled");
+    --btn-bg: var(--e-color-disabled, #{map.get(setting.$colors-light, "disabled")});
+    --btn-text: var(--e-contrast-disabled, white);
   }
 }

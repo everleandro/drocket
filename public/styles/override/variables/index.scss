@@ -13,25 +13,72 @@ $space-amount: 24 !default;
 $space-step: 4px !default;
 
 $card-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f !default;
-//colors
 
-$colors: map.merge(("primary": #00af67,
+// colors - light theme (Material Design 3 + Vue colors)
+$colors-light: map.merge(("primary": #42b883,
+      "secondary": #35495e,
+      "tertiary": #3498db,
+      "error": #e74c3c,
+      "warning": #f39c12,
+      "success": #27ae60,
+      "info": #3498db,
       "blue": #00d3ee,
-      "secondary": #4c5f68,
-      "warning": #ffa21a,
       "purple": #af2cc5,
       "input": #4f636b,
       "grey": #91a0a8,
       "disabled": rgba(0, 0, 0, 0.38),
-      "error": #f55a4e,
       "white": white,
       "black": black,
-      "success": #5cb860,
-      "red": #f44336,
+      "surface-0": #f4f6f8,
+      "surface-1": #ffffff,
+      "surface-2": #f8fafc,
+      "surface-3": #eef2f7,
+      "red": #e74c3c,
+      "outline": #c0c0c0,
+      "schedule-bg": white,
+      "schedule-border": rgb(218, 220, 224),
     ),
     ()) !default;
 
-$contrast-colors: map.merge(("white": black,
+// colors - dark theme (Material Design 3 + Vue colors - dark variants)
+$colors-dark: map.merge(("primary": #58d78d,
+      "secondary": #8ca0b8,
+      "tertiary": #5dade2,
+      "error": #f58a8a,
+      "warning": #f8b739,
+      "success": #52c77a,
+      "info": #5dade2,
+      "blue": #26c6da,
+      "purple": #ce93d8,
+      "input": #90caf9,
+      "grey": #78909c,
+      "disabled": rgba(255, 255, 255, 0.38),
+      "white": #121212,
+      "black": #fafafa,
+      "surface-0": #141414,
+      "surface-1": #1e1e1e,
+      "surface-2": #262626,
+      "surface-3": #2f2f2f,
+      "red": #f58a8a,
+      "outline": #4a4a4a,
+      "schedule-bg": #1e1e1e,
+      "schedule-border": #424242,
+    ),
+    ()) !default;
+
+$contrast-colors-light: map.merge(("white": black,
+      "surface-0": black,
+      "surface-1": black,
+      "surface-2": black,
+      "surface-3": black,
+    ),
+    ()) !default;
+
+$contrast-colors-dark: map.merge(("white": #fafafa,
+      "surface-0": #fafafa,
+      "surface-1": #fafafa,
+      "surface-2": #fafafa,
+      "surface-3": #fafafa,
     ),
     ()) !default;
 
@@ -148,9 +195,16 @@ $list-item-height: map.merge(("x-small": 2.187rem,
     ()) !default;
 
 // schedule
-$schedule-border-color: rgb(218, 220, 224) !default;
 $schedule-border-width: 1px !default;
 $hour-column-width: 65px !default;
 $hour-column-width-xs: calc($hour-column-width - 19px) !default;
 $header-col-height: 65px !default;
-$schedule-bg: white !default;
+
+// elevation
+$elevation: (
+  "xs": (0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12)),
+  "sm": (0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12)),
+  "md": (0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12)),
+  "lg": (0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px -8px rgba(0, 0, 0, 0.14), 0 6px 30px -12px rgba(0, 0, 0, 0.12)),
+  "xl": (0 12px 16px -8px rgba(0, 0, 0, 0.2), 0 24px 32px -12px rgba(0, 0, 0, 0.14), 0 8px 40px -16px rgba(0, 0, 0, 0.12)),
+) !default;

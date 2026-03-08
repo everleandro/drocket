@@ -29,6 +29,16 @@ app.mount('#app')
 - [Theming](./theming.md)
 - [Componentes](./components/README.md)
 
+## Novedades recientes
+
+- Theming dinamico con CSS variables y soporte de tema claro/oscuro por `data-theme`.
+- Variables globales de componentes expuestas como `--e-*` (botones, listas, iconos, schedule, etc.).
+- `EButton` ahora soporta colores personalizados por CSS variables (`--e-color-{nombre}`, `--e-contrast-{nombre}`) sin recompilar.
+- Playground local independiente con scripts:
+	- `npm run playground:dev`
+	- `npm run playground:build`
+	- `npm run playground:preview`
+
 ## Convencion de docs por componente
 
 Cada componente debe incluir:

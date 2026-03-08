@@ -54,4 +54,3 @@ const orientation = computed(() => props.vertical ? 'vertical' : 'horizontal')
     }
 }
 </style>
-  

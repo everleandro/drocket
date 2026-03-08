@@ -8,8 +8,8 @@ export default {
 }
 </script>
 <script  lang="ts" setup>
-import type { MenuTypeTarget, ContainerMenuInterface } from '@/types'
-export interface Props {
+import type { MenuTypeTarget, ContainerMenuInterface, ElevationProps } from '@/types'
+export interface Props extends ElevationProps {
     absolute?: boolean
     closeOnContentClick?: boolean
     fullWidth?: boolean

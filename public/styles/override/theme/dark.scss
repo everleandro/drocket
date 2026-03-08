@@ -1,0 +1,22 @@
+@use "sass:map";
+@use "../variables/index.scss" as setting;
+
+// Dark theme
+[data-theme="dark"] {
+  // Colors
+  @each $color-name, $color-value in setting.$colors-dark {
+    --e-color-#{$color-name}: #{$color-value};
+  }
+
+  @each $color-name, $color-value in setting.$contrast-colors-dark {
+    --e-contrast-#{$color-name}: #{$color-value};
+  }
+
+  // App surface
+  --e-app-background: #{map.get(setting.$colors-dark, "surface-0")};
+  --e-app-color: #{map.get(setting.$contrast-colors-dark, "surface-0")};
+
+  // Schedule
+  --e-schedule-border-color: #{map.get(setting.$colors-dark, "schedule-border")};
+  --e-schedule-bg: #{map.get(setting.$colors-dark, "schedule-bg")};
+}

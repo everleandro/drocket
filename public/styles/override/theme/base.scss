@@ -1,0 +1,97 @@
+@use "sass:map";
+@use "../variables/index.scss" as setting;
+
+// Base theme variables (same for both light and dark)
+:root {
+  // Breakpoints
+  @each $bp-name, $bp-value in setting.$breakpoint {
+    --e-breakpoint-#{$bp-name}: #{$bp-value};
+  }
+
+  // Global
+  --e-border-radius-root: #{setting.$border-radius-root};
+  --e-root-font-size: #{setting.$root-font-size};
+  --e-root-font-family: #{setting.$root-font-family};
+  --e-space-base: #{setting.$space-base};
+  --e-space-step: #{setting.$space-step};
+  --e-card-shadow: #{setting.$card-shadow};
+
+  // Bar
+  --e-bar-padding-y: #{setting.$e-bar-padding-y};
+  --e-bar-padding-x: #{setting.$e-bar-padding-x};
+  --e-bar-height: #{setting.$e-bar-heigth};
+  --e-bar-height-dense: #{setting.$e-bar-heigth--dense};
+  --e-bar-box-shadow: #{setting.$e-bar-box-shadow};
+
+  // Icons
+  --e-icon-class: #{setting.$icon-class};
+  --e-icon-prefix: #{setting.$icon-prefix};
+  --e-icon-close-font-size: #{setting.$icon-close-font-size};
+  --e-icon-expand-font-size: #{setting.$icon-expand-font-size};
+
+  @each $size-name, $size-value in setting.$icon-font-sizes {
+    --e-icon-size-#{$size-name}: #{$size-value};
+  }
+
+  // Button
+  --e-btn-border-radius: #{setting.$btn-border-radius};
+  --e-btn-rounded-border-radius: #{setting.$btn-rounded-border-radius};
+  --e-btn-font-weight: #{setting.$btn-font-weight};
+  --e-btn-letter-spacing: #{setting.$btn-letter-spacing};
+  --e-btn-text-transform: #{setting.$btn-text-transform};
+  --e-btn-transition-duration: #{setting.$btn-transition-duration};
+  --e-btn-border-width: #{setting.$btn-border-width};
+  --e-btn-border-style: #{setting.$btn-border-style};
+
+  @each $state-name, $state-value in setting.$btn-states {
+    --e-btn-state-#{$state-name}: #{$state-value};
+  }
+
+  @each $size-name, $size-value in setting.$btn-font-sizes {
+    --e-btn-font-size-#{$size-name}: #{$size-value};
+  }
+
+  @each $height-name, $height-value in setting.$btn-height {
+    --e-btn-height-#{$height-name}: #{$height-value};
+  }
+
+  // FAB
+  @each $size-name, $size-value in setting.$fab-font-sizes {
+    --e-fab-font-size-#{$size-name}: #{$size-value};
+  }
+
+  @each $height-name, $height-value in setting.$fab-height {
+    --e-fab-height-#{$height-name}: #{$height-value};
+  }
+
+  // Stacked
+  @each $height-name, $height-value in setting.$stacked-height {
+    --e-stacked-height-#{$height-name}: #{$height-value};
+  }
+
+  // Expansion
+  --e-expansion-header-height: #{setting.$expansion-header-height};
+  --e-expansion-box-shadow: #{setting.$expansion-box-shadow};
+
+  // List
+  --e-list-prepend-width: #{setting.$list-prepend-width};
+
+  @each $size-name, $size-value in setting.$list-item-font-sizes {
+    --e-list-item-font-size-#{$size-name}: #{$size-value};
+  }
+
+  @each $height-name, $height-value in setting.$list-item-height {
+    --e-list-item-height-#{$height-name}: #{$height-value};
+  }
+
+  // Schedule
+  --e-schedule-borderwidth: #{setting.$schedule-border-width};
+  --e-header-col-height: #{setting.$header-col-height};
+  --e-hour-column-width: #{setting.$hour-column-width};
+  --e-hour-column-width-xs: #{setting.$hour-column-width-xs};
+
+  // Elevation
+  @each $level-name, $level-value in setting.$elevation {
+    --e-elevation-#{$level-name}: #{$level-value};
+  }
+}

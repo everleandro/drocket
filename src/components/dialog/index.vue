@@ -15,10 +15,12 @@ export default { name: 'EDialog' }
 </script>
 <script lang="ts" setup>
 import { computed, onMounted, provide, reactive, watch, ref } from 'vue'
+import { ElevationProps } from '@/types'
+
 export interface EDIalog {
     close: (forece?: boolean) => void
 }
-export interface Props {
+export interface Props extends ElevationProps {
     fullscreen?: boolean
     modelValue?: boolean
     absolute?: boolean
@@ -61,6 +63,7 @@ const dialogClass = computed(() => {
     store.active && classes.push(availableRootClasses.active)
     props.absolute && classes.push(availableRootClasses.absolute)
     store.animated && classes.push(availableRootClasses.animated)
+    props.elevation && classes.push(`e-elevation--${props.elevation}`)
     return classes
 })
 

@@ -3,11 +3,11 @@
 .e-icon {
   @each $key, $value in setting.$icon-font-sizes {
     &--size-#{$key} {
-      font-size: $value;
+      font-size: var(--e-icon-size-#{$key}, #{$value});
 
       .e-icon__svg {
-        height: $value;
-        width: $value;
+        height: var(--e-icon-size-#{$key}, #{$value});
+        width: var(--e-icon-size-#{$key}, #{$value});
       }
     }
   }

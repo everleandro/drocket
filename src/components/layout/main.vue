@@ -31,4 +31,3 @@ const props = withDefaults(defineProps<Props>(), { theme: 'light' })
     }
 }
 </style>
-  

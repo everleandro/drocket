@@ -20,8 +20,8 @@ import { EButton } from 'drocket'
 | `prependIcon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono al inicio del contenido. |
 | `ripple` | `boolean` | `false` | Habilita clase/efecto ripple. |
 | `loading` | `boolean` | `false` | Muestra loader y bloquea interaccion. |
-| `color` | `string` | `undefined` | Color base (`e-btn--{color}`). |
-| `hoverColor` | `string` | `undefined` | Color al hover (`e-btn--{hoverColor}`). |
+| `color` | `string` | `undefined` | Color base. Resuelve `--e-color-{color}` y `--e-contrast-{color}`. |
+| `hoverColor` | `string` | `undefined` | Color al hover. Si existe, reemplaza `color` mientras hover esta activo. |
 | `fab` | `boolean` | `false` | Variante circular flotante. |
 | `depressed` | `boolean` | `false` | Quita sombra. |
 | `text` | `boolean` | `false` | Variante texto (fondo transparente). |
@@ -93,6 +93,21 @@ const saving = ref(false)
 </template>
 ```
 
+### Color personalizado sin recompilar
+
+```vue
+<template>
+  <EButton color="brand">Marca</EButton>
+</template>
+
+<style>
+:root {
+  --e-color-brand: #1e88e5;
+  --e-contrast-brand: #ffffff;
+}
+</style>
+```
+
 ## Accesibilidad
 
 - Usa texto visible y especifico en el slot `default`.
@@ -103,3 +118,4 @@ const saving = ref(false)
 
 - Usar `height`/`width` esperando unidades distintas a px: el componente agrega `px` automaticamente.
 - Definir `to` sin Vue Router para rutas internas: en ese caso usa `link` + `href` externo o instala Router.
+- Definir `color="brand"` sin crear `--e-color-brand`: en ese caso se usa el color primario por defecto.

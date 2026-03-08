@@ -1,0 +1,20 @@
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const repoRoot = path.resolve(__dirname, "..");
+
+export default defineConfig({
+  root: "./playground",
+  publicDir: path.resolve(repoRoot, "public"),
+  plugins: [vue()],
+  resolve: {
+    alias: {
+      "@/": path.resolve(repoRoot, "src") + "/",
+      "~": repoRoot,
+    },
+  },
+});

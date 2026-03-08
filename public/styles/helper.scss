@@ -18,6 +18,12 @@ $spaces-states: (
   "ml": "margin-left",
 );
 
+@each $key, $value in $elevation {
+  .e-elevation--#{$key} {
+    box-shadow: var(--e-elevation-#{$key}, #{$value});
+  }
+}
+
 @each $key, $value in $spaces-states {
   .#{$key} {
     @for $i from 0 through $space-amount {
@@ -108,6 +114,19 @@ $breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
 
   .align-#{$value} {
     align-items: $value;
+  }
+}
+
+@each $color, $value in $colors-light {
+  .#{$color} {
+    background-color: var(--e-color-#{$color}) !important;
+    border-color: var(--e-color-#{$color});
+
+    &--text {
+      color: var(--e-color-#{$color}) !important;
+      caret-color: var(--e-color-#{$color}) !important;
+      fill: var(--e-color-#{$color}) !important;
+    }
   }
 }
 

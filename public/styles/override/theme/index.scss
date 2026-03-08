@@ -1,0 +1,6 @@
+// Theme system
+// Import base variables first, then theme overrides
+
+@use "./base.scss";
+@use "./light.scss";
+@use "./dark.scss";

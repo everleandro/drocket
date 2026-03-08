@@ -54,6 +54,12 @@
   ],
   "scripts": {
     "dev": "vite",
+    "playground:dev": "vite --config playground/vite.config.ts",
+    "playground:build": "vite build --config playground/vite.config.ts",
+    "playground:preview": "vite preview --config playground/vite.config.ts",
+    "site:dev": "vite --config site/vite.config.ts",
+    "site:build": "vite build --config site/vite.config.ts",
+    "site:preview": "vite preview --config site/vite.config.ts",
     "build": "vite build && vue-tsc --emitDeclarationOnly && move ./dist/src ./dist/types",
     "build-linux": "vite build && vue-tsc --emitDeclarationOnly && mv ./dist/src ./dist/types",
     "preserve": "vite build",

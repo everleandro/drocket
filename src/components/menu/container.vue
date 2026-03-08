@@ -3,7 +3,7 @@
     <div ref="ContainerReference" class="e-menu-container" v-click-outside="handleOutside" v-bind="configuration.attrs"
         :style="menuContentStyle" @click="handleContentClick">
         <transition :name="configuration.transition">
-            <div v-show="opened" ref="wrapper" class="e-menu-container__wrapper" :data-id="configuration.dataId">
+            <div v-show="opened" ref="wrapper" :class="wrapperClass" :data-id="configuration.dataId">
                 <slot></slot>
             </div>
         </transition>
@@ -15,7 +15,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { Ref, nextTick, onMounted, provide, reactive, ref, watch } from 'vue';
+import { Ref, nextTick, onMounted, provide, reactive, ref, watch, computed } from 'vue';
 import { MenuTypeTarget } from '@/types'
 
 const configuration: Record<string, any> = reactive({
@@ -44,6 +44,14 @@ const ContainerReference = ref(null)
 const menuContentStyle: Ref<Record<string, string | number>> = ref({
     top: 0
 });
+
+const wrapperClass = computed(() => {
+    const classes = ['e-menu-container__wrapper']
+    if (configuration.elevation) {
+        classes.push(`e-elevation--${configuration.elevation}`)
+    }
+    return classes
+})
 
 
 watch(() => opened.value, (value: boolean) => {

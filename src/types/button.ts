@@ -10,9 +10,5 @@ export type ButtonClassKeys =
   | "text"
   | "outlined"
   | "block"
-  | "small"
-  | "xSmall"
-  | "large"
-  | "xLarge"
   | "rounded"
   | "icon";

@@ -2,6 +2,6 @@
 
 .e-menu {
   &__content {
-    border-radius: setting.$border-radius-root;
+    border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
   }
 }

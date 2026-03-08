@@ -2,33 +2,33 @@
 @use "../variables/index.scss" as setting;
 
 .e-list {
-  --root-indent: #{setting.$space-base};
-  --list-item-prepend-width: calc(#{setting.$space-base} + #{setting.$list-prepend-width});
-  --padding-inline: #{setting.$space-base};
+  --root-indent: var(--e-space-base, #{setting.$space-base});
+  --list-item-prepend-width: calc(var(--e-space-base, #{setting.$space-base}) + var(--e-list-prepend-width, #{setting.$list-prepend-width}));
+  --padding-inline: var(--e-space-base, #{setting.$space-base});
 
   &-item {
-    padding-inline: calc(var(--padding-inline, #{setting.$space-base}) + var(--group-inline-padding, 0px));
+    padding-inline: calc(var(--padding-inline, var(--e-space-base, #{setting.$space-base})) + var(--group-inline-padding, 0px));
 
     &__prepend {
-      width: var(--list-item-prepend-width, calc(#{setting.$space-base} + #{setting.$list-prepend-width}));
+      width: var(--list-item-prepend-width, calc(var(--e-space-base, #{setting.$space-base}) + var(--e-list-prepend-width, #{setting.$list-prepend-width})));
     }
 
     @each $key, $value in setting.$list-item-font-sizes {
       &--size-#{$key} {
-        --list-item-font-size: #{$value};
-        --list-item-height: #{map.get(setting.$list-item-height, $key)};
-        --icon-font-size: #{map.get(setting.$icon-font-sizes, $key)};
+        --list-item-font-size: var(--e-list-item-font-size-#{$key}, #{$value});
+        --list-item-height: var(--e-list-item-height-#{$key}, #{map.get(setting.$list-item-height, $key)});
+        --icon-font-size: var(--e-icon-size-#{$key}, #{map.get(setting.$icon-font-sizes, $key)});
       }
     }
   }
 
   &-group {
     &__content {
-      --group-inline-padding:#{setting.$space-base};
+      --group-inline-padding: var(--e-space-base, #{setting.$space-base});
     }
 
     &:not(:last-child):not(:only-child) {
-      margin-bottom: #{setting.$space-step};
+      margin-bottom: var(--e-space-step, #{setting.$space-step});
     }
   }
 
@@ -51,13 +51,13 @@
 
 .e-drawer {
   .e-list {
-    padding-inline: calc(#{setting.$space-step} * 2);
+    padding-inline: calc(var(--e-space-step, #{setting.$space-step}) * 2);
 
     &-item {
-      border-radius: #{setting.$border-radius-root};
+      border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 
       &:not(:only-child):not(:last-child) {
-        margin-bottom: #{setting.$space-step};
+        margin-bottom: var(--e-space-step, #{setting.$space-step});
       }
     }
   }

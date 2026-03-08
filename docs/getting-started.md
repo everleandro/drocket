@@ -54,3 +54,23 @@ export default defineNuxtConfig({
   css: ['drocket/styles.css', 'drocket/framework.scss']
 })
 ```
+
+## Desarrollo local
+
+Para probar cambios de componentes y estilos en un entorno aislado:
+
+```bash
+npm run playground:dev
+```
+
+Para generar build del playground:
+
+```bash
+npm run playground:build
+```
+
+Para previsualizar el build del playground:
+
+```bash
+npm run playground:preview
+```

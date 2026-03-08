@@ -88,4 +88,3 @@ const refreshLayoutStyle = (_height?: number): void => {
 
 </script>
 <style lang="scss" src="./style.scss"></style>
-  

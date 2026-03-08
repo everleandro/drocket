@@ -2,7 +2,7 @@
 @use "../variables/index.scss" as setting;
 
 .e-row {
-  margin: -(setting.$space-base);
+  margin: calc(var(--e-space-base, #{setting.$space-base}) * -1);
   .e-col {
     @include mixins.grid-generator;
   }

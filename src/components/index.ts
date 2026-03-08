@@ -1,7 +1,5 @@
 export { default as EButton } from "./button/index.vue";
 export { default as EIcon } from "./icon/index.vue";
-export { default as EBar } from "./bar/index.vue";
-export { default as EDrawer } from "./drawer/index.vue";
 export { default as ECard } from "./card/index.vue";
 export { default as ECardContainer } from "./card/container.vue";
 export { default as EDatePicker } from "./date-picker/index.vue";
@@ -35,9 +33,15 @@ export { default as ETab } from "./tab/index.vue";
 export { default as ETabGroup } from "./tab/group.vue";
 export { default as EWindow } from "./window/index.vue";
 export { default as EWindowItem } from "./window/item.vue";
-export { default as EApp } from "./app.vue";
-export { default as EContainer } from "./container.vue";
-export { default as EDivider } from "./divider.vue";
-export { default as EMain } from "./main.vue";
-export { default as ESpacer } from "./spacer.vue";
 export { default as ETimePicker } from "./form/time-picker/index.vue";
+
+// Layout components
+export {
+  EApp,
+  EBar,
+  EContainer,
+  EDivider,
+  EDrawer,
+  EMain,
+  ESpacer
+} from "./layout";

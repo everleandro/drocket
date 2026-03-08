@@ -13,6 +13,21 @@ You can also browse and maintain local markdown docs in this repository:
 - [Theming](./docs/theming.md)
 - [Components](./docs/components/README.md)
 
+## Local playground
+
+Para probar cambios de componentes y tema en runtime:
+
+```bash
+npm run playground:dev
+```
+
+Build y preview del playground:
+
+```bash
+npm run playground:build
+npm run playground:preview
+```
+
 - [Get Started](https://drocket-doc.vercel.app/)
 - Forms & Inputs
   - [form](https://drocket-doc.vercel.app/form)

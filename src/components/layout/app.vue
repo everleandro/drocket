@@ -22,4 +22,3 @@ const props = withDefaults(defineProps<Props>(), { theme: 'light' })
     position: relative;
 }
 </style>
-  

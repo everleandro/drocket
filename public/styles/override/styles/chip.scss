@@ -2,6 +2,6 @@
 
 .e-chip {
   + .e-chip {
-    margin-left: setting.$space-base;
+    margin-left: var(--e-space-base, #{setting.$space-base});
   }
 }

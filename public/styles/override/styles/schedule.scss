@@ -3,67 +3,67 @@
 
 .e-schedule {
 
-  padding-top: setting.$header-col-height;
-  background: setting.$schedule-bg;
+  padding-top: var(--e-header-col-height, #{setting.$header-col-height});
+  background: var(--e-schedule-bg, white);
 
   &__body {
-    min-width: calc(100% - setting.$hour-column-width);
+    min-width: calc(100% - var(--e-hour-column-width, #{setting.$hour-column-width}));
   }
 
   &__event {
     &-container {
-      color: setting.$schedule-bg;
+      color: var(--e-schedule-bg, white);
     }
   }
 
   [role="cell"] {
-    border-bottom: setting.$schedule-border-width solid setting.$schedule-border-color;
+    border-bottom: var(--e-schedule-borderwidth, #{setting.$schedule-border-width}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
 
     &:not(:last-child) {
-      border-bottom: setting.$schedule-border-width solid setting.$schedule-border-color;
+      border-bottom: var(--e-schedule-borderwidth, #{setting.$schedule-border-width}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
     }
   }
 
   &__header {
     &[role="cell"] {
       &>span {
-        height: calc(setting.$header-col-height + 10px);
+        height: calc(var(--e-header-col-height, #{setting.$header-col-height}) + 10px);
         padding-top: 10px;
-        background-color: setting.$schedule-bg;
+        background-color: var(--e-schedule-bg, white);
       }
     }
   }
 
   div[role="col"] {
-    background-color: setting.$schedule-bg;
+    background-color: var(--e-schedule-bg, white);
 
     &:not(:last-child) {
-      border-right: setting.$schedule-border-width solid setting.$schedule-border-color;
+      border-right: var(--e-schedule-borderwidth, #{setting.$schedule-border-width}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
     }
 
     &.col-hour-info {
-      max-width: setting.$hour-column-width;
-      min-width: setting.$hour-column-width;
+      max-width: var(--e-hour-column-width, #{setting.$hour-column-width});
+      min-width: var(--e-hour-column-width, #{setting.$hour-column-width});
     }
   }
 
   &:has(.tab-reverse-transition-leave-active),
   &:has(.tab-transition-leave-active) {
     .e-schedule__body {
-      top: setting.$header-col-height;
+      top: var(--e-header-col-height, #{setting.$header-col-height});
     }
   }
 
   @include mixins.xs {
     div[role="col"] {
       &.col-hour-info {
-        max-width: setting.$hour-column-width-xs;
-        min-width: setting.$hour-column-width-xs;
+        max-width: var(--e-hour-column-width-xs, #{setting.$hour-column-width-xs});
+        min-width: var(--e-hour-column-width-xs, #{setting.$hour-column-width-xs});
       }
     }
 
     &__body {
-      min-width: calc(100% - setting.$hour-column-width-xs);
+      min-width: calc(100% - var(--e-hour-column-width-xs, #{setting.$hour-column-width-xs}));
     }
   }
 
