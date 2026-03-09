@@ -59,7 +59,6 @@
 </template>
 <script lang="ts" setup>
 import {
-  ButtonClassKeys,
   IconProps,
   IconPath,
   ElevationProps,
@@ -103,18 +102,18 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   elevation: "sm",
 });
 
-const availableRootClasses: Record<ButtonClassKeys, string> = {
-  disabled: "e-btn--disabled",
-  icon: "e-btn--icon",
-  depressed: "e-btn--depressed",
-  text: "e-btn--text",
-  fab: "e-btn--fab",
-  block: "e-btn--block",
-  loading: "e-btn--loading",
-  outlined: "e-btn--outlined",
-  rounded: "e-btn--rounded",
-  stacked: "e-btn--stacked",
-};
+const booleanClassKeys = [
+  "disabled",
+  "icon",
+  "depressed",
+  "text",
+  "fab",
+  "block",
+  "loading",
+  "outlined",
+  "rounded",
+  "stacked",
+] as const;
 
 const iconSize = computed((): Partial<IconProps> => ({ size: props.size }));
 const tag = computed(() => {
@@ -152,19 +151,18 @@ const btnClass = (): Array<string> => {
   classes.push(`e-btn--size-${currentSize}`);
 
   // Handle boolean classes
-  const availableRootClassKeys = Object.keys(
-    availableRootClasses,
-  ) as Array<ButtonClassKeys>;
-  const classes2 = availableRootClassKeys
-    .filter((key) => !!props[key])
-    .map((key) => availableRootClasses[key]);
+  booleanClassKeys.forEach((key) => {
+    if (props[key]) {
+      classes.push(`e-btn--${key}`);
+    }
+  });
 
   // Handle elevation
   if (props.elevation && !props.depressed && !props.text && !props.outlined) {
-    classes2.push(`e-elevation--${props.elevation}`);
+    classes.push(`e-elevation--${props.elevation}`);
   }
 
-  return [...classes, ...classes2];
+  return classes;
 };
 const handleHover = (value: boolean) => {
   if (isDisabledForInteraction.value) return;

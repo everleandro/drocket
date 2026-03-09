@@ -10,8 +10,6 @@ export type {
 export type { BarProps, BarClassKeys } from "./bar";
 
 export type { IconClassKeys, IconPath, IconProps } from "./icon";
-
-export type { ButtonClassKeys } from "./button";
 export type {
   DatesRange,
   Day,
