@@ -1,5 +1,5 @@
 <template>
-    <main class="e-main" :data-layout="true">
+    <main class="e-main" :data-layout="true" :style="mainLayoutStyle">
         <div class="e-main__wrapper">
             <slot />
         </div>
@@ -7,10 +7,13 @@
 </template>
   
 <script setup lang="ts" >
+import { useLayout } from '@/composables'
+
 interface Props {
     theme?: string
 }
 const props = withDefaults(defineProps<Props>(), { theme: 'light' })
+const { mainLayoutStyle } = useLayout()
 
 </script>
 

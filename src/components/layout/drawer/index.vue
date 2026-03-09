@@ -1,10 +1,18 @@
 <template>
+  <Teleport to="body">
+    <div
+      v-if="overlayMounted"
+      :class="['e-overlay', overlayClassName]"
+      @click="handleOutside"
+    ></div>
+  </Teleport>
+
   <component
     :is="tag"
     v-click-outside="handleOutside"
     :class="drawerClass"
     data-layout="true"
-    :style="style"
+    :style="mergedStyle"
   >
     <div
       class="e-drawer__content"
@@ -29,46 +37,20 @@
 
 <script lang="ts" setup>
 import { clickOutside } from "@/directives";
-const vClickOutside = { ...clickOutside };
-import {
-  computed,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  ref,
-  watch,
-  useSlots,
-} from "vue";
-// import { useRouter } from 'vue-router'
+const vClickOutside = clickOutside;
+import { computed, onMounted, onUnmounted, ref, watch, useSlots } from "vue";
+import { useLayout, useOverlay } from "@/composables";
+import { DrawerClassKeys, DrawerProps } from "@/types";
+
 const slots = useSlots();
-
-export type DrawerClassKeys =
-  | "disabled"
-  | "right"
-  | "modelValue"
-  | "fixed"
-  | "floating";
-
-export interface Props {
-  modelValue?: boolean;
-  floating?: boolean;
-  absolute?: boolean;
-  disabled?: boolean;
-  fixed?: boolean;
-  devMode?: boolean; //only for dev purpose
-  nav?: boolean;
-  right?: boolean;
-  widthUnit?: string;
-  width?: string | number;
-}
+const { setLayoutConfig, drawerLayoutStyle } = useLayout();
 
 let mdBreakpoint = ref(false);
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<DrawerProps>(), {
   width: 16,
   widthUnit: "rem",
 });
-
-let overlayNode: HTMLElement | null = null;
+let mediaQueryList: MediaQueryList | null = null;
 
 const availableRootClasses: Record<DrawerClassKeys, string> = {
   disabled: "e-drawer--disabled",
@@ -78,33 +60,38 @@ const availableRootClasses: Record<DrawerClassKeys, string> = {
   modelValue: "e-drawer--open",
 };
 
-// const router = useRouter()
 const absoluteComputed = computed(() => {
   if (props.devMode) return props.absolute;
   return props.absolute || mdBreakpoint.value;
 });
 const tag = computed(() => (props.nav ? "nav" : "aside"));
+const overlayActive = computed(
+  () => !!props.modelValue && !!absoluteComputed.value
+);
+const { overlayMounted, overlayClassName } = useOverlay({
+  active: overlayActive,
+  leaveDuration: 300,
+});
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
 }>();
 
 onMounted(() => {
-  setOverlay();
   observeBreakpoint();
-  refreshLayoutStyle();
-  if (props.devMode) return;
-  nextTick(() => {
-    window?.addEventListener("resize", observeBreakpoint);
-    if (props.modelValue && mdBreakpoint.value) {
-      changeValue(false);
-    }
-  });
+
+  if (props.modelValue && mdBreakpoint.value && !props.devMode) {
+    changeValue(false);
+  }
 });
 
 onUnmounted(() => {
-  window?.removeEventListener("resize", observeBreakpoint);
-  destroyOverlay();
+  if (mediaQueryList) {
+    mediaQueryList.removeEventListener("change", onBreakpointChange);
+    mediaQueryList = null;
+  }
+
+  setLayoutConfig({ drawer: { left: "0px", right: "0px" } });
 });
 
 const drawerClass = computed((): Array<string> => {
@@ -122,118 +109,60 @@ const drawerClass = computed((): Array<string> => {
   return [...classes, ...classes2];
 });
 const computedWidth = computed(() => {
-  let result = props.width;
   if (typeof props.width === "number") {
-    result = `${props.width}${props.widthUnit}`;
-  } else if (
-    props.width.length === parseInt(props.width, 10).toString().length
-  ) {
-    result = `${props.width}${props.widthUnit}`;
+    return `${props.width}${props.widthUnit}`;
   }
 
-  return result;
+  const trimmedWidth = props.width.trim();
+  if (/^\d+(\.\d+)?$/.test(trimmedWidth)) {
+    return `${trimmedWidth}${props.widthUnit}`;
+  }
+
+  return trimmedWidth;
 });
 
-watch(
-  () => [props.modelValue, mdBreakpoint.value, props.absolute, props.fixed],
-  () => {
-    setOverlay();
-    refreshLayoutStyle();
-  }
-);
-
-watch(
-  () => [props.right, props.width],
-  () => {
-    refreshLayoutStyle();
-  }
-);
-
-// watch(() => route.fullPath, () => {
-//   console.log('ads')
-
-// }, { deep: true })
-
-// watch(() => router, () => {
-//   if (props.modelValue && mdBreakpoint.value) {
-//     changeValue(false)
-//   }
-
-// }, { deep: true, immediate: true });
-
-const setOverlay = (): void => {
-  if (props.modelValue && absoluteComputed.value) {
-    if (!overlayNode) {
-      const root: HTMLElement = document.body || new HTMLElement();
-      const appParent: HTMLElement =
-        document.querySelector("#app.e-app") || new HTMLElement();
-      const parent = root.contains(appParent) ? appParent : root;
-      const newOverlayNode = document.createElement("div");
-      parent.prepend(newOverlayNode);
-      newOverlayNode.className = "e-overlay";
-      setTimeout(() => {
-        newOverlayNode.className = "e-overlay e-overlay--active";
-      }, 0);
-      overlayNode = newOverlayNode;
-    }
-  } else {
-    destroyOverlay();
-  }
-};
-
-const refreshLayoutStyle = (): void => {
-  const eMainNode = document.querySelector(
-    '.e-main[data-layout="true"]'
-  ) as HTMLElement;
-  const eBarNode = document.querySelector(
-    '.e-bar.e-bar--app[data-layout="true"]'
-  ) as HTMLElement;
+function refreshLayoutStyle(): void {
   const propertyValue =
     absoluteComputed.value || !props.modelValue
       ? "0px"
       : `${computedWidth.value}`;
-  if (eMainNode) {
-    if (props.right) {
-      eMainNode.style.paddingRight = propertyValue;
-      eMainNode.style.paddingLeft = "0px";
-    } else {
-      eMainNode.style.paddingRight = "0px";
-      eMainNode.style.paddingLeft = propertyValue;
-    }
-  }
+  setLayoutConfig({
+    drawer: {
+      left: props.right ? "0px" : propertyValue,
+      right: props.right ? propertyValue : "0px",
+    },
+  });
+}
 
-  if (eBarNode) {
-    if (props.right) {
-      eBarNode.style.right = propertyValue;
-      eBarNode.style.left = "0px";
-    } else {
-      eBarNode.style.right = "0px";
-      eBarNode.style.left = propertyValue;
-    }
-  }
-};
+watch(
+  () => [props.modelValue, props.right, computedWidth.value, absoluteComputed.value],
+  () => {
+    refreshLayoutStyle();
+  },
+  { immediate: true }
+);
 
-const destroyOverlay = (): void => {
-  if (overlayNode) {
-    overlayNode.className = "e-overlay e-overlay--inactive";
-    setTimeout(() => {
-      overlayNode && (overlayNode as HTMLElement).remove();
-      overlayNode = null;
-    }, 300);
-  }
-};
 const changeValue = (value: boolean): void => {
   emit("update:modelValue", value);
 };
-const observeBreakpoint = (): void => {
-  const windowWidth = window?.innerWidth;
-  const mdValue = getComputedStyle(document.body).getPropertyValue("--md");
-  mdBreakpoint.value = windowWidth <= parseInt(mdValue, 10);
+
+const onBreakpointChange = (event: MediaQueryListEvent): void => {
+  mdBreakpoint.value = event.matches;
 };
+
+const observeBreakpoint = (): void => {
+  const mdValue = getComputedStyle(document.body).getPropertyValue("--md").trim();
+  const parsedMd = parseInt(mdValue, 10);
+  const mdBreakpointValue = Number.isNaN(parsedMd) ? 960 : parsedMd;
+
+  mediaQueryList = window.matchMedia(`(max-width: ${mdBreakpointValue}px)`);
+  mdBreakpoint.value = mediaQueryList.matches;
+  mediaQueryList.addEventListener("change", onBreakpointChange);
+};
+
 const handleOutside = (): void => {
   if (absoluteComputed.value && props.modelValue) {
     changeValue(false);
-    destroyOverlay();
   }
 };
 const style = computed((): Record<string, string> => {
@@ -246,6 +175,11 @@ const style = computed((): Record<string, string> => {
 
   return { ...result };
 });
+
+const mergedStyle = computed((): Record<string, string> => ({
+  ...drawerLayoutStyle,
+  ...style.value,
+}));
 </script>
 <style lang="scss">
 @import "./style.scss";

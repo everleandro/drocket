@@ -1,8 +1,8 @@
-export type BarClassKeys = "dense" | "fixed" | "clipped" | "depressed" | "app";
+export type BarClassKeys = "dense" | "fixed" | "clipped" | "depressed" | "app" | "absolute";
 
 export interface BarProps {
   dense?: boolean;
-  absoulute?: boolean;
+  absolute?: boolean;
   app?: boolean;
   outlined?: boolean;
   height?: string | number;
