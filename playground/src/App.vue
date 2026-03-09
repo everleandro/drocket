@@ -10,7 +10,7 @@
     <section class="block">
       <h2>Button</h2>
       <div class="row">
-        <EButton color="primary">Primary</EButton>
+        <EButton color="primary" elevation="lg">Primary</EButton>
         <EButton color="secondary" outlined>Outlined</EButton>
         <EButton color="brand" rounded>Custom Brand</EButton>
         <EButton color="secondary" rounded>secondary</EButton>

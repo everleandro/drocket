@@ -12,8 +12,6 @@ const createRippleHandler = (
   binding?: Record<"value", RippleBinding>
 ) => {
   return (e: MouseEvent) => {
-    e.stopPropagation(); // Asegurarse de que el evento alcance el elemento
-
     if (binding?.value?.disabled) return;
 
     if (!el.classList.contains("v-ripple-element")) {

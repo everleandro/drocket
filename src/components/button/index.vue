@@ -1,13 +1,18 @@
 <template>
   <component
-    v-ripple
+    v-ripple="{ disabled: isDisabledForInteraction }"
     :is="tag"
-    v-bind="isExteranlLinkAttributes"
+    v-bind="isExternalLinkAttributes"
     :class="btnClass()"
     :type="type || 'button'"
     :style="style()"
-    @mouseover="handleHover(true)"
-    @mouseleave="handleHover(false)"
+    :aria-disabled="isDisabledForInteraction"
+    :aria-busy="props.loading"
+    :aria-label="ariaLabelComputed"
+    @pointerenter="handleHover(true)"
+    @pointerleave="handleHover(false)"
+    @focus="handleFocus(true)"
+    @blur="handleFocus(false)"
   >
     <span v-show="props.loading" class="e-btn__loader">
       <slot name="loading">
@@ -64,7 +69,7 @@ import {
 import { ripple } from "@/directives";
 import EIcon from "@/components/icon/index.vue";
 
-import { reactive, useAttrs, computed } from "vue";
+import { reactive, useAttrs, computed, useSlots } from "vue";
 const vRipple = { ...ripple };
 
 export interface ButtonProps extends ElevationProps, SizeProps {
@@ -72,7 +77,7 @@ export interface ButtonProps extends ElevationProps, SizeProps {
   link?: boolean;
   appendIcon?: Array<IconPath> | IconPath | string;
   prependIcon?: Array<IconPath> | IconPath | string;
-  ripple?: boolean;
+  ariaLabel?: string;
   loading?: boolean;
   color?: string;
   hoverColor?: string;
@@ -91,9 +96,12 @@ export interface ButtonProps extends ElevationProps, SizeProps {
 
 const configuration = reactive({
   hovered: false,
+  focused: false,
 });
 const attrs = useAttrs();
-const props = defineProps<ButtonProps>();
+const props = withDefaults(defineProps<ButtonProps>(), {
+  elevation: "sm",
+});
 
 const availableRootClasses: Record<ButtonClassKeys, string> = {
   disabled: "e-btn--disabled",
@@ -118,14 +126,27 @@ const tag = computed(() => {
   return "button";
 });
 
-const isExteranlLinkAttributes = computed(() => {
+const isExternalLinkAttributes = computed(() => {
   const { to } = attrs;
   if (typeof to === "string" && to.startsWith("http")) return { href: to };
   return {};
 });
 
+const slots = useSlots();
+const isDisabledForInteraction = computed(() => props.disabled || props.loading);
+
+const ariaLabelComputed = computed(() => {
+  if (props.ariaLabel) return props.ariaLabel;
+  if ((props.icon || props.fab) && !slots.default) return undefined;
+  return undefined;
+});
+
 const btnClass = (): Array<string> => {
   const classes = ["e-btn v-ripple-element"];
+
+  if (configuration.focused) {
+    classes.push("e-btn--focused");
+  }
 
   // Handle size
   const currentSize = props.size || "default";
@@ -140,14 +161,19 @@ const btnClass = (): Array<string> => {
     .map((key) => availableRootClasses[key]);
 
   // Handle elevation
-  if (props.elevation) {
+  if (props.elevation && !props.depressed && !props.text && !props.outlined) {
     classes2.push(`e-elevation--${props.elevation}`);
   }
 
   return [...classes, ...classes2];
 };
 const handleHover = (value: boolean) => {
+  if (isDisabledForInteraction.value) return;
   configuration.hovered = value;
+};
+
+const handleFocus = (value: boolean) => {
+  configuration.focused = value;
 };
 
 const getCurrentColor = (): string | undefined => {

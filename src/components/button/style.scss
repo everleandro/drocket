@@ -55,6 +55,11 @@
     box-shadow: none;
   }
 
+  &--focused:not(.e-btn--disabled):not(.e-btn--loading) {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
   &--text {
     background-color: transparent;
   }
