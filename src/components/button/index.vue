@@ -108,7 +108,6 @@ const availableRootClasses: Record<ButtonClassKeys, string> = {
   icon: "e-btn--icon",
   depressed: "e-btn--depressed",
   text: "e-btn--text",
-  ripple: "v-ripple-element",
   fab: "e-btn--fab",
   block: "e-btn--block",
   loading: "e-btn--loading",
