@@ -10,7 +10,7 @@
 </template>
 <script lang="ts" setup>
 import { ComputedRef, Ref, computed, onMounted, onBeforeUnmount, onUnmounted, ref, watch, useSlots, nextTick } from 'vue'
-import { BarProps, BarClassKeys } from '@/types'
+import { BarProps } from '@/types'
 import { useLayout } from '@/composables'
 
 let el: Ref<HTMLHeadElement | null> = ref(null)
@@ -19,15 +19,7 @@ const slots = useSlots()
 const props = defineProps<BarProps>()
 const { setLayoutConfig, barLayoutStyle } = useLayout()
 
-const availableRootClasses = {
-    dense: 'e-bar--dense',
-    fixed: 'e-bar--fixed',
-    clipped: 'e-bar--clipped',
-    depressed: 'e-bar--depressed',
-    app: 'e-bar--app',
-    absolute: 'e-bar--absolute',
-    outlined: 'e-bar--outlined'
-};
+const booleanClassKeys = ['dense', 'fixed', 'clipped', 'depressed', 'app', 'absolute', 'outlined'] as const
 
 watch(() => [props.clipped, props.fixed, props.absolute, props.app, props.dense], () => {
     nextTick(() => {
@@ -62,12 +54,13 @@ const barClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     const classes = ['e-bar']
     props.color && classes.push(props.color)
 
-    const availableRootClassKeys = Object.keys(availableRootClasses) as Array<BarClassKeys>
-    const classes2 = availableRootClassKeys.filter(
-        (key) => !!props[key]
-    ).map(key => availableRootClasses[key]);
+    booleanClassKeys.forEach((key) => {
+        if (props[key]) {
+            classes.push(`e-bar--${key}`)
+        }
+    })
 
-    return [...classes, ...classes2]
+    return classes
 })
 const computedHeight = computed(() => {
     if (typeof props.height === 'number') {

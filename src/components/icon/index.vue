@@ -14,7 +14,7 @@ export default {
 }
 </script>
 <script lang="ts" setup>
-import type { IconPath, IconProps, IconClassKeys } from '@/types';
+import type { IconPath, IconProps } from '@/types';
 import { ComputedRef, computed, ref, useAttrs, onMounted } from 'vue';
 import { useUtils } from "@/composables/utils"
 const { isObject } = useUtils()
@@ -24,9 +24,7 @@ const attrs = useAttrs()
 
 const props = withDefaults(defineProps<IconProps>(), { viewBox: '0 0 24 24' })
 
-const availableRootClasses = {
-    disabled: 'e-icon--disabled'
-};
+const booleanClassKeys = ['disabled'] as const
 const paths = computed((): Array<IconPath> => {
     if (!isPath) {
         return []
@@ -75,11 +73,13 @@ const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     !isPath.value && classes.push(`${(props.preffix || iconPreffix).trim()}${(props.icon as string).trim()}`);
     props.color && (classes.push(`${props.color}--text`));
 
-    const availableRootClassKeys = Object.keys(availableRootClasses) as Array<IconClassKeys>
-    const classes2 = availableRootClassKeys.filter(
-        (key) => !!props[key]
-    ).map(key => availableRootClasses[key]);
-    return [...classes, ...classes2]
+    booleanClassKeys.forEach((key) => {
+        if (props[key]) {
+            classes.push(`e-icon--${key}`)
+        }
+    })
+
+    return classes
 })
 
 onMounted(() => {

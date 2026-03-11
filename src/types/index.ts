@@ -7,9 +7,9 @@ export type {
   classKey,
 } from "./form";
 
-export type { BarProps, BarClassKeys } from "./bar";
+export type { BarProps } from "./bar";
 
-export type { IconClassKeys, IconPath, IconProps } from "./icon";
+export type { IconPath, IconProps } from "./icon";
 export type {
   DatesRange,
   Day,

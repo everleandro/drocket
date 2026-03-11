@@ -1,12 +1,4 @@
 <template>
-  <Teleport to="body">
-    <div
-      v-if="overlayMounted"
-      :class="['e-overlay', overlayClassName]"
-      @click="handleOutside"
-    ></div>
-  </Teleport>
-
   <component
     :is="tag"
     v-click-outside="handleOutside"
@@ -39,11 +31,12 @@
 import { clickOutside } from "@/directives";
 const vClickOutside = clickOutside;
 import { computed, onMounted, onUnmounted, ref, watch, useSlots } from "vue";
-import { useLayout, useOverlay } from "@/composables";
+import { useLayout, useOverlayService } from "@/composables";
 import { DrawerClassKeys, DrawerProps } from "@/types";
 
 const slots = useSlots();
 const { setLayoutConfig, drawerLayoutStyle } = useLayout();
+const { openOverlay, closeOverlay } = useOverlayService();
 
 let mdBreakpoint = ref(false);
 const props = withDefaults(defineProps<DrawerProps>(), {
@@ -51,6 +44,7 @@ const props = withDefaults(defineProps<DrawerProps>(), {
   widthUnit: "rem",
 });
 let mediaQueryList: MediaQueryList | null = null;
+const overlayId = `drawer-overlay-${Math.random().toString(36).slice(2)}`;
 
 const availableRootClasses: Record<DrawerClassKeys, string> = {
   disabled: "e-drawer--disabled",
@@ -68,10 +62,6 @@ const tag = computed(() => (props.nav ? "nav" : "aside"));
 const overlayActive = computed(
   () => !!props.modelValue && !!absoluteComputed.value
 );
-const { overlayMounted, overlayClassName } = useOverlay({
-  active: overlayActive,
-  leaveDuration: 300,
-});
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
@@ -91,6 +81,7 @@ onUnmounted(() => {
     mediaQueryList = null;
   }
 
+  closeOverlay(overlayId);
   setLayoutConfig({ drawer: { left: "0px", right: "0px" } });
 });
 
@@ -160,11 +151,29 @@ const observeBreakpoint = (): void => {
   mediaQueryList.addEventListener("change", onBreakpointChange);
 };
 
-const handleOutside = (): void => {
+function handleOutside(): void {
   if (absoluteComputed.value && props.modelValue) {
     changeValue(false);
   }
-};
+}
+
+watch(
+  () => overlayActive.value,
+  (isActive) => {
+    if (isActive) {
+      openOverlay({
+        id: overlayId,
+        dismissible: true,
+        onOutsideClick: handleOutside,
+      });
+      return;
+    }
+
+    closeOverlay(overlayId);
+  },
+  { immediate: true }
+);
+
 const style = computed((): Record<string, string> => {
   const translateX = props.modelValue ? "0%" : `${props.right ? "" : "-"}100%`;
   const result: Record<string, string> = {

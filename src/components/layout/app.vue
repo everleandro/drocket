@@ -1,10 +1,13 @@
 <template>
     <div class="e-app" id="app">
+        <EOverlayHost />
         <slot />
     </div>
 </template>
   
 <script setup lang="ts" >
+import EOverlayHost from './overlay-host.vue'
+
 interface Props {
     theme?: string
 }
