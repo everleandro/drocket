@@ -1,21 +1,24 @@
 
 <template>
-    <transition v-if="mounted" name="fade">
-        <div v-show="store.active" role="dialog" aria-modal="true" :class="contentClass" tabindex="0" @click.self="close()">
-            <transition name="scale">
-                <div v-show="store.active" :class="dialogClass" :style="style">
-                    <slot></slot>
-                </div>
-            </transition>
-        </div>
-    </transition>
+    <Teleport to="body">
+        <transition v-if="mounted" name="fade">
+            <div v-show="store.active" role="dialog" aria-modal="true" :class="contentClass" :style="contentStyle" tabindex="0">
+                <transition name="scale">
+                    <div v-show="store.active" :class="dialogClass" :style="dialogStyle">
+                        <slot></slot>
+                    </div>
+                </transition>
+            </div>
+        </transition>
+    </Teleport>
 </template>
 <script lang="ts">
 export default { name: 'EDialog' }
 </script>
 <script lang="ts" setup>
-import { computed, onMounted, provide, reactive, watch, ref } from 'vue'
+import { computed, onMounted, onUnmounted, provide, reactive, watch, ref } from 'vue'
 import { ElevationProps } from '@/types'
+import { useOverlayService } from '@/composables'
 
 export interface EDIalog {
     close: (forece?: boolean) => void
@@ -28,6 +31,8 @@ export interface Props extends ElevationProps {
     maxWidth?: string | number
 }
 const mounted = ref(false);
+const overlayId = `dialog-overlay-${Math.random().toString(36).slice(2)}`;
+const { openOverlay, closeOverlay, getStackZIndex } = useOverlayService();
 
 const availableRootClasses = {
     fullscreen: "e-dialog--fullscreen",
@@ -48,13 +53,22 @@ const emit = defineEmits<{
 }>()
 
 watch(() => props.modelValue, (value) => {
-    if (value) {
-        document.addEventListener("keydown", handleExcListener);
+    const nextValue = !!value
+
+    if (nextValue) {
+        openOverlay({
+            id: overlayId,
+            dismissible: true,
+            lockScroll: true,
+            onOutsideClick: () => close(),
+            onEscape: () => close(),
+        })
     } else {
-        document.removeEventListener("keydown", handleExcListener);
+        closeOverlay(overlayId)
     }
-    store.active = value
-})
+
+    store.active = nextValue
+}, { immediate: true })
 
 
 const dialogClass = computed(() => {
@@ -74,25 +88,30 @@ const contentClass = computed(() => {
     return classes
 })
 
+const contentStyle = computed((): { zIndex?: string } => {
+    const zIndex = getStackZIndex(overlayId, 1)
+    return zIndex === null ? {} : { zIndex: `${zIndex}` }
+})
 
-onMounted(() => { store.active = props.modelValue; mounted.value = true })
 
+onMounted(() => { mounted.value = true })
 
-const handleExcListener = ({ key }: KeyboardEvent): void => {
-    if (key === "Escape") {
-        close();
-    }
-}
+onUnmounted(() => {
+    closeOverlay(overlayId)
+})
+
 const changeValue = (value: boolean) => {
     emit('update:modelValue', value)
 }
 
-const style = computed((): { maxWidth?: string } => {
+const dialogStyle = computed((): { maxWidth?: string; zIndex?: string } => {
+    const dialogZIndex = getStackZIndex(overlayId, 2)
     const maxWidth =
         props.maxWidth && !props.fullscreen
             ? { maxWidth: `${props.maxWidth}px` }
             : {};
-    return { ...maxWidth };
+    const zIndex = dialogZIndex === null ? {} : { zIndex: `${dialogZIndex}` }
+    return { ...maxWidth, ...zIndex };
 })
 
 const close = (force = false): void => {

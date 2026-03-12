@@ -4,7 +4,6 @@ import EContainer from './container.vue'
 import EDivider from './divider.vue'
 import EDrawer from './drawer/index.vue'
 import EMain from './main.vue'
-import EOverlayHost from './overlay-host.vue'
 import ESpacer from './spacer.vue'
 
 export {
@@ -14,6 +13,5 @@ export {
   EDivider,
   EDrawer,
   EMain,
-  EOverlayHost,
   ESpacer
 }

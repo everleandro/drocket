@@ -35,7 +35,6 @@
     user-select: none;
     align-items: center;
     display: flex;
-    background-color: rgba(0, 0, 0, 0.4);
     height: 100%;
     justify-content: center;
     left: 0;
@@ -45,9 +44,15 @@
     width: 100%;
     outline: none;
     max-height: 100vh;
+    pointer-events: none;
 
     &--absolute {
       position: absolute;
     }
+  }
+
+  &,
+  * {
+    pointer-events: auto;
   }
 }

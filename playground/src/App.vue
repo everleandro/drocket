@@ -29,16 +29,94 @@
         <EIcon :icon="iconFactory.clear" x-large color="error" />
       </div>
     </section>
+
+    <section class="block">
+      <h2>Dialog</h2>
+      <div class="row">
+        <EButton color="primary" @click="dialogDefault = true">Open Default</EButton>
+        <EButton color="secondary" outlined @click="dialogPersistent = true">Open Persistent</EButton>
+        <EButton color="brand" @click="dialogFullscreen = true">Open Fullscreen</EButton>
+        <EButton color="success" @click="dialogParent = true">Open Nested</EButton>
+      </div>
+
+      <EDialog v-model="dialogDefault" :max-width="520" elevation="xl">
+        <div class="dialog-card">
+          <h3>Default Dialog</h3>
+          <p>This is a standard dialog. Click outside or press ESC to close.</p>
+          <div class="dialog-actions">
+            <EButton text @click="dialogDefault = false">Cancel</EButton>
+            <EButton color="primary" @click="dialogDefault = false">Confirm</EButton>
+          </div>
+        </div>
+      </EDialog>
+
+      <EDialog v-model="dialogPersistent" persistent :max-width="520" elevation="xl">
+        <div class="dialog-card">
+          <h3>Persistent Dialog</h3>
+          <p>This dialog ignores outside click and ESC unless you use an action.</p>
+          <div class="dialog-actions">
+            <EButton text @click="dialogPersistent = false">Close</EButton>
+            <EButton color="warning" @click="dialogPersistent = false">Understood</EButton>
+          </div>
+        </div>
+      </EDialog>
+
+      <EDialog v-model="dialogFullscreen" fullscreen>
+        <div class="dialog-fullscreen-content">
+          <h3>Fullscreen Dialog</h3>
+          <p>Useful for long forms or mobile-friendly full-screen flows.</p>
+          <EButton color="primary" @click="dialogFullscreen = false">Close Fullscreen</EButton>
+        </div>
+      </EDialog>
+
+      <EDialog v-model="dialogParent" :max-width="600" elevation="xl">
+        <div class="dialog-card">
+          <h3>Parent Dialog</h3>
+          <p>
+            Open the child dialog and test: press ESC or click outside. Only the child should close first.
+          </p>
+          <div class="dialog-actions">
+            <EButton text @click="dialogParent = false">Close Parent</EButton>
+            <EButton color="primary" @click="dialogChild = true">Open Child Dialog</EButton>
+          </div>
+        </div>
+
+        <EDialog v-model="dialogChild" :max-width="440" elevation="lg">
+          <div class="dialog-card dialog-card--child">
+            <h3>Child Dialog</h3>
+            <p>
+              This is the top dialog. ESC and outside click should close only this one.
+            </p>
+            <div class="dialog-actions">
+              <EButton text @click="dialogChild = false">Cancel</EButton>
+              <EButton color="primary" @click="dialogChild = false">Close Child</EButton>
+            </div>
+          </div>
+        </EDialog>
+      </EDialog>
+    </section>
   </main>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import EButton from "../../src/components/button/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
+import EDialog from "../../src/components/dialog/index.vue";
 import iconFactory from "../../src/utils/icons";
 
 const theme = ref("light");
+const dialogDefault = ref(false);
+const dialogPersistent = ref(false);
+const dialogFullscreen = ref(false);
+const dialogParent = ref(false);
+const dialogChild = ref(false);
+
+watch(dialogParent, (value) => {
+  if (!value) {
+    dialogChild.value = false;
+  }
+});
 
 const toggleTheme = () => {
   theme.value = theme.value === "light" ? "dark" : "light";
@@ -136,6 +214,43 @@ onMounted(() => {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+}
+
+.dialog-card {
+  background: var(--e-color-surface, #fff);
+  color: var(--e-color-on-surface, #222);
+  border-radius: 14px;
+  padding: 20px;
+  min-width: 320px;
+}
+
+.dialog-card h3 {
+  margin: 0 0 8px;
+}
+
+.dialog-card p {
+  margin: 0 0 16px;
+  line-height: 1.45;
+}
+
+.dialog-card--child {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.dialog-fullscreen-content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: var(--e-color-surface, #fff);
+  color: var(--e-color-on-surface, #222);
 }
 
 :global(:root) {

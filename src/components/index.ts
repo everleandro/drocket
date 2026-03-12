@@ -43,6 +43,5 @@ export {
   EDivider,
   EDrawer,
   EMain,
-  EOverlayHost,
   ESpacer
 } from "./layout";
