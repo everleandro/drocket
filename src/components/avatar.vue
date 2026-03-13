@@ -1,34 +1,59 @@
 <template>
     <div class="e-avatar__wrapper">
-        <div :class="avatarClass" :style="style">
+        <div :class="avatarClass" :style="avatarStyle">
             <slot>
-                <EIcon v-if="icon" :icon="icon"></EIcon>
-                <img v-else :src="src" alt="avatar" />
+                <img v-if="hasImage" :src="src" alt="avatar" />
+                <EIcon v-else :icon="resolvedIcon"></EIcon>
             </slot>
         </div>
     </div>
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { ElevationProps, IconPath, SizeProps, SizeValue } from '@/types';
 import EIcon from '@/components/icon/index.vue'
+import iconFactory from '@/utils/icons'
 
-export interface Props {
+export interface Props extends ElevationProps, SizeProps<SizeValue> {
     color?: string
-    icon?: string
+    icon?: string | IconPath | IconPath[]
     src?: string
-    size?: string | number
 }
 
-const props = withDefaults(defineProps<Props>(), { size: '65' })
+const avatarSizeKeys = ['x-small', 'small', 'default', 'large', 'x-large'] as const
+
+const props = withDefaults(defineProps<Props>(), { size: 'default' })
+
+const normalizeDimension = (value?: string | number): string | undefined => {
+    if (value === undefined || value === null || value === '') return undefined
+    if (typeof value === 'number') return `${value}px`
+    if (/^\d+(\.\d+)?$/.test(value)) return `${value}px`
+    return value
+}
+
+const isPresetSize = computed(() => {
+    return typeof props.size === 'string' && avatarSizeKeys.includes(props.size as typeof avatarSizeKeys[number])
+})
 
 const avatarClass = computed(() => {
-    const classes = ['e-avatar__container']
+    const classes: string[] = ['e-avatar__container']
     props.color && classes.push(`${props.color}--text`)
+    props.elevation && classes.push(`e-elevation--${props.elevation}`)
+    isPresetSize.value && classes.push(`e-avatar__container--size-${props.size}`)
     return classes
 })
 
-const style = computed(() => {
-    return { height: `${props.size}px`, width: `${props.size}px`, '--size': `${props.size}px` }
+const hasImage = computed(() => typeof props.src === 'string' && props.src.trim().length > 0)
+
+const resolvedIcon = computed(() => props.icon || iconFactory.person)
+
+const avatarStyle = computed(() => {
+    if (isPresetSize.value) {
+        return {}
+    }
+
+    const size = normalizeDimension(props.size)
+    return size ? { '--avatar-size': size, '--size': size } : {}
 })
 
 </script>
@@ -58,10 +83,8 @@ const style = computed(() => {
 
         img {
             width: 100%;
-        }
-
-        i.e-icon {
-            font-size: calc(var(--size) - var(--size) / 3);
+            height: 100%;
+            object-fit: cover;
         }
     }
 }

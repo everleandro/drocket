@@ -18,7 +18,7 @@ import { EButton } from 'drocket'
 | `link` | `boolean` | `false` | Fuerza render como `<a>`. |
 | `appendIcon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono al final del contenido. |
 | `prependIcon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono al inicio del contenido. |
-| `ripple` | `boolean` | `false` | Habilita clase/efecto ripple. |
+| `ripple` | `boolean` | `true` | Habilita o deshabilita el efecto ripple. |
 | `loading` | `boolean` | `false` | Muestra loader y bloquea interaccion. |
 | `color` | `string` | `undefined` | Color base. Resuelve `--e-color-{color}` y `--e-contrast-{color}`. |
 | `hoverColor` | `string` | `undefined` | Color al hover. Si existe, reemplaza `color` mientras hover esta activo. |
@@ -27,15 +27,12 @@ import { EButton } from 'drocket'
 | `text` | `boolean` | `false` | Variante texto (fondo transparente). |
 | `outlined` | `boolean` | `false` | Variante outlined. |
 | `block` | `boolean` | `false` | Ocupa todo el ancho disponible. |
-| `xSmall` | `boolean` | `false` | Tamano extra pequeno. |
-| `small` | `boolean` | `false` | Tamano pequeno. |
-| `large` | `boolean` | `false` | Tamano grande. |
-| `xLarge` | `boolean` | `false` | Tamano extra grande. |
+| `size` | `'x-small' \| 'small' \| 'default' \| 'large' \| 'x-large'` | `'default'` | Define el tamano visual del boton e iconos internos. |
 | `rounded` | `boolean` | `false` | Bordes redondeados. |
 | `stacked` | `boolean` | `false` | Acomoda icono/contenido en columna. |
-| `icon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono principal cuando no hay slot default. |
-| `height` | `string \| number` | `undefined` | Alto en px (`style.height`). |
-| `width` | `string \| number` | `undefined` | Ancho en px (`style.width`). |
+| `icon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono principal cuando no hay slot default; en ese caso entra en modo icon-only. |
+| `height` | `string \| number` | `undefined` | Alto del boton. Los numeros se convierten a px; strings conservan su unidad CSS. |
+| `width` | `string \| number` | `undefined` | Ancho del boton. Los numeros se convierten a px; strings conservan su unidad CSS. |
 | `type` | `string` | `'button'` | Tipo de boton HTML. |
 
 ## Atributos heredados
@@ -44,6 +41,7 @@ import { EButton } from 'drocket'
 
 - `to="/ruta"` renderiza `router-link`.
 - `to="https://..."` renderiza `<a href="...">`.
+- `href="https://..."` con `link` tambien renderiza `<a>`.
 - con `link`, siempre renderiza `<a>`.
 
 ## Slots
@@ -87,9 +85,17 @@ const saving = ref(false)
 
 ```vue
 <template>
-  <EButton to="https://example.com" link text>
+  <EButton href="https://example.com" link text>
     Ver sitio
   </EButton>
+</template>
+```
+
+### Icon-only accesible
+
+```vue
+<template>
+  <EButton icon="menu" aria-label="Abrir menu" text />
 </template>
 ```
 
@@ -112,10 +118,12 @@ const saving = ref(false)
 
 - Usa texto visible y especifico en el slot `default`.
 - Si el boton solo tiene icono, agrega `aria-label`.
+- Si no quieres pasar `aria-label`, al menos usa `title` en botones icon-only para exponer una etiqueta minima.
 - Evita deshabilitar botones sin una explicacion visible para el usuario.
 
 ## Errores comunes
 
-- Usar `height`/`width` esperando unidades distintas a px: el componente agrega `px` automaticamente.
+- Pasar `icon` junto con contenido esperando modo icon-only: ese modo solo se aplica cuando no hay slot `default`.
+- Usar `height`/`width` sin unidad en string cuando esperabas CSS libre: si pasas un numero o string numerico se convierte a px; usa valores como `100%`, `2.5rem` o `calc(...)` si necesitas otra unidad.
 - Definir `to` sin Vue Router para rutas internas: en ese caso usa `link` + `href` externo o instala Router.
 - Definir `color="brand"` sin crear `--e-color-brand`: en ese caso se usa el color primario por defecto.

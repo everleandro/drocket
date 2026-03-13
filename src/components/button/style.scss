@@ -10,8 +10,6 @@
   cursor: pointer;
   padding: 0 1em;
   min-width: 4em;
-  height: var(--btn-height, unset);
-  font-size: var(--btn-font-size, inherit);
 
   .e-icon__svg {
     fill: currentColor;
@@ -97,27 +95,14 @@
   &--icon {
     background-color: transparent;
     padding: 0;
-    width: var(--btn-height, unset);
   }
 
   &--fab {
     border-radius: 100%;
-    width: var(--btn-height, unset);
   }
 
   &--fab,
   &--icon {
-    width: var(--btn-height-responsive, var(--btn-height, unset));
-
-    .e-icon {
-      width: var(--btn-height, unset);
-
-      .e-icon__svg {
-        width: var(--btn-font-size, inherit);
-        height: var(--btn-font-size, inherit);
-      }
-    }
-
     .e-btn__content {
       display: flex;
       justify-content: center;

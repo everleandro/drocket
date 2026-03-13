@@ -41,7 +41,7 @@ textarea {
 }
 
 body {
-  color: var(--root-color);
+  color: var(--e-app-color, unset);
 }
 
 * {

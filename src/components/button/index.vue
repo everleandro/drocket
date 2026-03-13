@@ -1,18 +1,19 @@
 <template>
   <component
-    v-ripple="{ disabled: isDisabledForInteraction }"
+    v-ripple="rippleBinding"
     :is="tag"
-    v-bind="isExternalLinkAttributes"
-    :class="btnClass()"
-    :type="type || 'button'"
-    :style="style()"
+    v-bind="rootAttributes"
+    :class="btnClass"
+    :style="buttonStyle"
     :aria-disabled="isDisabledForInteraction"
     :aria-busy="props.loading"
     :aria-label="ariaLabelComputed"
     @pointerenter="handleHover(true)"
     @pointerleave="handleHover(false)"
-    @focus="handleFocus(true)"
-    @blur="handleFocus(false)"
+    @focusin="handleFocus(true)"
+    @focusout="handleFocus(false)"
+    @keydown="handleKeydown"
+    @keyup="handleKeyup"
   >
     <span v-show="props.loading" class="e-btn__loader">
       <slot name="loading">
@@ -63,10 +64,10 @@ import {
   IconPath,
   ElevationProps,
   SizeProps,
-  Size,
 } from "@/types";
 import { ripple } from "@/directives";
 import EIcon from "@/components/icon/index.vue";
+import { getBooleanClasses } from "@/composables/utils";
 
 import { reactive, useAttrs, computed, useSlots } from "vue";
 const vRipple = { ...ripple };
@@ -74,6 +75,7 @@ const vRipple = { ...ripple };
 export interface ButtonProps extends ElevationProps, SizeProps {
   disabled?: boolean;
   link?: boolean;
+  ripple?: boolean;
   appendIcon?: Array<IconPath> | IconPath | string;
   prependIcon?: Array<IconPath> | IconPath | string;
   ariaLabel?: string;
@@ -100,11 +102,11 @@ const configuration = reactive({
 const attrs = useAttrs();
 const props = withDefaults(defineProps<ButtonProps>(), {
   elevation: "sm",
+  ripple: true,
 });
 
 const booleanClassKeys = [
   "disabled",
-  "icon",
   "depressed",
   "text",
   "fab",
@@ -116,6 +118,8 @@ const booleanClassKeys = [
 ] as const;
 
 const iconSize = computed((): Partial<IconProps> => ({ size: props.size }));
+const slots = useSlots();
+
 const tag = computed(() => {
   if (props.link) return "a";
   const { to } = attrs;
@@ -124,22 +128,74 @@ const tag = computed(() => {
   return "button";
 });
 
-const isExternalLinkAttributes = computed(() => {
-  const { to } = attrs;
-  if (typeof to === "string" && to.startsWith("http")) return { href: to };
-  return {};
-});
-
-const slots = useSlots();
 const isDisabledForInteraction = computed(() => props.disabled || props.loading);
+const hasDefaultSlot = computed(() => Boolean(slots.default));
+const isIconOnly = computed(
+  () => !hasDefaultSlot.value && (!!props.icon || props.fab)
+);
+const hasNavigationTarget = computed(
+  () => typeof attrs.href === "string" || attrs.to !== undefined
+);
+const requiresButtonKeyboardSemantics = computed(
+  () => tag.value === "a" && !hasNavigationTarget.value
+);
+
+const rippleBinding = computed(() => ({
+  disabled: !props.ripple || isDisabledForInteraction.value,
+}));
+
+const rootAttributes = computed(() => {
+  const { to, href, ...restAttrs } = attrs;
+
+  if (tag.value === "button") {
+    return {
+      ...restAttrs,
+      type: props.type || "button",
+      disabled: isDisabledForInteraction.value,
+    };
+  }
+
+  if (tag.value === "a") {
+    const resolvedHref =
+      typeof href === "string"
+        ? href
+        : typeof to === "string" && to.startsWith("http")
+          ? to
+          : undefined;
+
+    return {
+      ...restAttrs,
+      ...(requiresButtonKeyboardSemantics.value
+        ? {
+            role: "button",
+            tabindex: isDisabledForInteraction.value ? -1 : 0,
+          }
+        : {}),
+      ...(to && typeof to !== "string" ? { to } : {}),
+      ...(resolvedHref ? { href: resolvedHref } : {}),
+    };
+  }
+
+  return {
+    ...restAttrs,
+    ...(to ? { to } : {}),
+    ...(href ? { href } : {}),
+  };
+});
 
 const ariaLabelComputed = computed(() => {
   if (props.ariaLabel) return props.ariaLabel;
-  if ((props.icon || props.fab) && !slots.default) return undefined;
+
+  const attrsAriaLabel = attrs["aria-label"];
+  if (typeof attrsAriaLabel === "string") return attrsAriaLabel;
+
+  const title = attrs.title;
+  if (isIconOnly.value && typeof title === "string") return title;
+
   return undefined;
 });
 
-const btnClass = (): Array<string> => {
+const btnClass = computed((): Array<string> => {
   const classes = ["e-btn v-ripple-element"];
 
   if (configuration.focused) {
@@ -151,11 +207,11 @@ const btnClass = (): Array<string> => {
   classes.push(`e-btn--size-${currentSize}`);
 
   // Handle boolean classes
-  booleanClassKeys.forEach((key) => {
-    if (props[key]) {
-      classes.push(`e-btn--${key}`);
-    }
-  });
+  classes.push(...getBooleanClasses(props, booleanClassKeys, "e-btn"));
+
+  if (isIconOnly.value) {
+    classes.push("e-btn--icon");
+  }
 
   // Handle elevation
   if (props.elevation && !props.depressed && !props.text && !props.outlined) {
@@ -163,7 +219,7 @@ const btnClass = (): Array<string> => {
   }
 
   return classes;
-};
+});
 const handleHover = (value: boolean) => {
   if (isDisabledForInteraction.value) return;
   configuration.hovered = value;
@@ -173,15 +229,57 @@ const handleFocus = (value: boolean) => {
   configuration.focused = value;
 };
 
+const triggerSyntheticClick = (event: KeyboardEvent) => {
+  if (isDisabledForInteraction.value || !requiresButtonKeyboardSemantics.value) {
+    return;
+  }
+
+  event.preventDefault();
+  (event.currentTarget as HTMLElement | null)?.click();
+};
+
+const handleKeydown = (event: KeyboardEvent) => {
+  if (event.key === "Enter") {
+    triggerSyntheticClick(event);
+  }
+
+  if (event.key === " " && requiresButtonKeyboardSemantics.value) {
+    event.preventDefault();
+  }
+};
+
+const handleKeyup = (event: KeyboardEvent) => {
+  if (event.key === " ") {
+    triggerSyntheticClick(event);
+  }
+};
+
 const getCurrentColor = (): string | undefined => {
   if (configuration.hovered && props.hoverColor) return props.hoverColor;
   return props.color;
 };
 
-const style = (): Record<string, string> => {
+const normalizeDimension = (
+  value?: string | number
+): string | undefined => {
+  if (value === undefined || value === null || value === "") return undefined;
+  if (typeof value === "number") return `${value}px`;
+  if (/^\d+(\.\d+)?$/.test(value)) return `${value}px`;
+  return value;
+};
+
+const buttonStyle = computed((): Record<string, string> => {
   const result: Record<string, string> = {};
-  props.height && (result.height = `${props.height}px !important`);
-  props.width && (result.width = `${props.width}px !important`);
+  const height = normalizeDimension(props.height);
+  const width = normalizeDimension(props.width);
+
+  if (height) {
+    result.height = height;
+  }
+
+  if (width) {
+    result.width = width;
+  }
 
   // Inject color CSS variables for any color (predefined or custom)
   const currentColor = getCurrentColor();
@@ -191,7 +289,7 @@ const style = (): Record<string, string> => {
   }
 
   return result;
-};
+});
 </script>
 
 <style lang="scss" src="./style.scss"></style>

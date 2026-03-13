@@ -2,6 +2,8 @@
 @use "../variables/index.scss" as setting;
 
 .e-btn {
+  height: var(--btn-height, unset);
+  font-size: var(--btn-font-size, inherit);
   font-weight: var(--e-btn-font-weight, #{setting.$btn-font-weight});
   letter-spacing: var(--e-btn-letter-spacing, #{setting.$btn-letter-spacing});
   text-indent: var(--e-btn-letter-spacing, #{setting.$btn-letter-spacing});
@@ -34,6 +36,16 @@
   &--icon {
     color: var(--btn-text);
     background-color: transparent;
+    width: var(--btn-height, unset);
+  }
+
+  &--fab {
+    width: var(--btn-height, unset);
+  }
+
+  &--fab,
+  &--icon {
+    width: var(--btn-height-responsive, var(--btn-height, unset));
   }
 
   @each $key, $value in setting.$btn-states {
@@ -64,7 +76,7 @@
 
   &.e-btn--outlined {
     border: var(--e-btn-border-width, #{setting.$btn-border-width}) var(--e-btn-border-style, #{setting.$btn-border-style});
-    background-color: var(--btn-text);
+    background-color: unset;
     border-color: var(--btn-bg);
     color: var(--btn-bg);
   }

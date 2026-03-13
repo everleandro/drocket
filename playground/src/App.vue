@@ -31,6 +31,32 @@
     </section>
 
     <section class="block">
+      <h2>Avatar</h2>
+
+      <div class="chip-group">
+        <h3>Preset sizes</h3>
+        <div class="row">
+          <EAvatar size="x-small" />
+          <EAvatar size="small" color="primary" />
+          <EAvatar size="default" color="secondary" />
+          <EAvatar size="large" color="success" />
+          <EAvatar size="x-large" color="warning" />
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <h3>Content modes</h3>
+        <div class="row">
+          <EAvatar />
+          <EAvatar :icon="iconFactory.clear" color="error" />
+          <EAvatar src="https://i.pravatar.cc/64?img=15" />
+          <EAvatar src="https://i.pravatar.cc/64?img=32" elevation="lg" />
+          <EAvatar size="44" color="brand" />
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
       <h2>Dialog</h2>
       <div class="row">
         <EButton color="primary" @click="dialogDefault = true">Open Default</EButton>
@@ -95,12 +121,76 @@
         </EDialog>
       </EDialog>
     </section>
+
+    <section class="block">
+      <h2>Chip</h2>
+
+      <div class="chip-group">
+        <h3>Sizes</h3>
+        <div class="row">
+          <EChip size="x-small">x-small</EChip>
+          <EChip size="small">small</EChip>
+          <EChip size="default">default</EChip>
+          <EChip size="large">large</EChip>
+          <EChip size="x-large">x-large</EChip>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <h3>Content</h3>
+        <div class="row">
+          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft">With prepend</EChip>
+          <EChip color="secondary" :append-icon="iconFactory.clear">With append</EChip>
+          <EChip color="warning" prepend-avatar="https://i.pravatar.cc/40?img=12">Avatar chip</EChip>
+          <EChip text color="success">Text chip</EChip>
+          <EChip color="tertiary" closable @click:close="chipMessage = 'Closable chip closed'">Closable</EChip>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <h3>Interactive</h3>
+        <div class="row">
+          <EChip
+            v-for="option in filterChips"
+            :key="option.value"
+            clickable
+            ripple
+            :selected="selectedFilters.includes(option.value)"
+            color="primary"
+            @click="toggleFilter(option.value)"
+          >
+            {{ option.label }}
+          </EChip>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <h3>Closable + clickable</h3>
+        <div class="row">
+          <EChip
+            v-for="tag in tags"
+            :key="tag"
+            clickable
+            closable
+            color="brand"
+            @click="chipMessage = `Clicked ${tag}`"
+            @click:close="removeTag(tag)"
+          >
+            {{ tag }}
+          </EChip>
+        </div>
+      </div>
+
+      <p class="playground-note">{{ chipMessage }}</p>
+    </section>
   </main>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from "vue";
+import EAvatar from "../../src/components/avatar.vue";
 import EButton from "../../src/components/button/index.vue";
+import EChip from "../../src/components/chip/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
 import EDialog from "../../src/components/dialog/index.vue";
 import iconFactory from "../../src/utils/icons";
@@ -111,12 +201,35 @@ const dialogPersistent = ref(false);
 const dialogFullscreen = ref(false);
 const dialogParent = ref(false);
 const dialogChild = ref(false);
+const selectedFilters = ref(["vue", "scss"]);
+const tags = ref(["Vue 3", "TypeScript", "SCSS", "Autocomplete"]);
+const chipMessage = ref("Try the chip interactions below.");
+
+const filterChips = [
+  { label: "Vue", value: "vue" },
+  { label: "TypeScript", value: "typescript" },
+  { label: "SCSS", value: "scss" },
+  { label: "A11y", value: "a11y" },
+];
 
 watch(dialogParent, (value) => {
   if (!value) {
     dialogChild.value = false;
   }
 });
+
+const toggleFilter = (value) => {
+  selectedFilters.value = selectedFilters.value.includes(value)
+    ? selectedFilters.value.filter((current) => current !== value)
+    : [...selectedFilters.value, value];
+
+  chipMessage.value = `Selected filters: ${selectedFilters.value.join(", ") || "none"}`;
+};
+
+const removeTag = (tag) => {
+  tags.value = tags.value.filter((current) => current !== tag);
+  chipMessage.value = `Removed ${tag}`;
+};
 
 const toggleTheme = () => {
   theme.value = theme.value === "light" ? "dark" : "light";
@@ -205,8 +318,20 @@ onMounted(() => {
   margin-top: 0;
 }
 
+.block h3 {
+  margin: 0 0 12px;
+  color: #4a5568;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .playground[data-theme="dark"] .block h2 {
   color: #fafafa;
+}
+
+.playground[data-theme="dark"] .block h3 {
+  color: #cbd5e0;
 }
 
 .row {
@@ -214,6 +339,20 @@ onMounted(() => {
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+}
+
+.chip-group + .chip-group {
+  margin-top: 20px;
+}
+
+.playground-note {
+  margin: 20px 0 0;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.playground[data-theme="dark"] .playground-note {
+  color: #e2e8f0;
 }
 
 .dialog-card {

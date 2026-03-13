@@ -4,8 +4,15 @@ type OverlayEntry = {
   id: string;
   dismissible: boolean;
   lockScroll: boolean;
+  autoFocus: boolean;
+  restoreFocus: boolean;
+  contentElement?: HTMLElement | null;
   onOutsideClick?: () => void;
   onEscape?: () => void;
+};
+
+type OverlayFocusRuntime = {
+  previousFocusedElement: HTMLElement | null;
 };
 
 type OverlayRuntime = {
@@ -18,6 +25,9 @@ type OpenOverlayOptions = {
   id: string;
   dismissible?: boolean;
   lockScroll?: boolean;
+  autoFocus?: boolean;
+  restoreFocus?: boolean;
+  contentElement?: HTMLElement | null;
   onOutsideClick?: () => void;
   onEscape?: () => void;
 };
@@ -30,8 +40,24 @@ const isOverlayActive = computed(() => state.stack.length > 0);
 
 let hasEscapeListener = false;
 const overlayRuntimeById = new Map<string, OverlayRuntime>();
+const overlayFocusRuntimeById = new Map<string, OverlayFocusRuntime>();
 const OVERLAY_BASE_Z_INDEX = 3;
 const OVERLAY_TRANSITION_MS = 300;
+
+const getFocusableElement = (target?: HTMLElement | null): HTMLElement | null => {
+  if (!target || !target.isConnected) return null;
+  if (target instanceof HTMLButtonElement && target.disabled) return null;
+  return typeof target.focus === "function" ? target : null;
+};
+
+const scheduleFocus = (target?: HTMLElement | null): void => {
+  const focusTarget = getFocusableElement(target);
+  if (!focusTarget || typeof window === "undefined") return;
+
+  window.setTimeout(() => {
+    getFocusableElement(focusTarget)?.focus();
+  }, 0);
+};
 
 const getOverlayZIndex = (id: string): number | null => {
   const index = state.stack.findIndex((entry) => entry.id === id);
@@ -54,6 +80,26 @@ const syncBodyScroll = (): void => {
 
 const getActiveOverlay = (): OverlayEntry | undefined =>
   state.stack[state.stack.length - 1];
+
+const focusActiveOverlay = (): void => {
+  const activeOverlay = getActiveOverlay();
+  if (!activeOverlay || !activeOverlay.autoFocus) return;
+
+  scheduleFocus(activeOverlay.contentElement);
+};
+
+const restoreOverlayFocus = (id: string): void => {
+  const activeOverlay = getActiveOverlay();
+  if (activeOverlay?.autoFocus && activeOverlay.contentElement) {
+    scheduleFocus(activeOverlay.contentElement);
+    return;
+  }
+
+  const runtime = overlayFocusRuntimeById.get(id);
+  if (!runtime) return;
+
+  scheduleFocus(runtime.previousFocusedElement);
+};
 
 const destroyOverlayRuntime = (id: string): void => {
   const runtime = overlayRuntimeById.get(id);
@@ -100,7 +146,7 @@ const ensureOverlayRuntime = (id: string): OverlayRuntime | null => {
 
   const clickHandler = (): void => {
     const activeOverlay = getActiveOverlay();
-    if (!activeOverlay || activeOverlay.id !== id || !activeOverlay.dismissible) {
+    if (!activeOverlay || activeOverlay.id !== id) {
       return;
     }
     activeOverlay.onOutsideClick?.();
@@ -123,7 +169,7 @@ const handleEscapeKey = ({ key }: KeyboardEvent): void => {
   if (key !== "Escape") return;
 
   const activeOverlay = getActiveOverlay();
-  if (!activeOverlay || !activeOverlay.dismissible) return;
+  if (!activeOverlay) return;
 
   activeOverlay.onEscape?.();
 };
@@ -164,12 +210,17 @@ const syncOverlayElements = (): void => {
       scheduleOverlayDestroy(id);
     }
   });
+
+  focusActiveOverlay();
 };
 
 const openOverlay = ({
   id,
   dismissible = true,
   lockScroll = true,
+  autoFocus = false,
+  restoreFocus = false,
+  contentElement,
   onOutsideClick,
   onEscape,
 }: OpenOverlayOptions): void => {
@@ -178,6 +229,9 @@ const openOverlay = ({
     id,
     dismissible,
     lockScroll,
+    autoFocus,
+    restoreFocus,
+    contentElement,
     onOutsideClick,
     onEscape,
   };
@@ -188,20 +242,62 @@ const openOverlay = ({
     return;
   }
 
+  if (typeof document !== "undefined") {
+    const activeElement = document.activeElement;
+    overlayFocusRuntimeById.set(id, {
+      previousFocusedElement:
+        restoreFocus && activeElement instanceof HTMLElement ? activeElement : null,
+    });
+  }
+
   state.stack.push(nextEntry);
   syncOverlayElements();
+};
+
+const updateOverlayContentElement = (
+  id: string,
+  contentElement: HTMLElement | null
+): void => {
+  const currentIndex = state.stack.findIndex((entry) => entry.id === id);
+  if (currentIndex < 0) return;
+
+  state.stack[currentIndex] = {
+    ...state.stack[currentIndex],
+    contentElement,
+  };
+
+  const activeOverlay = getActiveOverlay();
+  if (activeOverlay?.id === id && activeOverlay.autoFocus) {
+    focusActiveOverlay();
+  }
 };
 
 const closeOverlay = (id: string): void => {
   const currentIndex = state.stack.findIndex((entry) => entry.id === id);
   if (currentIndex < 0) return;
+  const closedOverlay = state.stack[currentIndex];
+  const wasActiveOverlay = currentIndex === state.stack.length - 1;
   state.stack.splice(currentIndex, 1);
   syncOverlayElements();
+
+  if (wasActiveOverlay && closedOverlay.restoreFocus) {
+    restoreOverlayFocus(id);
+  }
+
+  overlayFocusRuntimeById.delete(id);
 };
 
 const closeAllOverlays = (): void => {
+  const lastOverlay = state.stack[state.stack.length - 1];
+  const closedOverlayIds = state.stack.map((entry) => entry.id);
   state.stack.splice(0, state.stack.length);
   syncOverlayElements();
+
+  if (lastOverlay?.restoreFocus) {
+    restoreOverlayFocus(lastOverlay.id);
+  }
+
+  closedOverlayIds.forEach((id) => overlayFocusRuntimeById.delete(id));
 };
 
 export default function useOverlayService() {
@@ -209,6 +305,7 @@ export default function useOverlayService() {
     isOverlayActive,
     getStackZIndex,
     openOverlay,
+    updateOverlayContentElement,
     closeOverlay,
     closeAllOverlays,
   };

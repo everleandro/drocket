@@ -21,7 +21,15 @@ export default defineConfig({
       },
       {
         text: 'Componentes',
-        items: [{ text: 'Button', link: '/components/button' }]
+        items: [
+          { text: 'Indice', link: '/components/' },
+          { text: 'Avatar', link: '/components/avatar' },
+          { text: 'Button', link: '/components/button' },
+          { text: 'Card', link: '/components/card' },
+          { text: 'Chip', link: '/components/chip' },
+          { text: 'Dialog', link: '/components/dialog' },
+          { text: 'Icon', link: '/components/icon' }
+        ]
       }
     ],
     socialLinks: [{ icon: 'github', link: 'https://github.com/everleandro/drocket' }]

@@ -1,27 +1,49 @@
 .e-chip {
+  appearance: none;
   align-items: center;
+  background-color: transparent;
+  color: inherit;
   cursor: default;
   display: inline-flex;
+  font-family: inherit;
+  margin: 0;
+  gap: 8px;
   font-weight: 400;
   max-width: 100%;
   overflow: hidden;
+  padding: 0;
   position: relative;
   text-decoration: none;
   white-space: nowrap;
   vertical-align: middle;
-  // border-color: rgba(var(--v-border-color), var(--v-border-opacity));
   border-style: solid;
   border-width: 0;
   border-radius: 9999px;
+  outline: none;
 
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
-  &--size-default {
-    --v-chip-size: 0.875rem;
-    --v-chip-height: 32px;
-    font-size: 0.875rem;
-    padding: 0px 12px;
-    height: 32px;
+  &--clickable {
+    cursor: pointer;
+  }
+
+  &--disabled {
+    cursor: default;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &--selected {
+    .e-chip__underlay {
+      opacity: 0.18;
+    }
+  }
+
+  &--clickable:hover,
+  &--clickable:focus-visible {
+    .e-chip__underlay {
+      opacity: 0.18;
+    }
   }
 
   &__underlay {
@@ -44,29 +66,34 @@
 
   &__prepend,
   &__append,
-  &__close {
+  &__close,
+  &__content {
     align-items: center;
     display: inline-flex;
+    min-width: 0;
   }
 
-  &__prepend {
-    transform: translateX(-8px);
+  &__content {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: relative;
+    z-index: 1;
   }
 
+  &__prepend,
+  &__append,
+  &__close {
+    position: relative;
+    z-index: 1;
+  }
+
+  &__prepend,
   &__append {
-    transform: translateX(8px);
+    flex: none;
   }
 
   &__close {
-    transform: translateX(8px);
-
-    button {
-      height: 24px;
-      width: 24px;
-
-      i {
-        font-size: 18px;
-      }
-    }
+    flex: none;
   }
 }

@@ -16,7 +16,7 @@ export default {
 <script lang="ts" setup>
 import type { IconPath, IconProps } from '@/types';
 import { ComputedRef, computed, ref, useAttrs, onMounted } from 'vue';
-import { useUtils } from "@/composables/utils"
+import { getBooleanClasses, useUtils } from "@/composables/utils"
 const { isObject } = useUtils()
 const mounted = ref(false)
 
@@ -25,8 +25,39 @@ const attrs = useAttrs()
 const props = withDefaults(defineProps<IconProps>(), { viewBox: '0 0 24 24' })
 
 const booleanClassKeys = ['disabled'] as const
+const defaultIconClass = 'icon'
+const defaultIconPrefix = 'icon-'
+
+const resolvedRootConfig = computed(() => {
+    if (typeof window === 'undefined') {
+        return {
+            iconClass: defaultIconClass,
+            iconPrefix: defaultIconPrefix,
+        }
+    }
+
+    const rootVar = window.getComputedStyle(document.documentElement)
+
+    return {
+        iconClass: rootVar.getPropertyValue('--e-icon-class').trim() || defaultIconClass,
+        iconPrefix: rootVar.getPropertyValue('--e-icon-prefix').trim() || defaultIconPrefix,
+    }
+})
+
+const resolvedPrefix = computed(() => {
+    return (props.prefix || props.preffix || resolvedRootConfig.value.iconPrefix).trim()
+})
+
+const resolvedStringIcon = computed(() => {
+    return typeof props.icon === 'string' ? props.icon.trim() : ''
+})
+
+const isPath = computed(() => {
+    return typeof props.icon !== 'string'
+})
+
 const paths = computed((): Array<IconPath> => {
-    if (!isPath) {
+    if (!isPath.value) {
         return []
     } else if (isObject(props.icon)) {
         return [props.icon as IconPath]
@@ -45,39 +76,20 @@ const bindPathAttributes = (
     }
     return result;
 }
-
-
-const isPath = computed(() => {
-    return typeof props.icon !== 'string'
-})
-
 const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
-    let iconClass = 'icon';
-    let iconPreffix = 'icon-'
-    if (typeof window !== 'undefined') {
-        const rootVar = window.getComputedStyle(document.documentElement);
-        iconClass =
-            rootVar.getPropertyValue('--e-icon-class') ||
-            iconClass;
-        iconPreffix =
-            rootVar.getPropertyValue('--e-icon-prefix') ||
-            iconPreffix;
-    }
     const defaultClass = attrs.class ? `${attrs.class}` : ''
-    let classes = ['e-icon', iconClass, defaultClass];
+    let classes = ['e-icon', resolvedRootConfig.value.iconClass];
+
+    defaultClass && classes.push(defaultClass)
     
     // Handle size
     const currentSize = props.size || 'default';
     classes.push(`e-icon--size-${currentSize}`);
 
-    !isPath.value && classes.push(`${(props.preffix || iconPreffix).trim()}${(props.icon as string).trim()}`);
+    !isPath.value && resolvedStringIcon.value && classes.push(`${resolvedPrefix.value}${resolvedStringIcon.value}`);
     props.color && (classes.push(`${props.color}--text`));
 
-    booleanClassKeys.forEach((key) => {
-        if (props[key]) {
-            classes.push(`e-icon--${key}`)
-        }
-    })
+    classes.push(...getBooleanClasses(props, booleanClassKeys, 'e-icon'))
 
     return classes
 })
