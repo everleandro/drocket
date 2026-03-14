@@ -356,8 +356,8 @@ onMounted(() => {
 }
 
 .dialog-card {
-  background: var(--e-color-surface, #fff);
-  color: var(--e-color-on-surface, #222);
+  background: var(--e-color-surface-1, #fff);
+  color: var(--e-contrast-surface-1, #222);
   border-radius: 14px;
   padding: 20px;
   min-width: 320px;

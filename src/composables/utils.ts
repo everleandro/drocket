@@ -17,6 +17,15 @@ export const getBooleanClasses = <
   return classes;
 };
 
+export const normalizeDimension = (
+  value?: string | number
+): string | undefined => {
+  if (value === undefined || value === null || value === "") return undefined;
+  if (typeof value === "number") return `${value}px`;
+  if (/^\d+(\.\d+)?$/.test(value)) return `${value}px`;
+  return value;
+};
+
 export function useUtils() {
   const isObject = (arg: any): boolean => {
     return typeof arg === "object" && !Array.isArray(arg) && arg !== null;

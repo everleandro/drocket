@@ -39,7 +39,7 @@
 export default { name: "Chip" }
 </script>
 <script lang="ts" setup>
-import { IconPath, SizeProps, SizeValue } from '@/types'
+import { ElevationProps, IconPath, SizeProps, SizeValue } from '@/types'
 import { ripple } from '@/directives'
 import icon from '@/utils/icons';
 import EIcon from '@/components/icon/index.vue'
@@ -52,7 +52,7 @@ const vRipple = { ...ripple }
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<SizeProps & {
+const props = withDefaults(defineProps<ElevationProps & SizeProps & {
     tag?: string
     type?: string
     ariaLabel?: string
@@ -145,6 +145,7 @@ const chipClass = computed(() => {
     hasAppend.value && classes.push('e-chip--has-append')
     props.appendAvatar && classes.push('e-chip--has-append-avatar')
     props.closable && classes.push('e-chip--has-close')
+    props.elevation && classes.push(`e-elevation--${props.elevation}`)
     props.color && classes.push(`${props.color}--text`)
     return classes
 })

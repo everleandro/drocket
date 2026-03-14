@@ -11,6 +11,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { ElevationProps, IconPath, SizeProps, SizeValue } from '@/types';
+import { normalizeDimension } from '@/composables/utils'
 import EIcon from '@/components/icon/index.vue'
 import iconFactory from '@/utils/icons'
 
@@ -23,13 +24,6 @@ export interface Props extends ElevationProps, SizeProps<SizeValue> {
 const avatarSizeKeys = ['x-small', 'small', 'default', 'large', 'x-large'] as const
 
 const props = withDefaults(defineProps<Props>(), { size: 'default' })
-
-const normalizeDimension = (value?: string | number): string | undefined => {
-    if (value === undefined || value === null || value === '') return undefined
-    if (typeof value === 'number') return `${value}px`
-    if (/^\d+(\.\d+)?$/.test(value)) return `${value}px`
-    return value
-}
 
 const isPresetSize = computed(() => {
     return typeof props.size === 'string' && avatarSizeKeys.includes(props.size as typeof avatarSizeKeys[number])

@@ -67,7 +67,7 @@ import {
 } from "@/types";
 import { ripple } from "@/directives";
 import EIcon from "@/components/icon/index.vue";
-import { getBooleanClasses } from "@/composables/utils";
+import { getBooleanClasses, normalizeDimension } from "@/composables/utils";
 
 import { reactive, useAttrs, computed, useSlots } from "vue";
 const vRipple = { ...ripple };
@@ -257,15 +257,6 @@ const handleKeyup = (event: KeyboardEvent) => {
 const getCurrentColor = (): string | undefined => {
   if (configuration.hovered && props.hoverColor) return props.hoverColor;
   return props.color;
-};
-
-const normalizeDimension = (
-  value?: string | number
-): string | undefined => {
-  if (value === undefined || value === null || value === "") return undefined;
-  if (typeof value === "number") return `${value}px`;
-  if (/^\d+(\.\d+)?$/.test(value)) return `${value}px`;
-  return value;
 };
 
 const buttonStyle = computed((): Record<string, string> => {

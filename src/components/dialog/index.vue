@@ -2,9 +2,9 @@
 <template>
     <Teleport to="body">
         <transition v-if="mounted" name="fade">
-            <div ref="dialogContent" v-show="store.active" role="dialog" aria-modal="true" :class="contentClass" :style="contentStyle" tabindex="0">
+            <div ref="dialogContent" v-show="store.active" role="dialog" aria-modal="true" :class="contentClass" :style="contentStyle" tabindex="0" @keydown="handleContentKeydown">
                 <transition name="scale">
-                    <div v-show="store.active" :class="dialogClass" :style="dialogStyle">
+                    <div ref="dialogPanel" v-show="store.active" :class="dialogClass" :style="dialogStyle">
                         <slot></slot>
                     </div>
                 </transition>
@@ -19,20 +19,21 @@ export default { name: 'EDialog' }
 import { computed, onMounted, onUnmounted, provide, reactive, watch, ref } from 'vue'
 import { ElevationProps } from '@/types'
 import { useOverlayService } from '@/composables'
-import { getBooleanClasses } from '@/composables/utils'
+import { getBooleanClasses, normalizeDimension } from '@/composables/utils'
 
-export interface EDIalog {
-    close: (forece?: boolean) => void
-}
-export interface Props extends ElevationProps {
-    fullscreen?: boolean
-    modelValue?: boolean
-    absolute?: boolean
-    autoFocus?: boolean
-    restoreFocus?: boolean
-    persistent?: boolean
-    maxWidth?: string | number
-}
+const FOCUSABLE_SELECTOR = [
+    'a[href]',
+    'area[href]',
+    'button:not([disabled])',
+    'input:not([disabled]):not([type="hidden"])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    'iframe',
+    'object',
+    'embed',
+    '[tabindex]:not([tabindex="-1"])',
+    '[contenteditable="true"]',
+].join(',')
 const mounted = ref(false);
 const overlayId = `dialog-overlay-${Math.random().toString(36).slice(2)}`;
 const { openOverlay, closeOverlay, getStackZIndex, updateOverlayContentElement } = useOverlayService();
@@ -44,11 +45,20 @@ const dialogPropsBooleanClassKeys = [
 
 const contentBooleanClassKeys = ['absolute'] as const
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ElevationProps & {
+    fullscreen?: boolean
+    modelValue?: boolean
+    absolute?: boolean
+    autoFocus?: boolean
+    restoreFocus?: boolean
+    persistent?: boolean
+    maxWidth?: string | number
+}>(), {
     autoFocus: true,
     restoreFocus: true,
 })
 const dialogContent = ref<HTMLElement | null>(null)
+const dialogPanel = ref<HTMLElement | null>(null)
 const store = reactive({
     animated: false,
     active: false
@@ -133,10 +143,10 @@ const changeValue = (value: boolean) => {
 
 const dialogStyle = computed((): { maxWidth?: string; zIndex?: string } => {
     const dialogZIndex = getStackZIndex(overlayId, 2)
-    const maxWidth =
-        props.maxWidth && !props.fullscreen
-            ? { maxWidth: `${props.maxWidth}px` }
-            : {};
+    const normalizedMaxWidth = normalizeDimension(props.maxWidth)
+    const maxWidth = normalizedMaxWidth && !props.fullscreen
+        ? { maxWidth: normalizedMaxWidth }
+        : {}
     const zIndex = dialogZIndex === null ? {} : { zIndex: `${dialogZIndex}` }
     return { ...maxWidth, ...zIndex };
 })
@@ -149,6 +159,58 @@ const close = (force = false): void => {
         }, 200);
     } else {
         changeValue(false)
+    }
+}
+
+const getFocusableElements = (): HTMLElement[] => {
+    const root = dialogPanel.value || dialogContent.value
+    if (!root) return []
+
+    return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((element) => {
+        if (!element.isConnected) return false
+        if (element.getAttribute('aria-hidden') === 'true') return false
+        if ((element as HTMLButtonElement).disabled) return false
+        if (element.tabIndex < 0) return false
+        if (element.hasAttribute('hidden')) return false
+        return element.getClientRects().length > 0
+    })
+}
+
+const handleContentKeydown = (evt: KeyboardEvent): void => {
+    if (!store.active || evt.key !== 'Tab') return
+
+    const container = dialogContent.value
+    if (!container) return
+
+    const focusableElements = getFocusableElements()
+
+    if (!focusableElements.length) {
+        evt.preventDefault()
+        container.focus()
+        return
+    }
+
+    const firstFocusable = focusableElements[0]
+    const lastFocusable = focusableElements[focusableElements.length - 1]
+    const activeElement = document.activeElement as HTMLElement | null
+    const isContainerFocused = activeElement === container
+    const focusInsideDialog = !!activeElement && container.contains(activeElement)
+
+    if (!focusInsideDialog) {
+        evt.preventDefault()
+        ;(evt.shiftKey ? lastFocusable : firstFocusable).focus()
+        return
+    }
+
+    if (!evt.shiftKey && (isContainerFocused || activeElement === lastFocusable)) {
+        evt.preventDefault()
+        firstFocusable.focus()
+        return
+    }
+
+    if (evt.shiftKey && (isContainerFocused || activeElement === firstFocusable)) {
+        evt.preventDefault()
+        lastFocusable.focus()
     }
 }
 

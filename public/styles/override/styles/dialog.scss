@@ -1,5 +1,7 @@
 @use "../variables/index.scss" as setting;
 
 .e-dialog {
+  background-color: var(--e-color-surface-1);
+  color: var(--e-contrast-surface-1);
   border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 }
