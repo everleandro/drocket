@@ -7,7 +7,7 @@
   position: relative;
 
   &__title {
-    color: var(--e-contrast-surface-1, #222);
+    /* color ahora en override */
     padding: 16px;
 
     &__btn {
@@ -42,7 +42,7 @@
   }
 
   &__body {
-    background: var(--e-color-surface-1, #fff);
+    /* background ahora en override */
     height: auto;
     overflow: hidden;
     position: relative;
@@ -142,7 +142,7 @@
         border-style: none;
         height: 40px;
         transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-        color: var(--e-app-color, #222);
+        /* color ahora en override */
 
         &:hover {
           color: currentColor;

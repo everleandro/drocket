@@ -66,14 +66,13 @@ $colors-dark: map.merge(("primary": #58d78d,
     ),
     ()) !default;
 
-$contrast-colors-light: map.merge((
-  "primary": white,
+$contrast-colors-light: map.merge(("primary": white,
       "secondary": white,
-  "tertiary": white,
-  "error": white,
+      "tertiary": white,
+      "error": white,
       "warning": white,
-  "success": white,
-  "info": white,
+      "success": white,
+      "info": white,
       "blue": white,
       "purple": white,
       "input": white,
@@ -92,8 +91,7 @@ $contrast-colors-light: map.merge((
     ),
     ()) !default;
 
-$contrast-colors-dark: map.merge((
-      "primary": white,
+$contrast-colors-dark: map.merge(("primary": white,
       "secondary": white,
       "tertiary": white,
       "error": white,
@@ -221,8 +219,8 @@ $btn-text-transform: uppercase !default;
 $btn-transition-duration: 0.28s !default;
 
 $btn-states: map.merge(("focus": 0.12,
-  "hover": 0.08,
-  "active": 0.12,
+      "hover": 0.08,
+      "active": 0.12,
     ),
     ()) !default;
 
@@ -307,4 +305,7 @@ $elevation: (
   "md": (0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12)),
   "lg": (0 8px 10px -5px rgba(0, 0, 0, 0.2), 0 16px 24px -8px rgba(0, 0, 0, 0.14), 0 6px 30px -12px rgba(0, 0, 0, 0.12)),
   "xl": (0 12px 16px -8px rgba(0, 0, 0, 0.2), 0 24px 32px -12px rgba(0, 0, 0, 0.14), 0 8px 40px -16px rgba(0, 0, 0, 0.12)),
-) !default;
+  ) !default;
+
+// date picker
+$date-picker-border-radius: $border-radius-root !default;

@@ -1,14 +1,29 @@
 @use "../variables/index.scss" as setting;
 
+// Colores y backgrounds personalizados para date-picker
 .e-picker {
-  $date-picker-border-radius: var(--e-border-radius-root, #{setting.$border-radius-root}) !default;
+  &__title {
+    color: var(--e-contrast-surface-1, #222);
+  }
+
+  &__body {
+    background: var(--e-color-surface-1, #fff);
+  }
+}
+
+.e-date-picker-header__value button {
+  color: var(--e-app-color, #222);
+}
+
+.e-picker {
+  --e-date-picker-border-radius: #{setting.$date-picker-border-radius};
 
   .e-picker {
-    border-radius: $date-picker-border-radius;
+    border-radius: var(--e-date-picker-border-radius);
 
     &__title {
-      border-top-left-radius: $date-picker-border-radius;
-      border-top-right-radius: $date-picker-border-radius;
+      border-top-left-radius: var(--e-date-picker-border-radius);
+      border-top-right-radius: var(--e-date-picker-border-radius);
     }
   }
 }
