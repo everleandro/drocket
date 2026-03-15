@@ -1,9 +1,26 @@
 import { defineConfig } from 'vitepress'
+import { fileURLToPath } from 'node:url'
 
 export default defineConfig({
   title: 'Drocket',
   description: 'Vue 3 UI component library',
   lang: 'es-ES',
+  vite: {
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('../../src', import.meta.url)),
+        '~': fileURLToPath(new URL('../../', import.meta.url)),
+      },
+    },
+    server: {
+      port: 5176,
+      strictPort: true,
+      watch: {
+        usePolling: true,
+        interval: 150,
+      },
+    },
+  },
   themeConfig: {
     nav: [
       { text: 'Inicio', link: '/' },
@@ -27,6 +44,7 @@ export default defineConfig({
           { text: 'Button', link: '/components/button' },
           { text: 'Card', link: '/components/card' },
           { text: 'Chip', link: '/components/chip' },
+          { text: 'Date Picker', link: '/components/date-picker' },
           { text: 'Dialog', link: '/components/dialog' },
           { text: 'Icon', link: '/components/icon' }
         ]

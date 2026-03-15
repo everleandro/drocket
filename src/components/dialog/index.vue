@@ -40,6 +40,7 @@ const { openOverlay, closeOverlay, getStackZIndex, updateOverlayContentElement }
 
 const dialogPropsBooleanClassKeys = [
     'fullscreen',
+    'fluid',
     'persistent',
 ] as const
 
@@ -47,6 +48,7 @@ const contentBooleanClassKeys = ['absolute'] as const
 
 const props = withDefaults(defineProps<ElevationProps & {
     fullscreen?: boolean
+    fluid?: boolean
     modelValue?: boolean
     absolute?: boolean
     autoFocus?: boolean

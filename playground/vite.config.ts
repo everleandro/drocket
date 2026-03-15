@@ -10,6 +10,14 @@ const repoRoot = path.resolve(__dirname, "..");
 export default defineConfig({
   root: "./playground",
   publicDir: path.resolve(repoRoot, "public"),
+  server: {
+    port: 5173,
+    strictPort: true,
+    watch: {
+      usePolling: true,
+      interval: 150,
+    },
+  },
   plugins: [vue()],
   resolve: {
     alias: {

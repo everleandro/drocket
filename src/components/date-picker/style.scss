@@ -6,12 +6,8 @@
   vertical-align: top;
   position: relative;
 
-  .e-btn {
-    font-weight: 400;
-  }
-
   &__title {
-    color: #fff;
+    color: var(--e-contrast-surface-1, #222);
     padding: 16px;
 
     &__btn {
@@ -33,8 +29,20 @@
     }
   }
 
+  &__live-region {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   &__body {
-    background: #fff;
+    background: var(--e-color-surface-1, #fff);
     height: auto;
     overflow: hidden;
     position: relative;
@@ -62,55 +70,14 @@
   }
 
   .btn-day {
-    box-shadow: none;
     border-radius: 9999px;
-    background-color: transparent;
 
-    .e-btn__content {
-      color: #000;
-    }
-
-    &:hover {
-      .e-btn__content {
-        color: currentColor;
-      }
-    }
-
+    &--adjacent-month,
     &--disabled {
-      pointer-events: none;
-
-      .e-btn__content {
-        color: rgba(0, 0, 0, 0.5);
-      }
+      opacity: 0.4;
     }
-
-    // &--highlighted {
-    // }
-    &--today {
-      border: 2px solid currentColor;
-
-      .e-btn__content {
-        color: currentColor;
-      }
-    }
-
-    &--selected {
-      .e-btn__content {
-        color: currentColor;
-      }
-    }
-
-    // &--weekend {
-    // }
-    // &--sat {
-    // }
-    // &--sun {
-    // }
-    // &--highlight-tart {
-    // }
-    // &--highlight-end {
-    // }
   }
+
 }
 
 .e-date-picker {
@@ -163,12 +130,19 @@
       button {
         cursor: pointer;
         font-weight: 500;
-        outline: none;
         padding: 0.5rem;
+
+        &:focus-visible {
+          outline: 2px solid currentColor;
+          outline-offset: 2px;
+          border-radius: 4px;
+        }
+
         background-color: transparent;
         border-style: none;
         height: 40px;
         transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+        color: var(--e-app-color, #222);
 
         &:hover {
           color: currentColor;
@@ -190,7 +164,7 @@
   &-grid {
     position: relative;
     padding: 0 12px;
-    height: 250px;
+    height: 276px;
 
     .e-btn {
       z-index: auto;
@@ -205,18 +179,6 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-
-      span[role="week-day"] {
-        font-size: 12px;
-        color: rgba(0, 0, 0, 0.38);
-        text-align: center;
-        position: relative;
-      }
-
-      span[role="month-day"] {
-        text-align: center;
-        position: relative;
-      }
 
       .grid-header {
         padding-bottom: 4px;
@@ -246,8 +208,8 @@
       }
 
       .e-btn {
-        height: 32px;
-        width: 32px;
+        height: 36px;
+        width: 36px;
         padding: 0;
 
         min-width: unset;
@@ -268,13 +230,6 @@
           font-weight: 500;
         }
       }
-
-      // .e-btn {
-      //   height: 32px;
-      //   width: 32px;
-      //   padding: 0;
-      //   min-width: unset;
-      // }
     }
   }
 }

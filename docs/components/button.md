@@ -25,6 +25,7 @@ import { EButton } from 'drocket'
 | `fab` | `boolean` | `false` | Variante circular flotante. |
 | `depressed` | `boolean` | `false` | Quita sombra. |
 | `text` | `boolean` | `false` | Variante texto (fondo transparente). |
+| `noInvertColor` | `boolean` | `false` | En variante `text`, usa `--btn-text` y evita invertir color con `--btn-bg`. |
 | `outlined` | `boolean` | `false` | Variante outlined. |
 | `block` | `boolean` | `false` | Ocupa todo el ancho disponible. |
 | `size` | `'x-small' \| 'small' \| 'default' \| 'large' \| 'x-large'` | `'default'` | Define el tamano visual del boton e iconos internos. |
@@ -96,6 +97,16 @@ const saving = ref(false)
 ```vue
 <template>
   <EButton icon="menu" aria-label="Abrir menu" text />
+</template>
+```
+
+### Text sin inversion de color
+
+```vue
+<template>
+  <EButton text color="surface-1" no-invert-color>
+    Accion secundaria
+  </EButton>
 </template>
 ```
 

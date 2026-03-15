@@ -2,7 +2,9 @@
 @use "../variables/index.scss" as setting;
 
 // Dark theme
-[data-theme="dark"] {
+[data-theme="dark"],
+html.dark,
+:root.dark {
   // Colors
   @each $color-name, $color-value in setting.$colors-dark {
     --e-color-#{$color-name}: #{$color-value};

@@ -5,13 +5,19 @@
   overflow-y: auto;
   pointer-events: auto;
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  width: 100%;
+  width: auto;
+  width: fit-content;
+  max-width: calc(100vw - 16px);
   z-index: inherit;
   transform-origin: center center;
   user-select: text;
 
   &:not(.e-dialog--fullscreen) {
     max-height: 90%;
+  }
+
+  &--fluid {
+    width: 100%;
   }
 
   &--animated {
@@ -22,6 +28,7 @@
   &--fullscreen {
     border-radius: 0;
     margin: 0;
+    width: 100%;
     height: 100%;
     position: fixed;
     overflow-y: auto;

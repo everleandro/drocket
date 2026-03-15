@@ -8,6 +8,7 @@ Esta seccion documenta cada componente publico exportado por Drocket.
 - [Button (`EButton`)](./button.md)
 - [Card (`ECard`)](./card.md)
 - [Chip (`EChip`)](./chip.md)
+- [Date Picker (`EDatePicker`)](./date-picker.md)
 - [Dialog (`EDialog`)](./dialog.md)
 - [Icon (`EIcon`)](./icon.md)
 

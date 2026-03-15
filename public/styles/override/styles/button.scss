@@ -13,8 +13,8 @@
   font-family: var(--e-root-font-family, #{setting.$root-font-family});
 
   // CSS variables for dynamic theming (can be overridden via inline style)
-  --btn-bg: var(--e-color-primary, #{map.get(setting.$colors-light, "primary")});
-  --btn-text: var(--e-contrast-primary, white);
+  --btn-bg: var(--e-color-surface-1, #{map.get(setting.$colors-light, "surface-1")});
+  --btn-text: var(--e-contrast-surface-1, #{map.get(setting.$contrast-colors-light, "surface-1")});
 
   color: var(--btn-text);
   background-color: var(--btn-bg);
@@ -31,6 +31,15 @@
   &--text {
     background-color: transparent;
     color: var(--btn-bg);
+  }
+
+  &--text.e-btn--no-invert-color {
+    color: var(--btn-text);
+  }
+
+  &--outlined.e-btn--no-invert-color {
+    color: var(--btn-text);
+    border-color: var(--btn-text);
   }
 
   &--icon {

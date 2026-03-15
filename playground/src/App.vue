@@ -3,7 +3,7 @@
     <header class="playground-header">
       <h1>Playground</h1>
       <button class="theme-toggle" @click="toggleTheme">
-        {{ theme === 'light' ? '🌙 Dark' : '☀️ Light' }}
+        {{ theme === "light" ? "🌙 Dark" : "☀️ Light" }}
       </button>
     </header>
 
@@ -14,7 +14,9 @@
         <EButton color="secondary" outlined>Outlined</EButton>
         <EButton color="brand" rounded>Custom Brand</EButton>
         <EButton color="secondary" rounded>secondary</EButton>
-        <EButton text rounded :prepend-icon="iconFactory.arrowLeft">Text Button</EButton>
+        <EButton text rounded :prepend-icon="iconFactory.arrowLeft"
+          >Text Button</EButton
+        >
         <EButton :prepend-icon="iconFactory.arrowLeft" color="warning"
           >With Icon</EButton
         >
@@ -59,10 +61,21 @@
     <section class="block">
       <h2>Dialog</h2>
       <div class="row">
-        <EButton color="primary" @click="dialogDefault = true">Open Default</EButton>
-        <EButton color="secondary" outlined @click="dialogPersistent = true">Open Persistent</EButton>
-        <EButton color="brand" @click="dialogFullscreen = true">Open Fullscreen</EButton>
-        <EButton color="success" @click="dialogParent = true">Open Nested</EButton>
+        <EButton color="primary" @click="dialogDefault = true"
+          >Open Default</EButton
+        >
+        <EButton color="secondary" @click="dialogFluid = true"
+          >Open Fluid</EButton
+        >
+        <EButton color="secondary" outlined @click="dialogPersistent = true"
+          >Open Persistent</EButton
+        >
+        <EButton color="brand" @click="dialogFullscreen = true"
+          >Open Fullscreen</EButton
+        >
+        <EButton color="success" @click="dialogParent = true"
+          >Open Nested</EButton
+        >
       </div>
 
       <EDialog v-model="dialogDefault" :max-width="520" elevation="xl">
@@ -71,18 +84,39 @@
           <p>This is a standard dialog. Click outside or press ESC to close.</p>
           <div class="dialog-actions">
             <EButton text @click="dialogDefault = false">Cancel</EButton>
-            <EButton color="primary" @click="dialogDefault = false">Confirm</EButton>
+            <EButton color="primary" @click="dialogDefault = false"
+              >Confirm</EButton
+            >
           </div>
         </div>
       </EDialog>
 
-      <EDialog v-model="dialogPersistent" persistent :max-width="520" elevation="xl">
+      <EDialog v-model="dialogFluid" fluid elevation="xl">
+        <div class="dialog-card">
+          <h3>Fluid Dialog</h3>
+          <p>This dialog keeps full width, unlike the default fit-content behavior.</p>
+          <div class="dialog-actions">
+            <EButton text @click="dialogFluid = false">Close</EButton>
+          </div>
+        </div>
+      </EDialog>
+
+      <EDialog
+        v-model="dialogPersistent"
+        persistent
+        :max-width="520"
+        elevation="xl"
+      >
         <div class="dialog-card">
           <h3>Persistent Dialog</h3>
-          <p>This dialog ignores outside click and ESC unless you use an action.</p>
+          <p>
+            This dialog ignores outside click and ESC unless you use an action.
+          </p>
           <div class="dialog-actions">
             <EButton text @click="dialogPersistent = false">Close</EButton>
-            <EButton color="warning" @click="dialogPersistent = false">Understood</EButton>
+            <EButton color="warning" @click="dialogPersistent = false"
+              >Understood</EButton
+            >
           </div>
         </div>
       </EDialog>
@@ -91,7 +125,9 @@
         <div class="dialog-fullscreen-content">
           <h3>Fullscreen Dialog</h3>
           <p>Useful for long forms or mobile-friendly full-screen flows.</p>
-          <EButton color="primary" @click="dialogFullscreen = false">Close Fullscreen</EButton>
+          <EButton color="primary" @click="dialogFullscreen = false"
+            >Close Fullscreen</EButton
+          >
         </div>
       </EDialog>
 
@@ -99,11 +135,14 @@
         <div class="dialog-card">
           <h3>Parent Dialog</h3>
           <p>
-            Open the child dialog and test: press ESC or click outside. Only the child should close first.
+            Open the child dialog and test: press ESC or click outside. Only the
+            child should close first.
           </p>
           <div class="dialog-actions">
             <EButton text @click="dialogParent = false">Close Parent</EButton>
-            <EButton color="primary" @click="dialogChild = true">Open Child Dialog</EButton>
+            <EButton color="primary" @click="dialogChild = true"
+              >Open Child Dialog</EButton
+            >
           </div>
         </div>
 
@@ -111,15 +150,62 @@
           <div class="dialog-card dialog-card--child">
             <h3>Child Dialog</h3>
             <p>
-              This is the top dialog. ESC and outside click should close only this one.
+              This is the top dialog. ESC and outside click should close only
+              this one.
             </p>
             <div class="dialog-actions">
               <EButton text @click="dialogChild = false">Cancel</EButton>
-              <EButton color="primary" @click="dialogChild = false">Close Child</EButton>
+              <EButton color="primary" @click="dialogChild = false"
+                >Close Child</EButton
+              >
             </div>
           </div>
         </EDialog>
       </EDialog>
+    </section>
+
+    <section class="block">
+      <h2>Date Picker</h2>
+
+      <div class="date-picker-grid">
+        <div class="date-picker-card">
+          <h3>Inline Selection</h3>
+          <p class="playground-note">
+            Selected date: {{ formatPlaygroundDate(selectedDate) }}
+          </p>
+          <e-card>
+            <EDatePicker
+              v-model="selectedDate"
+              color="primary"
+              :highlighted="highlightedDates"
+              :disabled="disabledDates"
+            />
+          </e-card>
+        </div>
+
+        <div class="date-picker-card">
+          <h3>Inside Dialog</h3>
+          <p class="playground-note">
+            Meeting date: {{ formatPlaygroundDate(dialogDate) }}
+          </p>
+          <div class="row">
+            <EButton color="primary" @click="dateDialog = true"
+              >Choose Date</EButton
+            >
+          </div>
+
+          <EDialog v-model="dateDialog" elevation="xl">
+            <ECard>
+              <EDatePicker
+                v-model="dialogDate"
+                color="secondary"
+                close-on-change
+                :highlighted="highlightedDates"
+              />
+            </ECard>
+          </EDialog>
+        </div>
+      </div>
     </section>
 
     <section class="block">
@@ -139,11 +225,24 @@
       <div class="chip-group">
         <h3>Content</h3>
         <div class="row">
-          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft">With prepend</EChip>
-          <EChip color="secondary" :append-icon="iconFactory.clear">With append</EChip>
-          <EChip color="warning" prepend-avatar="https://i.pravatar.cc/40?img=12">Avatar chip</EChip>
+          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft"
+            >With prepend</EChip
+          >
+          <EChip color="secondary" :append-icon="iconFactory.clear"
+            >With append</EChip
+          >
+          <EChip
+            color="warning"
+            prepend-avatar="https://i.pravatar.cc/40?img=12"
+            >Avatar chip</EChip
+          >
           <EChip text color="success">Text chip</EChip>
-          <EChip color="tertiary" closable @click:close="chipMessage = 'Closable chip closed'">Closable</EChip>
+          <EChip
+            color="tertiary"
+            closable
+            @click:close="chipMessage = 'Closable chip closed'"
+            >Closable</EChip
+          >
         </div>
       </div>
 
@@ -191,19 +290,34 @@ import { ref, onMounted, watch } from "vue";
 import EAvatar from "../../src/components/avatar.vue";
 import EButton from "../../src/components/button/index.vue";
 import EChip from "../../src/components/chip/index.vue";
+import EDatePicker from "../../src/components/date-picker/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
 import EDialog from "../../src/components/dialog/index.vue";
 import iconFactory from "../../src/utils/icons";
 
 const theme = ref("light");
 const dialogDefault = ref(false);
+const dialogFluid = ref(false);
 const dialogPersistent = ref(false);
 const dialogFullscreen = ref(false);
 const dialogParent = ref(false);
 const dialogChild = ref(false);
+const dateDialog = ref(false);
+const selectedDate = ref(new Date(2026, 2, 14));
+const dialogDate = ref(new Date(2026, 2, 21));
 const selectedFilters = ref(["vue", "scss"]);
 const tags = ref(["Vue 3", "TypeScript", "SCSS", "Autocomplete"]);
 const chipMessage = ref("Try the chip interactions below.");
+
+const highlightedDates = {
+  from: new Date(2026, 2, 18),
+  to: new Date(2026, 2, 22),
+};
+
+const disabledDates = {
+  days: [0, 6],
+  dates: [new Date(2026, 2, 17)],
+};
 
 const filterChips = [
   { label: "Vue", value: "vue" },
@@ -231,6 +345,21 @@ const removeTag = (tag) => {
   chipMessage.value = `Removed ${tag}`;
 };
 
+const formatPlaygroundDate = (value) => {
+  if (!value) {
+    return "No date selected";
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+};
+
 const toggleTheme = () => {
   theme.value = theme.value === "light" ? "dark" : "light";
   document.documentElement.setAttribute("data-theme", theme.value);
@@ -243,7 +372,9 @@ onMounted(() => {
   if (saved) {
     theme.value = saved;
   } else {
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const systemDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
     theme.value = systemDark ? "dark" : "light";
   }
   document.documentElement.setAttribute("data-theme", theme.value);
@@ -305,7 +436,9 @@ onMounted(() => {
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  transition: background, box-shadow 0.3s ease;
+  transition:
+    background,
+    box-shadow 0.3s ease;
 }
 
 .playground[data-theme="dark"] .block {
@@ -376,10 +509,35 @@ onMounted(() => {
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
+.dialog-card--datepicker {
+  min-width: 0;
+}
+
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+}
+
+.date-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.date-picker-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.playground[data-theme="dark"] .date-picker-card {
+  background: rgba(17, 24, 39, 0.55);
+  border-color: rgba(148, 163, 184, 0.16);
 }
 
 .dialog-fullscreen-content {
@@ -388,13 +546,12 @@ onMounted(() => {
   flex-direction: column;
   gap: 12px;
   padding: 24px;
-  background: var(--e-color-surface, #fff);
-  color: var(--e-color-on-surface, #222);
+  background: var(--e-color-surface-1, #fff);
+  color: var(--e-contrast-surface-1, #222);
 }
 
 :global(:root) {
   --e-color-brand: #1e88e5;
   --e-contrast-brand: #ffffff;
 }
-
 </style>

@@ -54,6 +54,7 @@
   ],
   "scripts": {
     "dev": "vite",
+    "dev:all": "concurrently -n playground,site,docs -c blue,green,yellow \"npm:playground:dev\" \"npm:site:dev\" \"npm:docs:dev\"",
     "playground:dev": "vite --config playground/vite.config.ts",
     "playground:build": "vite build --config playground/vite.config.ts",
     "playground:preview": "vite preview --config playground/vite.config.ts",
@@ -67,7 +68,7 @@
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",
     "test": "exit 0",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "vitepress dev docs --port 5176",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
@@ -77,6 +78,7 @@
   "devDependencies": {
     "@types/node": "^20.11.5",
     "@vitejs/plugin-vue": "^4.6.2",
+    "concurrently": "^9.2.1",
     "sass": "^1.70.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.12",

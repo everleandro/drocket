@@ -17,6 +17,7 @@ export interface Day {
   isWeekend: boolean;
   isSaturday: boolean;
   isSunday: boolean;
+  isAdjacentMonth?: boolean;
 }
 
 export enum datePickerViewType {
@@ -39,6 +40,7 @@ export interface Month {
   month: string;
   timestamp: number;
   isSelected: boolean;
+  isCurrent: boolean;
   isDisabled: boolean;
 }
 
@@ -46,6 +48,7 @@ export interface Year {
   year: number;
   timestamp: number;
   isSelected: boolean;
+  isCurrent: boolean;
   isDisabled: boolean;
 }
 export interface DatePickerProps {

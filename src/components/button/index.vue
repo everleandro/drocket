@@ -86,6 +86,7 @@ export interface ButtonProps extends ElevationProps, SizeProps {
   depressed?: boolean;
   text?: boolean;
   outlined?: boolean;
+  noInvertColor?: boolean;
   block?: boolean;
   type?: string;
   rounded?: boolean;
@@ -208,6 +209,10 @@ const btnClass = computed((): Array<string> => {
 
   // Handle boolean classes
   classes.push(...getBooleanClasses(props, booleanClassKeys, "e-btn"));
+
+  if (props.noInvertColor) {
+    classes.push("e-btn--no-invert-color");
+  }
 
   if (isIconOnly.value) {
     classes.push("e-btn--icon");
