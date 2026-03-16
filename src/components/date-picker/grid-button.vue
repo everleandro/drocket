@@ -3,7 +3,6 @@
     v-bind="forwardedAttrs"
     :type="props.type"
     :text="props.text"
-    :no-invert-color="props.noInvertColor"
     :outlined="props.outlined"
     :depressed="props.depressed"
     :block="props.block"
@@ -27,7 +26,6 @@ interface DatePickerGridButtonProps {
   color?: string;
   depressed?: boolean;
   disabled?: boolean;
-  noInvertColor?: boolean;
   outlined?: boolean;
   size?: "x-small" | "small" | "default" | "large" | "x-large";
   text?: boolean;
@@ -41,7 +39,6 @@ const props = withDefaults(defineProps<DatePickerGridButtonProps>(), {
   color: undefined,
   depressed: false,
   disabled: false,
-  noInvertColor: false,
   outlined: false,
   size: "default",
   text: false,

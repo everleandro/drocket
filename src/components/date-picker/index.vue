@@ -45,16 +45,12 @@
               @click="prevButtonAction()"
             />
 
-            <div class="e-date-picker-header__value">
+            <div class="e-date-picker-header__value"> 
               <transition :name="store.globalContentAnimation">
-                <div :class="textColor" :key="headerValueKey">
-                  <button
-                    type="button"
-                    :aria-label="headerButtonLabel"
-                    @click="changeViewMode()"
-                  >
+                <div :key="headerValueKey">
+                  <EButton type="button" text :aria-label="headerButtonLabel" size="x-small" block @click="changeViewMode()">
                     {{ formattedSubheader() }}
-                  </button>
+                  </EButton>
                 </div>
               </transition>
             </div>
@@ -218,10 +214,6 @@ import {
 } from "vue";
 
 const liveAnnouncement = ref("");
-
-const textColor = computed(() => {
-  return `${props.color}--text`;
-});
 
 // Computed disables for navigation buttons
 const nextDisabled = computed(() => {
@@ -758,7 +750,6 @@ const dayGridButtonProps = (
   color?: string;
   depressed: boolean;
   disabled: boolean;
-  noInvertColor?: boolean;
   outlined: boolean;
   text: boolean;
 } => {
@@ -797,7 +788,6 @@ const dayGridButtonProps = (
     color: undefined,
     depressed: false,
     disabled: day.isDisabled,
-    noInvertColor: true,
     outlined: false,
     text: true,
   };
@@ -812,7 +802,6 @@ const selectableGridButtonProps = (
   color?: string;
   depressed: boolean;
   disabled: boolean;
-  noInvertColor?: boolean;
   outlined: boolean;
   size: "default";
   text: boolean;
@@ -836,7 +825,6 @@ const selectableGridButtonProps = (
       color: props.color,
       depressed: false,
       disabled: isDisabled,
-      noInvertColor: true,
       outlined: true,
       size: "default",
       text: false,
@@ -848,7 +836,6 @@ const selectableGridButtonProps = (
     color: undefined,
     depressed: false,
     disabled: isDisabled,
-    noInvertColor: true,
     outlined: false,
     size: "default",
     text: true,

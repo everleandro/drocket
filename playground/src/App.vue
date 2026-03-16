@@ -198,6 +198,7 @@
             <ECard>
               <EDatePicker
                 v-model="dialogDate"
+                landscape
                 color="secondary"
                 close-on-change
                 :highlighted="highlightedDates"

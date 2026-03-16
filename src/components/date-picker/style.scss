@@ -65,6 +65,7 @@
     .e-picker {
       &__title {
         width: 170px;
+        border-top-right-radius: 0;
       }
     }
   }
@@ -124,30 +125,10 @@
       flex: 1;
       text-align: center;
       position: relative;
+      align-content: center;
+      padding: 0 8px;
       overflow: hidden;
-      height: 40px;
-
-      button {
-        cursor: pointer;
-        font-weight: 500;
-        padding: 0.5rem;
-
-        &:focus-visible {
-          outline: 2px solid currentColor;
-          outline-offset: 2px;
-          border-radius: 4px;
-        }
-
-        background-color: transparent;
-        border-style: none;
-        height: 40px;
-        transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-        /* color ahora en override */
-
-        &:hover {
-          color: currentColor;
-        }
-      }
+      min-height: 40px;
 
       div {
         transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
@@ -204,6 +185,7 @@
           padding: 8px 0;
           font-weight: 500;
           text-transform: capitalize;
+          text-align: center;
         }
       }
 

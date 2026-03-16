@@ -11,19 +11,13 @@
   }
 }
 
-.e-date-picker-header__value button {
-  color: var(--e-app-color, #222);
-}
-
 .e-picker {
   --e-date-picker-border-radius: #{setting.$date-picker-border-radius};
+  border-radius: var(--e-date-picker-border-radius);
 
-  .e-picker {
-    border-radius: var(--e-date-picker-border-radius);
+  &__title {
+    border-top-left-radius: var(--e-date-picker-border-radius);
+    border-top-right-radius: var(--e-date-picker-border-radius);
 
-    &__title {
-      border-top-left-radius: var(--e-date-picker-border-radius);
-      border-top-right-radius: var(--e-date-picker-border-radius);
-    }
   }
 }

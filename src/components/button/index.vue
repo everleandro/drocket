@@ -1,44 +1,19 @@
 <template>
-  <component
-    v-ripple="rippleBinding"
-    :is="tag"
-    v-bind="rootAttributes"
-    :class="btnClass"
-    :style="buttonStyle"
-    :aria-disabled="isDisabledForInteraction"
-    :aria-busy="props.loading"
-    :aria-label="ariaLabelComputed"
-    @pointerenter="handleHover(true)"
-    @pointerleave="handleHover(false)"
-    @focusin="handleFocus(true)"
-    @focusout="handleFocus(false)"
-    @keydown="handleKeydown"
-    @keyup="handleKeyup"
-  >
+  <component v-ripple="rippleBinding" :is="tag" v-bind="rootAttributes" :class="btnClass" :style="buttonStyle"
+    :aria-disabled="isDisabledForInteraction" :aria-busy="props.loading" :aria-label="ariaLabelComputed"
+    @pointerenter="handleHover(true)" @pointerleave="handleHover(false)" @focusin="handleFocus(true)"
+    @focusout="handleFocus(false)" @keydown="handleKeydown" @keyup="handleKeyup">
     <span v-show="props.loading" class="e-btn__loader">
       <slot name="loading">
-        <span
-          role="progressbar"
-          aria-valuemin="0"
-          aria-valuemax="100"
+        <span role="progressbar" aria-valuemin="0" aria-valuemax="100"
           class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
-          style="height: 23px; width: 23px"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
+          style="height: 23px; width: 23px">
+          <svg xmlns="http://www.w3.org/2000/svg"
             viewBox="21.904761904761905 21.904761904761905 43.80952380952381 43.80952380952381"
-            style="transform: rotate(0deg)"
-          >
-            <circle
-              fill="transparent"
-              cx="43.80952380952381"
-              cy="43.80952380952381"
-              r="20"
-              stroke-width="3.8095238095238093"
-              stroke-dasharray="125.664"
-              stroke-dashoffset="125.66370614359172px"
-              class="e-progress-circular__overlay"
-            ></circle>
+            style="transform: rotate(0deg)">
+            <circle fill="transparent" cx="43.80952380952381" cy="43.80952380952381" r="20"
+              stroke-width="3.8095238095238093" stroke-dasharray="125.664" stroke-dashoffset="125.66370614359172px"
+              class="e-progress-circular__overlay"></circle>
           </svg>
         </span>
       </slot>
@@ -168,9 +143,9 @@ const rootAttributes = computed(() => {
       ...restAttrs,
       ...(requiresButtonKeyboardSemantics.value
         ? {
-            role: "button",
-            tabindex: isDisabledForInteraction.value ? -1 : 0,
-          }
+          role: "button",
+          tabindex: isDisabledForInteraction.value ? -1 : 0,
+        }
         : {}),
       ...(to && typeof to !== "string" ? { to } : {}),
       ...(resolvedHref ? { href: resolvedHref } : {}),
@@ -210,7 +185,7 @@ const btnClass = computed((): Array<string> => {
   // Handle boolean classes
   classes.push(...getBooleanClasses(props, booleanClassKeys, "e-btn"));
 
-  if (props.noInvertColor) {
+  if (props.noInvertColor || (!props.color && (props.text || props.outlined))) {
     classes.push("e-btn--no-invert-color");
   }
 
