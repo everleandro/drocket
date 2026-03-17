@@ -1,15 +1,7 @@
 @use '~/public/styles/_mixins.scss' as *;
 .e-btn {
-  border: none;
-  align-items: center;
-  display: inline-flex;
-  flex: 0 0 auto;
-  justify-content: center;
-  outline: 0;
-  position: relative;
-  cursor: pointer;
-  padding: 0 1em;
-  min-width: 4em;
+
+  @include button-reset();
 
   .e-icon__svg {
     fill: currentColor;
@@ -21,14 +13,7 @@
   }
 
   @include prefix(user-select, none);
-  text-decoration: none;
-  transition-property: box-shadow,
-  transform,
-  opacity,
-  background-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  vertical-align: middle;
-  white-space: nowrap;
+  
 
   @include button-before();
 

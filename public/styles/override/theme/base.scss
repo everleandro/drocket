@@ -27,7 +27,6 @@
   --e-icon-class: #{setting.$icon-class};
   --e-icon-prefix: #{setting.$icon-prefix};
   --e-icon-close-font-size: #{setting.$icon-close-font-size};
-  --e-icon-expand-font-size: #{setting.$icon-expand-font-size};
 
   @each $size-name, $size-value in setting.$icon-font-sizes {
     --e-icon-size-#{$size-name}: #{$size-value};
@@ -71,8 +70,9 @@
 
   // Expansion
   --e-expansion-header-height: #{setting.$expansion-header-height};
-  --e-expansion-box-shadow: #{setting.$expansion-box-shadow};
-
+  --e-expansion-header-height-opened: #{setting.$expansion-header-height-opened};
+  --e-expansion-header-font-size: #{setting.$expansion-header-font-size};
+  
   // List
   --e-list-prepend-width: #{setting.$list-prepend-width};
 

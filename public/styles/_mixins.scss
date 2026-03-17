@@ -53,6 +53,27 @@
     }
 }
 
+@mixin button-reset() {
+    border: none;
+    align-items: center;
+    display: inline-flex;
+    flex: 0 0 auto;
+    justify-content: center;    
+    outline: 0;
+    position: relative;
+    cursor: pointer;
+    padding: 0 calc(var(--e-space-base ) * 2);
+    min-width: 4em;
+    text-decoration: none;
+    transition-property: box-shadow,
+        transform,
+        opacity,
+        background-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
 @mixin force-sizes($value,
     $properties: min-width max-width min-height max-height) {
     @each $property in $properties {

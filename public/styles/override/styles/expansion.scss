@@ -1,39 +1,62 @@
+@use "sass:map";
 @use "../variables/index.scss" as setting;
 
 .e-expansion {
-  box-shadow: var(--e-expansion-box-shadow, #{setting.$expansion-box-shadow});
-  border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 
-  &-panels {
-    box-shadow: var(--e-expansion-box-shadow, #{setting.$expansion-box-shadow});
-    border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
+  &-panel {
+    --panel-border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 
-    .e-expansion {
-      border-radius: 0;
+    --panel-background-color: var(--e-color-surface-1, #{map.get(setting.$colors-light, "surface-1")});
+    --panel-color: var(--e-contrast-surface-1);
 
-      &__header>.e-btn {
-        border-radius: 0;
+    background-color: var(--panel-background-color);
+    color: var(--panel-color);
+
+    &--disabled {
+      --panel-background-color: var(--e-color-disabled, #{map.get(setting.$colors-light, "disabled")});
+      --panel-color: var(--e-contrast-disabled, white);
+    }
+
+    &--opened {
+      --e-expansion-header-height: var(--e-expansion-header-height-opened, #{setting.$expansion-header-height-opened});
+
+      &not:first-child,
+      +.e-expansion-panel {
+        margin-top: var(--e-space-base, #{setting.$space-base});
       }
     }
-  }
 
-  &__header {
-    &-actions {
-      >* {
-        max-height: var(--e-expansion-header-height, #{setting.$expansion-header-height}) !important;
-        min-height: var(--e-expansion-header-height, #{setting.$expansion-header-height}) !important;
-        height: var(--e-expansion-header-height, #{setting.$expansion-header-height}) !important;
+    &__header {
+      &-actions {
+        >* {
+          height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
+        }
+      }
+
+      &-button {
+        color: var(--panel-color);
+        background-color: var(--panel-background-color);
+        font-size: var(--e-expansion-header-font-size, #{setting.$expansion-header-font-size});
+        padding: 0px calc(var(--e-space-base, #{setting.$space-base}) * 3);
+
+        @each $key, $value in setting.$btn-states {
+          &:#{$key}:before {
+            opacity: var(--e-btn-state-#{$key}, #{$value});
+          }
+        }
+
+        &-content {
+          height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
+        }
       }
     }
 
-    i {
-      font-size: var(--e-icon-expand-font-size, #{setting.$icon-expand-font-size});
+    &__body-content-wrapper {
+        padding: var(--e-space-base, #{setting.$space-base}) calc(var(--e-space-base, #{setting.$space-base}) * 3) calc(var(--e-space-base, #{setting.$space-base}) * 2) ;
+      
     }
 
-    &-content {
-      max-height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
-      min-height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
-      height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
-    }
   }
+
+
 }

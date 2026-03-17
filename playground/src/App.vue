@@ -8,18 +8,29 @@
     </header>
 
     <section class="block">
+      <h2>Expansion</h2>
+      <div class="row  my-4">
+        <EExpansionPanels  accordion>
+          <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" color="primary">
+            <div class="secondary--text">
+              <code> content {{ i }} </code>
+            </div>
+          </EExpansionPanel>
+        </EExpansionPanels>
+      </div>
+
+
+    </section>
+
+    <section class="block">
       <h2>Button</h2>
       <div class="row">
         <EButton color="primary" elevation="lg">Primary</EButton>
         <EButton color="secondary" outlined>Outlined</EButton>
         <EButton color="brand" rounded>Custom Brand</EButton>
         <EButton color="secondary" rounded>secondary</EButton>
-        <EButton text rounded :prepend-icon="iconFactory.arrowLeft"
-          >Text Button</EButton
-        >
-        <EButton :prepend-icon="iconFactory.arrowLeft" color="warning"
-          >With Icon</EButton
-        >
+        <EButton text rounded :prepend-icon="iconFactory.arrowLeft">Text Button</EButton>
+        <EButton :prepend-icon="iconFactory.arrowLeft" color="warning">With Icon</EButton>
       </div>
     </section>
 
@@ -61,21 +72,11 @@
     <section class="block">
       <h2>Dialog</h2>
       <div class="row">
-        <EButton color="primary" @click="dialogDefault = true"
-          >Open Default</EButton
-        >
-        <EButton color="secondary" @click="dialogFluid = true"
-          >Open Fluid</EButton
-        >
-        <EButton color="secondary" outlined @click="dialogPersistent = true"
-          >Open Persistent</EButton
-        >
-        <EButton color="brand" @click="dialogFullscreen = true"
-          >Open Fullscreen</EButton
-        >
-        <EButton color="success" @click="dialogParent = true"
-          >Open Nested</EButton
-        >
+        <EButton color="primary" @click="dialogDefault = true">Open Default</EButton>
+        <EButton color="secondary" @click="dialogFluid = true">Open Fluid</EButton>
+        <EButton color="secondary" outlined @click="dialogPersistent = true">Open Persistent</EButton>
+        <EButton color="brand" @click="dialogFullscreen = true">Open Fullscreen</EButton>
+        <EButton color="success" @click="dialogParent = true">Open Nested</EButton>
       </div>
 
       <EDialog v-model="dialogDefault" :max-width="520" elevation="xl">
@@ -84,9 +85,7 @@
           <p>This is a standard dialog. Click outside or press ESC to close.</p>
           <div class="dialog-actions">
             <EButton text @click="dialogDefault = false">Cancel</EButton>
-            <EButton color="primary" @click="dialogDefault = false"
-              >Confirm</EButton
-            >
+            <EButton color="primary" @click="dialogDefault = false">Confirm</EButton>
           </div>
         </div>
       </EDialog>
@@ -101,12 +100,7 @@
         </div>
       </EDialog>
 
-      <EDialog
-        v-model="dialogPersistent"
-        persistent
-        :max-width="520"
-        elevation="xl"
-      >
+      <EDialog v-model="dialogPersistent" persistent :max-width="520" elevation="xl">
         <div class="dialog-card">
           <h3>Persistent Dialog</h3>
           <p>
@@ -114,9 +108,7 @@
           </p>
           <div class="dialog-actions">
             <EButton text @click="dialogPersistent = false">Close</EButton>
-            <EButton color="warning" @click="dialogPersistent = false"
-              >Understood</EButton
-            >
+            <EButton color="warning" @click="dialogPersistent = false">Understood</EButton>
           </div>
         </div>
       </EDialog>
@@ -125,9 +117,7 @@
         <div class="dialog-fullscreen-content">
           <h3>Fullscreen Dialog</h3>
           <p>Useful for long forms or mobile-friendly full-screen flows.</p>
-          <EButton color="primary" @click="dialogFullscreen = false"
-            >Close Fullscreen</EButton
-          >
+          <EButton color="primary" @click="dialogFullscreen = false">Close Fullscreen</EButton>
         </div>
       </EDialog>
 
@@ -140,9 +130,7 @@
           </p>
           <div class="dialog-actions">
             <EButton text @click="dialogParent = false">Close Parent</EButton>
-            <EButton color="primary" @click="dialogChild = true"
-              >Open Child Dialog</EButton
-            >
+            <EButton color="primary" @click="dialogChild = true">Open Child Dialog</EButton>
           </div>
         </div>
 
@@ -155,9 +143,7 @@
             </p>
             <div class="dialog-actions">
               <EButton text @click="dialogChild = false">Cancel</EButton>
-              <EButton color="primary" @click="dialogChild = false"
-                >Close Child</EButton
-              >
+              <EButton color="primary" @click="dialogChild = false">Close Child</EButton>
             </div>
           </div>
         </EDialog>
@@ -174,12 +160,8 @@
             Selected date: {{ formatPlaygroundDate(selectedDate) }}
           </p>
           <e-card>
-            <EDatePicker
-              v-model="selectedDate"
-              color="primary"
-              :highlighted="highlightedDates"
-              :disabled="disabledDates"
-            />
+            <EDatePicker v-model="selectedDate" color="primary" :highlighted="highlightedDates"
+              :disabled="disabledDates" />
           </e-card>
         </div>
 
@@ -189,20 +171,13 @@
             Meeting date: {{ formatPlaygroundDate(dialogDate) }}
           </p>
           <div class="row">
-            <EButton color="primary" @click="dateDialog = true"
-              >Choose Date</EButton
-            >
+            <EButton color="primary" @click="dateDialog = true">Choose Date</EButton>
           </div>
 
           <EDialog v-model="dateDialog" elevation="xl">
             <ECard>
-              <EDatePicker
-                v-model="dialogDate"
-                landscape
-                color="secondary"
-                close-on-change
-                :highlighted="highlightedDates"
-              />
+              <EDatePicker v-model="dialogDate" landscape color="secondary" close-on-change
+                :highlighted="highlightedDates" />
             </ECard>
           </EDialog>
         </div>
@@ -226,39 +201,19 @@
       <div class="chip-group">
         <h3>Content</h3>
         <div class="row">
-          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft"
-            >With prepend</EChip
-          >
-          <EChip color="secondary" :append-icon="iconFactory.clear"
-            >With append</EChip
-          >
-          <EChip
-            color="warning"
-            prepend-avatar="https://i.pravatar.cc/40?img=12"
-            >Avatar chip</EChip
-          >
+          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft">With prepend</EChip>
+          <EChip color="secondary" :append-icon="iconFactory.clear">With append</EChip>
+          <EChip color="warning" prepend-avatar="https://i.pravatar.cc/40?img=12">Avatar chip</EChip>
           <EChip text color="success">Text chip</EChip>
-          <EChip
-            color="tertiary"
-            closable
-            @click:close="chipMessage = 'Closable chip closed'"
-            >Closable</EChip
-          >
+          <EChip color="tertiary" closable @click:close="chipMessage = 'Closable chip closed'">Closable</EChip>
         </div>
       </div>
 
       <div class="chip-group">
         <h3>Interactive</h3>
         <div class="row">
-          <EChip
-            v-for="option in filterChips"
-            :key="option.value"
-            clickable
-            ripple
-            :selected="selectedFilters.includes(option.value)"
-            color="primary"
-            @click="toggleFilter(option.value)"
-          >
+          <EChip v-for="option in filterChips" :key="option.value" clickable ripple
+            :selected="selectedFilters.includes(option.value)" color="primary" @click="toggleFilter(option.value)">
             {{ option.label }}
           </EChip>
         </div>
@@ -267,15 +222,8 @@
       <div class="chip-group">
         <h3>Closable + clickable</h3>
         <div class="row">
-          <EChip
-            v-for="tag in tags"
-            :key="tag"
-            clickable
-            closable
-            color="brand"
-            @click="chipMessage = `Clicked ${tag}`"
-            @click:close="removeTag(tag)"
-          >
+          <EChip v-for="tag in tags" :key="tag" clickable closable color="brand" @click="chipMessage = `Clicked ${tag}`"
+            @click:close="removeTag(tag)">
             {{ tag }}
           </EChip>
         </div>
@@ -283,6 +231,7 @@
 
       <p class="playground-note">{{ chipMessage }}</p>
     </section>
+
   </main>
 </template>
 
@@ -294,6 +243,10 @@ import EChip from "../../src/components/chip/index.vue";
 import EDatePicker from "../../src/components/date-picker/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
 import EDialog from "../../src/components/dialog/index.vue";
+import ECard from "../../src/components/card/index.vue";
+import EDivider from "../../src/components/layout/divider.vue";
+import EExpansionPanel from "../../src/components/expansion/panel.vue";
+import EExpansionPanels from "../../src/components/expansion/panels.vue";
 import iconFactory from "../../src/utils/icons";
 
 const theme = ref("light");
@@ -475,7 +428,7 @@ onMounted(() => {
   gap: 12px;
 }
 
-.chip-group + .chip-group {
+.chip-group+.chip-group {
   margin-top: 20px;
 }
 

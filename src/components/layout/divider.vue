@@ -31,7 +31,8 @@ const orientation = computed(() => props.vertical ? 'vertical' : 'horizontal')
     transition: inherit;
     min-width: 100%;
     margin: 0;
-    border-color: rgba(0, 0, 0, .12);
+    opacity: .12;
+    border-color: var(--e-contrast-surface-1);
 
     &[aria-orientation='vertical'] {
         align-self: stretch;
