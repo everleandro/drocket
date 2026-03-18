@@ -8,6 +8,8 @@
 
   &-panel {
     width: 100%;
+    transition: margin-top 0.3s ease;
+    overflow: hidden;
 
     &__header {
       display: flex;

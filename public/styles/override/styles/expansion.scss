@@ -2,42 +2,80 @@
 @use "../variables/index.scss" as setting;
 
 .e-expansion {
+  &-panels {
+    .e-expansion-panel {
+      --panel-border-radius: 0px;
+
+
+      &:first-child {
+        border-top-left-radius: var(--e-border-radius-root);
+        border-top-right-radius: var(--e-border-radius-root);
+      }
+
+      &:last-child {
+        border-bottom-left-radius: var(--e-border-radius-root);
+        border-bottom-right-radius: var(--e-border-radius-root);
+      }
+
+      &--opened {
+        --panel-border-radius: var(--e-border-radius-root);
+
+        &:not(:first-child),
+        +.e-expansion-panel {
+          --panel-space-base: var(--e-space-base);
+        }
+      }
+    }
+
+    &--accordion {
+      .e-expansion-panel {
+        --panel-space-base: 0;
+
+        &--opened {
+          --panel-border-radius: 0;
+
+          &:not(:first-child),
+          +.e-expansion-panel {
+            --panel-space-base: 0;
+          }
+        }
+      }
+    }
+  }
 
   &-panel {
-    --panel-border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
-
-    --panel-background-color: var(--e-color-surface-1, #{map.get(setting.$colors-light, "surface-1")});
+    --panel-border-radius: var(--e-border-radius-root);
+    --panel-space-base: 0px;
+    --panel-background-color: var(--e-color-surface-1);
     --panel-color: var(--e-contrast-surface-1);
 
+    border-top: var(--e-border-width) solid var(--e-color-border, 0, 0, 0);
     background-color: var(--panel-background-color);
     color: var(--panel-color);
+    margin-top: var(--panel-space-base);
+    border-radius: var(--panel-border-radius);
 
     &--disabled {
-      --panel-background-color: var(--e-color-disabled, #{map.get(setting.$colors-light, "disabled")});
+      --panel-background-color: var(--e-color-disabled);
       --panel-color: var(--e-contrast-disabled, white);
     }
 
     &--opened {
-      --e-expansion-header-height: var(--e-expansion-header-height-opened, #{setting.$expansion-header-height-opened});
-
-      &not:first-child,
-      +.e-expansion-panel {
-        margin-top: var(--e-space-base, #{setting.$space-base});
-      }
+      --e-expansion-header-height: var(--e-expansion-header-height-opened);
     }
 
     &__header {
       &-actions {
         >* {
-          height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
+          height: var(--e-expansion-header-height);
         }
       }
 
       &-button {
         color: var(--panel-color);
         background-color: var(--panel-background-color);
-        font-size: var(--e-expansion-header-font-size, #{setting.$expansion-header-font-size});
-        padding: 0px calc(var(--e-space-base, #{setting.$space-base}) * 3);
+        font-size: var(--e-expansion-header-font-size);
+        padding: 0px calc(var(--e-space-base) * 3);
 
         @each $key, $value in setting.$btn-states {
           &:#{$key}:before {
@@ -46,14 +84,14 @@
         }
 
         &-content {
-          height: var(--e-expansion-header-height, #{setting.$expansion-header-height});
+          height: var(--e-expansion-header-height);
         }
       }
     }
 
     &__body-content-wrapper {
-        padding: var(--e-space-base, #{setting.$space-base}) calc(var(--e-space-base, #{setting.$space-base}) * 3) calc(var(--e-space-base, #{setting.$space-base}) * 2) ;
-      
+      padding: var(--e-space-base) calc(var(--e-space-base) * 3) calc(var(--e-space-base) * 2);
+
     }
 
   }

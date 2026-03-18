@@ -10,8 +10,18 @@
     <section class="block">
       <h2>Expansion</h2>
       <div class="row  my-4">
-        <EExpansionPanels  accordion>
+        <EExpansionPanels accordion>
           <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" color="primary">
+            <div class="secondary--text">
+              <code> content {{ i }} </code>
+            </div>
+          </EExpansionPanel>
+        </EExpansionPanels>
+      </div>
+      <div>{{expansionModel}}</div>
+      <div class="row  my-4">
+        <EExpansionPanels v-model="expansionModel">
+          <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" color="primary" :value="i">
             <div class="secondary--text">
               <code> content {{ i }} </code>
             </div>
@@ -250,6 +260,7 @@ import EExpansionPanels from "../../src/components/expansion/panels.vue";
 import iconFactory from "../../src/utils/icons";
 
 const theme = ref("light");
+const expansionModel = ref([]);
 const dialogDefault = ref(false);
 const dialogFluid = ref(false);
 const dialogPersistent = ref(false);

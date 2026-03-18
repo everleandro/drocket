@@ -22,21 +22,13 @@ $colors-light: map.merge(("primary": #42b883,
       "warning": #f39c12,
       "success": #27ae60,
       "info": #3498db,
-      "blue": #00d3ee,
-      "purple": #af2cc5,
       "input": #4f636b,
-      "grey": #91a0a8,
       "disabled": rgba(0, 0, 0, 0.38),
-      "white": white,
-      "black": black,
       "surface-0": #f4f6f8,
       "surface-1": #ffffff,
       "surface-2": #f8fafc,
       "surface-3": #eef2f7,
-      "red": #e74c3c,
-      "outline": #c0c0c0,
-      "schedule-bg": white,
-      "schedule-border": rgb(218, 220, 224),
+      "border": rgba(0,0,0,.12)
     ),
     ()) !default;
 
@@ -48,21 +40,13 @@ $colors-dark: map.merge(("primary": #58d78d,
       "warning": #f8b739,
       "success": #52c77a,
       "info": #5dade2,
-      "blue": #26c6da,
-      "purple": #ce93d8,
       "input": #90caf9,
-      "grey": #78909c,
       "disabled": rgba(255, 255, 255, 0.38),
-      "white": #121212,
-      "black": #fafafa,
       "surface-0": #141414,
       "surface-1": #1e1e1e,
       "surface-2": #262626,
       "surface-3": #2f2f2f,
-      "red": #f58a8a,
-      "outline": #4a4a4a,
-      "schedule-bg": #1e1e1e,
-      "schedule-border": #424242,
+      "border":  rgba(255,255,255,.12)
     ),
     ()) !default;
 
@@ -73,21 +57,12 @@ $contrast-colors-light: map.merge(("primary": white,
       "warning": white,
       "success": white,
       "info": white,
-      "blue": white,
-      "purple": white,
       "input": white,
-      "grey": black,
       "disabled": black,
-      "white": black,
-      "black": white,
       "surface-0": black,
       "surface-1": black,
       "surface-2": black,
       "surface-3": black,
-      "red": white,
-      "outline": black,
-      "schedule-bg": black,
-      "schedule-border": black,
     ),
     ()) !default;
 
@@ -98,21 +73,12 @@ $contrast-colors-dark: map.merge(("primary": white,
       "warning": white,
       "success": white,
       "info": white,
-      "blue": white,
-      "purple": white,
       "input": white,
-      "grey": white,
       "disabled": #fafafa,
-      "white": #fafafa,
-      "black": #121212,
       "surface-0": #fafafa,
       "surface-1": #fafafa,
       "surface-2": #fafafa,
       "surface-3": #fafafa,
-      "red": white,
-      "outline": #fafafa,
-      "schedule-bg": #fafafa,
-      "schedule-border": #fafafa,
     ),
     ()) !default;
 
@@ -290,11 +256,6 @@ $list-item-height: map.merge(("x-small": 2.187rem,
     ),
     ()) !default;
 
-// schedule
-$schedule-border-width: 1px !default;
-$hour-column-width: 65px !default;
-$hour-column-width-xs: calc($hour-column-width - 19px) !default;
-$header-col-height: 65px !default;
 
 // elevation
 $elevation: (
@@ -307,3 +268,12 @@ $elevation: (
 
 // date picker
 $date-picker-border-radius: $border-radius-root !default;
+
+//border
+$border-width: thin !default;
+
+// schedule
+$schedule-border-width: $border-width !default;
+$hour-column-width: 65px !default;
+$hour-column-width-xs: calc($hour-column-width - 19px) !default;
+$header-col-height: 65px !default;

@@ -1,116 +1,176 @@
 <template>
 	<div :class="expansionClass">
 		<div class="e-expansion-panel__header">
-			<button :class="buttonClass" @click="changeValue(!opened)" :aria-expanded="opened"
-				:aria-controls="expansionContentId" :id="expansionHeaderId" :disabled="props.disabled">
+			<button :class="buttonClass" @click="toggle" :aria-expanded="opened" :aria-controls="contentId"
+				:id="headerId" :disabled="props.disabled">
 				<span class="e-expansion-panel__header-button-content">
 					<slot name="header">
 						{{ headerTitle }}
 					</slot>
+
 					<div class="e-expansion-panel__header-button-icon">
-						<EIcon :icon="icon.arrowDown"></EIcon>
+						<EIcon :icon="icon.arrowDown" />
 					</div>
 				</span>
 			</button>
+
 			<div class="e-expansion-panel__header-actions">
-				<slot name="actions"></slot>
+				<slot name="actions" />
 			</div>
 		</div>
+
 		<div class="e-expansion-panel__body">
 			<ETransitionExpand>
-				<div v-show="opened" class="e-expansion-panel__body-content" :role="'region'" :aria-labelledby="expansionHeaderId"
-					:id="expansionContentId">
+				<div v-show="opened" class="e-expansion-panel__body-content" role="region" :aria-labelledby="headerId"
+					:id="contentId">
 					<div class="e-expansion-panel__body-content-wrapper">
-						<slot name="default"></slot>
+						<slot />
 					</div>
 				</div>
 			</ETransitionExpand>
 		</div>
 	</div>
 </template>
+
 <script lang="ts" setup>
+import { computed, inject, ref, useId } from 'vue';
 import icon from '@/utils/icons';
-import { computed, ref, inject } from 'vue';
 import ETransitionExpand from '@/components/transition/expand.vue';
 import EIcon from '@/components/icon/index.vue';
-import { ElevationProps } from '@/types';
+import type { ElevationProps } from '@/types';
+import { PanelsContext } from './panels.vue';
+import {
+	EXPANSION_PANELS_KEY,
+	EXPANSION_PANELS_ELEVATION_KEY,
+} from './keys';
+
+/**
+ * Tipos
+ */
+type PanelValue = string | number;
 
 export interface Props extends ElevationProps {
-	dense?: boolean
-	headerTitle?: string
-	color?: string
-	modelValue?: boolean
-	id?: string
-	disabled?: boolean
+	dense?: boolean;
+	headerTitle?: string;
+	color?: string;
+	modelValue?: boolean;
+	disabled?: boolean;
+	value?: PanelValue;
 }
 
-const localValue = ref(false);
-const panelsElevation = inject<string | undefined>('expansionPanelsElevation', undefined);
-const props = withDefaults(defineProps<Props>(), { modelValue: undefined })
-
-// ID determinístico para accesibilidad
-function sanitizeId(str: string) {
-	return str.replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase();
-}
-const baseId = computed(() => {
-	if (props.id) return sanitizeId(props.id);
-	if (props.headerTitle) return sanitizeId(props.headerTitle);
-	return 'expansion';
+/**
+ * Props / Emits
+ */
+const props = withDefaults(defineProps<Props>(), {
+	modelValue: undefined,
 });
-const expansionHeaderId = computed(() => `${baseId.value}-header`);
-const expansionContentId = computed(() => `${baseId.value}-content`);
-
-// Elevation: usa la prop si está, si no, la de Panels, si no, 'sm'
-const effectiveElevation = computed(() => props.elevation || panelsElevation || 'sm');
 
 const emit = defineEmits<{
-	(e: 'update:modelValue', value: boolean): void
-	(e: 'expand'): void
-	(e: 'collapse'): void
-	(e: 'toggle', value: boolean): void
-}>()
+	(e: 'update:modelValue', value: boolean): void;
+	(e: 'expand'): void;
+	(e: 'collapse'): void;
+	(e: 'toggle', value: boolean): void;
+}>();
 
-const rootClasses = {
-	dense: "e-expansion-panel--dense",
-	opened: "e-expansion-panel--opened",
-};
+/**
+ * Contexto
+ */
+const panelsContext = inject<PanelsContext | null>(EXPANSION_PANELS_KEY, null);
+const panelsElevation = inject<string | undefined>(
+	EXPANSION_PANELS_ELEVATION_KEY,
+	undefined
+);
 
-const opened = computed((): boolean => props.modelValue === undefined ? localValue.value : props.modelValue)
+/**
+ * Estado local (solo si es uncontrolled)
+ */
+const local = ref(false);
 
-const expansionClass = computed(() => {
-	const classes = ['e-expansion-panel']
-	props.dense && classes.push(rootClasses.dense)
-	opened.value && classes.push(rootClasses.opened)
-	props.disabled && classes.push('e-expansion-panel--disabled')
-	if (effectiveElevation.value) {
-		classes.push(`e-elevation--${effectiveElevation.value}`)
+
+const rawId = useId();
+
+const id = computed(() => {
+	return props.value
+		? `expansion-panel-${props.value}`
+		: rawId;
+});
+
+const headerId = `${id.value}-header`;
+const contentId = `${id.value}-content`;
+
+/**
+ * Value del panel
+ */
+const panelValue = computed<PanelValue>(() => {
+	return props.value ?? id.value;
+});
+
+/**
+ * Elevation
+ */
+const elevation = computed(() => {
+	return props.elevation || panelsElevation || 'sm';
+});
+
+/**
+ * Estado abierto (single source)
+ */
+const opened = computed<boolean>(() => {
+	if (panelsContext) {
+		const model = panelsContext.model.value;
+
+		if (panelsContext.isMultiple.value) {
+			return Array.isArray(model) && model.includes(panelValue.value);
+		}
+
+		return model === panelValue.value;
 	}
-	return classes
-})
-const buttonClass = computed(() => {
-	const classes = ['e-expansion-panel__header-button']
-	props.color && classes.push(`${props.color}--text`)
-	return classes
-})
 
-const changeValue = (value: boolean) => {
+	if (props.modelValue !== undefined) {
+		return props.modelValue;
+	}
+
+	return local.value;
+});
+
+/**
+ * Toggle
+ */
+const toggle = () => {
 	if (props.disabled) return;
-	const prev = opened.value;
-	if (prev === value) return;
+
+	const next = !opened.value;
+
+	if (panelsContext) {
+		panelsContext.updateSelected(panelValue.value);
+		return;
+	}
 
 	if (props.modelValue === undefined) {
-		localValue.value = value;
+		local.value = next;
 	} else {
-		emit("update:modelValue", value);
+		emit('update:modelValue', next);
 	}
 
-	emit('toggle', value);
-	if (value) {
-		emit('expand');
-	} else {
-		emit('collapse');
-	}
-}
+	emit('toggle', next);
+	next ? emit('expand') : emit('collapse');
+};
 
+/**
+ * Clases
+ */
+const expansionClass = computed(() => [
+	'e-expansion-panel',
+	props.dense && 'e-expansion-panel--dense',
+	opened.value && 'e-expansion-panel--opened',
+	props.disabled && 'e-expansion-panel--disabled',
+	elevation.value && `e-elevation--${elevation.value}`,
+]);
+
+const buttonClass = computed(() => [
+	'e-expansion-panel__header-button',
+	props.color && `${props.color}--text`,
+]);
 </script>
+
 <style lang="scss" src="./style.scss"></style>
