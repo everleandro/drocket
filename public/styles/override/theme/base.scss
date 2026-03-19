@@ -3,9 +3,13 @@
 
 // Base theme variables (same for both light and dark)
 :root {
+
   // Breakpoints
-  @each $bp-name, $bp-value in setting.$breakpoint {
-    --e-breakpoint-#{$bp-name}: #{$bp-value};
+  @each $bp-name, $bp-value in setting.$grid-breakpoints {
+    --e-grid-breakpoint-#{$bp-name}: #{$bp-value};
+  }
+  @each $bp-name, $bp-value in setting.$grid-gaps {
+    --e-grid-gap#{$bp-name}: #{$bp-value};
   }
 
   // Global
@@ -72,7 +76,12 @@
   --e-expansion-header-height: #{setting.$expansion-header-height};
   --e-expansion-header-height-opened: #{setting.$expansion-header-height-opened};
   --e-expansion-header-font-size: #{setting.$expansion-header-font-size};
-  
+  --e-expansion-panel-gap: #{setting.$expansion-panel-gap};
+  --e-expansion-panel-border-width: #{setting.$expansion-panel-border-width};
+  --e-expansion-panel-border-radius: #{setting.$expansion-panel-border-radius};
+  --e-expansion-panel-background-color: #{setting.$expansion-panel-background-color};
+  --e-expansion-panel-color: #{setting.$expansion-panel-color};
+
   // List
   --e-list-prepend-width: #{setting.$list-prepend-width};
 
@@ -94,5 +103,6 @@
   @each $level-name, $level-value in setting.$elevation {
     --e-elevation-#{$level-name}: #{$level-value};
   }
+
   --e-border-width: #{setting.$border-width};
 }

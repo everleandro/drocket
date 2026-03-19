@@ -71,8 +71,10 @@
     }
 
     &--opened {
-      .e-expansion-panel__header-button-icon i {
-        transform: rotate(180deg);
+      &:not(.e-expansion-panel--disable-icon-rotation) {
+        .e-expansion-panel__header-button-icon i {
+          transform: rotate(180deg);
+        }
       }
     }
   }

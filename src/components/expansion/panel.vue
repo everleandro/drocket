@@ -9,7 +9,7 @@
 					</slot>
 
 					<div class="e-expansion-panel__header-button-icon">
-						<EIcon :icon="icon.arrowDown" />
+						<EIcon :icon="headerButtonIcon" />
 					</div>
 				</span>
 			</button>
@@ -33,8 +33,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, useId } from 'vue';
+import { computed, ComputedRef, inject, ref, useId } from 'vue';
 import icon from '@/utils/icons';
+import { IconPath } from '@/types';
 import ETransitionExpand from '@/components/transition/expand.vue';
 import EIcon from '@/components/icon/index.vue';
 import type { ElevationProps } from '@/types';
@@ -42,6 +43,7 @@ import { PanelsContext } from './panels.vue';
 import {
 	EXPANSION_PANELS_KEY,
 	EXPANSION_PANELS_ELEVATION_KEY,
+	EXPANSION_PANELS_COLOR_KEY,
 } from './keys';
 
 /**
@@ -54,6 +56,10 @@ export interface Props extends ElevationProps {
 	headerTitle?: string;
 	color?: string;
 	modelValue?: boolean;
+	collapsedIcon?: string | IconPath;
+	expandedIcon?: string | IconPath;
+	toggleIcon?: string | IconPath;
+	disableIconRotation?: boolean;
 	disabled?: boolean;
 	value?: PanelValue;
 }
@@ -76,8 +82,12 @@ const emit = defineEmits<{
  * Contexto
  */
 const panelsContext = inject<PanelsContext | null>(EXPANSION_PANELS_KEY, null);
-const panelsElevation = inject<string | undefined>(
+const panelsElevation = inject<ComputedRef<string | undefined> | undefined>(
 	EXPANSION_PANELS_ELEVATION_KEY,
+	undefined
+);
+const panelsColor = inject<ComputedRef<string | undefined> | undefined>(
+	EXPANSION_PANELS_COLOR_KEY,
 	undefined
 );
 
@@ -86,17 +96,21 @@ const panelsElevation = inject<string | undefined>(
  */
 const local = ref(false);
 
+const headerButtonIcon = computed(() => {
+	if (opened.value) return props.expandedIcon ?? props.toggleIcon ?? icon.arrowDown;
+	return props.collapsedIcon ?? props.toggleIcon ?? icon.arrowDown;
+});
 
 const rawId = useId();
 
 const id = computed(() => {
-	return props.value
+	return props.value != null
 		? `expansion-panel-${props.value}`
 		: rawId;
 });
 
-const headerId = `${id.value}-header`;
-const contentId = `${id.value}-content`;
+const headerId = computed(() => `${id.value}-header`);
+const contentId = computed(() => `${id.value}-content`);
 
 /**
  * Value del panel
@@ -109,9 +123,11 @@ const panelValue = computed<PanelValue>(() => {
  * Elevation
  */
 const elevation = computed(() => {
-	return props.elevation || panelsElevation || 'sm';
+	return props.elevation || panelsElevation?.value || 'sm';
 });
-
+const color = computed(() => {
+	return props.color || panelsColor?.value || undefined;
+});
 /**
  * Estado abierto (single source)
  */
@@ -164,12 +180,13 @@ const expansionClass = computed(() => [
 	props.dense && 'e-expansion-panel--dense',
 	opened.value && 'e-expansion-panel--opened',
 	props.disabled && 'e-expansion-panel--disabled',
+	props.disableIconRotation && 'e-expansion-panel--disable-icon-rotation',
 	elevation.value && `e-elevation--${elevation.value}`,
 ]);
 
 const buttonClass = computed(() => [
 	'e-expansion-panel__header-button',
-	props.color && `${props.color}--text`,
+	color.value && `${color.value}--text`,
 ]);
 </script>
 

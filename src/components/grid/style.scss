@@ -1,7 +1,7 @@
 @use '~/public/styles/override/variables/index' as *;
 
 .e-row {
-  margin: -$space-base;
+  margin: var(--space-base);
   display: flex;
   flex-wrap: wrap;
   flex: 1 1 auto;

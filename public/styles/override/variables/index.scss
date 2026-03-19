@@ -2,15 +2,15 @@
 $border-radius-root: 4px !default;
 $root-font-size: 1rem !default;
 $space-base: 8px !default;
-$grid-cols: 24 !default;
 $root-font-family: "Roboto", sans-serif !default;
 
 $icon-close-font-size: 24px !default;
 $icon-class: "icon" !default;
 $icon-prefix: "icon-" !default;
 
-$space-amount: 24 !default;
-$space-step: 4px !default;
+
+//border
+$border-width: thin !default;
 
 $card-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f !default;
 
@@ -28,8 +28,7 @@ $colors-light: map.merge(("primary": #42b883,
       "surface-1": #ffffff,
       "surface-2": #f8fafc,
       "surface-3": #eef2f7,
-      "border": rgba(0,0,0,.12)
-    ),
+      "border": rgba(0, 0, 0, .12)),
     ()) !default;
 
 // colors - dark theme (Material Design 3 + Vue colors - dark variants)
@@ -46,8 +45,7 @@ $colors-dark: map.merge(("primary": #58d78d,
       "surface-1": #1e1e1e,
       "surface-2": #262626,
       "surface-3": #2f2f2f,
-      "border":  rgba(255,255,255,.12)
-    ),
+      "border": rgba(255, 255, 255, .12)),
     ()) !default;
 
 $contrast-colors-light: map.merge(("primary": white,
@@ -82,12 +80,23 @@ $contrast-colors-dark: map.merge(("primary": white,
     ),
     ()) !default;
 
-$breakpoint: (
+//grid
+$grid-breakpoints: (
   "xs": 600px,
   "sm": 960px,
   "md": 1264px,
   "lg": 1904px,
   ) !default;
+
+$grid-gaps: (
+  none: 0,
+  xs: 4px,
+  sm: 8px,
+  md: 16px,
+  lg: 24px,
+  xl: 32px) !default;
+
+$grid-cols: 12 !default;
 
 
 // bar
@@ -232,9 +241,14 @@ $btn-height: map.merge(("x-small": 2.187rem,
 
 
 // expansion
-$expansion-header-height: 3rem !default;
+$expansion-header-height: 2.5rem !default;
 $expansion-header-height-opened: $expansion-header-height * 1.3 !default;
 $expansion-header-font-size: 0.875rem !default;
+$expansion-panel-gap: $space-base * 2 !default;
+$expansion-panel-border-width: $border-width !default;
+$expansion-panel-border-radius: $border-radius-root !default;
+$expansion-panel-background-color: var(--e-color-surface-1) !default;
+$expansion-panel-color: var(--e-contrast-surface-1) !default;
 
 //list
 
@@ -269,8 +283,7 @@ $elevation: (
 // date picker
 $date-picker-border-radius: $border-radius-root !default;
 
-//border
-$border-width: thin !default;
+
 
 // schedule
 $schedule-border-width: $border-width !default;

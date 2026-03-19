@@ -20,10 +20,20 @@
       </div>
       <div>{{expansionModel}}</div>
       <div class="row  my-4">
-        <EExpansionPanels v-model="expansionModel">
-          <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" color="primary" :value="i">
+        <EExpansionPanels v-model="expansionModel" color="secondary">
+          <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" :color="i===1?'primary':''" :value="i">
             <div class="secondary--text">
-              <code> content {{ i }} </code>
+              lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec suscipit auctor dui, at condimentum
+              nisl. Integer ac nisi id erat facilisis efficitur. {{ i }}
+            </div>
+          </EExpansionPanel>
+        </EExpansionPanels>
+      </div>
+      <div class="row  my-4">
+        <EExpansionPanels v-model="expansionModel" color="secondary">
+          <EExpansionPanel header-title="custom color" color="warning"  :toggle-icon="iconFactory.clear">
+             <div class="secondary--text">
+              <code> content with custom icons </code >
             </div>
           </EExpansionPanel>
         </EExpansionPanels>

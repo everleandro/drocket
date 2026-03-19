@@ -6,7 +6,7 @@
   
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { provide, defineProps, defineEmits } from 'vue';
+import { provide } from 'vue';
 import { ListModelProp } from '@/types'
 
 export interface Props {

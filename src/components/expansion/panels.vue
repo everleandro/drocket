@@ -9,6 +9,7 @@ import { computed, provide, ComputedRef, ref } from 'vue';
 import type { ElevationProps } from '@/types'; import {
   EXPANSION_PANELS_KEY,
   EXPANSION_PANELS_ELEVATION_KEY,
+  EXPANSION_PANELS_COLOR_KEY,
 } from './keys';
 
 /**
@@ -20,6 +21,7 @@ type ModelValue = PanelValue | PanelValue[] | undefined;
 export interface PanelsProps extends ElevationProps {
   accordion?: boolean;
   modelValue?: ModelValue;
+  color?: string;
 }
 
 export interface PanelsContext {
@@ -33,6 +35,7 @@ export interface PanelsContext {
  */
 const props = withDefaults(defineProps<PanelsProps>(), {
   elevation: 'sm',
+  color: undefined,
   accordion: false,
 });
 
@@ -78,18 +81,16 @@ const model = computed<ModelValue>({
 const updateSelected = (value: PanelValue) => {
   if (isMultiple.value) {
     const current = Array.isArray(model.value) ? [...model.value] : [];
-    const index = current.indexOf(value);
+    const exists = current.includes(value);
 
-    if (index > -1) {
-      current.splice(index, 1);
-    } else {
-      current.push(value);
-    }
+    model.value = exists
+      ? current.filter(v => v !== value)
+      : [...current, value];
 
-    model.value = current;
-  } else {
-    model.value = model.value === value ? undefined : value;
+    return;
   }
+
+  model.value = model.value === value ? undefined : value;
 };
 
 
@@ -99,7 +100,8 @@ provide(EXPANSION_PANELS_KEY, {
   isMultiple,
 });
 
-provide(EXPANSION_PANELS_ELEVATION_KEY, props.elevation);
+provide(EXPANSION_PANELS_ELEVATION_KEY, computed(() => props.elevation));
+provide(EXPANSION_PANELS_COLOR_KEY, computed(() => props.color));
 
 /**
  * Clases reactivas
@@ -107,5 +109,7 @@ provide(EXPANSION_PANELS_ELEVATION_KEY, props.elevation);
 const panelsClass = computed(() => [
   'e-expansion-panels',
   props.accordion && 'e-expansion-panels--accordion',
+  !props.accordion && 'e-expansion-panels--default',
+  isMultiple.value && 'e-expansion-panels--multiple',
 ]);
 </script>
