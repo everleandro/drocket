@@ -1,0 +1,144 @@
+<template>
+    <main class="playground" :data-theme="theme">
+        <header class="playground-header">
+            <h1>Playground</h1>
+            <button class="theme-toggle" @click="toggleTheme">
+                {{ theme === "light" ? "🌙 Dark" : "☀️ Light" }}
+            </button>
+        </header>
+        <nav class="nav">
+            <router-link to="/">Inicio</router-link>
+            <router-link to="/form">Formulario</router-link>
+        </nav>
+        <router-view />
+    </main>
+</template>
+
+<script setup>
+import { ref, onMounted, watch } from "vue";
+const theme = ref("light");
+
+const toggleTheme = () => {
+    theme.value = theme.value === "light" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", theme.value);
+    localStorage.setItem("playground-theme", theme.value);
+};
+
+onMounted(() => {
+    // Restore saved theme or use system preference
+    const saved = localStorage.getItem("playground-theme");
+    if (saved) {
+        theme.value = saved;
+    } else {
+        const systemDark = window.matchMedia(
+            "(prefers-color-scheme: dark)",
+        ).matches;
+        theme.value = systemDark ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", theme.value);
+});
+</script>
+
+<style scoped>
+.playground {
+    min-height: 100vh;
+    padding: 24px;
+    background: linear-gradient(135deg, #f7f9fb, #eef4ff);
+    transition: background 0.3s ease;
+}
+
+.playground[data-theme="dark"] {
+    background: linear-gradient(135deg, #121212, #1e1e1e);
+}
+
+.playground-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.playground-header h1 {
+    margin: 0;
+    color: #333;
+}
+
+.playground[data-theme="dark"] .playground-header h1 {
+    color: #fafafa;
+}
+
+.theme-toggle {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.playground[data-theme="dark"] .theme-toggle {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #fafafa;
+}
+
+.theme-toggle:hover {
+    opacity: 0.8;
+}
+
+.block {
+    margin-bottom: 24px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    transition:
+        background,
+        box-shadow 0.3s ease;
+}
+
+.playground[data-theme="dark"] .block {
+    background: #2a2a2a;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.block h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+.block h3 {
+    margin: 0 0 12px;
+    color: #4a5568;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.playground[data-theme="dark"] .block h2 {
+    color: #fafafa;
+}
+
+.playground[data-theme="dark"] .block h3 {
+    color: #cbd5e0;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.playground-note {
+    margin: 20px 0 0;
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.playground[data-theme="dark"] .playground-note {
+    color: #e2e8f0;
+}
+</style>

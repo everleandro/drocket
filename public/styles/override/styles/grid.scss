@@ -2,8 +2,27 @@
 @use "../variables/index.scss" as setting;
 
 .e-row {
-  margin: calc(var(--e-space-base, #{setting.$space-base}) * -1);
-  .e-col {
-    @include mixins.grid-generator;
+  display: grid;
+  grid-template-columns: repeat(var(--e-grid-cols, #{setting.$grid-cols}), 1fr);
+
+  @include mixins.grid-gap-responsive;
+
+  gap: var(--e-grid-gap);
+
+  &--dense {
+    grid-auto-flow: dense;
+  }
+
+  &--auto {
+    grid-auto-rows: auto;
+  }
+
+  &--equal {
+    grid-auto-rows: 1fr;
+  }
+
+  &--no-gutters {
+    --e-grid-gap: 0;
   }
 }
+@include mixins.generate-grid-classes;

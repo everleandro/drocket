@@ -1,26 +1,15 @@
 <template>
-    <div :class="gridClass">
+    <div :class="gridColClass">
         <slot name="default"></slot>
     </div>
 </template>
-  
+
 <script lang="ts" setup>
 
-import { useGrid } from "@/composables/grid"
-import { computed } from "vue"
 
-export interface Props {
-    cols?: string | number
-    xs?: string | number
-    sm?: string | number
-    md?: string | number
-    lg?: string | number
-    xl?: string | number
-}
-
-const props = defineProps<Props>()
-const { gridClass } = useGrid()
-const columnClass = computed(() => [...gridClass.value, 'e-col'])
+import { useGridCol } from "@/composables/grid-col"
+import type { ColProps } from "@/types"
+const props = defineProps<ColProps>()
+const { gridColClass } = useGridCol(props);
 
 </script>
-  

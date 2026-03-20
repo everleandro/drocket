@@ -1,7 +1,7 @@
 <template>
 	<div :class="expansionClass">
 		<div class="e-expansion-panel__header">
-			<button :class="buttonClass" @click="toggle" :aria-expanded="opened" :aria-controls="contentId"
+			<button :class="buttonClass" :style="panelButtonHeaderStyle" @click="toggle" :aria-expanded="opened" :aria-controls="contentId"
 				:id="headerId" :disabled="props.disabled">
 				<span class="e-expansion-panel__header-button-content">
 					<slot name="header">
@@ -125,8 +125,21 @@ const panelValue = computed<PanelValue>(() => {
 const elevation = computed(() => {
 	return props.elevation || panelsElevation?.value || 'sm';
 });
+
 const color = computed(() => {
 	return props.color || panelsColor?.value || undefined;
+});
+
+const panelButtonHeaderStyle = computed((): Record<string, string> => {
+  const result: Record<string, string> = {};
+
+
+  // Inject color CSS variables for any color (predefined or custom)
+  if (color.value) {
+    result["--e-expansion-panel-button-color"] = `var(--e-color-${color.value})`;
+  }
+
+  return result;
 });
 /**
  * Estado abierto (single source)
@@ -186,7 +199,6 @@ const expansionClass = computed(() => [
 
 const buttonClass = computed(() => [
 	'e-expansion-panel__header-button',
-	color.value && `${color.value}--text`,
 ]);
 </script>
 

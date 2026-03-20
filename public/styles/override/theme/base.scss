@@ -9,7 +9,7 @@
     --e-grid-breakpoint-#{$bp-name}: #{$bp-value};
   }
   @each $bp-name, $bp-value in setting.$grid-gaps {
-    --e-grid-gap#{$bp-name}: #{$bp-value};
+    --e-grid-gap-#{$bp-name}: #{$bp-value};
   }
 
   // Global
@@ -17,7 +17,6 @@
   --e-root-font-size: #{setting.$root-font-size};
   --e-root-font-family: #{setting.$root-font-family};
   --e-space-base: #{setting.$space-base};
-  --e-space-step: #{setting.$space-step};
   --e-card-shadow: #{setting.$card-shadow};
 
   // Bar
@@ -81,6 +80,8 @@
   --e-expansion-panel-border-radius: #{setting.$expansion-panel-border-radius};
   --e-expansion-panel-background-color: #{setting.$expansion-panel-background-color};
   --e-expansion-panel-color: #{setting.$expansion-panel-color};
+  --e-expansion-panel-button-background-color: #{setting.$expansion-panel-button-background-color};
+  --e-expansion-panel-button-color: #{setting.$expansion-panel-button-color};
 
   // List
   --e-list-prepend-width: #{setting.$list-prepend-width};

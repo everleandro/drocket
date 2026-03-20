@@ -72,8 +72,8 @@
       }
 
       &-button {
-        color: var(--panel-color);
-        background-color: var(--panel-background-color);
+        color: var(--e-expansion-panel-button-color);
+        background-color: var(--e-expansion-panel-button-background-color);
         font-size: var(--e-expansion-header-font-size);
         padding: 0px calc(var(--e-space-base) * 3);
 

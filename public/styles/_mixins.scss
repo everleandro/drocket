@@ -36,237 +36,158 @@
     }
 }
 
-@mixin button-before() {
-    &:before {
+@mixin button-before($bg: currentColor,
+    $opacity: 0,
+    $transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1)) {
+    &::before {
         content: '';
-        background-color: currentColor;
-        border-radius: inherit;
-        bottom: 0;
-        opacity: 0;
-        left: 0;
-        top: 0;
-        right: 0;
-        color: inherit;
-        pointer-events: none;
         position: absolute;
-        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
+        inset: 0; // shorthand de top, right, bottom, left
+
+        background-color: $bg;
+        border-radius: inherit;
+
+        opacity: $opacity;
+        pointer-events: none;
+
+        transition: $transition;
     }
 }
 
-@mixin button-reset() {
+@mixin button-reset($padding-x: calc(var(--e-space-base) * 4),
+    $min-width: 4em) {
     border: none;
-    align-items: center;
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex: 0 0 auto;
-    justify-content: center;    
-    outline: 0;
     position: relative;
+
     cursor: pointer;
-    padding: 0 calc(var(--e-space-base ) * 2);
-    min-width: 4em;
+    outline: 0;
     text-decoration: none;
-    transition-property: box-shadow,
-        transform,
-        opacity,
-        background-color;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+    padding: 0 $padding-x;
+    min-width: $min-width;
+
     vertical-align: middle;
     white-space: nowrap;
+
+    transition-property: box-shadow, opacity, background-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @mixin force-sizes($value,
-    $properties: min-width max-width min-height max-height) {
+    $properties: (min-width, max-width, min-height, max-height)) {
     @each $property in $properties {
         #{$property}: $value;
     }
 }
 
+@mixin force-square($size) {
+    @include force-sizes($size, (width, height));
+}
+
 @mixin e-field-outlined() {
-    &.e-field--is-disabled {
-        .e-field__slot {
-            border-style: dashed;
-        }
-    }
+    $active-states: (
+        ".e-field--is-hovered",
+        ".e-field--is-focused",
+        ".e-field--retain-color",
+        ".e-field--has-error"
+    );
 
-    &.e-field--is-hovered,
-    &.e-field--is-hovered,
-    &.e-field--is-focused,
-    &.e-field--retain-color,
-    &.e-field--has-error {
-        z-index: 1;
-
-        .e-field__slot {
-            border-color: currentColor;
-        }
-    }
-
+&.e-field--is-disabled {
     .e-field__slot {
-        border-style: solid;
-        border-width: 1px;
-        border-color: var(--input-border);
+        border-style: dashed;
     }
+}
+
+.e-field__slot {
+    border: 1px solid var(--input-border);
+}
 }
 
 
 //grid
+@mixin media-up($key) {
+    $value: map-get($grid-breakpoints, $key);
+
+    @if $value !=0 {
+        @media (min-width: $value) {
+            @content;
+        }
+    }
+
+    @else {
+        @content;
+    }
+}
+
 @mixin xs {
-    @media (max-width: #{map.get($breakpoint,'xs')}) {
+    @media (max-width: #{map.get($grid-breakpoints,'sm') -1px}) {
         @content;
     }
 }
 
 @mixin sm {
-    @media (min-width: #{map.get($breakpoint,'xs') + 1px}) and (max-width: #{map.get($breakpoint,'sm')}) {
+    @media (min-width: #{map.get($grid-breakpoints,'sm')}) and (max-width: #{map.get($grid-breakpoints,'md') -1px}) {
         @content;
     }
 }
 
 @mixin md {
-    @media (min-width: #{map.get($breakpoint,'sm') + 1px}) and (max-width: #{map.get($breakpoint,'md')}) {
+    @media (min-width: #{map.get($grid-breakpoints,'md')}) and (max-width: #{map.get($grid-breakpoints,'lg') -1px}) {
         @content;
     }
 }
 
 @mixin lg {
-    @media (min-width: #{map.get($breakpoint,'md') + 1px}) and (max-width: #{map.get($breakpoint,'lg')}) {
+    @media (min-width: #{map.get($grid-breakpoints,'lg')}) and (max-width: #{map.get($grid-breakpoints,'xl') -1px}) {
         @content;
     }
 }
 
-@mixin _xl {
-    @media (min-width: #{map.get($breakpoint,'lg') + 1px}) {
+@mixin xl {
+    @media (min-width: #{map.get($grid-breakpoints,'xl')}) {
         @content;
     }
 }
 
-@mixin from_sm {
-    @media only screen and (min-width: #{map.get($breakpoint,'xs') + 1px}) {
-        @content;
+@mixin generate-grid-classes {
+
+    .e-col {
+        grid-column: span var(--e-grid-cols, #{$grid-cols});
     }
-}
 
-@mixin from_md {
-    @media only screen and (min-width: #{map.get($breakpoint,'sm') + 1px}) {
-        @content;
-    }
-}
-
-@mixin from_lg {
-    @media only screen and (min-width: #{map.get($breakpoint,'md') + 1px}) {
-        @content;
-    }
-}
-
-@mixin from_xl {
-    @media only screen and (min-width: #{map.get($breakpoint,'lg') + 1px}) {
-        @content;
-    }
-}
-
-@function col-percent($i, $extra_px) {
-    $base: calc(#{$i} / #{$grid-cols} * 100%);
-    $result: calc(#{$base} + #{$extra_px});
-    @return $result;
-}
-
-@mixin grid-generator-by-breakpoint($breakpoint_key, $extra_px: 0px) {
+    // ✅ 1. BASE FIRST
     @for $i from 1 through $grid-cols {
-        $_col_percent: col-percent($i, $extra_px);
+        .e-col-#{$i} {
+            grid-column: span #{$i};
+        }
+    }
 
-        &#{$breakpoint_key}#{$i} {
-            @if ($breakpoint_key =="-") {
-                flex: 0 0 $_col_percent;
-                max-width: $_col_percent;
-            }
-
-            @else if ($breakpoint_key =="-sm-") {
-                @include from_sm {
-                    flex: 0 0 $_col_percent;
-                    max-width: $_col_percent;
+    // ✅ 2. RESPONSIVE AFTER (para que tengan más especificidad que la clase base)
+    @each $breakpoint, $value in $grid-breakpoints {
+        @include media-up($breakpoint) {
+            @for $i from 1 through $grid-cols {
+                .e-col-#{$breakpoint}-#{$i} {
+                    grid-column: span #{$i};
                 }
             }
 
-            @else if ($breakpoint_key =="-md-") {
-                @include from_md {
-                    flex: 0 0 $_col_percent;
-                    max-width: $_col_percent;
-                }
-            }
-
-            @else if ($breakpoint_key =="-lg-") {
-                @include from_lg {
-                    flex: 0 0 $_col_percent;
-                    max-width: $_col_percent;
-                }
-            }
-
-            @else if ($breakpoint_key =="-xl-") {
-                @include from_xl {
-                    flex: 0 0 $_col_percent;
-                    max-width: $_col_percent;
-                }
+            .e-col-#{$breakpoint}-auto {
+                grid-column: auto;
             }
         }
     }
 }
 
-@mixin grid-generator-dynamic-property($breakpoint_key, $suffix, $property, $value) {
-
-    &#{$breakpoint_key}#{$suffix} {
-        @if ($breakpoint_key =="-sm-") {
-            @include from_sm {
-                flex-basis: 0;
-                flex-grow: 1;
-                max-width: 100%;
-                #{$property}: $value;
-            }
-        }
-
-        @else if ($breakpoint_key =="-md-") {
-            @include from_md {
-                flex-basis: 0;
-                flex-grow: 1;
-                max-width: 100%;
-                #{$property}: $value;
-            }
-        }
-
-        @else if ($breakpoint_key =="-lg-") {
-            @include from_lg {
-                flex-basis: 0;
-                flex-grow: 1;
-                max-width: 100%;
-                #{$property}: $value;
-            }
-        }
-
-        @else if ($breakpoint_key =="-xl-") {
-            @include from_xl {
-                flex-basis: 0;
-                flex-grow: 1;
-                max-width: 100%;
-                #{$property}: $value;
+@mixin grid-gap-responsive {
+    @each $breakpoint, $value in $grid-breakpoints {
+        @include media-up($breakpoint) {
+            & {
+                --e-grid-gap: var(--e-grid-gap-#{$breakpoint});
             }
         }
     }
 }
-
-$breakpoint_keys: "-", "-sm-", "-md-", "-lg-", "-xl-";
-
-@mixin grid-generator($extra_px: 0px) {
-    padding: $space-base;
-    flex-basis: 0;
-    flex-grow: 1;
-    max-width: 100%;
-
-    @each $key in $breakpoint_keys {
-        @include grid-generator-by-breakpoint($key, $extra_px);
-
-        @if($key !='-') {
-            @include grid-generator-dynamic-property($key, 'auto', 'max-width', 100%);
-            @include grid-generator-dynamic-property($key, 'min-content', 'flex-grow', 0);
-        }
-    }
-}
-
-//end

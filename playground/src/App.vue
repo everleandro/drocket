@@ -6,7 +6,48 @@
         {{ theme === "light" ? "🌙 Dark" : "☀️ Light" }}
       </button>
     </header>
+    <section class="block">
+      <h2>Grid</h2>
 
+      <!-- Grid más complejo -->
+      <ERow dense>
+        <ECol :cols="12" :sm="6" :lg="3">
+          <ECard class="e-pa-3">1</ECard>
+        </ECol>
+        <ECol :cols="12" :sm="6" :lg="3">
+          <ECard class="e-mt-3">2</ECard>
+        </ECol>
+        <ECol :cols="12" :sm="6" :lg="3">
+          <ECard>3</ECard>
+        </ECol>
+        <ECol :cols="12" :sm="6" :lg="3">
+          <ECard>4</ECard>
+        </ECol>
+      </ERow>
+
+      <!-- Sin gutters -->
+      <ERow noGutters>
+        <ECol :cols="6">
+          <ECard>No gap</ECard>
+        </ECol>
+        <ECol :cols="6">
+          <ECard>No gap</ECard>
+        </ECol>
+      </ERow>
+
+      <!-- Equal height -->
+      <ERow equal>
+        <ECol :cols="4">
+          <ECard>Tall</ECard>
+        </ECol>
+        <ECol :cols="4">
+          <ECard>Normal</ECard>
+        </ECol>
+        <ECol :cols="4">
+          <div class="box">Normal</div>
+        </ECol>
+      </ERow>
+    </section>
     <section class="block">
       <h2>Expansion</h2>
       <div class="row  my-4">
@@ -18,10 +59,11 @@
           </EExpansionPanel>
         </EExpansionPanels>
       </div>
-      <div>{{expansionModel}}</div>
+      <div>{{ expansionModel }}</div>
       <div class="row  my-4">
         <EExpansionPanels v-model="expansionModel" color="secondary">
-          <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" :color="i===1?'primary':''" :value="i">
+          <EExpansionPanel v-for="i in 3" :key="i" :header-title="'accordion: ' + i" :color="i === 1 ? 'primary' : ''"
+            :value="i">
             <div class="secondary--text">
               lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec suscipit auctor dui, at condimentum
               nisl. Integer ac nisi id erat facilisis efficitur. {{ i }}
@@ -31,9 +73,9 @@
       </div>
       <div class="row  my-4">
         <EExpansionPanels v-model="expansionModel" color="secondary">
-          <EExpansionPanel header-title="custom color" color="warning"  :toggle-icon="iconFactory.clear">
-             <div class="secondary--text">
-              <code> content with custom icons </code >
+          <EExpansionPanel header-title="custom color" color="warning" :toggle-icon="iconFactory.clear">
+            <div class="secondary--text">
+              <code> content with custom icons </code>
             </div>
           </EExpansionPanel>
         </EExpansionPanels>
@@ -264,7 +306,8 @@ import EDatePicker from "../../src/components/date-picker/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
 import EDialog from "../../src/components/dialog/index.vue";
 import ECard from "../../src/components/card/index.vue";
-import EDivider from "../../src/components/layout/divider.vue";
+import ERow from "../../src/components/grid/row.vue";
+import ECol from "../../src/components/grid/col.vue";
 import EExpansionPanel from "../../src/components/expansion/panel.vue";
 import EExpansionPanels from "../../src/components/expansion/panels.vue";
 import iconFactory from "../../src/utils/icons";

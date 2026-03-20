@@ -2,21 +2,7 @@
 @use "../variables/index.scss" as setting;
 
 .e-form {
-  margin: calc(var(--e-space-base, #{setting.$space-base}) * -1);
-
-  &>.e-field {
-    @include mixins.grid-generator();
-  }
-
-
-
-  &.no-gutters>.e-field {
-    @include mixins.grid-generator(1px);
-  }
-
-  &.no-gutters>.e-field {
-    padding: 0;
-    margin: -0.5px;
-    max-width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-space-md, #{setting.$space-scale * 2}px);
 }

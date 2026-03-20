@@ -20,6 +20,7 @@ export type {
 } from "./date-picker";
 
 export { datePickerViewType } from "./date-picker";
+export type { ColProps, Breakpoint, GapValue, RowProps } from "./grid";
 
 export type {
   ScheduleSpace,

@@ -1,7 +1,7 @@
 @use "sass:map";
 $border-radius-root: 4px !default;
 $root-font-size: 1rem !default;
-$space-base: 8px !default;
+$space-base: 4px !default;
 $root-font-family: "Roboto", sans-serif !default;
 
 $icon-close-font-size: 24px !default;
@@ -82,11 +82,16 @@ $contrast-colors-dark: map.merge(("primary": white,
 
 //grid
 $grid-breakpoints: (
-  "xs": 600px,
-  "sm": 960px,
-  "md": 1264px,
-  "lg": 1904px,
-  ) !default;
+  xs: 0,
+  sm: 600px,
+  md: 960px,
+  lg: 1264px,
+  xl: 1904px
+) !default;
+
+$space-scale: 10 !default;
+
+$grid-cols: 12 !default;
 
 $grid-gaps: (
   none: 0,
@@ -94,9 +99,8 @@ $grid-gaps: (
   sm: 8px,
   md: 16px,
   lg: 24px,
-  xl: 32px) !default;
-
-$grid-cols: 12 !default;
+  xl: 32px
+) !default;
 
 
 // bar
@@ -247,7 +251,9 @@ $expansion-header-font-size: 0.875rem !default;
 $expansion-panel-gap: $space-base * 2 !default;
 $expansion-panel-border-width: $border-width !default;
 $expansion-panel-border-radius: $border-radius-root !default;
+$expansion-panel-button-background-color: var(--e-color-surface-1) !default;
 $expansion-panel-background-color: var(--e-color-surface-1) !default;
+$expansion-panel-button-color: var(--e-contrast-surface-1) !default;
 $expansion-panel-color: var(--e-contrast-surface-1) !default;
 
 //list

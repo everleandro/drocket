@@ -28,7 +28,7 @@
     }
 
     &:not(:last-child):not(:only-child) {
-      margin-bottom: var(--e-space-step, #{setting.$space-step});
+      margin-bottom: var(--e-space-base, #{setting.$space-base});
     }
   }
 
@@ -51,13 +51,13 @@
 
 .e-drawer {
   .e-list {
-    padding-inline: calc(var(--e-space-step, #{setting.$space-step}) * 2);
+    padding-inline: calc(var(--e-space-base, #{setting.$space-base}) * 2);
 
     &-item {
       border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
 
       &:not(:only-child):not(:last-child) {
-        margin-bottom: var(--e-space-step, #{setting.$space-step});
+        margin-bottom: var(--e-space-base, #{setting.$space-base});
       }
     }
   }

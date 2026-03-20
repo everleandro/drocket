@@ -1,21 +1,14 @@
 <template>
-  <div :class="gridClass">
+  <div :class="gridRowClass" :style="gridRowStyle">
     <slot name="default"></slot>
   </div>
 </template>
-  
-<script lang="ts" setup>
-import { computed } from 'vue';
 
-export interface Props {
-  noGutters?: boolean
-}
-const props = defineProps<Props>()
-const gridClass = computed(() => {
-  const result: Array<string> = ['e-row']
-  props.noGutters && result.push('no-gutters')
-  return result
-})
+<script lang="ts" setup>
+import { useGridRow } from "@/composables/grid-row"
+import type { RowProps } from "@/types"
+const props = defineProps<RowProps>()
+const { gridRowClass, gridRowStyle } = useGridRow(props);
+
 </script>
 <style lang="scss" src="./style.scss"></style>
-  
