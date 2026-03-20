@@ -1,5 +1,5 @@
 import { ComputedRef } from "vue";
-export declare interface Field {
+export declare interface EField {
   setConfiguration: (value: Record<string, string>) => void;
   uid: number;
   dirty: boolean;
@@ -8,31 +8,31 @@ export declare interface Field {
   reset: () => void;
 }
 
-export interface Form {
-  bindField: (component: Partial<Field>) => void;
+export interface EForm {
+  bindField: (component: Partial<EField>) => void;
   unbindField: (uid: number) => void;
   validate: () => Promise<boolean>;
   reset: () => void;
-  updateField: (component: Partial<Field>) => void;
+  updateField: (component: Partial<EField>) => void;
 }
 
-export interface Radio {
+export interface ERadio {
   uid: number;
-  modelValue: radioType;
+  modelValue: ERadioType;
   setConfiguration: (value: Record<string, string>) => void;
 }
 
-export interface RadioGroup {
-  bindRadio: (component: Partial<Radio>) => void;
+export interface ERadioGroup {
+  bindRadio: (component: Partial<ERadio>) => void;
   unbindRadio: (uid: number) => void;
-  changeModelValue: (value: radioType) => void;
+  changeModelValue: (value: ERadioType) => void;
   handleFocus: (value?: FocusEvent) => void;
   handleBlur: (value?: Event) => void;
-  modelValue: ComputedRef<radioType>;
+  modelValue: ComputedRef<ERadioType>;
 }
 
-export declare type radioType = string | number | undefined | null;
-export declare type classKey =
+export declare type ERadioType = string | number | undefined | null;
+export declare type FieldClassKey =
   | "disabled"
   | "readonly"
   | "hasError"

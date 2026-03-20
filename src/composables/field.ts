@@ -1,5 +1,5 @@
 import { fieldClasses } from "@/components/form/constants";
-import type { classKey, Form } from "@/types";
+import type { FieldClassKey, EForm } from "@/types";
 import {
   ref,
   reactive,
@@ -9,6 +9,7 @@ import {
   computed,
   ComputedRef,
   watch,
+  onUnmounted,
 } from "vue";
 export function useField(useFormInjection = true) {
   const props = ref(getCurrentInstance()?.props);
@@ -29,7 +30,7 @@ export function useField(useFormInjection = true) {
     const keys = Object.keys(fieldClasses);
     const result = keys
       .filter((key) => !!props?.value?.[key])
-      .map((key) => fieldClasses[key as classKey]);
+      .map((key) => fieldClasses[key as FieldClassKey]);
     result.push(textColor.value);
     hasError.value && result.push(fieldClasses.hasError);
     hovered.value && result.push(fieldClasses.hovered);
@@ -61,11 +62,11 @@ export function useField(useFormInjection = true) {
     const rules = (props.value?.rules || []) as Array<
       (val: any) => string | true
     >;
-    const _function = rules.find(
-      (rule: (param: any) => string | true) =>
-        rule(props.value?.modelValue) !== true
-    );
-    return _function?.(props.value?.modelValue) || "";
+    for (const rule of rules) {
+      const result = rule(props.value?.modelValue);
+      if (result !== true) return result;
+    }
+    return "";
   });
 
   const hasError: ComputedRef<boolean> = computed((): boolean => {
@@ -109,7 +110,7 @@ export function useField(useFormInjection = true) {
 
   watch(
     () => props.value?.modelValue,
-    () => (dirty.value = true)
+    () => (dirty.value = true),
   );
 
   const handleClickPrependIcon = (event: FocusEvent): void => {
@@ -146,7 +147,7 @@ export function useField(useFormInjection = true) {
     configuration.retainColor = Boolean(value.retainColor);
   };
 
-  const form = inject<Partial<Form> | undefined>("EForm", undefined);
+  const form = inject<Partial<EForm> | undefined>("EForm", undefined);
   const uid = getCurrentInstance()?.uid;
 
   const validate = () => {
@@ -163,6 +164,10 @@ export function useField(useFormInjection = true) {
     mounted.value = true;
     if (useFormInjection)
       form?.bindField?.({ validate, reset, uid: uid || -1, setConfiguration });
+  });
+
+  onUnmounted(() => {
+    if (useFormInjection) form?.unbindField?.(uid || -1);
   });
 
   return {

@@ -50,7 +50,7 @@
 import { IconPath } from '@/types';
 import icon from '@/utils/icons';
 
-import { useGrid } from "@/composables/grid"
+import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
 
 import EButton from '@/components/button/index.vue'
@@ -84,8 +84,8 @@ const { fieldClass, inputStyle, id, showClearable, showDetails, textColor, mount
     handleClickAppendIcon, handleFocus, setInputFocus } = useField()
 
 
-const { gridClass } = useGrid('e-field')
-const textFieldClass = computed(() => [...fieldClass.value, 'e-text-field', ...gridClass.value])
+const { gridColClass } = useGridCol(props);
+const textFieldClass = computed(() => [...fieldClass.value, 'e-text-field', ...gridColClass.value])
 
 const changeValue = (value: any, isEvent = false) => {
     const valueResult = isEvent ? value.target.value : value

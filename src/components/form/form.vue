@@ -11,7 +11,7 @@ export default defineComponent({
 </script>
   
 <script lang="ts" setup>
-import { Field } from '@/types';
+import type { EField } from '@/types';
 
 export interface Props {
     modelValue?: boolean | undefined
@@ -35,14 +35,13 @@ const emit = defineEmits<{
 }>()
 
 const state = reactive({
-    fieldsChild: new Array<Partial<Field>>(),
+    fieldsChild: new Array<Partial<EField>>(),
     fieldsChildError: new Array<boolean>(),
     localValue: true
 });
 
 const formClass = computed(() => {
     const result: Array<string> = ['e-form']
-    props.noGutters && result.push('no-gutters')
     props.outlined && result.push('e-form--outlined')
     props.disabled && result.push('e-form--disabled')
     props.readonly && result.push('e-form--readonly')
@@ -62,7 +61,7 @@ const submit = (event: Event): void => {
     emit('submit', event as SubmitEvent)
 }
 
-const bindField = (component: Field) => {
+const bindField = (component: Partial<EField>) => {
     state.fieldsChild.push(component);
     state.fieldsChildError.push(false);
 }
@@ -75,7 +74,7 @@ const unbindField = (uid: number) => {
     }
 }
 
-const updateField = (component: Field) => {
+const updateField = (component: Partial<EField>) => {
     const index = state.fieldsChild.findIndex((c) => c.uid === component.uid);
     if (index > -1) {
         state.fieldsChildError.splice(index, 1, component.hasError)

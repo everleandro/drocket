@@ -1,27 +1,22 @@
 <template>
-  <main class="playground" :data-theme="theme">
-    <header class="playground-header">
-      <h1>Playground</h1>
-      <button class="theme-toggle" @click="toggleTheme">
-        {{ theme === "light" ? "🌙 Dark" : "☀️ Light" }}
-      </button>
-    </header>
+  <div>
+  
     <section class="block">
       <h2>Grid</h2>
 
       <!-- Grid más complejo -->
       <ERow dense>
         <ECol :cols="12" :sm="6" :lg="3">
-          <ECard class="e-pa-3">1</ECard>
+          <ECard class="e-pa-3" elevation="xs">1</ECard>
         </ECol>
         <ECol :cols="12" :sm="6" :lg="3">
-          <ECard class="e-mt-3">2</ECard>
+          <ECard class="e-mt-3" elevation="sm">2</ECard>
         </ECol>
         <ECol :cols="12" :sm="6" :lg="3">
-          <ECard>3</ECard>
+          <ECard elevation="md">3</ECard>
         </ECol>
         <ECol :cols="12" :sm="6" :lg="3">
-          <ECard>4</ECard>
+          <ECard elevation="lg">4</ECard>
         </ECol>
       </ERow>
 
@@ -294,7 +289,7 @@
       <p class="playground-note">{{ chipMessage }}</p>
     </section>
 
-  </main>
+  </div>
 </template>
 
 <script setup>
