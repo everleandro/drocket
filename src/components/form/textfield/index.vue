@@ -1,5 +1,5 @@
 <template>
-  <div :class="textFieldClass">
+  <div :class="textFieldClass" :style="fieldStyle">
     <div class="e-field__control">
       <div
         class="e-field__slot"
@@ -20,7 +20,6 @@
           <label
             :for="id"
             :class="[
-              textColor,
               'e-label',
               {
                 'e-label--floating': isLabelFloating,
@@ -33,7 +32,7 @@
           </label>
           <div
             v-if="prefix"
-            :class="[textColor, 'e-field__prefix']"
+            class="e-field__prefix"
             aria-hidden="true"
           >
             {{ prefix }}
@@ -72,7 +71,7 @@
 
           <div
             v-if="suffix"
-            :class="[textColor, 'e-field__suffix']"
+            class="e-field__suffix"
             aria-hidden="true"
           >
             {{ suffix }}
@@ -107,7 +106,6 @@
         :hasError="hasError"
         :modelValue="modelValue"
         :limit="limit"
-        :textColor="textColor"
         :id="detailsId"
         :showDetails="showDetails"
       >
@@ -159,6 +157,7 @@ const input = ref<HTMLInputElement | null>(null);
 const {
   fieldClass,
   inputStyle,
+  fieldStyle,
   id,
   focus,
   blur,
@@ -181,7 +180,7 @@ const {
 
 const { gridColClass } = useGridCol(props);
 const textFieldClass = computed(() => [
-  ...fieldClass.value,
+  ...fieldClass.value.filter((className) => className !== textColor.value),
   "e-text-field",
   ...gridColClass.value,
 ]);

@@ -43,6 +43,7 @@ import {
 import { ripple } from "@/directives";
 import EIcon from "@/components/icon/index.vue";
 import { getBooleanClasses, normalizeDimension } from "@/composables/utils";
+import { getColorContrastCssValue, getColorCssValue } from "@/utils/style";
 
 import { reactive, useAttrs, computed, useSlots } from "vue";
 const vRipple = { ...ripple };
@@ -255,8 +256,16 @@ const buttonStyle = computed((): Record<string, string> => {
   // Inject color CSS variables for any color (predefined or custom)
   const currentColor = getCurrentColor();
   if (currentColor) {
-    result["--btn-bg"] = `var(--e-color-${currentColor})`;
-    result["--btn-text"] = `var(--e-contrast-${currentColor}, white)`;
+    const backgroundColor = getColorCssValue(currentColor);
+    const textColor = getColorContrastCssValue(currentColor);
+
+    if (backgroundColor) {
+      result["--btn-bg"] = backgroundColor;
+    }
+
+    if (textColor) {
+      result["--btn-text"] = textColor;
+    }
   }
 
   return result;

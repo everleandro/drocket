@@ -31,7 +31,6 @@
             label-behavior="floating"
             v-model="formValid"
             class="demo-form"
-            color="secondary"
             label-min-width="136"
             dense
             @submit="handleSubmit"

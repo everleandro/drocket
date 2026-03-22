@@ -2,6 +2,7 @@ export * from "./composables";
 export * from "./directives";
 export * from "./components";
 export * from "./types";
+export * from "./utils/style";
 export { default as DateBuilder } from "./utils/date";
 import "@/assets/sass/main.scss";
 

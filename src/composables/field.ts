@@ -1,7 +1,11 @@
 import * as Vue from "vue";
 import { FORM_KEY } from "@/components/form/constants";
 import { fieldClasses } from "@/components/form/constants";
-import { normalizeCssSize } from "@/utils/style";
+import {
+  getColorContrastCssValue,
+  getColorCssValue,
+  normalizeCssSize,
+} from "@/utils/style";
 import type {
   FieldClassKey,
   FieldConfiguration,
@@ -24,7 +28,7 @@ type FieldEmit = (event: string, ...args: Array<unknown>) => void;
 
 type FieldConfigurationState = {
   labelStyle: Record<string, string>;
-  color: string;
+  color?: string;
   retainColor: boolean;
   dense: boolean;
   disabled: boolean;
@@ -75,7 +79,6 @@ export function useField<TValue = unknown>(useFormInjection = true) {
   const hovered = ref(false);
   const configuration = reactive<FieldConfigurationState>({
     labelStyle: {},
-    color: "primary",
     retainColor: false,
     dense: false,
     disabled: false,
@@ -115,11 +118,7 @@ export function useField<TValue = unknown>(useFormInjection = true) {
       return target as FocusableElement;
     }
 
-    if (
-      typeof target === "object" &&
-      target !== null &&
-      "$el" in target
-    ) {
+    if (typeof target === "object" && target !== null && "$el" in target) {
       return resolveFocusableElement((target as { $el?: unknown }).$el);
     }
 
@@ -248,12 +247,12 @@ export function useField<TValue = unknown>(useFormInjection = true) {
         key === "dense"
           ? isDense.value
           : key === "disabled"
-          ? isDisabled.value
-          : key === "readonly"
-            ? isReadonly.value
-            : key === "outlined"
-              ? isOutlined.value
-              : Boolean(props[key]);
+            ? isDisabled.value
+            : key === "readonly"
+              ? isReadonly.value
+              : key === "outlined"
+                ? isOutlined.value
+                : Boolean(props[key]);
 
       if (isActive) classes.push(fieldClasses[key]);
 
@@ -304,6 +303,27 @@ export function useField<TValue = unknown>(useFormInjection = true) {
 
   const inputStyle = computed((): Record<string, string> => {
     return props.inputAlign ? { textAlign: props.inputAlign } : {};
+  });
+
+  const fieldStyle = computed((): Record<string, string> => {
+    const result: Record<string, string> = {};
+    const resolvedColor = getColorCssValue(color.value);
+    const resolvedContrast = getColorContrastCssValue(color.value);
+    const shouldRetainColor = props.retainColor || configuration.retainColor;
+
+    if (resolvedColor) {
+      result["--e-field-color"] = resolvedColor;
+
+      if (shouldRetainColor) {
+        result["--e-field-rest-color"] = resolvedColor;
+      }
+    }
+
+    if (resolvedContrast) {
+      result["--e-field-contrast"] = resolvedContrast;
+    }
+
+    return result;
   });
 
   const textColor = computed((): string => {
@@ -368,7 +388,7 @@ export function useField<TValue = unknown>(useFormInjection = true) {
 
   const setConfiguration = (value: FieldConfiguration): void => {
     configuration.labelStyle = value.labelStyle ? { ...value.labelStyle } : {};
-    configuration.color = value.color || "primary";
+    configuration.color = value.color;
     configuration.retainColor = Boolean(value.retainColor);
     configuration.dense = Boolean(value.dense);
     configuration.disabled = Boolean(value.disabled);
@@ -436,6 +456,7 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     isOutlined,
     isLabelFloating,
     inputStyle,
+    fieldStyle,
     showClearable,
     showDetails,
     shouldFloatLabel,

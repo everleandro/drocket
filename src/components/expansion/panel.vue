@@ -35,6 +35,7 @@
 <script lang="ts" setup>
 import { computed, ComputedRef, inject, ref, useId } from 'vue';
 import icon from '@/utils/icons';
+import { getColorCssValue } from '@/utils/style';
 import { IconPath } from '@/types';
 import ETransitionExpand from '@/components/transition/expand.vue';
 import EIcon from '@/components/icon/index.vue';
@@ -136,7 +137,11 @@ const panelButtonHeaderStyle = computed((): Record<string, string> => {
 
   // Inject color CSS variables for any color (predefined or custom)
   if (color.value) {
-    result["--e-expansion-panel-button-color"] = `var(--e-color-${color.value})`;
+		const resolvedColor = getColorCssValue(color.value);
+
+		if (resolvedColor) {
+			result["--e-expansion-panel-button-color"] = resolvedColor;
+		}
   }
 
   return result;

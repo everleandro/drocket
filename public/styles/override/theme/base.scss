@@ -1,109 +1,33 @@
 @use "sass:map";
+@use "sass:meta";
+@use "sass:string";
 @use "../variables/index.scss" as setting;
 
 // Base theme variables (same for both light and dark)
 :root {
+  @each $var-name, $var-value in meta.module-variables("setting") {
+    $normalized-var-name: #{$var-name};
 
-  // Breakpoints
-  @each $bp-name, $bp-value in setting.$grid-breakpoints {
-    --e-grid-breakpoint-#{$bp-name}: #{$bp-value};
-  }
-  @each $bp-name, $bp-value in setting.$grid-gaps {
-    --e-grid-gap-#{$bp-name}: #{$bp-value};
-  }
+    @if meta.type-of($var-value) != "map" {
+      $css-var-name: if(string.slice($normalized-var-name, 1, 2) == "e-", $normalized-var-name, "e-#{$normalized-var-name}");
 
-  // Global
-  --e-border-radius-root: #{setting.$border-radius-root};
-  --e-root-font-size: #{setting.$root-font-size};
-  --e-root-font-family: #{setting.$root-font-family};
-  --e-space-base: #{setting.$space-base};
-  --e-card-shadow: #{setting.$card-shadow};
-
-  // Bar
-  --e-bar-padding-y: #{setting.$e-bar-padding-y};
-  --e-bar-padding-x: #{setting.$e-bar-padding-x};
-  --e-bar-height: #{setting.$e-bar-heigth};
-  --e-bar-height-dense: #{setting.$e-bar-heigth--dense};
-  --e-bar-box-shadow: #{setting.$e-bar-box-shadow};
-
-  // Icons
-  --e-icon-class: #{setting.$icon-class};
-  --e-icon-prefix: #{setting.$icon-prefix};
-  --e-icon-close-font-size: #{setting.$icon-close-font-size};
-
-  @each $size-name, $size-value in setting.$icon-font-sizes {
-    --e-icon-size-#{$size-name}: #{$size-value};
+      --#{$css-var-name}: #{$var-value};
+    }
   }
 
-  // Button
-  --e-btn-border-radius: #{setting.$btn-border-radius};
-  --e-btn-rounded-border-radius: #{setting.$btn-rounded-border-radius};
-  --e-btn-font-weight: #{setting.$btn-font-weight};
-  --e-btn-letter-spacing: #{setting.$btn-letter-spacing};
-  --e-btn-text-transform: #{setting.$btn-text-transform};
-  --e-btn-transition-duration: #{setting.$btn-transition-duration};
-  --e-btn-border-width: #{setting.$btn-border-width};
-  --e-btn-border-style: #{setting.$btn-border-style};
-
-  @each $state-name, $state-value in setting.$btn-states {
-    --e-btn-state-#{$state-name}: #{$state-value};
+  @each $group-name, $group-values in setting.$theme-base-css-var-groups {
+    @each $item-name, $item-value in $group-values {
+      --#{$group-name}-#{$item-name}: #{$item-value};
+    }
   }
 
-  @each $size-name, $size-value in setting.$btn-font-sizes {
-    --e-btn-font-size-#{$size-name}: #{$size-value};
+  @each $palette-name, $palette-scale in setting.$primitive-color-palettes {
+    @if map.has-key(setting.$primitive-color-seeds, $palette-name) {
+      --e-palette-#{$palette-name}: #{map.get(setting.$primitive-color-seeds, $palette-name)};
+    }
+
+    @each $tone-name, $tone-value in $palette-scale {
+      --e-palette-#{$palette-name}-#{$tone-name}: #{$tone-value};
+    }
   }
-
-  @each $height-name, $height-value in setting.$btn-height {
-    --e-btn-height-#{$height-name}: #{$height-value};
-  }
-
-  // FAB
-  @each $size-name, $size-value in setting.$fab-font-sizes {
-    --e-fab-font-size-#{$size-name}: #{$size-value};
-  }
-
-  @each $height-name, $height-value in setting.$fab-height {
-    --e-fab-height-#{$height-name}: #{$height-value};
-  }
-
-  // Stacked
-  @each $height-name, $height-value in setting.$stacked-height {
-    --e-stacked-height-#{$height-name}: #{$height-value};
-  }
-
-  // Expansion
-  --e-expansion-header-height: #{setting.$expansion-header-height};
-  --e-expansion-header-height-opened: #{setting.$expansion-header-height-opened};
-  --e-expansion-header-font-size: #{setting.$expansion-header-font-size};
-  --e-expansion-panel-gap: #{setting.$expansion-panel-gap};
-  --e-expansion-panel-border-width: #{setting.$expansion-panel-border-width};
-  --e-expansion-panel-border-radius: #{setting.$expansion-panel-border-radius};
-  --e-expansion-panel-background-color: #{setting.$expansion-panel-background-color};
-  --e-expansion-panel-color: #{setting.$expansion-panel-color};
-  --e-expansion-panel-button-background-color: #{setting.$expansion-panel-button-background-color};
-  --e-expansion-panel-button-color: #{setting.$expansion-panel-button-color};
-
-  // List
-  --e-list-prepend-width: #{setting.$list-prepend-width};
-
-  @each $size-name, $size-value in setting.$list-item-font-sizes {
-    --e-list-item-font-size-#{$size-name}: #{$size-value};
-  }
-
-  @each $height-name, $height-value in setting.$list-item-height {
-    --e-list-item-height-#{$height-name}: #{$height-value};
-  }
-
-  // Schedule
-  --e-schedule-borderwidth: #{setting.$schedule-border-width};
-  --e-header-col-height: #{setting.$header-col-height};
-  --e-hour-column-width: #{setting.$hour-column-width};
-  --e-hour-column-width-xs: #{setting.$hour-column-width-xs};
-
-  // Elevation
-  @each $level-name, $level-value in setting.$elevation {
-    --e-elevation-#{$level-name}: #{$level-value};
-  }
-
-  --e-border-width: #{setting.$border-width};
 }

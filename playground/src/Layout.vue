@@ -9,6 +9,7 @@
         <nav class="nav">
             <router-link to="/">Inicio</router-link>
             <router-link to="/form">Formulario</router-link>
+            <router-link to="/palette">Paleta</router-link>
         </nav>
         <router-view />
     </main>
@@ -86,6 +87,50 @@ onMounted(() => {
 
 .theme-toggle:hover {
     opacity: 0.8;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.nav a {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 600;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav a:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.nav a.router-link-active {
+    background: #111827;
+    color: #f9fafb;
+}
+
+.playground[data-theme="dark"] .nav a {
+    background: rgba(17, 24, 39, 0.72);
+    color: #e5e7eb;
+}
+
+.playground[data-theme="dark"] .nav a:hover {
+    background: rgba(17, 24, 39, 0.9);
+}
+
+.playground[data-theme="dark"] .nav a.router-link-active {
+    background: #f9fafb;
+    color: #111827;
 }
 
 .block {

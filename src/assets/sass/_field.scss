@@ -8,8 +8,14 @@
     --e-field-label-current-y: var(--e-field-label-rest-y);
     --e-field-label-current-translate-y: -50%;
     --e-field-label-current-scale: 1;
+    --e-field-rest-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+    --e-field-placeholder-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.38));
+    --e-field-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+    --label: var(--e-field-rest-color);
+    --input-placeholder: var(--e-field-placeholder-color);
 
     align-items: flex-start;
+    color: var(--e-field-rest-color);
     display: flex;
     flex: 1 1 auto;
     font-size: 1rem;
@@ -20,6 +26,10 @@
     label {
         color: var(--label);
         white-space: nowrap;
+    }
+
+    .e-btn--text.e-btn--no-invert-color {
+        color: currentColor;
     }
 
     &--dense {
@@ -81,10 +91,19 @@
 
     &--is-hovered,
     &--retain-color,
-    &--is-focused {
+    &--is-focused,
+    &--has-error {
+        --label: var(--e-field-color);
+        color: var(--e-field-color);
+
         .e-field__overlay {
             opacity: 0.08;
         }
+    }
+
+    &--retain-color {
+        --e-field-rest-color: var(--e-field-color);
+        --e-field-placeholder-color: color-mix(in srgb, var(--e-field-color) 38%, transparent);
     }
 
     &--is-focused {
@@ -482,7 +501,6 @@
     }
 
     &--is-hovered,
-    &--retain-color,
     &--is-focused {
 
         ::-webkit-input-placeholder,

@@ -17,10 +17,10 @@
   }
 
   [role="cell"] {
-    border-bottom: var(--e-schedule-borderwidth, #{setting.$schedule-border-width}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    border-bottom: var(--e-schedule-borderwidth, #{setting.$e-schedule-borderwidth}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
 
     &:not(:last-child) {
-      border-bottom: var(--e-schedule-borderwidth, #{setting.$schedule-border-width}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+      border-bottom: var(--e-schedule-borderwidth, #{setting.$e-schedule-borderwidth}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
     }
   }
 
@@ -38,7 +38,7 @@
     background-color: var(--e-schedule-bg, white);
 
     &:not(:last-child) {
-      border-right: var(--e-schedule-borderwidth, #{setting.$schedule-border-width}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+      border-right: var(--e-schedule-borderwidth, #{setting.$e-schedule-borderwidth}) solid var(--e-schedule-border-color, rgb(218, 220, 224));
     }
 
     &.col-hour-info {

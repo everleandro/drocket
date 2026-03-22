@@ -42,6 +42,142 @@ $colors-dark: (
 
 El framework publica variables CSS `--e-*` para permitir cambios de tema sin recompilar.
 
+### Paleta primitiva publica
+
+Ademas de los tokens semanticos del tema, la libreria expone una paleta primitiva pensada para usuarios consumidores.
+
+La idea es separar:
+
+1. Paleta primitiva publica: `--e-palette-red-500`, `--e-palette-blue-700`, etc.
+2. Tokens semanticos del tema: `--e-color-primary`, `--e-color-surface-1`, etc.
+
+La paleta primitiva no reemplaza el sistema actual `light` y `dark`; es una capa adicional para que la app consumidora tenga colores reutilizables consistentes.
+
+Los props `color` de los componentes deben referenciar colores definidos en el sistema (`--e-color-*` o `--e-palette-*`).
+No se considera parte del contrato pasar valores literales como `#000`, `rgb(...)` o `hsl(...)` directamente al prop.
+
+#### API Sass
+
+En [public/styles/override/variables/index.scss](../public/styles/override/variables/index.scss) existen tres piezas:
+
+1. `$primitive-color-seeds`
+2. `$primitive-color-overrides`
+3. `$primitive-color-palettes`
+
+`$primitive-color-seeds` define el color base por familia:
+
+```scss
+$primitive-color-seeds: (
+  red: #ef4444,
+  blue: #3b82f6,
+  green: #22c55e,
+  amber: #f59e0b,
+  neutral: #6b7280,
+) !default;
+```
+
+A partir de esas seeds, Drocket genera automaticamente una escala por color:
+
+```css
+--e-palette-red: #ef4444;
+--e-palette-red-50: ...;
+--e-palette-red-100: ...;
+--e-palette-red-200: ...;
+--e-palette-red-300: ...;
+--e-palette-red-400: ...;
+--e-palette-red-500: #ef4444;
+--e-palette-red-600: ...;
+--e-palette-red-700: ...;
+--e-palette-red-800: ...;
+--e-palette-red-900: ...;
+```
+
+#### Personalizar la paleta
+
+Puedes redefinir las seeds antes de importar `drocket/setting.scss`:
+
+```scss
+$primitive-color-seeds: (
+  red: #dc2626,
+  blue: #2563eb,
+  green: #16a34a,
+  amber: #d97706,
+  neutral: #4b5563,
+) !default;
+
+@import 'drocket/setting.scss';
+```
+
+Si quieres corregir tonos especificos sin perder la generacion automatica, usa `$primitive-color-overrides`:
+
+```scss
+$primitive-color-overrides: (
+  red: (
+    500: #dc2626,
+    700: #b91c1c,
+    900: #7f1d1d,
+  ),
+  blue: (
+    500: #2563eb,
+  ),
+) !default;
+
+@import 'drocket/setting.scss';
+```
+
+Eso te permite usar la paleta directamente en tu app:
+
+```scss
+:root {
+  border-color: var(--e-palette-neutral-300);
+}
+
+.danger-banner {
+  background: var(--e-palette-red-100);
+  color: var(--e-palette-red-800);
+}
+```
+
+### Como se generan
+
+La fuente de verdad para tokens base vive en [public/styles/override/variables/index.scss](../public/styles/override/variables/index.scss).
+
+Reglas actuales:
+
+1. Variables Sass simples se exportan automaticamente desde [public/styles/override/theme/base.scss](../public/styles/override/theme/base.scss)
+2. Si la variable Sass empieza con `$e-`, la CSS var resultante conserva el nombre
+3. Si no empieza con `$e-`, se le agrega el prefijo `e-`
+4. Los mapas Sass no se exportan automaticamente; solo se convierten en CSS vars si se agregan a `$theme-base-css-var-groups`
+5. La paleta primitiva publica se exporta ademas como `--e-palette-{color}` y `--e-palette-{color}-{tono}`
+
+Ejemplos:
+
+```scss
+$border-radius-root: 4px;   // -> --e-border-radius-root
+$e-bar-height: 64px;        // -> --e-bar-height
+$root-font-family: "Roboto", sans-serif; // -> --e-root-font-family
+```
+
+Para grupos:
+
+```scss
+$icon-font-sizes: (
+  small: 20px,
+  default: 24px,
+) !default;
+
+$theme-base-css-var-groups: (
+  "e-icon-size": $icon-font-sizes,
+) !default;
+```
+
+Eso genera:
+
+```css
+--e-icon-size-small: 20px;
+--e-icon-size-default: 24px;
+```
+
 ### Variables disponibles
 
 ```css
@@ -53,10 +189,11 @@ El framework publica variables CSS `--e-*` para permitir cambios de tema sin rec
 /* + todos los demás colores definidos */
 
 /* Breakpoints */
---e-breakpoint-xs: 600px;
---e-breakpoint-sm: 960px;
---e-breakpoint-md: 1264px;
---e-breakpoint-lg: 1904px;
+--e-grid-breakpoint-xs: 0;
+--e-grid-breakpoint-sm: 600px;
+--e-grid-breakpoint-md: 960px;
+--e-grid-breakpoint-lg: 1264px;
+--e-grid-breakpoint-xl: 1904px;
 
 /* Tamaños de botón */
 --e-btn-height-x-small: 2.187rem;
@@ -67,9 +204,56 @@ El framework publica variables CSS `--e-*` para permitir cambios de tema sin rec
 /* Otras variables globales */
 --e-root-font-family: "Roboto", sans-serif;
 --e-border-radius-root: 4px;
---e-space-base: 12px;
+--e-space-base: 4px;
+--e-bar-height: 64px;
+--e-schedule-borderwidth: thin;
 --e-schedule-bg: white;
 --e-schedule-border-color: rgb(218, 220, 224);
+
+/* Paleta primitiva */
+--e-palette-red: #ef4444;
+--e-palette-red-500: #ef4444;
+--e-palette-blue-500: #3b82f6;
+--e-palette-neutral-300: ...;
+```
+
+### Agregar nuevos tokens
+
+#### Token simple
+
+Si agregas una variable simple en [public/styles/override/variables/index.scss](../public/styles/override/variables/index.scss), no hace falta registrarla en otro lado.
+
+```scss
+$field-label-gap: 6px !default;
+```
+
+Genera automaticamente:
+
+```css
+--e-field-label-gap: 6px;
+```
+
+#### Grupo de tokens
+
+Si agregas un map y quieres una CSS var por item, debes incluirlo en `$theme-base-css-var-groups`.
+
+```scss
+$badge-sizes: (
+  small: 16px,
+  large: 24px,
+) !default;
+
+$theme-base-css-var-groups: (
+  "e-grid-breakpoint": $grid-breakpoints,
+  "e-badge-size": $badge-sizes,
+) !default;
+```
+
+Genera:
+
+```css
+--e-badge-size-small: 16px;
+--e-badge-size-large: 24px;
 ```
 
 ### Crear temas

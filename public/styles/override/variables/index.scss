@@ -1,20 +1,133 @@
+@use "sass:color";
 @use "sass:map";
+
+@function e-primitive-color-scale($base-color) {
+  @return (
+    50: color.mix(white, $base-color, 92%),
+    100: color.mix(white, $base-color, 84%),
+    200: color.mix(white, $base-color, 68%),
+    300: color.mix(white, $base-color, 48%),
+    400: color.mix(white, $base-color, 24%),
+    500: $base-color,
+    600: color.mix(black, $base-color, 12%),
+    700: color.mix(black, $base-color, 24%),
+    800: color.mix(black, $base-color, 38%),
+    900: color.mix(black, $base-color, 52%),
+  );
+}
+
+@function e-build-primitive-palettes($seeds, $overrides: ()) {
+  $palettes: ();
+
+  @each $palette-name, $base-color in $seeds {
+    $generated-scale: e-primitive-color-scale($base-color);
+    $override-scale: if(map.has-key($overrides, $palette-name), map.get($overrides, $palette-name), ());
+    $palettes: map.merge($palettes, ($palette-name: map.merge($generated-scale, $override-scale)));
+  }
+
+  @return $palettes;
+}
+
+// Tokens simples autoexportables a CSS vars.
+// Regla:
+// - Si el nombre empieza con `e-`, se genera `--<nombre>`.
+// - Si no, se genera `--e-<nombre>`.
+
+// Global
 $border-radius-root: 4px !default;
 $root-font-size: 1rem !default;
 $space-base: 4px !default;
 $root-font-family: "Roboto", sans-serif !default;
+$border-width: thin !default;
+$card-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f !default;
+$space-scale: 10 !default;
+$grid-cols: 12 !default;
 
+// Icon
 $icon-close-font-size: 24px !default;
 $icon-class: "icon" !default;
 $icon-prefix: "icon-" !default;
 
+// Bar
+$e-bar-padding-y: 0px !default;
+$e-bar-padding-x: 16px !default;
+$e-bar-height: 64px !default;
+$e-bar-height-dense: 48px !default;
+$e-bar-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+  0px 4px 5px 0px rgb(0 0 0 / 14%),
+  0px 1px 10px 0px rgb(0 0 0 / 12%) !default;
 
-//border
-$border-width: thin !default;
+// Button
+$btn-border-radius: 4px !default;
+$btn-font-weight: 500 !default;
+$btn-letter-spacing: 0.089em !default;
+$btn-border-style: solid !default;
+$btn-border-width: 1px !default;
+$btn-rounded-border-radius: 28px !default;
+$btn-text-transform: uppercase !default;
+$btn-transition-duration: 0.28s !default;
 
-$card-shadow: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f !default;
+// Expansion
+$expansion-header-height: 2.5rem !default;
+$expansion-header-height-opened: $expansion-header-height * 1.3 !default;
+$expansion-header-font-size: 0.875rem !default;
+$expansion-panel-gap: $space-base * 2 !default;
+$expansion-panel-border-width: $border-width !default;
+$expansion-panel-border-radius: $border-radius-root !default;
+$expansion-panel-button-background-color: var(--e-color-surface-1) !default;
+$expansion-panel-background-color: var(--e-color-surface-1) !default;
+$expansion-panel-button-color: var(--e-contrast-surface-1) !default;
+$expansion-panel-color: var(--e-contrast-surface-1) !default;
 
-// colors - light theme (Material Design 3 + Vue colors)
+// List
+$list-prepend-width: 34px;
+
+// Date picker
+$date-picker-border-radius: $border-radius-root !default;
+
+// Schedule
+$e-schedule-borderwidth: $border-width !default;
+$hour-column-width: 65px !default;
+$hour-column-width-xs: calc($hour-column-width - 19px) !default;
+$header-col-height: 65px !default;
+
+// Maps de configuracion.
+// No se exportan automaticamente; si queres CSS vars por item,
+// agregalos luego a $theme-base-css-var-groups.
+
+// Primitive palette
+// Pensado para usuarios de la libreria que quieran consumir una paleta publica
+// como `--e-palette-red-500` sin modificar los tokens semanticos del tema.
+$primitive-color-seeds: (
+  "red": #ef4444,
+  "pink": #ec4899,
+  "purple": #8b5cf6,
+  "indigo": #6366f1,
+  "blue": #3b82f6,
+  "cyan": #06b6d4,
+  "teal": #14b8a6,
+  "green": #22c55e,
+  "lime": #84cc16,
+  "yellow": #eab308,
+  "amber": #f59e0b,
+  "orange": #f97316,
+  "brown": #8d6e63,
+  "neutral": #6b7280,
+) !default;
+
+// Permite ajustar tonos especificos sin perder la generacion automatica.
+// Ejemplo:
+// $primitive-color-overrides: (
+//   red: (
+//     500: #dc2626,
+//     700: #b91c1c,
+//   ),
+// ) !default;
+$primitive-color-overrides: map.merge((), ()) !default;
+
+$primitive-color-palettes: e-build-primitive-palettes($primitive-color-seeds, $primitive-color-overrides) !default;
+
+// Colors - light theme (Material Design 3 + Vue colors)
 $colors-light: map.merge(("primary": #42b883,
       "secondary": #35495e,
       "tertiary": #3498db,
@@ -31,7 +144,7 @@ $colors-light: map.merge(("primary": #42b883,
       "border": rgba(0, 0, 0, .12)),
     ()) !default;
 
-// colors - dark theme (Material Design 3 + Vue colors - dark variants)
+// Colors - dark theme (Material Design 3 + Vue colors - dark variants)
 $colors-dark: map.merge(("primary": #58d78d,
       "secondary": #8ca0b8,
       "tertiary": #5dade2,
@@ -80,17 +193,13 @@ $contrast-colors-dark: map.merge(("primary": white,
     ),
     ()) !default;
 
-//grid
+// Grid
 $grid-breakpoints: (
   xs: 0,
   sm: 600px,
   md: 960px,
   lg: 1264px,
   xl: 1904px) !default;
-
-$space-scale: 10 !default;
-
-$grid-cols: 12 !default;
 
 $grid-gaps: (
   none: 0,
@@ -100,208 +209,178 @@ $grid-gaps: (
   lg: 24px,
   xl: 32px) !default;
 
-
-// bar
-$e-bar-padding-y: 0px !default;
-$e-bar-padding-x: 16px !default;
-$e-bar-heigth: 64px !default;
-$e-bar-heigth--dense: 48px !default;
-$e-bar-box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
-  0px 4px 5px 0px rgb(0 0 0 / 14%),
-  0px 1px 10px 0px rgb(0 0 0 / 12%) !default;
-
-// icon
+// Icon
 $icon-font-sizes: (
-  "x-small": 18px,
-  "small": 20px,
-  "default": 24px,
-  "large": 28px,
-  "x-large": 32px,
+  x-small: 18px,
+  small: 20px,
+  default: 24px,
+  large: 28px,
+  x-large: 32px,
   ) !default;
 
-$avatar-size: map.merge(("x-small": 24px,
-      "small": 32px,
-      "default": 65px,
-      "large": 80px,
-      "x-large": 96px,
+$avatar-size: map.merge((x-small: 24px,
+      small: 32px,
+      default: 65px,
+      large: 80px,
+      x-large: 96px,
     ),
     ()) !default;
 
-$chip-font-sizes: map.merge(("x-small": 0.625rem,
-      "small": 0.75rem,
-      "default": 0.875rem,
-      "large": 0.9375rem,
-      "x-large": 1rem,
+// Chip
+$chip-font-sizes: map.merge((x-small: 0.625rem,
+      small: 0.75rem,
+      default: 0.875rem,
+      large: 0.9375rem,
+      x-large: 1rem,
     ),
     ()) !default;
 
-$chip-height: map.merge(("x-small": 24px,
-      "small": 28px,
-      "default": 32px,
-      "large": 36px,
-      "x-large": 40px,
+$chip-height: map.merge((x-small: 24px,
+      small: 28px,
+      default: 32px,
+      large: 36px,
+      x-large: 40px,
     ),
     ()) !default;
 
-$chip-padding-x: map.merge(("x-small": 8px,
-      "small": 10px,
-      "default": 12px,
-      "large": 14px,
-      "x-large": 16px,
+$chip-padding-x: map.merge((x-small: 8px,
+      small: 10px,
+      default: 12px,
+      large: 14px,
+      x-large: 16px,
     ),
     ()) !default;
 
-$chip-content-padding-x: map.merge(("x-small": 8px,
-      "small": 10px,
-      "default": 12px,
-      "large": 14px,
-      "x-large": 16px,
+$chip-content-padding-x: map.merge((x-small: 8px,
+      small: 10px,
+      default: 12px,
+      large: 14px,
+      x-large: 16px,
     ),
     ()) !default;
 
-$chip-edge-padding-x: map.merge(("x-small": 5px,
-      "small": 6px,
-      "default": 7px,
-      "large": 8px,
-      "x-large": 9px,
+$chip-edge-padding-x: map.merge((x-small: 5px,
+      small: 6px,
+      default: 7px,
+      large: 8px,
+      x-large: 9px,
     ),
     ()) !default;
 
-$chip-avatar-size: map.merge(("x-small": 18px,
-      "small": 22px,
-      "default": 27px,
-      "large": 30px,
-      "x-large": 34px,
+$chip-avatar-size: map.merge((x-small: 18px,
+      small: 22px,
+      default: 27px,
+      large: 30px,
+      x-large: 34px,
     ),
     ()) !default;
 
-$chip-icon-size: map.merge(("x-small": 14px,
-      "small": 16px,
-      "default": 18px,
-      "large": 20px,
-      "x-large": 22px,
+$chip-icon-size: map.merge((x-small: 14px,
+      small: 16px,
+      default: 18px,
+      large: 20px,
+      x-large: 22px,
     ),
     ()) !default;
 
-
-//button
-
-$btn-border-radius: 4px !default;
-$btn-font-weight: 500 !default;
-$btn-letter-spacing: 0.089em !default;
-$btn-border-style: solid !default;
-$btn-border-width: 1px !default;
-$btn-rounded-border-radius: 28px !default;
-$btn-text-transform: uppercase !default;
-$btn-transition-duration: 0.28s !default;
-
-$btn-states: map.merge(("focus": 0.12,
-      "hover": 0.08,
-      "active": 0.12,
+// Button
+$btn-states: map.merge((focus: 0.12,
+      hover: 0.08,
+      active: 0.12,
     ),
     ()) !default;
 
-$btn-font-sizes: map.merge(("x-small": 0.625rem,
-      "small": 0.75rem,
-      "default": 0.875rem,
-      "large": 0.875rem,
-      "x-large": 1rem,
+$btn-font-sizes: map.merge((x-small: 0.625rem,
+      small: 0.75rem,
+      default: 0.875rem,
+      large: 0.875rem,
+      x-large: 1rem,
     ),
     ()) !default;
 
-$fab-font-sizes: map.merge(("x-small": 1.25rem,
-      "small": 1.25rem,
-      "default": 1.5rem,
-      "large": 0.714rem,
-      "x-large": 2rem,
+$fab-font-sizes: map.merge((x-small: 1.25rem,
+      small: 1.25rem,
+      default: 1.5rem,
+      large: 0.714rem,
+      x-large: 2rem,
     ),
     ()) !default;
 
-$fab-height: map.merge(("x-small": 2em,
-      "small": 2.5em,
-      "default": 3.5em,
-      "large": 4em,
-      "x-large": 4.5em,
+$fab-height: map.merge((x-small: 2em,
+      small: 2.5em,
+      default: 3.5em,
+      large: 4em,
+      x-large: 4.5em,
     ),
     ()) !default;
 
-$stacked-height: map.merge(("x-small": 2em,
-      "small": 2.5em,
-      "default": 4.5em,
-      "large": 5.5em,
-      "x-large": 8em,
+$stacked-height: map.merge((x-small: 2em,
+      small: 2.5em,
+      default: 4.5em,
+      large: 5.5em,
+      x-large: 8em,
     ),
     ()) !default;
 
-$btn-height: map.merge(("x-small": 2.187rem,
-      "small": 2.5rem,
-      "default": 3rem,
-      "large": 3.125rem,
-      "x-large": 3.4375rem,
+$btn-height: map.merge((x-small: 2.187rem,
+      small: 2.5rem,
+      default: 3rem,
+      large: 3.125rem,
+      x-large: 3.4375rem,
     ),
     ()) !default;
 
-
-// expansion
-$expansion-header-height: 2.5rem !default;
-$expansion-header-height-opened: $expansion-header-height * 1.3 !default;
-$expansion-header-font-size: 0.875rem !default;
-$expansion-panel-gap: $space-base * 2 !default;
-$expansion-panel-border-width: $border-width !default;
-$expansion-panel-border-radius: $border-radius-root !default;
-$expansion-panel-button-background-color: var(--e-color-surface-1) !default;
-$expansion-panel-background-color: var(--e-color-surface-1) !default;
-$expansion-panel-button-color: var(--e-contrast-surface-1) !default;
-$expansion-panel-color: var(--e-contrast-surface-1) !default;
-
-//list
-
-$list-prepend-width: 34px;
-
-$list-item-font-sizes: map.merge(("x-small": 0.625rem,
-      "small": 0.75rem,
-      "default": 0.875rem,
-      "large": 0.875rem,
-      "x-large": 1rem,
+// List
+$list-item-font-sizes: map.merge((x-small: 0.625rem,
+      small: 0.75rem,
+      default: 0.875rem,
+      large: 0.875rem,
+      x-large: 1rem,
     ),
     ()) !default;
 
-$list-item-height: map.merge(("x-small": 2.187rem,
-      "small": 2.5rem,
-      "default": 3rem,
-      "large": 3.62rem,
-      "x-large": 4rem,
+$list-item-height: map.merge((x-small: 2.187rem,
+      small: 2.5rem,
+      default: 3rem,
+      large: 3.62rem,
+      x-large: 4rem,
     ),
     ()) !default;
 
 $elevation: (
-  "xs": (0 1px 2px 0 rgba(0, 0, 0, 0.18),
+  xs: (0 1px 2px 0 rgba(0, 0, 0, 0.18),
     0 1px 1px 0 rgba(0, 0, 0, 0.12),
     0 1px 3px 0 rgba(0, 0, 0, 0.10)),
 
-  "sm": (0 1px 3px 0 rgba(0, 0, 0, 0.2),
+  sm: (0 1px 3px 0 rgba(0, 0, 0, 0.2),
     0 1px 1px 0 rgba(0, 0, 0, 0.14),
     0 2px 1px -1px rgba(0, 0, 0, 0.12)),
 
-  "md": (0 2px 4px 0 rgba(0, 0, 0, 0.2),
+  md: (0 2px 4px 0 rgba(0, 0, 0, 0.2),
     0 2px 2px 0 rgba(0, 0, 0, 0.14),
     0 3px 2px -1px rgba(0, 0, 0, 0.12)),
 
-  "lg": (0 3px 6px 0 rgba(0, 0, 0, 0.2),
+  lg: (0 3px 6px 0 rgba(0, 0, 0, 0.2),
     0 4px 4px 0 rgba(0, 0, 0, 0.14),
     0 5px 3px -2px rgba(0, 0, 0, 0.12)),
 
-  "xl": (0 4px 8px 0 rgba(0, 0, 0, 0.2),
+  xl: (0 4px 8px 0 rgba(0, 0, 0, 0.2),
     0 6px 6px 0 rgba(0, 0, 0, 0.14),
     0 8px 4px -2px rgba(0, 0, 0, 0.12))) !default;
 
-// date picker
-$date-picker-border-radius: $border-radius-root !default;
-
-
-
-// schedule
-$schedule-border-width: $border-width !default;
-$hour-column-width: 65px !default;
-$hour-column-width-xs: calc($hour-column-width - 19px) !default;
-$header-col-height: 65px !default;
+// Maps exportados como grupos de CSS vars.
+// Se generan como `--<grupo>-<clave>` desde theme/base.scss.
+$theme-base-css-var-groups: (
+  "e-grid-breakpoint": $grid-breakpoints,
+  "e-grid-gap": $grid-gaps,
+  "e-icon-size": $icon-font-sizes,
+  "e-btn-state": $btn-states,
+  "e-btn-font-size": $btn-font-sizes,
+  "e-btn-height": $btn-height,
+  "e-fab-font-size": $fab-font-sizes,
+  "e-fab-height": $fab-height,
+  "e-stacked-height": $stacked-height,
+  "e-list-item-font-size": $list-item-font-sizes,
+  "e-list-item-height": $list-item-height,
+  "e-elevation": $elevation,
+) !default;

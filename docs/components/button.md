@@ -137,4 +137,5 @@ const saving = ref(false)
 - Pasar `icon` junto con contenido esperando modo icon-only: ese modo solo se aplica cuando no hay slot `default`.
 - Usar `height`/`width` sin unidad en string cuando esperabas CSS libre: si pasas un numero o string numerico se convierte a px; usa valores como `100%`, `2.5rem` o `calc(...)` si necesitas otra unidad.
 - Definir `to` sin Vue Router para rutas internas: en ese caso usa `link` + `href` externo o instala Router.
-- Definir `color="brand"` sin crear `--e-color-brand`: en ese caso se usa el color primario por defecto.
+- Definir `color="brand"` sin crear `--e-color-brand`: el prop `color` debe apuntar a un color definido en el sistema (`--e-color-*` o `--e-palette-*`), no a valores hex directos.
+- Pasar `color="#000"` o cualquier literal CSS: esa API no forma parte del contrato del componente; define primero el token en el sistema de color y luego usa su nombre.
