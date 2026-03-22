@@ -24,7 +24,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "Drocket",
-      fileName: (format) => `drocket.${format}.js`,
+      fileName: (format: string) => `drocket.${format}.js`,
     },
 
     rollupOptions: {

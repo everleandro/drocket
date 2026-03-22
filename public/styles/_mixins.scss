@@ -132,25 +132,25 @@
 }
 
 @mixin xs {
-    @media (max-width: #{map.get($grid-breakpoints,'sm') -1px}) {
+    @media (max-width: #{map.get($grid-breakpoints, 'sm') - 1px}) {
         @content;
     }
 }
 
 @mixin sm {
-    @media (min-width: #{map.get($grid-breakpoints,'sm')}) and (max-width: #{map.get($grid-breakpoints,'md') -1px}) {
+    @media (min-width: #{map.get($grid-breakpoints, 'sm')}) and (max-width: #{map.get($grid-breakpoints, 'md') - 1px}) {
         @content;
     }
 }
 
 @mixin md {
-    @media (min-width: #{map.get($grid-breakpoints,'md')}) and (max-width: #{map.get($grid-breakpoints,'lg') -1px}) {
+    @media (min-width: #{map.get($grid-breakpoints, 'md')}) and (max-width: #{map.get($grid-breakpoints, 'lg') - 1px}) {
         @content;
     }
 }
 
 @mixin lg {
-    @media (min-width: #{map.get($grid-breakpoints,'lg')}) and (max-width: #{map.get($grid-breakpoints,'xl') -1px}) {
+    @media (min-width: #{map.get($grid-breakpoints, 'lg')}) and (max-width: #{map.get($grid-breakpoints, 'xl') - 1px}) {
         @content;
     }
 }

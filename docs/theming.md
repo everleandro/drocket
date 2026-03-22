@@ -58,7 +58,7 @@ No se considera parte del contrato pasar valores literales como `#000`, `rgb(...
 
 #### API Sass
 
-En [public/styles/override/variables/index.scss](../public/styles/override/variables/index.scss) existen tres piezas:
+En `public/styles/override/variables/index.scss` existen tres piezas:
 
 1. `$primitive-color-seeds`
 2. `$primitive-color-overrides`
@@ -140,11 +140,11 @@ Eso te permite usar la paleta directamente en tu app:
 
 ### Como se generan
 
-La fuente de verdad para tokens base vive en [public/styles/override/variables/index.scss](../public/styles/override/variables/index.scss).
+La fuente de verdad para tokens base vive en `public/styles/override/variables/index.scss`.
 
 Reglas actuales:
 
-1. Variables Sass simples se exportan automaticamente desde [public/styles/override/theme/base.scss](../public/styles/override/theme/base.scss)
+1. Variables Sass simples se exportan automaticamente desde `public/styles/override/theme/base.scss`
 2. Si la variable Sass empieza con `$e-`, la CSS var resultante conserva el nombre
 3. Si no empieza con `$e-`, se le agrega el prefijo `e-`
 4. Los mapas Sass no se exportan automaticamente; solo se convierten en CSS vars si se agregan a `$theme-base-css-var-groups`
@@ -221,7 +221,7 @@ Eso genera:
 
 #### Token simple
 
-Si agregas una variable simple en [public/styles/override/variables/index.scss](../public/styles/override/variables/index.scss), no hace falta registrarla en otro lado.
+Si agregas una variable simple en `public/styles/override/variables/index.scss`, no hace falta registrarla en otro lado.
 
 ```scss
 $field-label-gap: 6px !default;

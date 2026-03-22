@@ -18,12 +18,12 @@
   
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, provide, reactive, watch } from "vue";
-import { Radio, radioType } from "@/types"
+import type { ERadio, ERadioType } from "@/types"
 
 import EDetails from '@/components/form/details.vue'
 
 export interface Props {
-    mandatory?: boolean, modelValue: radioType, row?: boolean, label?: string,
+    mandatory?: boolean, modelValue: ERadioType, row?: boolean, label?: string,
     labelMinWidth?: string, disabled?: boolean, color?: string, retainColor?: boolean; hideOverlay?: boolean;
     readonly?: boolean, outlined?: boolean, dense?: boolean; inputReadonly?: boolean
     labelInline?: boolean; detail?: string; detailErrors?: Array<string>; flat?: boolean;
@@ -46,18 +46,18 @@ const radioGroupClass = computed(() => {
 })
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: radioType): void
+    (e: 'update:modelValue', value: ERadioType): void
 }>()
 
-watch(() => configuration.color, (value: string) => setConfiguration('color', value))
-watch(() => props.color, (value: string = 'primary') => setConfiguration('color', value))
+watch(() => configuration.color, (value) => setConfiguration('color', value))
+watch(() => props.color, (value) => setConfiguration('color', value))
 
-const state = reactive({ radioChilds: new Array<Partial<Radio>>() })
+const state = reactive<{ radioChilds: Array<Partial<ERadio>> }>({ radioChilds: [] })
 
 const setConfiguration = (key?: string, value?: any): void => {
     state.radioChilds.forEach((vueComponent) => {
         const configuration: Record<string, any> = {}
-        if (key && value) {
+        if (key !== undefined) {
             configuration[key] = value;
         } else {
             props.labelMinWidth && (configuration.labelStyle = { minWidth: `${props.labelMinWidth}px` })
@@ -67,13 +67,13 @@ const setConfiguration = (key?: string, value?: any): void => {
     });
 }
 
-const bindRadio = (component: Partial<Radio>) => state.radioChilds.push(component)
+const bindRadio = (component: Partial<ERadio>) => state.radioChilds.push(component)
 
 const unbindRadio = (uid: number) => {
     const index = state.radioChilds.findIndex((c) => c.uid === uid);
     (index > -1) && (state.radioChilds.splice(index, 1))
 }
-const changeModelValue = (value: radioType): void => emit('update:modelValue', value)
+const changeModelValue = (value: ERadioType): void => emit('update:modelValue', value)
 
 provide("ERadioGroup", { bindRadio, unbindRadio, handleFocus, handleBlur, changeModelValue, modelValue: computed(() => props.modelValue) });
 

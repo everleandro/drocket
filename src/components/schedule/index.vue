@@ -46,33 +46,33 @@
                                 </div>
                                 <div role="cell" v-for="(hour, hourIndex) in hourList" :key="hourIndex"
                                     class="e-schedule__event">
-                                    <div v-if="hasEvent({ x: hourIndex, y: colIndex + chunkIndex })"
+                                    <div v-if="hasEvent(getEventPoint(hourIndex, colIndex, chunkIndex))"
                                         class="e-schedule__event"
-                                        :style="eventStyle({ x: hourIndex, y: colIndex + chunkIndex })">
-                                        <slot name="event" :event="getEvent({ x: hourIndex, y: colIndex + chunkIndex })">
+                                        :style="eventStyle(getEventPoint(hourIndex, colIndex, chunkIndex))">
+                                        <slot name="event" :event="getEvent(getEventPoint(hourIndex, colIndex, chunkIndex))">
                                             <div v-ripple
-                                                :class="eventClass(getEvent({ x: hourIndex, y: colIndex + chunkIndex }))"
-                                                @click="handleEventClick(getEvent({ x: hourIndex, y: colIndex + chunkIndex }), $event)">
+                                                :class="eventClass(getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)))"
+                                                @click="handleEventClick(getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)), $event)">
                                                 <span class="event-name">{{
-                                                    getEvent({ x: hourIndex, y: colIndex + chunkIndex }).name
+                                                    getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)).name
                                                 }}</span>
                                                 <span class="event-subtitle">{{
-                                                    getEvent({ x: hourIndex, y: colIndex + chunkIndex }).subtitle
+                                                    getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)).subtitle
                                                 }}</span>
                                                 <span class="event-footer">{{
-                                                    getEvent({ x: hourIndex, y: colIndex + chunkIndex }).footer
+                                                    getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)).footer
                                                 }}</span>
                                             </div>
                                         </slot>
                                     </div>
-                                    <slot v-else name="empty-slot" :data="getEmptySlotData({ x: hourIndex, y: colIndex })">
+                                    <slot v-else name="empty-slot" :data="getEmptySlotData(getEmptyPoint(hourIndex, colIndex))">
                                         <div v-ripple :class="[
                                             `${color}--text`,
                                             'v-ripple-element',
                                             'e-schedule__empty-slot',
                                             'e-btn',
                                             'e-btn--text'
-                                        ]" @click="emptySlotClickHandler({ x: hourIndex, y: colIndex }, $event)"></div>
+                                        ]" @click="emptySlotClickHandler(getEmptyPoint(hourIndex, colIndex), $event)"></div>
                                     </slot>
                                 </div>
                             </div>
@@ -252,6 +252,19 @@ const setLocalEvents = (): void => {
 }
 
 const secondsByDate = (date: Date): number => date.getSeconds() + date.getMinutes() * 60 + date.getHours() * 60 * 60 - props.start
+
+const toPointIndex = (value: string | number): number => Number(value)
+
+const getEventPoint = (
+    hourIndex: string | number,
+    colIndex: string | number,
+    chunkIndex: string | number,
+): Point => ({ x: toPointIndex(hourIndex), y: toPointIndex(colIndex) + toPointIndex(chunkIndex) })
+
+const getEmptyPoint = (hourIndex: string | number, colIndex: string | number): Point => ({
+    x: toPointIndex(hourIndex),
+    y: toPointIndex(colIndex),
+})
 
 const getEvent = ({ x, y }: Point) => local.events[x][y]
 

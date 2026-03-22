@@ -1,3 +1,5 @@
+type FieldActionEvent = "click:prepend" | "click:append";
+
 export interface UseFieldActionsOptions {
   emit: unknown;
   focus: () => void;
@@ -8,19 +10,20 @@ export const useFieldActions = ({
   focus,
 }: UseFieldActionsOptions) => {
   const emitFieldAction = (
-    event: "click:prepend" | "click:append",
-    value: MouseEvent,
+    event: FieldActionEvent,
   ): void => {
-    (emit as (event: typeof event, value: MouseEvent) => void)(event, value);
+    (emit as (event: FieldActionEvent) => void)(event);
   };
 
   const handleClickPrependIcon = (event: MouseEvent): void => {
-    emitFieldAction("click:prepend", event);
+    void event;
+    emitFieldAction("click:prepend");
     focus();
   };
 
   const handleClickAppendIcon = (event: MouseEvent): void => {
-    emitFieldAction("click:append", event);
+    void event;
+    emitFieldAction("click:append");
     focus();
   };
 
