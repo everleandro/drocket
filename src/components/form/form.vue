@@ -1,44 +1,76 @@
 <template>
     <form ref="form" :class="formClass" v-on:submit="submit">
-        <slot></slot>
+        <div :class="gridRowClass" :style="gridRowStyle">
+            <slot></slot>
+        </div>
     </form>
 </template>
 <script lang="ts">
-import { computed, defineComponent, nextTick, onMounted, provide, reactive, ref, watch } from 'vue'
+import { defineComponent } from 'vue'
 export default defineComponent({
     name: "EForm"
 })
 </script>
   
 <script lang="ts" setup>
-import type { EField } from '@/types';
+import { FORM_KEY } from '@/components/form/constants';
+import { useGridRow } from '@/composables/grid-row';
+import type { EField, FieldConfiguration, FieldLabelBehavior, RowProps } from '@/types';
+import { normalizeCssSize } from '@/utils/style';
+import { computed, nextTick, provide, reactive, ref, watch } from 'vue';
 
-export interface Props {
+export interface Props extends RowProps {
     modelValue?: boolean | undefined
     lazy?: boolean
-    noGutters?: boolean
+    focusFirstInvalid?: boolean
+    validateOnSubmit?: boolean
     outlined?: boolean
     disabled?: boolean
     readonly?: boolean
     retainColor?: boolean
-    labelMinWidth?: string
+    labelBehavior?: FieldLabelBehavior
+    labelMinWidth?: string | number
     color?: string
 }
 
 const props = withDefaults(defineProps<Props>(), { modelValue: undefined })
-const localValue = ref(true)
-const form = ref()
+const form = ref<HTMLFormElement | null>(null)
+
+const { gridRowClass, gridRowStyle } = useGridRow(props)
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean): void
     (e: 'submit', value: SubmitEvent): void
+    (e: 'submit-invalid', value: SubmitEvent): void
 }>()
 
 const state = reactive({
     fieldsChild: new Array<Partial<EField>>(),
     fieldsChildError: new Array<boolean>(),
-    localValue: true
 });
+
+const effectiveConfiguration = computed<FieldConfiguration>(() => {
+    const configuration: FieldConfiguration = {
+        retainColor: Boolean(props.retainColor),
+        dense: Boolean(props.dense),
+        disabled: Boolean(props.disabled),
+        readonly: Boolean(props.readonly),
+        outlined: Boolean(props.outlined),
+        labelBehavior: props.labelBehavior,
+    }
+
+    const labelMinWidth = normalizeCssSize(props.labelMinWidth)
+
+    if (labelMinWidth) {
+        configuration.labelStyle = { minWidth: labelMinWidth }
+    }
+
+    if (props.color) {
+        configuration.color = props.color
+    }
+
+    return configuration
+})
 
 const formClass = computed(() => {
     const result: Array<string> = ['e-form']
@@ -53,17 +85,25 @@ watch(() => state.fieldsChildError, (val: Array<boolean>) => {
     changeValue(valid)
 }, { deep: true })
 
-onMounted(() => {
-    setConfiguration()
-})
-const submit = (event: Event): void => {
+const submit = async (event: Event): Promise<void> => {
     event.preventDefault()
+
+    if (props.validateOnSubmit) {
+        const valid = await validate()
+
+        if (!valid) {
+            emit('submit-invalid', event as SubmitEvent)
+            return
+        }
+    }
+
     emit('submit', event as SubmitEvent)
 }
 
 const bindField = (component: Partial<EField>) => {
     state.fieldsChild.push(component);
-    state.fieldsChildError.push(false);
+    state.fieldsChildError.push(Boolean(component.hasError));
+    component.setConfiguration?.(effectiveConfiguration.value);
 }
 
 const unbindField = (uid: number) => {
@@ -77,18 +117,17 @@ const unbindField = (uid: number) => {
 const updateField = (component: Partial<EField>) => {
     const index = state.fieldsChild.findIndex((c) => c.uid === component.uid);
     if (index > -1) {
-        state.fieldsChildError.splice(index, 1, component.hasError)
+        state.fieldsChildError.splice(index, 1, Boolean(component.hasError))
     }
 }
 
-provide("EForm", {
+provide(FORM_KEY, {
     bindField,
     unbindField,
     updateField
 });
 
 const changeValue = (value: boolean): void => {
-    localValue.value = value;
     emit('update:modelValue', value)
 }
 
@@ -98,17 +137,23 @@ const reset = (): void => {
     });
 }
 
-watch(() => props.color, () => setConfiguration())
-watch(() => props.retainColor, () => setConfiguration())
+const resetValidation = (): void => {
+    state.fieldsChild.forEach((vueComponent) => {
+        vueComponent.resetValidation?.();
+    });
+}
 
 const setConfiguration = (): void => {
     state.fieldsChild.forEach((vueComponent) => {
-        const configuration: Record<string, any> = {}
-        props.labelMinWidth && (configuration.labelStyle = { minWidth: `${props.labelMinWidth}px` })
-        props.color && (configuration.color = props.color)
-        props.retainColor && (configuration.retainColor = props.retainColor)
-        vueComponent.setConfiguration?.(configuration);
+        vueComponent.setConfiguration?.(effectiveConfiguration.value);
     });
+}
+
+watch(effectiveConfiguration, () => setConfiguration(), { deep: true, immediate: true })
+
+const getFirstInvalidField = (): Partial<EField> | undefined => {
+    const invalidIndex = state.fieldsChildError.findIndex(Boolean)
+    return invalidIndex >= 0 ? state.fieldsChild[invalidIndex] : undefined
 }
 
 const validate = async (): Promise<boolean> => {
@@ -120,10 +165,15 @@ const validate = async (): Promise<boolean> => {
         }
     });
     await nextTick()
+
+    if (!valid && props.focusFirstInvalid) {
+        getFirstInvalidField()?.focus?.()
+    }
+
     return valid
 }
 
-defineExpose({ validate, reset })
+defineExpose({ validate, reset, resetValidation })
 
 </script>
 <style lang="scss" src="./style.scss"></style>

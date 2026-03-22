@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div>
   
     <section class="block">

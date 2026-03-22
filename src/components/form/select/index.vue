@@ -14,7 +14,7 @@
                     <label v-if="mounted" :for="id" :class="[textColor, 'e-label']" :style="labelStyle">
                         <slot name="label"> {{ label }}</slot>
                     </label>
-                    <div v-if="prefix" :class="[textColor, 'e-field__prefix']" @click="setInputFocus">
+                    <div v-if="prefix" :class="[textColor, 'e-field__prefix']" @click="focus">
                         {{ prefix }}
                     </div>
                     <div :class="['e-select__selections', textColor]">
@@ -48,7 +48,7 @@
                             @input="changeSearchValue($event, true)" />
                     </div>
 
-                    <div v-if="suffix" :class="[textColor, 'e-field__suffix']" @click="setInputFocus">
+                    <div v-if="suffix" :class="[textColor, 'e-field__suffix']" @click="focus">
                         {{ suffix }}
                     </div>
                     <transition name="scale">
@@ -104,9 +104,8 @@ export default { name: "Select" }
 import { clickOutside } from '@/directives'
 import { IconPath } from '@/types';
 import icon from '@/utils/icons';
-const vClickOutside = { ...clickOutside }
-
-import { useGrid } from "@/composables/grid"
+import { useFieldActions } from "@/composables/field-actions"
+import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
 import { useUtils } from "@/composables/utils"
 
@@ -116,8 +115,19 @@ import EButton from '@/components/button/index.vue'
 import EIcon from '@/components/icon/index.vue'
 import EDetails from '@/components/form/details.vue'
 
-export type itemType = string | number | null | Record<string, any> | Array<itemType>;
-export interface Props {
+const vClickOutside = { ...clickOutside }
+
+type itemType = string | number | null | Record<string, any> | Array<itemType>;
+const emit = defineEmits<{
+    (e: 'click:clear'): void, (e: 'focus', value: FocusEvent): void,
+    (e: 'click:prepend'): void, (e: 'click:append'): void, (e: 'blur', value: Event): void,
+    (e: 'update:modelValue', value: itemType): void
+    (e: 'update:search', value: string | number): void
+}>()
+
+const input = ref()
+
+const props = withDefaults(defineProps<{
     arrowDown?: string | IconPath | Array<IconPath>; multiple?: boolean, returnObject?: boolean; retainColor?: boolean; loading?: boolean
     disabled?: boolean; dense?: boolean; readonly?: boolean; clearable?: boolean; itemCol?: string | number;
     labelInline?: boolean; detail?: string; outlined?: boolean; label?: string | number; search?: string | number
@@ -130,29 +140,17 @@ export interface Props {
     itemText?: string
     itemValue?: string
     items: Array<any>
-}
-
-
-const emit = defineEmits<{
-    (e: 'click:clear'): void, (e: 'focus', value: FocusEvent): void,
-    (e: 'click:prepend'): void, (e: 'click:append'): void, (e: 'blur', value: Event): void,
-    (e: 'update:modelValue', value: itemType): void
-    (e: 'update:search', value: string | number): void
-}>()
-
-const input = ref()
-
-const props = withDefaults(defineProps<Props>(), { itemText: 'text', itemValue: 'value', inputAlign: 'start', itemCol: 1 })
+}>(), { itemText: 'text', itemValue: 'value', inputAlign: 'start', itemCol: 1 })
 const opened = ref<boolean>(false)
-const { fieldClass, dirty, id, focused, showDetails, textColor, color, mounted,
-    details, labelStyle, handleHover, handleBlur, handleClickPrependIcon,
-    handleClickAppendIcon, handleFocus, setInputFocus } = useField()
-const { gridClass } = useGrid('e-field')
+const { fieldClass, touched, id, focused, focus, showDetails, textColor, color, mounted,
+    details, labelStyle, handleHover, handleBlur, handleFocus } = useField()
+const { handleClickPrependIcon, handleClickAppendIcon } = useFieldActions({ emit, focus })
+const { gridColClass } = useGridCol(props, 'e-field')
 const { isObject } = useUtils()
 watch(() => opened.value, (val: boolean) => {
     if (val) {
         document.addEventListener("keydown", handleExcListener);
-        setInputFocus()
+        focus()
     }
     else
         document.removeEventListener("keydown", handleExcListener);
@@ -172,7 +170,7 @@ const lineStyle = computed(() => {
 })
 
 const selectClass = computed(() => {
-    const result = [...fieldClass.value, 'e-select', ...gridClass.value]
+    const result = [...fieldClass.value, 'e-select', ...gridColClass.value]
     opened.value && result.push('e-select--is-open')
     props.itemCol && result.push('e-select--columns-variant')
     props.multiple && result.push('e-select--multiple')
@@ -254,7 +252,8 @@ const closeMenu = (): void => {
     focused.value = false;
 }
 const displayedText = (item: itemType): string => {
-    return isObject(item) ? (item as Record<string, any>)[props.itemText] : item;
+    const result = isObject(item) ? (item as Record<string, any>)[props.itemText] : item
+    return result == null ? '' : String(result)
 }
 const changeValue = (value: any, isEvent = false) => {
     const valueResult = isEvent ? value.target.value : value
@@ -362,7 +361,7 @@ const clear = (): void => {
 
 const handleOutsideMenu = (): void => {
     if (opened.value) {
-        dirty.value = true;
+        touched.value = true;
         closeMenu()
     }
 }

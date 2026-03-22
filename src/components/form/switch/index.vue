@@ -6,10 +6,10 @@
                 <label v-if="mounted" :class="[textColor, 'e-label']" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
-                <div :class="['e-field--selection-controls__field', switchColor]" :data-focused="focused">
+                <div :class="['e-field__selection-control', switchColor]" :data-focused="focused">
                     <input v-if="mounted" :value="modelValue" :aria-checked="active" :id="id" role="switch" type="checkbox"
                         aria-disabled="false" @focus="handleFocus" @blur="handleBlur" />
-                    <div :class="['e-field--selection-controls__ripple', switchColor]"></div>
+                    <div :class="['e-field__selection-ripple', switchColor]"></div>
                     <div :class="['e-field-switch__track', switchColor]"></div>
                     <div class="e-field-switch__thumb">
                         <template v-if="mounted">
@@ -35,7 +35,7 @@
 </template>
   
 <script lang="ts" setup>
-import { useGrid } from "@/composables/grid"
+import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
 
 import EDetails from '@/components/form/details.vue'
@@ -60,7 +60,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: boolean | string | number): void
 }>()
 
-const { gridClass } = useGrid('e-field')
+const { gridColClass } = useGridCol(props, 'e-field')
 
 const switchColor = computed(() => {
     const color = props.color || configuration.color
@@ -68,7 +68,7 @@ const switchColor = computed(() => {
 })
 
 const swithcClass = computed((): Array<string> => {
-    const classes = [...fieldClass.value, 'e-field-switch', 'e-field--selection-controls', ...gridClass.value]
+    const classes = [...fieldClass.value, 'e-field-switch', 'e-field--selection-controls', ...gridColClass.value]
     active.value && classes.push('e-field-switch--active')
     return classes
 })

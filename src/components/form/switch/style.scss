@@ -5,11 +5,11 @@
     }
 
     .e-field {
-      &--selection-controls__ripple {
+      &__selection-ripple {
         left: -2px;
       }
 
-      &--selection-controls__field {
+      &__selection-control {
         margin-right: 20px;
         align-self: center;
       }
@@ -20,7 +20,7 @@
     }
 
     &--active {
-      .e-field--selection-controls__ripple {
+      .e-field__selection-ripple {
         left: 20px;
       }
 

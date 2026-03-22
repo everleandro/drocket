@@ -32,15 +32,15 @@ export interface Props {
     md?: string | number; lg?: string | number; xl?: string | number;
 }
 import { useField } from "@/composables/field"
-import { useGrid } from "@/composables/grid"
+import { useGridCol } from "@/composables/grid-col"
 const props = defineProps<Props>()
 
 const { fieldClass, id, showDetails, handleBlur, textColor, details, labelStyle, handleHover, handleFocus, configuration } = useField()
 
-const { gridClass } = useGrid('e-field')
+const { gridColClass } = useGridCol(props, 'e-field')
 
 const radioGroupClass = computed(() => {
-    const result = [...fieldClass.value, 'e-field--selection-controls e-field e-field--radio-group', ...gridClass.value]
+    const result = [...fieldClass.value, 'e-field--selection-controls e-field e-field--radio-group', ...gridColClass.value]
     props.row ? result.push('e-field--radio-group--row') : result.push('e-field--radio-group--column')
     return result
 })

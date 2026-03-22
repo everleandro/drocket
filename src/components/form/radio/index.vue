@@ -1,6 +1,6 @@
 <template>
     <div :class="radioClass" @click="changeModelValue(true)">
-        <div :class="['e-field--selection-controls__field']" :data-focused="controlFocused">
+        <div :class="['e-field__selection-control']" :data-focused="controlFocused">
             <span aria-hidden="true" class="e-icon" :class="radioColor"><svg xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24" width="24" height="24 " role="img" aria-hidden="true" class="e-icon__svg">
                     <path v-if="active"
@@ -14,7 +14,7 @@
             <input v-if="mounted" ref="input" :aria-checked="active" :id="id" role="radio" type="radio" :name="id"
                 :value="modelValue" @input="changeModelValue()" @focus="handleFocus" @blur="handleBlur" />
 
-            <div v-ripple="{ center: true }" :class="['e-field--selection-controls__ripple', radioColor]">
+            <div v-ripple="{ center: true }" :class="['e-field__selection-ripple', radioColor]">
             </div>
         </div>
         <label v-if="mounted" :class="[textColor, 'e-label']" :for="id" :labelStyle="labelStyle">
@@ -25,20 +25,20 @@
 
 <script lang="ts" setup>
 import { computed, getCurrentInstance, inject, onMounted, ref } from "vue";
-import { radioType, RadioGroup } from "@/types"
+import type { ERadioGroup, ERadioType } from "@/types"
 import { useField } from "@/composables/field"
 
 export interface Props {
     retainColor?: boolean;
     isActive?: boolean;
     disabled?: boolean; readonly?: boolean; label?: string | number;
-    modelValue: radioType; color?: string; labelMinWidth?: string;
+    modelValue: ERadioType; color?: string; labelMinWidth?: string;
 }
 const controlFocused = ref(false)
 const input = ref<HTMLInputElement>()
 const { fieldClass, id, textColor, labelStyle, setConfiguration, configuration, mounted } = useField(false)
 
-const radioGroup = inject<Partial<RadioGroup> | undefined>("ERadioGroup", undefined);
+const radioGroup = inject<Partial<ERadioGroup> | undefined>("ERadioGroup", undefined);
 
 const props = defineProps<Props>()
 

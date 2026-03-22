@@ -83,7 +83,8 @@
 import UtilDate from '@/utils/date';
 import EButton from '@/components/button/index.vue'
 import EIcon from '@/components/icon/index.vue'
-import { useGrid } from "@/composables/grid"
+import { useFieldActions } from "@/composables/field-actions"
+import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
 import { IconPath } from '@/types'
 
@@ -115,10 +116,10 @@ const emit = defineEmits<{
     (e: 'blur', value: Event): void
 }>()
 
-const { fieldClass, dirty, focused, id, showDetails, textColor, color,
-    details, labelStyle, handleHover, handleClickPrependIcon,
-    handleClickAppendIcon, mounted } = useField()
-const { gridClass } = useGrid('e-field')
+const { fieldClass, touched, focused, id, showDetails, textColor, color,
+    details, labelStyle, handleHover, focus, mounted } = useField()
+const { handleClickPrependIcon, handleClickAppendIcon } = useFieldActions({ emit, focus })
+const { gridColClass } = useGridCol(props, 'e-field')
 
 watch(() => opened.value, (val: boolean) => {
     if (val) {
@@ -137,7 +138,7 @@ const hourLabel = computed(() => new UtilDate(props.modelValue).format('hour-hh'
 const minutesLabel = computed(() => new UtilDate(props.modelValue).format('minutes-mm'))
 
 const timePickerClass = computed(() => {
-    const result = [...fieldClass.value, 'e-time-picker', ...gridClass.value]
+    const result = [...fieldClass.value, 'e-time-picker', ...gridColClass.value]
     opened.value && result.push('e-time-picker--is-open')
     return result
 })
@@ -154,7 +155,7 @@ const arrowActions = (timeKey: 'minutes' | 'hours', actionKey: 'subtract' | 'add
 
 
 const handleOutsideMenu = (): void => {
-    dirty.value = true;
+    touched.value = true;
     closeMenu()
 }
 
@@ -176,7 +177,7 @@ const changeValue = (value: Date | string) => {
 }
 
 const handleBlur = (event: Event) => {
-    dirty.value = true;
+    touched.value = true;
     nextTick(() => {
         if (!opened.value) {
             emit('blur', event)

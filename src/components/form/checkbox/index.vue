@@ -3,7 +3,7 @@
         <div class="e-field__control">
             <div v-if="!hideOverlay" class="e-field__overlay"></div>
             <div class="e-field__slot">
-                <div :class="['e-field--selection-controls__field']" :data-focused="controlFocused">
+                <div :class="['e-field__selection-control']" :data-focused="controlFocused">
                     <span aria-hidden="true" class="e-icon" :class="checkboxColor"><svg
                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img"
                             aria-hidden="true" class="e-icon__svg">
@@ -18,7 +18,7 @@
 
                     <input v-if="mounted" ref="input" :aria-checked="checked" :id="id" role="checkbox" type="checkbox"
                         @input="change" :value="checked" @focus="handleCheckboxFocus" @blur="handleCheckboxBlur" />
-                    <div v-ripple="{ center: true }" class="e-field--selection-controls__ripple" :class="checkboxColor"
+                    <div v-ripple="{ center: true }" class="e-field__selection-ripple" :class="checkboxColor"
                         @click="change"></div>
                 </div>
                 <label v-if="mounted" :class="[textColor, 'e-label']" :for="id">
@@ -31,7 +31,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { useGrid } from "@/composables/grid"
+import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
 
 import EDetails from '@/components/form/details.vue'
@@ -51,11 +51,11 @@ const emit = defineEmits<{
 }>()
 
 const checkboxClass = computed(() => {
-    return [...fieldClass.value, ' e-field--selection-controls', 'e-checkbox-field', ...gridClass.value]
+    return [...fieldClass.value, ' e-field--selection-controls', 'e-checkbox-field', ...gridColClass.value]
 })
 
 const { fieldClass, id, showDetails, textColor, details, handleHover, handleBlur, handleFocus, configuration, mounted } = useField()
-const { gridClass } = useGrid('e-field')
+const { gridColClass } = useGridCol(props, 'e-field')
 
 const checkboxColor = computed(() => {
     const color = props.color || configuration.color

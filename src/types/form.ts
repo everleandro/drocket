@@ -1,11 +1,11 @@
-import { ComputedRef } from "vue";
-export declare interface EField {
-  setConfiguration: (value: Record<string, string>) => void;
-  uid: number;
-  dirty: boolean;
-  hasError: any;
-  validate: () => void;
-  reset: () => void;
+import type { ComputedRef } from "vue";
+
+import type { EField, FieldConfiguration } from "./field";
+
+export interface FormInjection {
+  bindField: (component: Partial<EField>) => void;
+  unbindField: (uid: number) => void;
+  updateField: (component: Partial<EField>) => void;
 }
 
 export interface EForm {
@@ -13,13 +13,14 @@ export interface EForm {
   unbindField: (uid: number) => void;
   validate: () => Promise<boolean>;
   reset: () => void;
+  resetValidation: () => void;
   updateField: (component: Partial<EField>) => void;
 }
 
 export interface ERadio {
   uid: number;
   modelValue: ERadioType;
-  setConfiguration: (value: Record<string, string>) => void;
+  setConfiguration: (value: FieldConfiguration) => void;
 }
 
 export interface ERadioGroup {
@@ -31,13 +32,4 @@ export interface ERadioGroup {
   modelValue: ComputedRef<ERadioType>;
 }
 
-export declare type ERadioType = string | number | undefined | null;
-export declare type FieldClassKey =
-  | "disabled"
-  | "readonly"
-  | "hasError"
-  | "outlined"
-  | "focused"
-  | "labelInline"
-  | "hovered"
-  | "dense";
+export type ERadioType = string | number | undefined | null;

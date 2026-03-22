@@ -103,7 +103,15 @@
 }
 
 .e-field__slot {
-    border: 1px solid var(--input-border);
+    border: 1px solid var(--e-color-border, rgba(0, 0, 0, 0.38));
+}
+
+@each $state in $active-states {
+    &#{$state} {
+        .e-field__slot {
+            border-color: currentColor;
+        }
+    }
 }
 }
 

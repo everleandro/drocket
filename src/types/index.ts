@@ -1,10 +1,34 @@
 export type {
   EField,
+  FieldBaseProps,
+  FieldConfiguration,
+  FieldClassKey,
+  FieldLabelBehavior,
+  FieldRule,
+  FieldValidationResult,
+  UseFieldProps,
+} from "./field";
+
+export type {
+  TextInputBaseProps,
+  TextInputElement,
+  TextInputEmits,
+  TextInputEnterKeyHint,
+  TextInputInputMode,
+  TextInputKeyEventPayload,
+  TextInputModelModifiers,
+  TextInputRule,
+  TextInputValue,
+  TextInputValueEventPayload,
+  UseTextInputProps,
+} from "./text-input";
+
+export type {
   EForm,
+  FormInjection,
   ERadio,
   ERadioGroup,
   ERadioType,
-  FieldClassKey,
 } from "./form";
 
 export type { BarProps } from "./bar";
