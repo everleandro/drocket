@@ -9,7 +9,11 @@
     $normalized-var-name: #{$var-name};
 
     @if meta.type-of($var-value) != "map" {
-      $css-var-name: if(string.slice($normalized-var-name, 1, 2) == "e-", $normalized-var-name, "e-#{$normalized-var-name}");
+      $css-var-name: "e-#{$normalized-var-name}";
+
+      @if string.slice($normalized-var-name, 1, 2) == "e-" {
+        $css-var-name: $normalized-var-name;
+      }
 
       --#{$css-var-name}: #{$var-value};
     }

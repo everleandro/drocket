@@ -1,5 +1,6 @@
 @use "sass:map";
 @use "sass:meta";
+@use "sass:color";
 @use './override/variables/index' as *;
 @use './_mixins.scss' as *;
 
@@ -8,8 +9,8 @@
     @return map.get($contrast-colors-light, $name);
   }
 
-  @if meta.type-of($bg-color)=="color" {
-    @if lightness($bg-color)>60% {
+  @if meta.type-of($bg-color) == "color" {
+    @if color.channel($bg-color, "lightness", $space: hsl) > 60% {
       @return #000;
     }
 
@@ -88,7 +89,11 @@ $directions: (
 // =============================
 @each $bp, $value in $grid-breakpoints {
   @each $d in $displays {
-    $selector: if($bp ==0, ".d-#{$d}", ".d-#{$bp}-#{$d}");
+    $selector: ".d-#{$bp}-#{$d}";
+
+    @if $bp == 0 {
+      $selector: ".d-#{$d}";
+    }
 
     #{$selector} {
       @include media-up($bp) {
@@ -103,7 +108,7 @@ $directions: (
     @for $i from 0 through $space-scale {
 
       .#{$type}#{$dir}-#{$i} {
-        @if type-of($dir-val)=="list" {
+        @if meta.type-of($dir-val) == "list" {
           @each $d in $dir-val {
             #{$prop}-#{$d}: $i * $space-base;
           }
@@ -121,7 +126,7 @@ $directions: (
       // negativos (solo margin)
       @if $type ==m {
         .#{$type}#{$dir}-n#{$i} {
-          @if type-of($dir-val)=="list" {
+          @if meta.type-of($dir-val) == "list" {
             @each $d in $dir-val {
               #{$prop}-#{$d}: -$i * $space-base;
             }

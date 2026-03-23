@@ -1,8 +1,8 @@
-@import "animations";
-@import "field";
-@import "reset.scss";
-@import "transitions.scss";
-@import "typography.scss";
+@use "animations";
+@use "field";
+@use "reset.scss";
+@use "transitions.scss";
+@use "typography.scss";
 
 .v-ripple-element {
   position: relative;

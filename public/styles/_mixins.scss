@@ -118,7 +118,7 @@
 
 //grid
 @mixin media-up($key) {
-    $value: map-get($grid-breakpoints, $key);
+    $value: map.get($grid-breakpoints, $key);
 
     @if $value !=0 {
         @media (min-width: $value) {

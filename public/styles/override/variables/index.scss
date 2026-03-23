@@ -21,7 +21,12 @@
 
   @each $palette-name, $base-color in $seeds {
     $generated-scale: e-primitive-color-scale($base-color);
-    $override-scale: if(map.has-key($overrides, $palette-name), map.get($overrides, $palette-name), ());
+    $override-scale: ();
+
+    @if map.has-key($overrides, $palette-name) {
+      $override-scale: map.get($overrides, $palette-name);
+    }
+
     $palettes: map.merge($palettes, ($palette-name: map.merge($generated-scale, $override-scale)));
   }
 
