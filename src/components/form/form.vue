@@ -13,11 +13,11 @@ export default defineComponent({
 <script lang="ts" setup>
 import { FORM_KEY } from '@/components/form/constants';
 import { useGridRow } from '@/composables/grid-row';
-import type { EField, FieldConfiguration, FieldLabelBehavior, RowProps } from '@/types';
+import type { EField, ElevationProps, FieldConfiguration, FieldLabelBehavior, RowProps } from '@/types';
 import { getColorContrastCssValue, getColorCssValue, normalizeCssSize } from '@/utils/style';
 import { computed, nextTick, provide, reactive, ref, watch } from 'vue';
 
-export interface Props extends RowProps {
+export interface Props extends RowProps, ElevationProps {
     modelValue?: boolean | undefined
     lazy?: boolean
     focusFirstInvalid?: boolean
@@ -25,16 +25,19 @@ export interface Props extends RowProps {
     outlined?: boolean
     disabled?: boolean
     readonly?: boolean
-    retainColor?: boolean
     labelBehavior?: FieldLabelBehavior
     labelMinWidth?: string | number
+    retainColor?: boolean
+    fieldColor?: string
     color?: string
     table?: boolean
+    tableLineColor?: string
+    tableCellBackgroundColor?: string
     tableFieldColor?: string
     tableLineOpacity?: string | number
 }
 
-const props = withDefaults(defineProps<Props>(), { modelValue: undefined })
+const props = withDefaults(defineProps<Props>(), { modelValue: undefined})
 const form = ref<HTMLFormElement | null>(null)
 
 const { gridRowClass, gridRowStyle } = useGridRow(props)
@@ -66,8 +69,10 @@ const effectiveConfiguration = computed<FieldConfiguration>(() => {
         configuration.labelStyle = { minWidth: labelMinWidth }
     }
 
-    if (props.color) {
-        configuration.color = props.color
+    const resolvedFieldColor = props.fieldColor || props.color
+
+    if (resolvedFieldColor) {
+        configuration.color = resolvedFieldColor
     }
 
     return configuration
@@ -79,6 +84,7 @@ const formClass = computed(() => {
     props.disabled && result.push('e-form--disabled')
     props.readonly && result.push('e-form--readonly')
     props.table && result.push('e-form--table')
+    props.elevation && result.push(`e-elevation--${props.elevation}`)
     return result
 })
 
@@ -89,15 +95,19 @@ const formStyle = computed<Record<string, string>>(() => {
         return result
     }
 
-    const resolvedLineColor = getColorCssValue(props.color)
-    const resolvedFieldColor = getColorCssValue(props.tableFieldColor)
-    const resolvedContrastFieldColor = getColorContrastCssValue(props.color, {
+    const legacyTableLineColor = !props.tableLineColor && !props.fieldColor ? props.color : undefined
+    const resolvedTableLineColor = props.tableLineColor || legacyTableLineColor
+    const resolvedTableCellBackgroundColor = props.tableCellBackgroundColor || props.tableFieldColor
+
+    const resolvedLineColor = getColorCssValue(resolvedTableLineColor)
+    const resolvedCellBackgroundColor = getColorCssValue(resolvedTableCellBackgroundColor)
+    const resolvedLegacyContrastCellBackgroundColor = getColorContrastCssValue(legacyTableLineColor, {
         fallbackContrast: 'var(--e-color-surface-1, white)',
     })
     const resolvedLineOpacity = props.tableLineOpacity
 
     result['--e-form-table-line-color'] = resolvedLineColor || 'var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87))'
-    result['--e-form-table-field-bg'] = resolvedFieldColor || resolvedContrastFieldColor || 'var(--e-color-surface-1, white)'
+    result['--e-form-table-field-bg'] = resolvedCellBackgroundColor || resolvedLegacyContrastCellBackgroundColor || 'var(--e-color-surface-1, white)'
 
     if (resolvedLineOpacity !== undefined && resolvedLineOpacity !== null && resolvedLineOpacity !== '') {
         result['--e-form-table-line-opacity'] = String(resolvedLineOpacity)

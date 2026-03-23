@@ -1,8 +1,12 @@
 @use '~/public/styles/_mixins.scss' as *;
+
 .e-form {
   --e-form-table-line-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
-  --e-form-table-line-opacity: 0.14;
+  --e-form-table-line-opacity: 0.46;
   --e-form-table-field-bg: var(--e-color-surface-1, white);
+  --e-form-table-border-radius: var(--e-border-radius-root);
+  --e-form-table-line-width: max(1px, var(--e-grid-gap, 1px));
+  border-radius: var(--e-form-table-border-radius);
 
   flex: 1 1 auto;
 
@@ -49,6 +53,7 @@
     position: relative;
     isolation: isolate;
     padding: var(--e-grid-gap);
+    border-radius: var(--e-form-table-border-radius);
 
     &::before {
       content: "";
@@ -56,14 +61,69 @@
       inset: 0;
       background-color: var(--e-form-table-line-color);
       opacity: var(--e-form-table-line-opacity);
+      border-radius: inherit;
       pointer-events: none;
       z-index: 0;
     }
 
-    > * {
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 2;
+      box-shadow: inset 0 0 0 var(--e-grid-gap) var(--e-form-table-line-color);
+    }
+
+    .e-field__line {
+      display: none;
+    }
+
+    @supports (box-shadow: inset 0 0 0 1px color-mix(in srgb, black 50%, transparent)) {
+      &::after {
+        box-shadow: inset 0 0 0 var(--e-grid-gap) color-mix(in srgb,
+            var(--e-form-table-line-color) calc(var(--e-form-table-line-opacity) * 100%),
+            transparent);
+      }
+    }
+
+    >* {
       position: relative;
       z-index: 1;
       background-color: var(--e-form-table-field-bg);
+    }
+
+    &.e-form--disabled {
+      overflow: hidden;
+      padding: 0;
+      gap: 0;
+
+      &::before {
+        display: none;
+      }
+
+      &::after {
+        box-shadow: none;
+        border-color: var(--e-form-table-line-color);
+        border-style: dashed;
+        border-width: 0 var(--e-form-table-line-width) var(--e-form-table-line-width) 0;
+      }
+
+      > * {
+        position: relative;
+      }
+
+      > *::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-color: var(--e-form-table-line-color);
+        border-style: dashed;
+        border-width: var(--e-form-table-line-width) 0 0 var(--e-form-table-line-width);
+        pointer-events: none;
+        z-index: 2;
+      }
     }
 
     .e-field {
@@ -74,35 +134,7 @@
         background-color: inherit;
       }
 
-      &__slot {
-        background-color: transparent;
-        border: 0;
-        border-radius: 0;
 
-        &::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          border: 1px solid transparent;
-          pointer-events: none;
-          transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-      }
-
-      &__line {
-        display: none;
-      }
-
-      &--is-hovered,
-      &--retain-color,
-      &--is-focused,
-      &--has-error {
-        color: var(--e-form-table-active-color);
-
-        .e-field__slot::after {
-          border-color: var(--e-form-table-active-color);
-        }
-      }
     }
   }
 }

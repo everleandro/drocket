@@ -12,7 +12,7 @@
 
     <ERow dense>
       <ECol :cols="12" :lg="8">
-        <ECard class="form-card form-card--main" elevation="md">
+        <ECard class="form-card secondary--text" elevation="md">
           <div class="form-card__header">
             <div>
               <p class="section-kicker">Demo integrada</p>
@@ -31,7 +31,7 @@
             label-behavior="floating"
             v-model="formValid"
             class="demo-form"
-            color="cyan-800"
+            field-color="cyan-800"
             label-min-width="136"
             dense
             @submit="handleSubmit"
@@ -164,8 +164,8 @@
               <p class="table-lab__copy">
                 Estos ejemplos usan la nueva prop <strong>table</strong> del
                 formulario. El primer bloque usa el fallback por defecto y el
-                segundo reutiliza <strong>color</strong> para las lineas y
-                <strong>tableFieldColor</strong> para el fondo de las celdas.
+                segundo usa <strong>tableLineColor</strong> para las lineas y
+                <strong>tableCellBackgroundColor</strong> para el fondo de las celdas.
               </p>
             </div>
 
@@ -220,10 +220,10 @@
                 <p class="table-lab__label">Tinted table</p>
                 <EForm
                   table
-                  gap="1"
-                  color="cyan-800"
-                  table-field-color="neutral-50"
+                  elevation="xs"
+                  table-line-color="teal-900"
                   label-behavior="floating"
+                  disabled
                   class="table-demo-form"
                 >
                   <ETextfield
@@ -246,7 +246,6 @@
                     :md="4"
                     label="Prioridad"
                     placeholder="Alta"
-                    color="primary"
                     retain-color
                   />
                   <ETextfield
@@ -262,6 +261,55 @@
                     :md="6"
                     label="Nota"
                     placeholder="Cambiar color de fondo sin tocar la linea"
+                  />
+                </EForm>
+              </div>
+            </div>
+          </div>
+
+          <div class="elevation-lab">
+            <div class="elevation-lab__header">
+              <div>
+                <p class="section-kicker">Elevacion</p>
+                <h2>Sombras para el contenedor del formulario</h2>
+              </div>
+              <p class="table-lab__copy">
+                Esta seccion prueba la nueva prop <strong>elevation</strong> en
+                <strong>EForm</strong> usando la misma escala que ya existe en
+                <strong>EButton</strong> y <strong>ECard</strong>.
+              </p>
+            </div>
+
+            <div class="elevation-lab__grid">
+              <div
+                v-for="example in elevationExamples"
+                :key="example.level"
+                class="elevation-lab__panel"
+              >
+                <div class="elevation-lab__meta">
+                  <p class="table-lab__label">{{ example.title }}</p>
+                  <span>{{ example.copy }}</span>
+                </div>
+
+                <EForm
+                  :elevation="example.level"
+                  class="elevation-demo-form"
+                  label-behavior="floating"
+                  gap="3"
+                >
+                  <ETextfield
+                    v-model="elevationPreview[example.level].name"
+                    :cols="12"
+                    :md="6"
+                    label="Nombre"
+                    placeholder="Ada Lovelace"
+                  />
+                  <ETextfield
+                    v-model="elevationPreview[example.level].context"
+                    :cols="12"
+                    :md="6"
+                    label="Contexto"
+                    placeholder="Shadow preview"
                   />
                 </EForm>
               </div>
@@ -538,6 +586,48 @@ const websiteRules = [validWebsite];
 const notesRules = [maxNotesLength];
 const inlineRules = [requiredText, alphaDashCode];
 
+const elevationExamples = [
+  {
+    level: "xs",
+    title: "Elevation xs",
+    copy: "Separacion sutil para bloques livianos.",
+  },
+  {
+    level: "sm",
+    title: "Elevation sm",
+    copy: "Buena opcion por defecto para agrupar campos.",
+  },
+  {
+    level: "md",
+    title: "Elevation md",
+    copy: "Aumenta la jerarquia visual sin verse pesada.",
+  },
+  {
+    level: "lg",
+    title: "Elevation lg",
+    copy: "Util para formularios protagonistas o modales.",
+  },
+] as const;
+
+const elevationPreview = reactive({
+  xs: {
+    name: "Ada Lovelace",
+    context: "Sombra minima",
+  },
+  sm: {
+    name: "Grace Hopper",
+    context: "Agrupacion estandar",
+  },
+  md: {
+    name: "Katherine Johnson",
+    context: "Jerarquia intermedia",
+  },
+  lg: {
+    name: "Radia Perlman",
+    context: "Contenedor destacado",
+  },
+});
+
 const payloadPreview = computed(() => {
   return JSON.stringify(form, null, 2);
 });
@@ -609,6 +699,7 @@ const handleReset = (): void => {
   border: 1px solid rgba(23, 32, 51, 0.08);
   border-radius: 20px;
   padding: 24px;
+  flex-direction: column;
 }
 
 .form-card__header {
@@ -659,13 +750,49 @@ const handleReset = (): void => {
   padding-top: 24px;
 }
 
+.elevation-lab {
+  border-top: 1px solid rgba(23, 32, 51, 0.08);
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+  padding-top: 24px;
+}
+
+.elevation-lab__header,
+.elevation-lab__meta {
+  display: grid;
+  gap: 10px;
+}
+
+.elevation-lab__meta span {
+  color: #5f6f86;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.elevation-lab__grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.elevation-lab__panel {
+  display: grid;
+  gap: 12px;
+}
+
+.elevation-demo-form {
+  background: linear-gradient(180deg, #ffffff, #f7f9fc);
+  border-radius: 18px;
+  padding: 16px;
+}
+
 .table-lab__header {
   display: grid;
   gap: 10px;
 }
 
 .table-lab__copy {
-  color: #5f6f86;
   line-height: 1.6;
   margin: 0;
   max-width: 72ch;
@@ -677,7 +804,6 @@ const handleReset = (): void => {
 }
 
 .table-lab__panel {
-  background: #f7f9fc;
   border: 1px solid rgba(23, 32, 51, 0.08);
   border-radius: 18px;
   display: grid;
