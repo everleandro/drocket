@@ -31,6 +31,7 @@
             label-behavior="floating"
             v-model="formValid"
             class="demo-form"
+            color="cyan-800"
             label-min-width="136"
             dense
             @submit="handleSubmit"
@@ -153,6 +154,119 @@
             >
             <EButton text @click="handleReset">Restablecer</EButton>
           </div>
+
+          <div class="table-lab">
+            <div class="table-lab__header">
+              <div>
+                <p class="section-kicker">Modo tabla</p>
+                <h2>Grilla con separadores de 1px</h2>
+              </div>
+              <p class="table-lab__copy">
+                Estos ejemplos usan la nueva prop <strong>table</strong> del
+                formulario. El primer bloque usa el fallback por defecto y el
+                segundo reutiliza <strong>color</strong> para las lineas y
+                <strong>tableFieldColor</strong> para el fondo de las celdas.
+              </p>
+            </div>
+
+            <div class="table-lab__grid">
+              <div class="table-lab__panel">
+                <p class="table-lab__label">Default table</p>
+                <EForm
+                  table
+                  class="table-demo-form"
+                >
+                  <ETextfield
+                    v-model="tableForm.code"
+                    :cols="12"
+                    :md="4"
+                    label="Codigo"
+                    placeholder="TB-001"
+                  />
+                  <ETextfield
+                    v-model="tableForm.description"
+                    :cols="12"
+                    :md="8"
+                    label="Descripcion"
+                    placeholder="Fila base con lineas por contraste"
+                  />
+                  <ETextfield
+                    v-model="tableForm.owner"
+                    :cols="12"
+                    :md="4"
+                    label="Owner"
+                    placeholder="Ada"
+                  />
+                  <ETextfield
+                    v-model="tableForm.status"
+                    :cols="12"
+                    :md="4"
+                    label="Estado"
+                    placeholder="Activo"
+                    color="green-700"
+                  />
+                  <ETextfield
+                    v-model="tableForm.amount"
+                    :cols="12"
+                    :md="4"
+                    label="Monto"
+                    prefix="$"
+                    placeholder="1280"
+                  />
+                </EForm>
+              </div>
+
+              <div class="table-lab__panel">
+                <p class="table-lab__label">Tinted table</p>
+                <EForm
+                  table
+                  gap="1"
+                  color="cyan-800"
+                  table-field-color="neutral-50"
+                  label-behavior="floating"
+                  class="table-demo-form"
+                >
+                  <ETextfield
+                    v-model="tintedTableForm.ticket"
+                    :cols="12"
+                    :md="3"
+                    label="Ticket"
+                    placeholder="OPS-42"
+                  />
+                  <ETextfield
+                    v-model="tintedTableForm.assignee"
+                    :cols="12"
+                    :md="5"
+                    label="Responsable"
+                    placeholder="Equipo plataforma"
+                  />
+                  <ETextfield
+                    v-model="tintedTableForm.priority"
+                    :cols="12"
+                    :md="4"
+                    label="Prioridad"
+                    placeholder="Alta"
+                    color="primary"
+                    retain-color
+                  />
+                  <ETextfield
+                    v-model="tintedTableForm.window"
+                    :cols="12"
+                    :md="6"
+                    label="Ventana"
+                    placeholder="09:00 - 11:00"
+                  />
+                  <ETextfield
+                    v-model="tintedTableForm.note"
+                    :cols="12"
+                    :md="6"
+                    label="Nota"
+                    placeholder="Cambiar color de fondo sin tocar la linea"
+                  />
+                </EForm>
+              </div>
+            </div>
+          </div>
         </ECard>
       </ECol>
 
@@ -248,6 +362,22 @@ type SubmitState = {
   message: string;
 };
 
+type TableFormModel = {
+  code: string;
+  description: string;
+  owner: string;
+  status: string;
+  amount: string;
+};
+
+type TintedTableFormModel = {
+  ticket: string;
+  assignee: string;
+  priority: string;
+  window: string;
+  note: string;
+};
+
 type TextFieldValue = string | number | null;
 
 type TextFieldValueEventPayload<EventType extends Event = Event> = {
@@ -288,6 +418,20 @@ const createInitialForm = (): DemoFormModel => ({
 const formRef = ref<FormInstance | null>(null);
 const formValid = ref(false);
 const form = reactive<DemoFormModel>(createInitialForm());
+const tableForm = reactive<TableFormModel>({
+  code: "TB-001",
+  description: "Separadores construidos con gap y color del contenedor.",
+  owner: "Ada Lovelace",
+  status: "Activo",
+  amount: "1280",
+});
+const tintedTableForm = reactive<TintedTableFormModel>({
+  ticket: "OPS-42",
+  assignee: "Equipo plataforma",
+  priority: "Alta",
+  window: "09:00 - 11:00",
+  note: "La linea usa cyan y la celda neutral-50.",
+});
 const eventSequence = ref(0);
 const eventLog = ref<Array<EventLogEntry>>([]);
 const submitState = reactive<SubmitState>({
@@ -507,6 +651,53 @@ const handleReset = (): void => {
   margin-top: 24px;
 }
 
+.table-lab {
+  border-top: 1px solid rgba(23, 32, 51, 0.08);
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+  padding-top: 24px;
+}
+
+.table-lab__header {
+  display: grid;
+  gap: 10px;
+}
+
+.table-lab__copy {
+  color: #5f6f86;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 72ch;
+}
+
+.table-lab__grid {
+  display: grid;
+  gap: 16px;
+}
+
+.table-lab__panel {
+  background: #f7f9fc;
+  border: 1px solid rgba(23, 32, 51, 0.08);
+  border-radius: 18px;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.table-lab__label {
+  color: #51617d;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.table-demo-form {
+  width: 100%;
+}
+
 .sidebar-stack {
   display: grid;
   gap: 16px;
@@ -608,6 +799,10 @@ const handleReset = (): void => {
 
   .summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .table-lab__panel {
+    padding: 14px;
   }
 }
 </style>

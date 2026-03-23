@@ -1,7 +1,9 @@
 @use '~/public/styles/_mixins.scss' as *;
 .e-form {
-  display: flex;
-  flex-wrap: wrap;
+  --e-form-table-line-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+  --e-form-table-line-opacity: 0.14;
+  --e-form-table-field-bg: var(--e-color-surface-1, white);
+
   flex: 1 1 auto;
 
   &--readonly {
@@ -39,6 +41,67 @@
 
       &__line::before {
         border-style: dashed;
+      }
+    }
+  }
+
+  &--table {
+    position: relative;
+    isolation: isolate;
+    padding: var(--e-grid-gap);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: var(--e-form-table-line-color);
+      opacity: var(--e-form-table-line-opacity);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+      background-color: var(--e-form-table-field-bg);
+    }
+
+    .e-field {
+      --e-form-table-active-color: var(--e-field-color, var(--e-form-table-line-color, currentColor));
+      --e-field-border-radius: 0px;
+
+      &__control {
+        background-color: inherit;
+      }
+
+      &__slot {
+        background-color: transparent;
+        border: 0;
+        border-radius: 0;
+
+        &::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          border: 1px solid transparent;
+          pointer-events: none;
+          transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      }
+
+      &__line {
+        display: none;
+      }
+
+      &--is-hovered,
+      &--retain-color,
+      &--is-focused,
+      &--has-error {
+        color: var(--e-form-table-active-color);
+
+        .e-field__slot::after {
+          border-color: var(--e-form-table-active-color);
+        }
       }
     }
   }

@@ -1,8 +1,6 @@
 <template>
-    <form ref="form" :class="formClass" v-on:submit="submit">
-        <div :class="gridRowClass" :style="gridRowStyle">
-            <slot></slot>
-        </div>
+    <form ref="form" :class="mergedClass" :style="mergedStyle" v-on:submit="submit">
+        <slot></slot>
     </form>
 </template>
 <script lang="ts">
@@ -16,7 +14,7 @@ export default defineComponent({
 import { FORM_KEY } from '@/components/form/constants';
 import { useGridRow } from '@/composables/grid-row';
 import type { EField, FieldConfiguration, FieldLabelBehavior, RowProps } from '@/types';
-import { normalizeCssSize } from '@/utils/style';
+import { getColorContrastCssValue, getColorCssValue, normalizeCssSize } from '@/utils/style';
 import { computed, nextTick, provide, reactive, ref, watch } from 'vue';
 
 export interface Props extends RowProps {
@@ -31,6 +29,9 @@ export interface Props extends RowProps {
     labelBehavior?: FieldLabelBehavior
     labelMinWidth?: string | number
     color?: string
+    table?: boolean
+    tableFieldColor?: string
+    tableLineOpacity?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), { modelValue: undefined })
@@ -77,8 +78,53 @@ const formClass = computed(() => {
     props.outlined && result.push('e-form--outlined')
     props.disabled && result.push('e-form--disabled')
     props.readonly && result.push('e-form--readonly')
+    props.table && result.push('e-form--table')
     return result
 })
+
+const formStyle = computed<Record<string, string>>(() => {
+    const result: Record<string, string> = {}
+
+    if (!props.table) {
+        return result
+    }
+
+    const resolvedLineColor = getColorCssValue(props.color)
+    const resolvedFieldColor = getColorCssValue(props.tableFieldColor)
+    const resolvedContrastFieldColor = getColorContrastCssValue(props.color, {
+        fallbackContrast: 'var(--e-color-surface-1, white)',
+    })
+    const resolvedLineOpacity = props.tableLineOpacity
+
+    result['--e-form-table-line-color'] = resolvedLineColor || 'var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87))'
+    result['--e-form-table-field-bg'] = resolvedFieldColor || resolvedContrastFieldColor || 'var(--e-color-surface-1, white)'
+
+    if (resolvedLineOpacity !== undefined && resolvedLineOpacity !== null && resolvedLineOpacity !== '') {
+        result['--e-form-table-line-opacity'] = String(resolvedLineOpacity)
+    }
+
+    return result
+})
+
+const effectiveGridRowStyle = computed<Record<string, string>>(() => {
+    const result = { ...gridRowStyle.value }
+
+    if (props.table && !result['--e-grid-gap']) {
+        result['--e-grid-gap'] = '1px'
+    }
+
+    return result
+})
+
+const mergedClass = computed<Array<string>>(() => [
+    ...formClass.value,
+    ...gridRowClass.value,
+])
+
+const mergedStyle = computed<Record<string, string>>(() => ({
+    ...formStyle.value,
+    ...effectiveGridRowStyle.value,
+}))
 
 watch(() => state.fieldsChildError, (val: Array<boolean>) => {
     const valid = !val.find((e) => !!e)
