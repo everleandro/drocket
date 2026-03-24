@@ -27,7 +27,6 @@ import { EChip } from 'drocket'
 | `color` | `string` | `undefined` | Agrega la clase `{color}--text`. |
 | `text` | `boolean` | `false` | Variante sin underlay. |
 | `prependAvatar` | `string` | `undefined` | URL del avatar al inicio. |
-| `avatarSize` | `string \| number` | `undefined` | Override explicito del tamano del avatar interno. |
 | `appendAvatar` | `string` | `undefined` | URL del avatar al final. |
 | `prependIcon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono al inicio. |
 | `appendIcon` | `IconPath \| IconPath[] \| string` | `undefined` | Icono al final. |
@@ -134,4 +133,4 @@ const selected = ref(false)
 - Esperar que `color` cambie el fondo: hoy aplica clase de color de texto y el underlay usa `currentColor`.
 - Esperar ripple automatico en chips interactivos: hoy solo se activa si pasas `ripple`.
 - Pasar `tag="button"` junto con `closable`: el componente evita roots interactivos nativos en ese caso para no anidar botones.
-- Forzar `avatarSize` cuando ya existe un tamano de chip resuelto por variables CSS: usalo solo si de verdad necesitas override local.
+- Esperar controlar el tamano del avatar desde un prop dedicado: el avatar interno sigue el size del chip y sus variables CSS.

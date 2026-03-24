@@ -1,6 +1,6 @@
 <template>
     <div class="e-avatar__wrapper">
-        <div :class="avatarClass" :style="avatarStyle">
+        <div :class="avatarClass">
             <slot>
                 <img v-if="hasImage" :src="src" alt="avatar" />
                 <EIcon v-else :icon="resolvedIcon"></EIcon>
@@ -10,45 +10,29 @@
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { ElevationProps, IconPath, SizeProps, SizeValue } from '@/types';
-import { normalizeDimension } from '@/composables/utils'
+import { ElevationProps, IconPath, SizeProps } from '@/types';
 import EIcon from '@/components/icon/index.vue'
 import iconFactory from '@/utils/icons'
 
-export interface Props extends ElevationProps, SizeProps<SizeValue> {
+export interface Props extends ElevationProps, SizeProps {
     color?: string
     icon?: string | IconPath | IconPath[]
     src?: string
 }
 
-const avatarSizeKeys = ['x-small', 'small', 'default', 'large', 'x-large'] as const
-
 const props = withDefaults(defineProps<Props>(), { size: 'default' })
-
-const isPresetSize = computed(() => {
-    return typeof props.size === 'string' && avatarSizeKeys.includes(props.size as typeof avatarSizeKeys[number])
-})
 
 const avatarClass = computed(() => {
     const classes: string[] = ['e-avatar__container']
     props.color && classes.push(`${props.color}--text`)
     props.elevation && classes.push(`e-elevation--${props.elevation}`)
-    isPresetSize.value && classes.push(`e-avatar__container--size-${props.size}`)
+    classes.push(`e-avatar__container--size-${props.size}`)
     return classes
 })
 
 const hasImage = computed(() => typeof props.src === 'string' && props.src.trim().length > 0)
 
 const resolvedIcon = computed(() => props.icon || iconFactory.person)
-
-const avatarStyle = computed(() => {
-    if (isPresetSize.value) {
-        return {}
-    }
-
-    const size = normalizeDimension(props.size)
-    return size ? { '--avatar-size': size, '--size': size } : {}
-})
 
 </script>
 

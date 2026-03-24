@@ -42,7 +42,6 @@ export type {
 	Point,
 	EListInjection,
 	ListModelProp,
-	ListSizeClassKeys,
 	DialogInterface,
 	Menu,
 	ContainerMenuInterface,

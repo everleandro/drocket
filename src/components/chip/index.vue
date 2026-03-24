@@ -10,7 +10,7 @@
         <span v-if="hasPrepend" class="e-chip__prepend">
             <slot name="prepend">
                 <EIcon v-if="prependIcon" :icon="prependIcon" />
-                <EAvatar v-if="prependAvatar" :size="props.avatarSize" :src="prependAvatar" />
+                <EAvatar v-if="prependAvatar" :src="prependAvatar" />
             </slot>
         </span>
         <span class="e-chip__underlay"></span>
@@ -21,7 +21,7 @@
         <span v-if="hasAppend" class="e-chip__append">
             <slot name="append">
                 <EIcon v-if="appendIcon" :icon="appendIcon" />
-                <EAvatar v-if="appendAvatar" :size="props.avatarSize" :src="appendAvatar" />
+                <EAvatar v-if="appendAvatar" :src="appendAvatar" />
             </slot>
         </span>
 
@@ -39,7 +39,7 @@
 export default { name: "Chip" }
 </script>
 <script lang="ts" setup>
-import { ElevationProps, IconPath, SizeProps, SizeValue } from '@/types'
+import { ElevationProps, IconPath, SizeProps } from '@/types'
 import { ripple } from '@/directives'
 import icon from '@/utils/icons';
 import EIcon from '@/components/icon/index.vue'
@@ -65,7 +65,6 @@ const props = withDefaults(defineProps<ElevationProps & SizeProps & {
     color?: string
     text?: boolean
     prependAvatar?: string
-    avatarSize?: SizeValue
     appendAvatar?: string
     appendIcon?: Array<IconPath> | IconPath | string
     prependIcon?: Array<IconPath> | IconPath | string

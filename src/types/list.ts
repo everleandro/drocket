@@ -1,4 +1,5 @@
 import { ComputedRef } from "vue";
+import { Size } from "./size";
 
 export type ListModelProp =
   | Array<string | number>
@@ -12,17 +13,12 @@ export type ListGroupedFocusDirection = "in" | "out";
 
 export type ListGroupValue = string | number;
 
-export type ListSizeClassKeys =
-  | "xSmall"
-  | "small"
-  | "large"
-  | "xLarge";
-
 export interface EListInjection {
   changeModelValue: (value: number | string | undefined | null) => void;
   changeGroupValue: (value: number | string | undefined | null) => void;
   modelValue: ComputedRef<ListModelProp>;
   group: ComputedRef<ListModelProp>;
+  size: ComputedRef<Size | undefined>;
   disabled: ComputedRef<boolean>;
   isListbox: ComputedRef<boolean>;
   focusedItemId: ComputedRef<string | null>;

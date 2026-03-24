@@ -13,14 +13,13 @@
   
 <script lang="ts" setup>
 import { computed, nextTick, provide, ref, useAttrs } from 'vue'
-import { ListFocusMoveDirection, ListModelProp } from '@/types'
+import { ElevationProps, ListFocusMoveDirection, ListModelProp, SizeProps } from '@/types'
 import { LIST_KEY } from './constants';
 
 type ListValue = string | number | undefined | null
 
-export interface Props {
+export interface Props extends ElevationProps, SizeProps {
     disabled?: boolean
-    elevated?: boolean
     outlined?: boolean
     dense?: boolean
     color?: string
@@ -59,7 +58,7 @@ const group = computed<ListModelProp>({
     }
 })
 
-const booleanClassKeys = ['disabled', 'elevated', 'dense', 'outlined'] as const
+const booleanClassKeys = ['disabled', 'dense', 'outlined'] as const
 
 const explicitRole = computed((): string | undefined => {
     return typeof attrs.role === 'string' ? attrs.role : undefined
@@ -86,6 +85,7 @@ const listOrientation = computed((): 'vertical' | undefined => {
 const listCLass = computed((): Array<string> => {
     const classes = ['e-list']
     props.color && classes.push(`${props.color}--text`)
+    props.elevation && classes.push(`e-elevation--${props.elevation}`)
 
     booleanClassKeys.forEach((key) => {
         if (props[key]) {
@@ -282,6 +282,7 @@ provide(LIST_KEY, {
     changeGroupValue,
     modelValue,
     group,
+    size: computed(() => props.size),
     disabled: computed(() => !!props.disabled),
     isListbox,
     focusedItemId: computed(() => focusedItemId.value),

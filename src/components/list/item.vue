@@ -4,8 +4,8 @@
         @keydown="handleItemKeydown" @keyup="handleItemKeyup">
         <div v-if="hasPrepend" :class="prependClass">
             <slot name="prepend">
-                <EIcon v-if="prependIcon" :icon="prependIcon" v-bind="iconSize"></EIcon>
-                <EAvatar v-else-if="prependAvatar" :size="avatarSize" :src="prependAvatar"></EAvatar>
+                <EIcon v-if="prependIcon" :icon="prependIcon"></EIcon>
+                <EAvatar v-else-if="prependAvatar" :src="prependAvatar"></EAvatar>
             </slot>
         </div>
         <div class="e-list-item__content">
@@ -15,15 +15,15 @@
         </div>
         <div v-if="hasAppend" :class="appendClass">
             <slot name="append">
-                <EIcon v-if="appendIcon" :icon="appendIcon" v-bind="iconSize"></EIcon>
-                <EAvatar v-else-if="appendAvatar" :size="avatarSize" :src="appendAvatar"></EAvatar>
+                <EIcon v-if="appendIcon" :icon="appendIcon"></EIcon>
+                <EAvatar v-else-if="appendAvatar" :src="appendAvatar"></EAvatar>
             </slot>
         </div>
     </component>
 </template>
 
 <script lang="ts" setup>
-import { EListGroupInjection, IconPath, EListInjection, ListSizeClassKeys } from '@/types'
+import { EListGroupInjection, IconPath, EListInjection, Size, SizeProps } from '@/types'
 import EIcon from '@/components/icon/index.vue';
 import { ripple } from '@/directives'
 import EAvatar from '@/components/avatar.vue';
@@ -32,7 +32,7 @@ import { LIST_GROUP_KEY, LIST_KEY } from './constants';
 
 const vRipple = { ...ripple }
 
-export interface Props {
+export interface Props extends SizeProps {
     disabled?: boolean
     ripple?: boolean
     prependIcon?: string | IconPath | Array<IconPath>
@@ -46,11 +46,6 @@ export interface Props {
     tag?: string
     color?: string
     value?: string | number | undefined
-    avatarSize?: string | number | undefined
-    small?: boolean
-    xSmall?: boolean
-    large?: boolean
-    xLarge?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -204,20 +199,14 @@ const availableRootClasses = {
     active: "e-list-item--active",
 };
 
-const sizeClasses = {
-    xSmall: 'e-list-item--size-x-small',
+const sizeClasses: Record<Size, string> = {
+    'x-small': 'e-list-item--size-x-small',
     small: 'e-list-item--size-small',
     default: 'e-list-item--size-default',
     large: 'e-list-item--size-large',
-    xLarge: 'e-list-item--size-x-large'
+    'x-large': 'e-list-item--size-x-large'
 }
 
-const iconSize = computed(() => {
-    if (props.small) return { small: true }
-    if (props.xSmall) return { xSmall: true }
-    if (props.large) return { large: true }
-    if (props.xLarge) return { xLarge: true }
-})
 
 const hasPrependIcon = computed((): boolean => !!props.prependIcon)
 
@@ -251,6 +240,8 @@ const appendTypeClass = computed((): string | undefined => {
 
 const listItemCLass = computed((): Array<unknown> => {
     const classes = [availableRootClasses.root, attrs.class || '']
+    const currentSize = props.size || parentList?.size?.value || 'default'
+
     props.color && classes.push(`${props.color}--text`)
     isDisabled.value && classes.push(availableRootClasses.disabled)
     prependTypeClass.value && classes.push(prependTypeClass.value)
@@ -261,21 +252,10 @@ const listItemCLass = computed((): Array<unknown> => {
     if (active.value) {
         classes.push(props.activeClass || '')
     }
-    const availableSizeClassKeys = Object.keys(sizeClasses) as Array<ListSizeClassKeys>
-    const sizeClass = availableSizeClassKeys.filter(
-        (key) => !!props[key]
-    ).map(key => sizeClasses[key]);
-    if (sizeClass.length == 0) classes.push(sizeClasses.default)
-    return [...classes, ...sizeClass];
-})
 
-const avatarSize = computed((): number => {
-    if (props.avatarSize) return parseInt(props.avatarSize as string)
-    if (props.xSmall) return 26
-    if (props.small) return 20
-    if (props.large) return 38
-    if (props.xLarge) return 42
-    return 34
+    classes.push(sizeClasses[currentSize])
+
+    return classes;
 })
 
 const hasPrepend = computed((): boolean => {

@@ -11,6 +11,7 @@ Esta seccion documenta cada componente publico exportado por Drocket.
 - [Date Picker (`EDatePicker`)](./date-picker.md)
 - [Dialog (`EDialog`)](./dialog.md)
 - [Icon (`EIcon`)](./icon.md)
+- [List (`EList`, `EListItem`, `EListGroup`)](./list.md)
 
 ## Como agregar una nueva pagina
 

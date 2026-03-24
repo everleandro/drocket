@@ -4,13 +4,121 @@
       <h2>List</h2>
 
       <div class="list-demo-grid">
+    <div class="list-demo-card">
+          <h3>Single selection</h3>
+          <p class="playground-note">
+            Current value: {{ selectedListItem ?? "none" }}
+          </p>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="x-small">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-avatar="avatarOne" 
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="small">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-avatar="avatarOne" 
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :append-avatar="avatarOne" 
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="large">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+           :prepend-avatar="avatarOne" 
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="x-large">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-avatar="avatarOne" 
+            />
+          </EList>
+        </div>
+
+
+
         <div class="list-demo-card">
           <h3>Single selection</h3>
           <p class="playground-note">
             Current value: {{ selectedListItem ?? "none" }}
           </p>
 
-          <EList v-model="selectedListItem" color="primary" outlined>
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="x-small">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="small">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="large">
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+            />
+          </EList>
+
+          <EList v-model="selectedListItem" color="primary" elevation="sm" size="x-large">
             <EListItem
               v-for="item in singleSelectItems"
               :key="item.value"
@@ -82,17 +190,19 @@
           </EList>
         </div>
 
+
+        
         <div class="list-demo-card">
           <h3>Multiple selection + sizes</h3>
           <p class="playground-note">
             Selected: {{ multiSelectItemsValue.length ? multiSelectItemsValue.join(", ") : "none" }}
           </p>
 
-          <EList v-model="multiSelectItemsValue" color="secondary" dense elevated>
-            <EListItem value="xs" title="xSmall item" subtitle="Compact utility action" x-small :prepend-icon="iconFactory.clear" />
-            <EListItem value="sm" title="Small item" subtitle="Secondary quick action" small :prepend-icon="iconFactory.arrowLeft" />
-            <EListItem value="lg" title="Large item" subtitle="Primary highlighted action" large :prepend-avatar="avatarOne" />
-            <EListItem value="xl" title="xLarge item" subtitle="Prominent rich option" x-large :append-avatar="avatarTwo" />
+          <EList v-model="multiSelectItemsValue" color="secondary" dense elevation="sm">
+            <EListItem value="xs" title="xSmall item" subtitle="Compact utility action" size="x-small" :prepend-icon="iconFactory.clear" />
+            <EListItem value="sm" title="Small item" subtitle="Secondary quick action" size="small" :prepend-icon="iconFactory.arrowLeft" />
+            <EListItem value="lg" title="Large item" subtitle="Primary highlighted action" size="large" :prepend-avatar="avatarOne" />
+            <EListItem value="xl" title="xLarge item" subtitle="Prominent rich option" size="x-large" :append-avatar="avatarTwo" />
           </EList>
         </div>
 
@@ -256,7 +366,7 @@
           <EAvatar :icon="iconFactory.clear" color="error" />
           <EAvatar src="https://i.pravatar.cc/64?img=15" />
           <EAvatar src="https://i.pravatar.cc/64?img=32" elevation="lg" />
-          <EAvatar size="44" color="brand" />
+          <EAvatar size="large" color="brand" />
         </div>
       </div>
     </section>

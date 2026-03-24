@@ -11,12 +11,12 @@
   
 <script lang="ts" setup>
 import { inject, computed, provide, useId } from 'vue';
-import { EListGroupInjection, EListInjection, ListGroupValue } from '@/types'
+import { EListGroupInjection, EListInjection, ElevationProps, ListGroupValue } from '@/types'
 import ETransitionExpand from '@/components/transition/expand.vue';
 import icon from '@/utils/icons';
 import { LIST_GROUP_KEY, LIST_KEY } from './constants';
 
-export interface Props {
+export interface Props extends ElevationProps {
     disabled?: boolean
     value?: ListGroupValue
 }
@@ -91,6 +91,7 @@ const groupCLass = computed((): Array<string> => {
     const classes = ["e-list-group"]
     active.value && classes.push('e-list-group--active')
     level.value > 0 && classes.push('e-list-group--nested')
+    props.elevation && classes.push(`e-elevation--${props.elevation}`)
     return classes
 })
 

@@ -60,7 +60,6 @@ export type {
   ListGroupedFocusDirection,
   ListGroupValue,
   ListModelProp,
-  ListSizeClassKeys,
 } from "./list";
 export type { DialogInterface } from "./dialog";
 export type { Menu, ContainerMenuInterface, MenuTypeTarget } from "./menu";

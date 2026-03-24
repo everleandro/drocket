@@ -14,7 +14,7 @@ import { EAvatar } from 'drocket'
 
 | Prop | Tipo | Default | Descripcion |
 | --- | --- | --- | --- |
-| `size` | `'x-small' \| 'small' \| 'default' \| 'large' \| 'x-large' \| string \| number` | `'default'` | Tamano preset o valor custom. Los numeros se convierten a px. |
+| `size` | `'x-small' \| 'small' \| 'default' \| 'large' \| 'x-large'` | `'default'` | Tamano preset del avatar. |
 | `color` | `string` | `undefined` | Agrega la clase `{color}--text`. |
 | `elevation` | `string \| number` | `undefined` | Agrega la clase `e-elevation--{valor}`. |
 | `icon` | `string \| IconPath \| IconPath[]` | `undefined` | Icono a renderizar cuando no hay `src`. |
@@ -31,7 +31,7 @@ import { EAvatar } from 'drocket'
 - Si `src` contiene una URL valida, se renderiza la imagen.
 - Si no hay `src`, el componente usa `icon`.
 - Si tampoco hay `icon`, usa `iconFactory.person` como fallback.
-- Los sizes preset se resuelven por clases CSS; los sizes custom se aplican mediante `--avatar-size`.
+- Los sizes se resuelven mediante clases CSS compartidas con el contrato global de `SizeProps`.
 
 ## Ejemplos
 
@@ -63,12 +63,12 @@ import iconFactory from '@/utils/icons'
 </script>
 ```
 
-### Tamano custom
+### Tamano preset
 
 ```vue
 <template>
-  <EAvatar size="44" color="brand" />
-  <EAvatar :size="56" elevation="lg" />
+  <EAvatar size="small" color="brand" />
+  <EAvatar size="x-large" elevation="lg" />
 </template>
 ```
 
@@ -81,6 +81,6 @@ import iconFactory from '@/utils/icons'
 ## Errores comunes
 
 - Esperar iniciales automaticas: hoy el fallback es iconografico, no texto.
-- Pasar `size="44px"` y `size="44"` pensando que son distintos: ambos funcionan, pero el string numerico tambien se convierte a px.
+- Pasar un valor fuera del conjunto de sizes soportados esperando un tamano custom: `EAvatar` ahora usa solo los presets compartidos.
 - Esperar que `color` afecte la imagen: solo afecta el modo icon/fallback y clases de texto.
 - Usar `src` vacio esperando fallback transparente: string vacio se trata como ausencia de imagen y cae al icono.
