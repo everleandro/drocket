@@ -1,6 +1,139 @@
  <template>
   <div>
-  
+  <section class="block">
+      <h2>List</h2>
+
+      <div class="list-demo-grid">
+        <div class="list-demo-card">
+          <h3>Single selection</h3>
+          <p class="playground-note">
+            Current value: {{ selectedListItem ?? "none" }}
+          </p>
+
+          <EList v-model="selectedListItem" color="primary" outlined>
+            <EListItem
+              v-for="item in singleSelectItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+            />
+          </EList>
+        </div>
+
+        <div class="list-demo-card">
+          <h3>Keyboard navigation</h3>
+          <p class="playground-note">
+            Usa Tab para entrar, ArrowUp y ArrowDown para mover el foco, Home y End para saltar,
+            y Enter o Space para seleccionar. Valor actual: {{ keyboardNavigationValue ?? "none" }}
+          </p>
+
+          <EList v-model="keyboardNavigationValue" color="success" outlined>
+            <EListItem
+              v-for="item in keyboardNavigationItems"
+              :key="item.value"
+              :value="item.value"
+              :title="item.title"
+              :subtitle="item.subtitle"
+              :prepend-icon="item.icon"
+            />
+          </EList>
+        </div>
+
+        <div class="list-demo-card">
+          <h3>Nested groups</h3>
+          <p class="playground-note">
+            Rutas abiertas: {{ nestedGroupModel.length ? nestedGroupModel.join(", ") : "none" }}
+          </p>
+
+          <EList v-model:group="nestedGroupModel" color="primary" outlined>
+            <EListGroup value="components">
+              <template #activator="{ attrs }">
+                <EListItem v-bind="attrs" title="Components" subtitle="Nivel raiz" />
+              </template>
+
+              <EListItem title="Button" subtitle="Componente base" :prepend-icon="iconFactory.arrowRight" />
+
+              <EListGroup value="navigation">
+                <template #activator="{ attrs }">
+                  <EListItem v-bind="attrs" title="Navigation" subtitle="Segundo nivel" />
+                </template>
+
+                <EListItem title="List" subtitle="Item hijo visible al expandir" :prepend-icon="iconFactory.arrowRight" />
+
+                <EListGroup value="advanced">
+                  <template #activator="{ attrs }">
+                    <EListItem v-bind="attrs" title="Advanced" subtitle="Tercer nivel" />
+                  </template>
+
+                  <EListItem title="Nested keyboard" subtitle="Valida la ruta components/navigation/advanced" :prepend-icon="iconFactory.clear" />
+                </EListGroup>
+              </EListGroup>
+            </EListGroup>
+
+            <EListGroup value="guides">
+              <template #activator="{ attrs }">
+                <EListItem v-bind="attrs" title="Guides" subtitle="Otra rama del arbol" />
+              </template>
+
+              <EListItem title="Getting started" subtitle="Ruta guides" :prepend-icon="iconFactory.arrowLeft" />
+            </EListGroup>
+          </EList>
+        </div>
+
+        <div class="list-demo-card">
+          <h3>Multiple selection + sizes</h3>
+          <p class="playground-note">
+            Selected: {{ multiSelectItemsValue.length ? multiSelectItemsValue.join(", ") : "none" }}
+          </p>
+
+          <EList v-model="multiSelectItemsValue" color="secondary" dense elevated>
+            <EListItem value="xs" title="xSmall item" subtitle="Compact utility action" x-small :prepend-icon="iconFactory.clear" />
+            <EListItem value="sm" title="Small item" subtitle="Secondary quick action" small :prepend-icon="iconFactory.arrowLeft" />
+            <EListItem value="lg" title="Large item" subtitle="Primary highlighted action" large :prepend-avatar="avatarOne" />
+            <EListItem value="xl" title="xLarge item" subtitle="Prominent rich option" x-large :append-avatar="avatarTwo" />
+          </EList>
+        </div>
+
+        <div class="list-demo-card">
+          <h3>Content variants</h3>
+          <EList color="warning" dense>
+            <EListItem title="Status" subtitle="Prepend icon + append icon" :prepend-icon="iconFactory.arrowLeft"
+              :append-icon="iconFactory.clear" />
+            <EListItem title="Profile" subtitle="Avatar-driven item" :prepend-avatar="avatarOne" />
+            <EListItem title="Media" subtitle="Append avatar example" :append-avatar="avatarTwo" />
+          </EList>
+        </div>
+
+        <div class="list-demo-card">
+          <h3>Append Layout Inspection</h3>
+          <p class="playground-note">
+            Casos minimos para inspeccionar el grid del item con append y con prepend + append.
+          </p>
+
+          <EList color="primary" outlined>
+            <EListItem
+              title="Append avatar only"
+              subtitle="Debe renderizar content + gap + avatar"
+              :append-avatar="avatarTwo"
+            />
+            <EListItem
+              title="Prepend icon + append avatar"
+              subtitle="Debe renderizar prepend + content + append sin columna implicita"
+              :prepend-icon="iconFactory.arrowLeft"
+              :append-avatar="avatarTwo"
+            />
+            <EListItem
+              title="Prepend avatar + append icon"
+              subtitle="Valida el caso inverso con ambos affixes"
+              :prepend-avatar="avatarOne"
+              :append-icon="iconFactory.clear"
+            />
+          </EList>
+        </div>
+      </div>
+    </section>
     <section class="block">
       <h2>Grid</h2>
 
@@ -78,6 +211,8 @@
 
 
     </section>
+
+    
 
     <section class="block">
       <h2>Button</h2>
@@ -301,6 +436,9 @@ import EDatePicker from "../../src/components/date-picker/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
 import EDialog from "../../src/components/dialog/index.vue";
 import ECard from "../../src/components/card/index.vue";
+import EList from "../../src/components/list/index.vue";
+import EListGroup from "../../src/components/list/group.vue";
+import EListItem from "../../src/components/list/item.vue";
 import ERow from "../../src/components/grid/row.vue";
 import ECol from "../../src/components/grid/col.vue";
 import EExpansionPanel from "../../src/components/expansion/panel.vue";
@@ -309,6 +447,10 @@ import iconFactory from "../../src/utils/icons";
 
 const theme = ref("light");
 const expansionModel = ref([]);
+const selectedListItem = ref("inbox");
+const keyboardNavigationValue = ref("focus");
+const nestedGroupModel = ref(["components", "components/navigation"]);
+const multiSelectItemsValue = ref(["sm", "xl"]);
 const dialogDefault = ref(false);
 const dialogFluid = ref(false);
 const dialogPersistent = ref(false);
@@ -321,6 +463,57 @@ const dialogDate = ref(new Date(2026, 2, 21));
 const selectedFilters = ref(["vue", "scss"]);
 const tags = ref(["Vue 3", "TypeScript", "SCSS", "Autocomplete"]);
 const chipMessage = ref("Try the chip interactions below.");
+
+const avatarOne = "https://i.pravatar.cc/64?img=12";
+const avatarTwo = "https://i.pravatar.cc/64?img=32";
+
+const singleSelectItems = [
+  {
+    value: "inbox",
+    title: "Inbox",
+    subtitle: "14 unread messages",
+    icon: iconFactory.arrowRight,
+  },
+  {
+    value: "drafts",
+    title: "Drafts",
+    subtitle: "3 items pending review",
+    icon: iconFactory.arrowLeft,
+  },
+  {
+    value: "archive",
+    title: "Archive",
+    subtitle: "Everything shipped this week",
+    icon: iconFactory.clear,
+  },
+];
+
+const keyboardNavigationItems = [
+  {
+    value: "focus",
+    title: "Focus entry",
+    subtitle: "Primer item para entrar al roving tabindex",
+    icon: iconFactory.arrowRight,
+  },
+  {
+    value: "browse",
+    title: "Browse with arrows",
+    subtitle: "Mueve el foco con ArrowUp y ArrowDown",
+    icon: iconFactory.arrowLeft,
+  },
+  {
+    value: "jump",
+    title: "Home and End",
+    subtitle: "Salta al inicio o al final sin salir de la lista",
+    icon: iconFactory.clear,
+  },
+  {
+    value: "select",
+    title: "Confirm selection",
+    subtitle: "Activa este item con Enter o Space",
+    icon: iconFactory.arrowRight,
+  },
+];
 
 const highlightedDates = {
   from: new Date(2026, 2, 18),
@@ -536,6 +729,27 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
+}
+
+.list-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.list-demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.playground[data-theme="dark"] .list-demo-card {
+  background: rgba(17, 24, 39, 0.55);
+  border-color: rgba(148, 163, 184, 0.16);
 }
 
 .date-picker-card {

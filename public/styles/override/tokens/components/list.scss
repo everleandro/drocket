@@ -1,6 +1,8 @@
 @use "sass:map";
 
-$list-prepend-width: 34px !default;
+$list-padding-inline: calc(var(--e-space-base, 4px) * 4) !default;
+$list-item-affix-size: var(--list-item-height, var(--e-list-item-height-default, 3rem)) !default;
+$list-item-media-size: calc(var(--e-list-item-affix-size, var(--list-item-height, var(--e-list-item-height-default, 3rem))) - (var(--e-space-base, 4px) * 3)) !default;
 
 $list-item-font-sizes: map.merge(
     (
@@ -13,6 +15,15 @@ $list-item-font-sizes: map.merge(
     ()
 ) !default;
 
+$list-item-states: map.merge(
+    (
+        focus: 0.12,
+        hover: 0.08,
+        active: 0.18,
+    ),
+    ()
+) !default;
+
 $list-item-height: map.merge(
     (
         x-small: 2.187rem,
@@ -20,6 +31,84 @@ $list-item-height: map.merge(
         default: 3rem,
         large: 3.62rem,
         x-large: 4rem,
+    ),
+    ()
+) !default;
+
+$list-item-title-font-sizes: map.merge(
+    (
+        x-small: 0.625rem,
+        small: 0.75rem,
+        default: 1rem,
+        large: 1rem,
+        x-large: 1.125rem,
+    ),
+    ()
+) !default;
+
+$list-item-title-line-heights: map.merge(
+    (
+        x-small: 0.875rem,
+        small: 1rem,
+        default: 1.5rem,
+        large: 1.5rem,
+        x-large: 1.75rem,
+    ),
+    ()
+) !default;
+
+$list-item-subtitle-font-sizes: map.merge(
+    (
+        x-small: 0.5rem,
+        small: 0.625rem,
+        default: 0.875rem,
+        large: 0.875rem,
+        x-large: 1rem,
+    ),
+    ()
+) !default;
+
+$list-item-subtitle-line-heights: map.merge(
+    (
+        x-small: 0.625rem,
+        small: 0.75rem,
+        default: 1rem,
+        large: 1rem,
+        x-large: 1.25rem,
+    ),
+    ()
+) !default;
+
+$list-item-content-padding-block: map.merge(
+    (
+        x-small: 0.375rem,
+        small: 0.5rem,
+        default: 0.75rem,
+        large: 0.875rem,
+        x-large: 1rem,
+    ),
+    ()
+) !default;
+
+$list-item-icon-size: map.merge(
+    (
+        x-small: 18px,
+        small: 20px,
+        default: 24px,
+        large: 28px,
+        x-large: 32px,
+    ),
+    ()
+) !default;
+
+$list-item-dense: map.merge(
+    (
+        height: 40px,
+        content-padding-block: 0.375rem,
+        title-line-height: 1.125rem,
+        subtitle-font-size: 0.75rem,
+        subtitle-line-height: 0.875rem,
+        icon-size: 20px,
     ),
     ()
 ) !default;

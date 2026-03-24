@@ -1,4 +1,5 @@
 import { ComputedRef } from "vue";
+
 export type ListModelProp =
   | Array<string | number>
   | string
@@ -6,14 +7,39 @@ export type ListModelProp =
   | undefined
   | null;
 
-  export type ListSizeClassKeys =
+export type ListFocusMoveDirection = "next" | "previous" | "first" | "last";
+export type ListGroupedFocusDirection = "in" | "out";
+
+export type ListGroupValue = string | number;
+
+export type ListSizeClassKeys =
   | "xSmall"
   | "small"
   | "large"
   | "xLarge";
+
 export interface EListInjection {
   changeModelValue: (value: number | string | undefined | null) => void;
   changeGroupValue: (value: number | string | undefined | null) => void;
   modelValue: ComputedRef<ListModelProp>;
   group: ComputedRef<ListModelProp>;
+  disabled: ComputedRef<boolean>;
+  isListbox: ComputedRef<boolean>;
+  focusedItemId: ComputedRef<string | null>;
+  setFocusedItem: (value: string | null) => void;
+  moveFocus: (currentId: string, direction: ListFocusMoveDirection) => void;
+  navigateGroupedFocus: (options: {
+    currentId: string;
+    direction: ListGroupedFocusDirection;
+    isGroupActivator?: boolean;
+    isExpanded?: boolean;
+    groupPath?: string;
+    parentGroupPath?: string;
+  }) => void;
+  syncFocusableItem: (candidateId?: string) => void;
+}
+
+export interface EListGroupInjection {
+  level: ComputedRef<number>;
+  path: ComputedRef<string>;
 }
