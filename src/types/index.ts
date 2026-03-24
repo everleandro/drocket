@@ -24,6 +24,16 @@ export type {
 } from "./text-input";
 
 export type {
+  SelectEmits,
+  SelectItemObject,
+  SelectItemType,
+  SelectModelValue,
+  SelectProps,
+  SelectPrimitiveValue,
+  SelectRule,
+} from "./select";
+
+export type {
   EForm,
   FormInjection,
   ERadio,

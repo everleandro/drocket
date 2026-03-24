@@ -3,7 +3,7 @@
         <div class="e-field__control">
             <div class="e-field__slot ">
                 <div v-if="!hideOverlay" class="e-field__overlay"></div>
-                <label :class="[textColor, 'e-label']" :style="labelStyle">
+                <label class="e-label" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
                 <div role="radiogroup" :aria-labelledby="id" class="e-field--radio-group__field">
@@ -11,7 +11,7 @@
                 </div>
                 <div v-if="!outlined && !flat" class="e-field__line"></div>
             </div>
-            <EDetails :details="details" :modelValue="modelValue" :textColor="textColor" :showDetails="showDetails" />
+            <EDetails :details="details" :modelValue="modelValue" :showDetails="showDetails" />
         </div>
     </div>
 </template>
@@ -35,7 +35,7 @@ import { useField } from "@/composables/field"
 import { useGridCol } from "@/composables/grid-col"
 const props = defineProps<Props>()
 
-const { fieldClass, id, showDetails, handleBlur, textColor, details, labelStyle, handleHover, handleFocus, configuration } = useField()
+const { fieldClass, id, showDetails, handleBlur, details, labelStyle, handleHover, handleFocus, configuration } = useField()
 
 const { gridColClass } = useGridCol(props, 'e-field')
 

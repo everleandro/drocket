@@ -260,7 +260,6 @@ export function useField<TValue = unknown>(useFormInjection = true) {
       return classes;
     }, []);
 
-    result.push(textColor.value);
     if (hasError.value) result.push(fieldClasses.hasError);
     if (hasValue.value) result.push(fieldClasses.hasValue);
     if (hovered.value) result.push(fieldClasses.hovered);
@@ -334,16 +333,6 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     }
 
     return result;
-  });
-
-  const textColor = computed((): string => {
-    if (hasError.value) return "error--text";
-    return hovered.value ||
-      focused.value ||
-      props.retainColor ||
-      configuration.retainColor
-      ? `${color.value}--text`
-      : "";
   });
 
   watch(
@@ -489,7 +478,6 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     details,
     labelStyle,
     color,
-    textColor,
     handleHover,
     focus,
     blur,

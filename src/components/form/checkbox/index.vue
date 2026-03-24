@@ -21,11 +21,11 @@
                     <div v-ripple="{ center: true }" class="e-field__selection-ripple" :class="checkboxColor"
                         @click="change"></div>
                 </div>
-                <label v-if="mounted" :class="[textColor, 'e-label']" :for="id">
+                <label v-if="mounted" class="e-label" :for="id">
                     <slot name="label"> {{ label }} </slot>
                 </label>
             </div>
-            <EDetails :details="details" :modelValue="modelValue" :textColor="textColor" :showDetails="showDetails" />
+            <EDetails :details="details" :modelValue="modelValue" :showDetails="showDetails" />
         </div>
     </div>
 </template>
@@ -54,12 +54,12 @@ const checkboxClass = computed(() => {
     return [...fieldClass.value, ' e-field--selection-controls', 'e-checkbox-field', ...gridColClass.value]
 })
 
-const { fieldClass, id, showDetails, textColor, details, handleHover, handleBlur, handleFocus, configuration, mounted } = useField()
+const { fieldClass, id, showDetails, details, handleHover, handleBlur, handleFocus, configuration, mounted } = useField()
 const { gridColClass } = useGridCol(props, 'e-field')
 
 const checkboxColor = computed(() => {
     const color = props.color || configuration.color
-    return textColor.value || color ? `${color}--text` : ''
+    return color ? `${color}--text` : ''
 })
 const checked = computed(() => {
     return props.modelValue === props.trueValue;

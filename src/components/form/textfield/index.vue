@@ -164,7 +164,6 @@ const {
   hasError,
   showClearable,
   showDetails,
-  textColor,
   isLabelFloating,
   mounted,
   details,
@@ -180,7 +179,7 @@ const {
 
 const { gridColClass } = useGridCol(props);
 const textFieldClass = computed(() => [
-  ...fieldClass.value.filter((className) => className !== textColor.value),
+  ...fieldClass.value,
   "e-text-field",
   ...gridColClass.value,
 ]);

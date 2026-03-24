@@ -17,7 +17,7 @@
             <div v-ripple="{ center: true }" :class="['e-field__selection-ripple', radioColor]">
             </div>
         </div>
-        <label v-if="mounted" :class="[textColor, 'e-label']" :for="id" :labelStyle="labelStyle">
+        <label v-if="mounted" class="e-label" :for="id" :labelStyle="labelStyle">
             <slot name="label"> {{ label }} </slot>
         </label>
     </div>
@@ -36,7 +36,7 @@ export interface Props {
 }
 const controlFocused = ref(false)
 const input = ref<HTMLInputElement>()
-const { fieldClass, id, textColor, labelStyle, setConfiguration, configuration, mounted } = useField(false)
+const { fieldClass, id, labelStyle, setConfiguration, configuration, mounted } = useField(false)
 
 const radioGroup = inject<Partial<ERadioGroup> | undefined>("ERadioGroup", undefined);
 
@@ -46,7 +46,7 @@ const radioClass = computed(() => [...fieldClass.value, 'e-radio'])
 
 const radioColor = computed(() => {
     const color = props.color || configuration.color
-    return textColor.value || color ? `${color}--text` : ''
+    return color ? `${color}--text` : ''
 })
 
 const active = computed(() => {

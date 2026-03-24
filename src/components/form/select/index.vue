@@ -1,98 +1,109 @@
-
-<template >
-    <div :class="selectClass">
-        <div class="e-field__control" v-click-outside="handleOutsideMenu">
-            <div role="button" aria-expanded="false" class="e-field__slot">
-                <div v-if="prependIcon" class="e-field__prepend-inner" @click="handleClickPrependIcon">
-                    <div class="e-field__icon e-field__icon--prepend-inner">
-                        <EIcon :icon="prependIcon" />
-                    </div>
-                </div>
-                <div class="e-field__overlay"></div>
-                <div class="e-select__slot e-field__field" @click="handleSelectSlotCLick" @mouseenter="handleHover(true)"
-                    @mouseleave="handleHover(false)">
-                    <label v-if="mounted" :for="id" :class="[textColor, 'e-label']" :style="labelStyle">
-                        <slot name="label"> {{ label }}</slot>
-                    </label>
-                    <div v-if="prefix" :class="[textColor, 'e-field__prefix']" @click="focus">
-                        {{ prefix }}
-                    </div>
-                    <div :class="['e-select__selections', textColor]">
-                        <div v-if="empty && !autocomplete" class="e-select__selection" :style="selectionStyle">
-                            <span class="e-select__selection-placeholder">
-                                {{ placeholder }}
-                            </span>
-                        </div>
-                        <template v-else-if="multiple">
-                            <div v-for="(itemValue, index) in modelValue" class="e-select__selection" :key="index"
-                                :style="selectionStyle">
-                                <slot name="selection" :selection="selectionItem(itemValue)"
-                                    :attrs="selectionAttrs(itemValue)">
-                                    <EChip closable @click:close="handleItemClick(selectionItem(itemValue))">
-                                        {{ selectedText(itemValue) }}
-                                    </EChip>
-                                </slot>
-                            </div>
-                        </template>
-                        <div v-else-if="!empty" class="e-select__selection" :style="selectionStyle">
-                            <slot name="selection" :selection="selectionItem()" :attrs="selectionAttrs()">
-                                <EChip v-if="chip" :closable="chipClosable" @click:close="changeValue(null)">
-                                    {{ selectedText() }}
-                                </EChip>
-                                <span v-else>{{ selectedText() }}</span>
-                            </slot>
-                        </div>
-                        <input v-if="mounted" ref="input" :value="search" :id="id" :readonly="inputReadonly"
-                            class="input--text" type="text" :aria-readonly="inputReadonly" :placeholder="placeholder"
-                            autocomplete="off" @blur="handleBlur" @focus="handleSelectFocus"
-                            @input="changeSearchValue($event, true)" />
-                    </div>
-
-                    <div v-if="suffix" :class="[textColor, 'e-field__suffix']" @click="focus">
-                        {{ suffix }}
-                    </div>
-                    <transition name="scale">
-                        <div v-if="!empty && clearable" class="e-field__append-inner">
-                            <div class="e-field__icon e-field__icon--clear e-icon--size-default">
-                                <EButton text :icon="icon.clear" small @click.stop.prevent="clear" />
+<template>
+    <div :class="selectClass" :style="fieldStyle">
+        <div class="e-field__control">
+            <EMenu v-model="opened" full-width hold-focus check-offset :close-on-content-click="false">
+                <template #activator="{ ref: activatorRef }">
+                    <div role="button" class="e-field__slot" :ref="activatorRef" @click="handleSelectSlotClick"
+                        @keydown="handleSelectSlotKeydown">
+                        <div v-if="prependIcon" class="e-field__prepend-inner" @click="handleClickPrependIcon">
+                            <div class="e-field__icon e-field__icon--prepend-inner">
+                                <EIcon :icon="prependIcon" />
                             </div>
                         </div>
-                    </transition>
-                    <div class="e-field__append-inner">
-                        <div class="e-field__icon e-field__icon--append">
-                            <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon"></EIcon>
-                        </div>
-                    </div>
-                </div>
-
-                <div v-if="appendIcon" class="e-field__append-inner" @click="handleClickAppendIcon">
-                    <div class="e-field__icon e-field__icon--append">
-                        <EIcon :icon="appendIcon" />
-                    </div>
-                </div>
-                <div v-if="!outlined" :style="lineStyle" class="e-field__line"></div>
-
-                <EProgressLinear v-if="loading" :color="color" :indeterminate="loading" height="3" />
-
-                <div class="e-menu">
-                    <transition name="fade">
-                        <div v-show="opened" class="e-menu__content">
-                            <e-list :color="color" :style="listStyle">
-                                <template v-for="(item, index) in items">
-                                    <slot name="item" :attrs="slotItemAttrs(item, index)" :item="item">
-                                        <e-list-item active-class="e-list-item--active" :isActive="active(item)"
-                                            @click="handleItemClick(item)" :key="index" :value="item[itemValue] || item">
-                                            {{ displayedText(item) }}
-                                        </e-list-item>
-                                    </slot>
+                        <div class="e-field__overlay"></div>
+                        <div class="e-select__slot e-field__field" @click="focusInput" @mouseenter="handleHover(true)"
+                            @mouseleave="handleHover(false)">
+                            <label v-if="mounted" :for="id" :class="[
+                                'e-label',
+                                {
+                                    'e-label--floating': isLabelFloating,
+                                    'e-label--floated': shouldFloatLabel,
+                                },
+                            ]" :style="labelStyle">
+                                <slot name="label"> {{ label }}</slot>
+                            </label>
+                            <div v-if="prefix" class="e-field__prefix" @click="focus">
+                                {{ prefix }}
+                            </div>
+                            <div class="e-select__selections">
+                                <div v-if="showPlaceholderSelection" class="e-select__selection" :style="selectionStyle">
+                                    <span class="e-select__selection-placeholder">
+                                        {{ resolvedPlaceholder }}
+                                    </span>
+                                </div>
+                                <template v-else-if="multiple && chip">
+                                    <div v-for="(itemValue, index) in selectedItems" class="e-select__selection"
+                                        :key="index" :style="selectionStyle">
+                                        <slot name="selection" :selection="selectionItem(itemValue)"
+                                            :attrs="selectionAttrs(itemValue)">
+                                            <EChip v-if="chip" :closable="true" @click:close="handleItemClick(selectionItem(itemValue))" :color="color">
+                                                {{ selectedText(itemValue) }}
+                                            </EChip>
+                                        </slot>
+                                    </div>
                                 </template>
+                                <div v-else-if="multiple" class="e-select__selection e-select__selection--text"
+                                    :style="selectionStyle">
+                                    <span class="e-select__selection-text" :title="multipleSelectedText">
+                                        {{ multipleSelectedText }}
+                                    </span>
+                                </div>
+                                <div v-else-if="!empty" class="e-select__selection" :style="selectionStyle">
+                                    <slot name="selection" :selection="selectionItem()" :attrs="selectionAttrs()">
+                                        <EChip v-if="chip" :closable="chipClosable" :color="color" @click:close="changeValue(null)">
+                                            {{ selectedText() }}
+                                        </EChip>
+                                        <span v-else>{{ selectedText() }}</span>
+                                    </slot>
+                                </div>
+                                <input ref="input" :value="search" :id="id" :readonly="inputReadonly"
+                                    class="input--text" type="text" :aria-readonly="inputReadonly"
+                                    :placeholder="resolvedPlaceholder" autocomplete="off" @blur="handleBlur"
+                                    @focus="handleSelectFocus" @input="changeSearchValue($event, true)" />
+                            </div>
 
-                            </e-list>
+                            <div v-if="suffix" class="e-field__suffix" @click="focus">
+                                {{ suffix }}
+                            </div>
+                            <transition name="scale">
+                                <div v-if="!empty && clearable" class="e-field__append-inner">
+                                    <div class="e-field__icon e-field__icon--clear e-icon--size-default">
+                                        <EButton text :icon="icon.clear" size="small" @click.stop.prevent="clear" />
+                                    </div>
+                                </div>
+                            </transition>
+                            <div class="e-field__append-inner">
+                                <div class="e-field__icon e-field__icon--append">
+                                    <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon"></EIcon>
+                                </div>
+                            </div>
                         </div>
-                    </transition>
+
+                        <div v-if="appendIcon" class="e-field__append-inner" @click="handleClickAppendIcon">
+                            <div class="e-field__icon e-field__icon--append">
+                                <EIcon :icon="appendIcon" />
+                            </div>
+                        </div>
+                        <div v-if="!outlined" :style="lineStyle" class="e-field__line"></div>
+
+                        <EProgressLinear v-if="loading" :color="color" :indeterminate="loading" height="3" />
+                    </div>
+                </template>
+
+                <div class="e-select__menu-content">
+                    <e-list :color="color" :style="listStyle">
+                        <template v-for="(item, index) in items">
+                            <slot name="item" :attrs="slotItemAttrs(item, index)" :item="item">
+                                <e-list-item active-class="e-list-item--active" :isActive="active(item)"
+                                    @click="handleItemClick(item)" :key="index" :value="getListItemValue(item)">
+                                    {{ displayedText(item) }}
+                                </e-list-item>
+                            </slot>
+                        </template>
+                    </e-list>
                 </div>
-            </div>
-            <EDetails :details="details" :textColor="textColor" :showDetails="showDetails"></EDetails>
+            </EMenu>
+            <EDetails :details="details" :showDetails="showDetails"></EDetails>
         </div>
     </div>
 </template>
@@ -101,8 +112,7 @@
 export default { name: "Select" }
 </script>
 <script lang="ts" setup>
-import { clickOutside } from '@/directives'
-import { IconPath } from '@/types';
+import type { SelectEmits, SelectItemObject, SelectItemType, SelectModelValue, SelectProps } from '@/types';
 import icon from '@/utils/icons';
 import { useFieldActions } from "@/composables/field-actions"
 import { useGridCol } from "@/composables/grid-col"
@@ -114,54 +124,55 @@ import { computed, ref, watch } from 'vue';
 import EButton from '@/components/button/index.vue'
 import EIcon from '@/components/icon/index.vue'
 import EDetails from '@/components/form/details.vue'
+import EChip from '@/components/chip/index.vue'
+import EList from '@/components/list/index.vue'
+import EListItem from '@/components/list/item.vue'
+import EMenu from '@/components/menu/index.vue'
+import EProgressLinear from '@/components/progress/linear.vue'
 
-const vClickOutside = { ...clickOutside }
+const emit = defineEmits<SelectEmits>()
 
-type itemType = string | number | null | Record<string, any> | Array<itemType>;
-const emit = defineEmits<{
-    (e: 'click:clear'): void, (e: 'focus', value: FocusEvent): void,
-    (e: 'click:prepend'): void, (e: 'click:append'): void, (e: 'blur', value: Event): void,
-    (e: 'update:modelValue', value: itemType): void
-    (e: 'update:search', value: string | number): void
-}>()
+const input = ref<HTMLInputElement | null>(null)
 
-const input = ref()
-
-const props = withDefaults(defineProps<{
-    arrowDown?: string | IconPath | Array<IconPath>; multiple?: boolean, returnObject?: boolean; retainColor?: boolean; loading?: boolean
-    disabled?: boolean; dense?: boolean; readonly?: boolean; clearable?: boolean; itemCol?: string | number;
-    labelInline?: boolean; detail?: string; outlined?: boolean; label?: string | number; search?: string | number
-    modelValue?: itemType; placeholder?: string; suffix?: string; autocomplete?: boolean; chip?: boolean; lineWidth?: string | number
-    prefix?: string; inputAlign?: string; color?: string; limit?: string | number; chipClosable?: boolean
-    detailErrors?: Array<string>; detailsOnMessageOnly?: boolean; appendIcon?: Array<IconPath> | IconPath | string;
-    labelMinWidth?: string; prependIcon?: Array<IconPath> | IconPath | string; rules?: Array<(param: any) => string | boolean>;
-    cols?: string | number; xs?: string | number; sm?: string | number; md?: string | number;
-    lg?: string | number; xl?: string | number;
-    itemText?: string
-    itemValue?: string
-    items: Array<any>
-}>(), { itemText: 'text', itemValue: 'value', inputAlign: 'start', itemCol: 1 })
+const props = withDefaults(defineProps<SelectProps>(), { itemText: 'text', itemValue: 'value', inputAlign: 'start', itemCol: 1 })
 const opened = ref<boolean>(false)
-const { fieldClass, touched, id, focused, focus, showDetails, textColor, color, mounted,
-    details, labelStyle, handleHover, handleBlur, handleFocus } = useField()
+const { fieldClass, fieldStyle, id, focused, focus, blur, showDetails, color, mounted,
+    details, labelStyle, handleHover, handleBlur, handleFocus, validate, reset, resetValidation,
+    isLabelFloating, shouldFloatLabel } = useField()
 const { handleClickPrependIcon, handleClickAppendIcon } = useFieldActions({ emit, focus })
-const { gridColClass } = useGridCol(props, 'e-field')
+const { gridColClass } = useGridCol(props)
 const { isObject } = useUtils()
-watch(() => opened.value, (val: boolean) => {
-    if (val) {
-        document.addEventListener("keydown", handleExcListener);
-        focus()
-    }
-    else
-        document.removeEventListener("keydown", handleExcListener);
 
+const isItemObject = (value: unknown): value is SelectItemObject => isObject(value)
+
+const getItemValue = (item: SelectItemType | SelectModelValue | undefined): SelectItemType | undefined => {
+    if (!isItemObject(item)) return item as SelectItemType | undefined
+    return item[props.itemValue] as SelectItemType | undefined
+}
+
+const getItemText = (item: SelectItemType | undefined): string => {
+    if (!isItemObject(item)) {
+        return item == null ? '' : String(item)
+    }
+
+    const result = item[props.itemText]
+    return result == null ? '' : String(result)
+}
+
+const getListItemValue = (item: SelectItemType): string | number | undefined => {
+    const value = getItemValue(item) ?? item
+    return typeof value === 'string' || typeof value === 'number' ? value : undefined
+}
+
+watch(() => opened.value, (val: boolean) => {
+    if (val) focus()
 })
 
 watch(() => props.loading, (val: boolean) => {
     if (val) closeMenu()
     else {
         opened.value = true;
-        openMenu()
+        focusInput()
     }
 })
 
@@ -185,8 +196,51 @@ const inputReadonly = computed((): boolean => {
     return false
 })
 
-const selectionAttrs = (item?: itemType) => {
-    const attrs: Record<string, any> = { closable: props.chipClosable || props.multiple }
+const resolvedPlaceholder = computed(() => {
+    if (!props.placeholder) return undefined
+    if (!isLabelFloating.value) return props.placeholder
+
+    return shouldFloatLabel.value ? props.placeholder : undefined
+})
+
+const hasObjectItems = computed((): boolean => isItemObject(props.items[0]))
+
+const selectedItems = computed<Array<SelectItemType>>(() => {
+    return props.multiple ? ((props.modelValue as Array<SelectItemType>) || []) : []
+})
+
+const multipleModel = computed<Array<SelectItemType>>(() => {
+    return props.multiple ? [...selectedItems.value] : []
+})
+
+const areSameItems = (left: SelectItemType, right: SelectItemType): boolean => {
+    return JSON.stringify(left) === JSON.stringify(right)
+}
+
+const getComparableValue = (item: SelectItemType | SelectModelValue | undefined): SelectItemType | undefined => {
+    return props.returnObject ? getItemValue(item) : getItemValue(item) ?? (item as SelectItemType | undefined)
+}
+
+const getEmittedItemValue = (item: SelectItemType): SelectItemType => {
+    if (props.returnObject || !isItemObject(item)) return item
+    return getItemValue(item) as SelectItemType
+}
+
+const findSelectedIndex = (items: Array<SelectItemType>, item: SelectItemType): number => {
+    if (isItemObject(item)) {
+        if (props.returnObject) {
+            return items.findIndex((candidate) => areSameItems(candidate, item))
+        }
+
+        const comparableValue = getComparableValue(item)
+        return items.findIndex((candidate) => candidate === comparableValue)
+    }
+
+    return items.findIndex((candidate) => candidate === item)
+}
+
+const selectionAttrs = (item?: SelectItemType) => {
+    const attrs: Record<string, unknown> = { closable: Boolean(props.chip && (props.chipClosable || props.multiple)) }
 
     if (item) {
         attrs['onClick:close'] = () => handleItemClick(selectionItem(item))
@@ -196,26 +250,22 @@ const selectionAttrs = (item?: itemType) => {
     return attrs
 }
 
-const handleExcListener = ({ key }: KeyboardEvent): void => {
-    if (key === "Escape") {
-        closeMenu()
-    }
-}
-const selectionItem = (value?: itemType): any => {
-    const isArrayOfObjects = isObject(props.items[0]);
-    let item: itemType | undefined;
+const selectionItem = (value?: SelectItemType): SelectItemType => {
+    let item: SelectItemType | undefined
     const localValue = value || props.modelValue
+
     if (props.returnObject) {
-        const compareItem: string | number = (localValue as Record<string, any>)?.[props.itemValue]
-        item = (props.items as Array<Record<string, any>>).find((el) => el[props.itemValue] === compareItem)
+        const compareItem = getComparableValue(localValue)
+        item = props.items.find((candidate) => getComparableValue(candidate) === compareItem)
     }
-    else if (isArrayOfObjects) {
-        item = (props.items as Array<Record<string, any>>).find((el) => el[props.itemValue] == localValue)
+    else if (hasObjectItems.value) {
+        item = props.items.find((candidate) => getComparableValue(candidate) == localValue)
     }
     else {
-        item = (props.items as Array<string | number>).find((el) => el === localValue)
+        item = props.items.find((candidate) => candidate === localValue)
     }
-    return item || {}
+
+    return item || (isItemObject(localValue) ? localValue : {})
 }
 
 const handleSelectFocus = (event: FocusEvent): void => {
@@ -223,126 +273,108 @@ const handleSelectFocus = (event: FocusEvent): void => {
     handleFocus(event)
 }
 
-const openMenu = (): void => {
+const focusInput = (): void => {
     input.value?.focus()
 }
 
 const empty = computed((): boolean => {
     if (props.multiple) {
-        return (props.modelValue as Array<itemType>)?.length === 0
+        return (props.modelValue as Array<SelectItemType>)?.length === 0
     }
     return props.modelValue === undefined || props.modelValue === null || props.modelValue === ""
 })
 
-const slotItemAttrs = (item: itemType, index: number): Record<string, any> => {
-    const attrs: Record<string, any> = {}
+const showPlaceholderSelection = computed((): boolean => {
+    return empty.value && !props.autocomplete && Boolean(resolvedPlaceholder.value)
+})
+
+const slotItemAttrs = (item: SelectItemType, index: number): Record<string, unknown> => {
+    const attrs: Record<string, unknown> = {}
     attrs.class = { 'e-list-item--active': active(item) }
-    attrs.value = isObject(item) ? (item as Record<string, string>)[props.itemValue] : item;
+    attrs.value = getListItemValue(item)
     attrs.onClick = () => handleItemClick(item)
     attrs.key = index
     return attrs;
 }
-const changeSearchValue = (value: any, isEvent = false): void => {
-    const valueResult = isEvent ? value.target.value : value
+
+const getEventInputValue = (value: Event): string => {
+    return (value.target as HTMLInputElement | null)?.value || ''
+}
+
+const changeSearchValue = (value: Event | string | number, isEvent = false): void => {
+    const valueResult: string | number = isEvent || value instanceof Event
+        ? getEventInputValue(value as Event)
+        : value
+    if (props.autocomplete) {
+        opened.value = true
+    }
     emit('update:search', valueResult)
+}
+
+const openMenu = (): void => {
+    if (props.disabled || props.readonly || props.loading) return
+    opened.value = true
 }
 
 const closeMenu = (): void => {
     opened.value = false;
     focused.value = false;
 }
-const displayedText = (item: itemType): string => {
-    const result = isObject(item) ? (item as Record<string, any>)[props.itemText] : item
-    return result == null ? '' : String(result)
+const displayedText = (item: SelectItemType): string => {
+    return getItemText(item)
 }
-const changeValue = (value: any, isEvent = false) => {
-    const valueResult = isEvent ? value.target.value : value
+const changeValue = (value: Event | SelectModelValue | undefined, isEvent = false) => {
+    const valueResult: SelectModelValue = isEvent ? getEventInputValue(value as Event) : (value as SelectModelValue)
     emit('update:modelValue', valueResult)
 }
 
-const handleItemClick = (item: itemType): void => {
+const handleItemClick = (item: SelectItemType): void => {
     if (props.autocomplete) changeSearchValue('')
+
     if (props.multiple) {
-        const result: Array<itemType> = [...(props.modelValue as Array<itemType>)]
-
-        let index = -1;
-        let value: itemType = item;
-        if (isObject(item)) {
-            if (props.returnObject) {
-                index = result.findIndex((e) => JSON.stringify(e) === JSON.stringify(item));
-            } else {
-                index = result.findIndex(
-                    (e) => e === (item as Record<string, string>)[props.itemValue]
-                );
-                value = (item as Record<string, string>)?.[props.itemValue]
-            }
-        } else {
-            index = result.findIndex((e) => e === item);
-            value = item
-        }
-
+        const result: Array<SelectItemType> = [...multipleModel.value]
+        const index = findSelectedIndex(result, item)
+        const value = getEmittedItemValue(item)
         index < 0 ? result.push(value) : result.splice(index, 1)
         changeValue(result);
-
-    } else if (props.returnObject || !isObject(item)) {
-        changeValue(item);
-        closeMenu()
-    } else {
-        changeValue((item as Record<string, any>)[props.itemValue]);
-        closeMenu()
+        return
     }
+
+    changeValue(getEmittedItemValue(item));
+    closeMenu()
 }
 
-const active = (item: itemType): boolean => {
+const active = (item: SelectItemType): boolean => {
     if (props.multiple) {
-        const model: Array<itemType> = [...(props.modelValue as Array<itemType>)]
-
-        let index = -1;
-        if (isObject(item)) {
-            if (props.returnObject) {
-                index = model.findIndex((e) => JSON.stringify(e) === JSON.stringify(item));
-            } else {
-                index = model.findIndex(
-                    (e) => e === (item as Record<string, string>)[props.itemValue]
-                );
-            }
-        } else {
-            index = model.findIndex((e) => e === item);
-        }
-        return index !== -1;
-
-    } else if (!isObject(item)) {
-        return item === props.modelValue;
-    } else if (props.returnObject) {
-        return JSON.stringify(item) === JSON.stringify(props.modelValue);
-    } else {
-        return (item as Record<string, any>)[props.itemValue] === props.modelValue;
+        return findSelectedIndex(multipleModel.value, item) !== -1
     }
+
+    if (!isItemObject(item)) {
+        return item === props.modelValue;
+    }
+
+    if (props.returnObject) {
+        return JSON.stringify(item) === JSON.stringify(props.modelValue);
+    }
+
+    return getComparableValue(item) === props.modelValue;
 }
 
-const selectedText = (itemValue?: itemType): string => {
-    const value = itemValue || props.modelValue
+const selectedText = (itemValue?: SelectItemType): string => {
     if (empty.value) {
         return '';
     }
-    const isArrayOfObjects = isObject(props.items[0]);
 
-    if (props.returnObject) {
-        const item = (value || {}) as Record<string, string>
-        return `${item[props.itemText]}`
-    }
-
-    if (isArrayOfObjects) {
-        const item = props.items.find(
-            (e) => (e as Record<string, string>)?.[props.itemValue] === value
-        );
-
-        return item?.[props.itemText] || '';
-    }
-
-    return `${value}`
+    return getItemText(selectionItem(itemValue))
 
 }
+
+const multipleSelectedText = computed((): string => {
+    return selectedItems.value
+        .map((itemValue) => selectedText(itemValue))
+        .filter((value) => value.length > 0)
+        .join(', ')
+})
 
 const selectionStyle = computed((): Record<string, string> => {
     return { textAlign: props.inputAlign }
@@ -355,20 +387,41 @@ const listStyle = computed((): Record<string, string> => {
 })
 
 const clear = (): void => {
-    changeValue(undefined)
+    changeValue(props.multiple ? [] : undefined)
+    changeSearchValue('')
+    emit('click:clear')
     openMenu()
+    focusInput()
 }
 
-const handleOutsideMenu = (): void => {
-    if (opened.value) {
-        touched.value = true;
+const handleSelectSlotClick = (evt: Event): void => {
+    evt.stopPropagation()
+    openMenu()
+    focusInput()
+}
+
+const handleSelectSlotKeydown = (evt: KeyboardEvent): void => {
+    if (evt.target === input.value) return
+
+    if (evt.key === 'Escape') {
         closeMenu()
+        return
+    }
+
+    if (evt.key === 'Enter' || evt.key === ' ' || evt.key === 'ArrowDown') {
+        evt.preventDefault()
+        openMenu()
+        focusInput()
     }
 }
 
-const handleSelectSlotCLick = (evt: Event): void => {
-    evt.stopPropagation()
-    openMenu()
-}
+defineExpose({
+    focus,
+    blur,
+    validate,
+    reset,
+    resetValidation,
+    input,
+})
 </script>
 <style lang="scss" src="./style.scss"></style>

@@ -10,7 +10,7 @@
                 </div>
                 <div class="e-field__overlay"></div>
                 <div class="e-time-picker__fields">
-                    <label v-if="mounted" :for="`${id}-hours`" :class="[textColor, 'e-label']" :style="labelStyle">
+                    <label v-if="mounted" :for="`${id}-hours`" class="e-label" :style="labelStyle">
                         <slot name="label">{{ label }}</slot>
                     </label>
                     <input v-if="mounted" ref="hours" :id="`${id}-hours`" class="input--text" :value="hourLabel" data-hours
@@ -75,7 +75,7 @@
                     </transition>
                 </div>
             </div>
-            <EDetails :details="details" :textColorClass="textColor" :showDetails="showDetails"></EDetails>
+            <EDetails :details="details" :showDetails="showDetails"></EDetails>
         </div>
     </div>
 </template>
@@ -116,7 +116,7 @@ const emit = defineEmits<{
     (e: 'blur', value: Event): void
 }>()
 
-const { fieldClass, touched, focused, id, showDetails, textColor, color,
+const { fieldClass, touched, focused, id, showDetails, color,
     details, labelStyle, handleHover, focus, mounted } = useField()
 const { handleClickPrependIcon, handleClickAppendIcon } = useFieldActions({ emit, focus })
 const { gridColClass } = useGridCol(props, 'e-field')

@@ -8,11 +8,11 @@
                     :role="hasError ? 'alert' : 'status'"
                     :aria-live="hasError ? 'assertive' : 'polite'"
                 >
-                    <div class="e-messages__wrapper" :class="textColor">
+                    <div class="e-messages__wrapper">
                         {{ details }}
                     </div>
                 </div>
-                <div v-if="showCounter" class="e-counter" :class="textColor">
+                <div v-if="showCounter" class="e-counter">
                     {{ normalizedModelValue.length }}
                     <template v-if="limit"> / {{ limit }}</template>
                 </div>
@@ -30,7 +30,6 @@ export interface Props {
     id?: string;
     modelValue?: unknown;
     showDetails?: boolean;
-    textColor?: string;
     details?: string | boolean;
     limit?: string | number;
     counter?: boolean;

@@ -9,32 +9,6 @@
     font-size: 24px;
   }
 
-  .e-menu {
-    height: 1px;
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0px;
-    right: 0px;
-    margin-bottom: -2px;
-
-    &__content {
-      background-color: var(--e-color-surface-1, #ffffff);
-      position: absolute;
-      display: inline-block;
-      max-width: 80%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      contain: content;
-      box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%),
-        0 8px 10px 1px rgb(0 0 0 / 14%), 0 3px 14px 2px rgb(0 0 0 / 12%);
-      max-height: 304px;
-      min-width: 100%;
-      transform-origin: left top;
-      z-index: 8;
-    }
-  }
-
   &--is-open {
     &.e-field {
       z-index: 3;
@@ -65,25 +39,41 @@
 
   &__selections {
     color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+    grid-area: field;
     min-height: 10px;
     align-self: center;
     align-items: center;
     display: flex;
     flex: 1 1;
     flex-wrap: wrap;
-    line-height: 18px;
+    line-height: 20px;
     max-width: 100%;
     min-width: 0;
+    padding: 0.5rem 0 0.5rem 0.5rem;
   }
 
   &__selection {
-    padding: 8px 0 8px 8px;
+    padding: 0;
     max-width: 100%;
     flex: 1 1 auto;
+
+    &--text {
+      min-width: 0;
+      width: 100%;
+    }
 
     &-placeholder {
       color: var(--input-placeholder);
     }
+  }
+
+  &__selection-text {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &.e-field {
@@ -101,8 +91,12 @@
   &--autocomplete {
     .e-select__selection {
       flex: unset;
-      padding: 0.25rem 0 0.25rem 0.5rem;
+      padding: 0;
       display: block;
+
+      &--text {
+        flex: 1 1 auto;
+      }
     }
 
     .e-field__slot {
@@ -112,8 +106,16 @@
     }
 
     .e-select__selections {
-      padding: 4px 0;
+      gap: 0.25rem 0.375rem;
+      padding: 4px 0 4px 0.5rem;
       height: 100%;
+    }
+  }
+
+  &.e-field--label-floating:not(.e-field--label-inline) {
+    .e-select__selections {
+      padding-top: 1.5rem;
+      padding-bottom: 0.35rem;
     }
   }
 
@@ -154,5 +156,17 @@
     .e-field__line {
       opacity: 0.1;
     }
+  }
+}
+
+.e-select__menu-content {
+  background-color: var(--e-color-surface-1, #ffffff);
+  max-height: 304px;
+  min-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  .e-list {
+    min-width: 100%;
   }
 }

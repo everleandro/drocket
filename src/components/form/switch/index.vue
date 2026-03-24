@@ -3,7 +3,7 @@
         <div class="e-field__control">
             <div class="e-field__slot" @click="change">
                 <div v-if="!hideOverlay" class="e-field__overlay"></div>
-                <label v-if="mounted" :class="[textColor, 'e-label']" :for="id" :style="labelStyle">
+                <label v-if="mounted" class="e-label" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
                 <div :class="['e-field__selection-control', switchColor]" :data-focused="focused">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            <EDetails :details="details" :textColor="textColor" :showDetails="showDetails" />
+            <EDetails :details="details" :showDetails="showDetails" />
         </div>
     </div>
 </template>
@@ -53,7 +53,7 @@ export interface Props {
 }
 const props = withDefaults(defineProps<Props>(), { falseValue: false, trueValue: true })
 
-const { fieldClass, id, showDetails, textColor, configuration, details, labelStyle, focused, mounted,
+const { fieldClass, id, showDetails, configuration, details, labelStyle, focused, mounted,
     handleHover, handleBlur, handleFocus } = useField()
 
 const emit = defineEmits<{
@@ -64,7 +64,7 @@ const { gridColClass } = useGridCol(props, 'e-field')
 
 const switchColor = computed(() => {
     const color = props.color || configuration.color
-    return textColor.value || color ? `${color}--text` : ''
+    return color ? `${color}--text` : ''
 })
 
 const swithcClass = computed((): Array<string> => {
