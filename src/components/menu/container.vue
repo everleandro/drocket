@@ -50,7 +50,8 @@ const emit = defineEmits<{
 const wrapper = ref()
 const timerResize = ref<number>(0);
 const timerScroll = ref<number>(0);
-const menuId = props.dataId || `menu-${useId()}`
+const fallbackMenuId = `menu-${useId()}`
+const menuId = computed(() => props.dataId || fallbackMenuId)
 const menuContentStyle: Ref<Record<string, string | number>> = ref({
     top: 0
 });
@@ -103,7 +104,7 @@ const syncMenuStack = (): void => {
     if (!props.modelValue) return
 
     registerMenu({
-        id: menuId,
+        id: menuId.value,
         activator: resolveTarget(),
         content: (wrapper.value as HTMLElement | null) || null,
         close: () => closeMenu(),
@@ -111,7 +112,7 @@ const syncMenuStack = (): void => {
 }
 
 const destroyComponent = (): void => {
-    unregisterMenu(menuId)
+    unregisterMenu(menuId.value)
     window.removeEventListener('resize', handleResize, true);
     window.removeEventListener('scroll', handleScroll, true);
 }
@@ -232,7 +233,7 @@ const updatemenuContentStyle = async (): Promise<void> => {
     }
     result.top = `${y}px`;
     result.left = `${x}px`;
-    const zIndex = getMenuZIndex(menuId)
+    const zIndex = getMenuZIndex(menuId.value)
     if (zIndex !== null) {
         result.zIndex = `${zIndex}`
     }
@@ -250,7 +251,7 @@ watch(() => [props.modelValue, wrapper.value, props.target, props.dataId] as con
 
 watch(() => props.modelValue, async (value) => {
     if (!value) {
-        unregisterMenu(menuId)
+        unregisterMenu(menuId.value)
         focusActivator()
         return
     }
@@ -267,6 +268,16 @@ watch(() => props.modelValue, async (value) => {
         (wrapper.value as HTMLElement | undefined)?.focus()
     }
 }, { immediate: true })
+
+watch(menuId, (nextId, previousId) => {
+    if (previousId && previousId !== nextId) {
+        unregisterMenu(previousId)
+    }
+
+    if (props.modelValue) {
+        syncMenuStack()
+    }
+})
 
 
 const getHeight = (): number => {
