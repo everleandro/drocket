@@ -1,4 +1,9 @@
 .e-chip {
+  font-size: var(--e-chip-font-size, 0.875rem);
+  height: var(--e-chip-height, 32px);
+  padding: 0;
+  --e-chip-content-padding-start: var(--e-chip-content-padding-x, 12px);
+  --e-chip-content-padding-end: var(--e-chip-content-padding-x, 12px);
   appearance: none;
   align-items: center;
   background-color: transparent;
@@ -22,6 +27,10 @@
   outline: none;
 
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+  +.e-chip {
+    margin-left: var(--e-space-base, 4px);
+  }
 
   &--clickable {
     cursor: pointer;
@@ -64,6 +73,80 @@
     }
   }
 
+  &--size-x-small {
+    --e-chip-font-size: var(--e-chip-font-size-x-small, 0.625rem);
+    --e-chip-height: var(--e-chip-height-x-small, 24px);
+    --e-chip-content-padding-x: var(--e-chip-content-padding-x-x-small, 8px);
+    --e-chip-edge-padding-x: var(--e-chip-edge-padding-x-x-small, 5px);
+    --e-chip-avatar-size: var(--e-chip-avatar-size-x-small, 18px);
+    --e-chip-icon-size: var(--e-chip-icon-size-x-small, 14px);
+  }
+
+  &--size-small {
+    --e-chip-font-size: var(--e-chip-font-size-small, 0.75rem);
+    --e-chip-height: var(--e-chip-height-small, 28px);
+    --e-chip-content-padding-x: var(--e-chip-content-padding-x-small, 10px);
+    --e-chip-edge-padding-x: var(--e-chip-edge-padding-x-small, 6px);
+    --e-chip-avatar-size: var(--e-chip-avatar-size-small, 22px);
+    --e-chip-icon-size: var(--e-chip-icon-size-small, 16px);
+  }
+
+  &--size-default {
+    --e-chip-font-size: var(--e-chip-font-size-default, 0.875rem);
+    --e-chip-height: var(--e-chip-height-default, 32px);
+    --e-chip-content-padding-x: var(--e-chip-content-padding-x-default, 12px);
+    --e-chip-edge-padding-x: var(--e-chip-edge-padding-x-default, 7px);
+    --e-chip-avatar-size: var(--e-chip-avatar-size-default, 27px);
+    --e-chip-icon-size: var(--e-chip-icon-size-default, 18px);
+  }
+
+  &--size-large {
+    --e-chip-font-size: var(--e-chip-font-size-large, 0.9375rem);
+    --e-chip-height: var(--e-chip-height-large, 36px);
+    --e-chip-content-padding-x: var(--e-chip-content-padding-x-large, 14px);
+    --e-chip-edge-padding-x: var(--e-chip-edge-padding-x-large, 8px);
+    --e-chip-avatar-size: var(--e-chip-avatar-size-large, 30px);
+    --e-chip-icon-size: var(--e-chip-icon-size-large, 20px);
+  }
+
+  &--size-x-large {
+    --e-chip-font-size: var(--e-chip-font-size-x-large, 1rem);
+    --e-chip-height: var(--e-chip-height-x-large, 40px);
+    --e-chip-content-padding-x: var(--e-chip-content-padding-x-x-large, 16px);
+    --e-chip-edge-padding-x: var(--e-chip-edge-padding-x-x-large, 9px);
+    --e-chip-avatar-size: var(--e-chip-avatar-size-x-large, 34px);
+    --e-chip-icon-size: var(--e-chip-icon-size-x-large, 22px);
+  }
+
+  &--has-prepend {
+    --e-chip-content-padding-start: 0px;
+  }
+
+  &--has-append,
+  &--has-close {
+    --e-chip-content-padding-end: 0px;
+  }
+
+  &--has-prepend-avatar {
+    .e-chip__prepend {
+      padding-inline-start: 0;
+
+      .e-avatar__container {
+        --avatar-size: var(--e-chip-height);
+      }
+    }
+  }
+
+  &--has-append-avatar {
+    .e-chip__append {
+      padding-inline-end: 0;
+
+      .e-avatar__container {
+        --avatar-size: var(--e-chip-height);
+      }
+    }
+  }
+
   &__prepend,
   &__append,
   &__close,
@@ -74,6 +157,8 @@
   }
 
   &__content {
+    padding-inline-start: var(--e-chip-content-padding-start);
+    padding-inline-end: var(--e-chip-content-padding-end);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -93,7 +178,34 @@
     flex: none;
   }
 
+  &__prepend {
+    padding-inline-start: var(--e-chip-edge-padding-x, 7px);
+  }
+
+  &__append {
+    padding-inline-end: var(--e-chip-edge-padding-x, 7px);
+  }
+
   &__close {
     flex: none;
+
+    button {
+      height: var(--e-chip-height, 24px);
+      width: var(--e-chip-height, 24px);
+      background-color: transparent;
+      color: inherit;
+
+      i {
+        font-size: var(--e-chip-icon-size, 24px);
+      }
+    }
+  }
+
+  .e-avatar__container {
+    --avatar-size: var(--e-chip-avatar-size);
+  }
+
+  .e-icon {
+    --e-icon-size-default: var(--e-chip-icon-size, 24px);
   }
 }

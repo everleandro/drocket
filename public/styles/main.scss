@@ -1,22 +1,3 @@
 @use "helper.scss";
 
-//style
-@use "override/styles/icon.scss";
-@use "override/styles/avatar.scss";
-@use "override/styles/button.scss";
-@use "override/styles/date-picker.scss";
-@use "override/styles/bar.scss";
-@use "override/styles/dialog.scss";
-@use "override/styles/menu.scss";
-@use "override/styles/card.scss";
-@use "override/styles/chip.scss";
-@use "override/styles/expansion.scss";
-@use "override/styles/select.scss";
-@use "override/styles/form.scss";
-@use "override/styles/grid.scss";
-@use "override/styles/list.scss";
-@use "override/styles/schedule.scss";
-@use "override/styles/container.scss";
-@use "override/styles/main.scss";
-@use "override/styles/typography.scss";
 @use './override/theme/index' as *;

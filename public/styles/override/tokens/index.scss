@@ -1,0 +1,40 @@
+@forward "./foundation/globals";
+@forward "./foundation/palettes";
+@forward "./foundation/semantic";
+@forward "./foundation/layout";
+@forward "./components/icon";
+@forward "./components/avatar";
+@forward "./components/bar";
+@forward "./components/button";
+@forward "./components/chip";
+@forward "./components/date-picker";
+@forward "./components/expansion";
+@forward "./components/list";
+@forward "./components/schedule";
+
+@use "./foundation/layout" as layout;
+@use "./components/button" as button;
+@use "./components/icon" as icon;
+@use "./components/list" as list;
+
+// Tokens simples autoexportables a CSS vars.
+// Regla:
+// - Si el nombre empieza con `e-`, se genera `--<nombre>`.
+// - Si no, se genera `--e-<nombre>`.
+
+// Maps exportados como grupos de CSS vars.
+// Se generan como `--<grupo>-<clave>` desde theme/base.scss.
+$theme-base-css-var-groups: (
+  "e-grid-breakpoint": layout.$grid-breakpoints,
+  "e-grid-gap": layout.$grid-gaps,
+  "e-icon-size": icon.$icon-font-sizes,
+  "e-btn-state": button.$btn-states,
+  "e-btn-font-size": button.$btn-font-sizes,
+  "e-btn-height": button.$btn-height,
+  "e-fab-font-size": button.$fab-font-sizes,
+  "e-fab-height": button.$fab-height,
+  "e-stacked-height": button.$stacked-height,
+  "e-list-item-font-size": list.$list-item-font-sizes,
+  "e-list-item-height": list.$list-item-height,
+  "e-elevation": layout.$elevation,
+) !default;

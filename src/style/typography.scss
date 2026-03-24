@@ -1,3 +1,5 @@
+@use '~/public/styles/_mixins.scss' as mixins;
+
 h1 {
   +p {
     font-size: 1.25rem;
@@ -77,5 +79,35 @@ p {
     font-weight: 400;
     line-height: 2.5rem;
     text-transform: none !important;
+  }
+}
+
+@include mixins.xs {
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+}
+
+@include mixins.sm {
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+}
+
+@include mixins.md {
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .title {
+    font-size: 1.3rem;
   }
 }

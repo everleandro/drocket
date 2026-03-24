@@ -1,4 +1,9 @@
 .e-bar {
+  margin-bottom: calc(var(--e-space-base, 4px) * 4);
+  box-shadow: var(--e-bar-box-shadow, 0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%));
+  height: var(--e-bar-height, 64px);
+  background-color: var(--e-color-surface-1, #ffffff);
+  color: var(--e-contrast-surface-1, #000000);
   flex-grow: 1;
   display: block;
   contain: layout;
@@ -23,6 +28,7 @@
   &__content {
     align-items: center;
     display: flex;
+    padding: var(--e-bar-padding-y, 0px) var(--e-bar-padding-x, 16px);
     position: relative;
     z-index: 1;
     height: 100%;
@@ -53,7 +59,30 @@
     position: fixed;
   }
 
+  &--dense {
+    &.e-bar {
+      height: var(--e-bar-height-dense, 48px);
+    }
+  }
+
   &--absolute {
     position: absolute;
+  }
+
+  &.primary > *,
+  &.secondary > *,
+  &.tertiary > *,
+  &.error > *,
+  &.warning > *,
+  &.success > *,
+  &.info > *,
+  &.input > *,
+  &.disabled > *,
+  &.surface-0 > *,
+  &.surface-1 > *,
+  &.surface-2 > *,
+  &.surface-3 > *,
+  &.border > * {
+    color: inherit;
   }
 }

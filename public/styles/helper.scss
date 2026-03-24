@@ -1,12 +1,12 @@
 @use "sass:map";
 @use "sass:meta";
 @use "sass:color";
-@use './override/variables/index' as *;
+@use './override/tokens/index' as *;
 @use './_mixins.scss' as *;
 
 @function e-contrast-fallback($name, $bg-color) {
-  @if map.has-key($contrast-colors-light, $name) {
-    @return map.get($contrast-colors-light, $name);
+  @if map.has-key($semantic-contrast-tokens-light, $name) {
+    @return map.get($semantic-contrast-tokens-light, $name);
   }
 
   @if meta.type-of($bg-color) == "color" {
@@ -26,7 +26,7 @@
   }
 }
 
-@each $color, $value in $colors-light {
+@each $color, $value in $semantic-color-tokens-light {
   $contrast-fallback: e-contrast-fallback($color, $value);
 
   .#{$color} {

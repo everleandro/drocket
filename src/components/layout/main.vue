@@ -18,12 +18,19 @@ const { mainLayoutStyle } = useLayout()
 </script>
 
 <style lang="scss">
+@use '~/public/styles/_mixins.scss' as *;
+
 .e-main {
     max-width: 100%;
     transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex: 1 0 auto;
     max-width: 100%;
+
+    @include lg {
+        padding-top: 75px;
+        padding-left: 256px;
+    }
 
 
     &__wrapper {

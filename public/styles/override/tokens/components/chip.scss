@@ -1,0 +1,78 @@
+@use "sass:map";
+
+$chip-font-sizes: map.merge(
+    (
+        x-small: 0.625rem,
+        small: 0.75rem,
+        default: 0.875rem,
+        large: 0.9375rem,
+        x-large: 1rem,
+    ),
+    ()
+) !default;
+
+$chip-height: map.merge(
+    (
+        x-small: 24px,
+        small: 28px,
+        default: 32px,
+        large: 36px,
+        x-large: 40px,
+    ),
+    ()
+) !default;
+
+$chip-padding-x: map.merge(
+    (
+        x-small: 8px,
+        small: 10px,
+        default: 12px,
+        large: 14px,
+        x-large: 16px,
+    ),
+    ()
+) !default;
+
+$chip-content-padding-x: map.merge(
+    (
+        x-small: 8px,
+        small: 10px,
+        default: 12px,
+        large: 14px,
+        x-large: 16px,
+    ),
+    ()
+) !default;
+
+$chip-edge-padding-x: map.merge(
+    (
+        x-small: 5px,
+        small: 6px,
+        default: 7px,
+        large: 8px,
+        x-large: 9px,
+    ),
+    ()
+) !default;
+
+$chip-avatar-size: map.merge(
+    (
+        x-small: 18px,
+        small: 22px,
+        default: 27px,
+        large: 30px,
+        x-large: 34px,
+    ),
+    ()
+) !default;
+
+$chip-icon-size: map.merge(
+    (
+        x-small: 14px,
+        small: 16px,
+        default: 18px,
+        large: 20px,
+        x-large: 22px,
+    ),
+    ()
+) !default;

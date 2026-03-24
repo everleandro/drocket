@@ -1,4 +1,8 @@
+@use '~/public/styles/_mixins.scss' as mixins;
+
 .e-schedule {
+  padding-top: var(--e-header-col-height, 65px);
+  background: var(--e-schedule-bg, #ffffff);
   display: flex;
 
   &__empty-slot {
@@ -13,6 +17,7 @@
   &__body {
     display: flex;
     flex: 1 1 100%;
+    min-width: calc(100% - var(--e-hour-column-width, 65px));
 
     .tab-reverse-transition-leave-active,
     .tab-transition-leave-active {
@@ -55,6 +60,7 @@
       height: 100%;
       width: 100%;
       position: relative;
+      color: var(--e-schedule-bg, #ffffff);
 
       &::after {
         content: "";
@@ -111,9 +117,10 @@
     text-align: center;
 
     background-color: transparent;
+    border-bottom: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
 
     &:not(.e-schedule__header) {
-      height: var(--row-height)
+      height: var(--row-height);
     }
   }
 
@@ -132,6 +139,9 @@
         position: absolute;
         bottom: 0;
         z-index: 1;
+        height: calc(var(--e-header-col-height, 65px) + 10px);
+        padding-top: 10px;
+        background-color: var(--e-schedule-bg, #ffffff);
 
         &.action-container {
           display: flex;
@@ -158,9 +168,16 @@
 
   div[role="col"] {
     flex: 1;
+    background-color: var(--e-schedule-bg, #ffffff);
+
+    &:not(:last-child) {
+      border-right: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    }
 
     &.col-hour-info {
       z-index: 1;
+      max-width: var(--e-hour-column-width, 65px);
+      min-width: var(--e-hour-column-width, 65px);
     }
   }
 
@@ -223,6 +240,7 @@
     }
 
     .e-schedule__body {
+      top: var(--e-header-col-height, 65px);
       transition-duration: 0.3s !important;
     }
   }
@@ -236,6 +254,65 @@
     position: absolute;
     top: 70px;
     z-index: 3;
+  }
+
+  @include mixins.xs {
+    div[role="col"] {
+      &.col-hour-info {
+        max-width: var(--e-hour-column-width-xs, 46px);
+        min-width: var(--e-hour-column-width-xs, 46px);
+      }
+    }
+
+    &__body {
+      min-width: calc(100% - var(--e-hour-column-width-xs, 46px));
+    }
+  }
+
+  @include mixins.xs {
+    .e-schedule {
+      &__header[role="cell"] [data-day-of-week="true"] {
+        font-size: 11px;
+        text-transform: capitalize;
+      }
+
+      &__empty-slot {
+        &.e-btn {
+          min-width: unset;
+          padding: 0 4px;
+          font-size: 12px;
+        }
+      }
+
+      &-btn--day {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+      }
+
+      &__event-container {
+        .event {
+          &-name {
+            overflow: hidden;
+            font-size: 11px;
+            line-height: 11px;
+          }
+
+          &-subtitle,
+          &-footer {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .hour-label {
+      &:after {
+        content: unset;
+      }
+
+      padding-right: 0;
+    }
   }
 
 

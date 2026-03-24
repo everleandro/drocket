@@ -1,4 +1,6 @@
 .e-picker {
+  --e-date-picker-border-radius: var(--e-date-picker-border-radius, var(--e-border-radius-root, 4px));
+  border-radius: var(--e-date-picker-border-radius);
   contain: layout style;
   display: inline-flex;
   flex-direction: column;
@@ -7,8 +9,10 @@
   position: relative;
 
   &__title {
-    /* color ahora en override */
+    color: var(--e-contrast-surface-1, #222222);
     padding: 16px;
+    border-top-left-radius: var(--e-date-picker-border-radius);
+    border-top-right-radius: var(--e-date-picker-border-radius);
 
     &__btn {
       transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
@@ -42,7 +46,7 @@
   }
 
   &__body {
-    /* background ahora en override */
+    background: var(--e-color-surface-1, #ffffff);
     height: auto;
     overflow: hidden;
     position: relative;

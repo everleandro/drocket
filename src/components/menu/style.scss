@@ -2,10 +2,11 @@
   box-sizing: border-box;
   position: absolute;
   display: inline-block;
-  z-index: 3;
 
   &__wrapper {
-    z-index: 3;
+    border-radius: var(--e-border-radius-root, 4px);
+    overflow: hidden;
+    background-color: var(--e-color-surface-1, #ffffff);
     transition-duration: 300ms;
     position: relative;
   }
@@ -24,11 +25,8 @@
     overflow-y: auto;
     overflow-x: hidden;
     contain: content;
-    box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%),
-      0 3px 14px 2px rgb(0 0 0 / 12%);
     max-height: 304px;
     min-width: 100%;
     transform-origin: left top;
-    z-index: 8;
   }
 }

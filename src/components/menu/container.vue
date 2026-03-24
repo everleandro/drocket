@@ -1,9 +1,10 @@
 
 <template>
-    <div ref="ContainerReference" class="e-menu-container" v-click-outside="handleOutside" v-bind="configuration.attrs"
-        :style="menuContentStyle" @click="handleContentClick">
-        <transition :name="configuration.transition">
-            <div v-show="opened" ref="wrapper" :class="wrapperClass" :data-id="configuration.dataId">
+    <div class="e-menu-container" v-bind="forwardedAttrs" :style="menuContentStyle"
+        @click="handleContentClick">
+        <transition :name="props.transition">
+            <div v-show="modelValue" :id="contentId" ref="wrapper" :class="wrapperClass" :data-id="dataId" role="menu"
+                tabindex="-1" :aria-hidden="modelValue ? 'false' : 'true'">
                 <slot></slot>
             </div>
         </transition>
@@ -15,79 +16,104 @@ export default {
 }
 </script>
 <script setup lang="ts">
-import { Ref, nextTick, onMounted, provide, reactive, ref, watch, computed } from 'vue';
-import { MenuTypeTarget } from '@/types'
+import { Ref, computed, nextTick, onMounted, onUnmounted, provide, ref, useId, watch } from 'vue';
+import type { ElevationProps, MenuTypeTarget } from '@/types'
+import { useMenuStack } from '@/composables/menu-stack'
 
-const configuration: Record<string, any> = reactive({
-    absolute: false,
-    target: <MenuTypeTarget>null,
-    dataId: '',
-    closeOnContentClick: false,
-    attrs: {},
-    offsetY: 0,
-    offsetX: 0,
-    holdFocus: false,
-    fullWidth: false,
-    checkOffset: false,
-    maxWidth: null,
-    width: null,
-    contentCLass: '',
+const props = withDefaults(defineProps<ElevationProps & {
+    absolute?: boolean
+    closeOnContentClick?: boolean
+    fullWidth?: boolean
+    holdFocus?: boolean
+    checkOffset?: boolean
+    transition?: string
+    origin?: string
+    maxWidth?: string | number
+    offsetX?: string | number
+    offsetY?: string | number
+    width?: string | number
+    modelValue?: boolean
+    target?: MenuTypeTarget
+    dataId?: string
+    contentId?: string
+    forwardedAttrs?: Record<string, unknown>
+}>(), {
+    transition: 'fade',
     origin: 'bottom left',
-    transition: 'fade'
+    offsetX: 0,
+    offsetY: 0,
 })
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: boolean): void
+}>()
 
 const wrapper = ref()
-const opened = ref(false)
 const timerResize = ref<number>(0);
 const timerScroll = ref<number>(0);
-const ContainerReference = ref(null)
+const menuId = props.dataId || `menu-${useId()}`
 const menuContentStyle: Ref<Record<string, string | number>> = ref({
     top: 0
 });
+const { registerMenu, unregisterMenu, getMenuZIndex } = useMenuStack()
 
 const wrapperClass = computed(() => {
     const classes = ['e-menu-container__wrapper']
-    if (configuration.elevation) {
-        classes.push(`e-elevation--${configuration.elevation}`)
+    if (props.elevation) {
+        classes.push(`e-elevation--${props.elevation}`)
     }
     return classes
 })
 
-
-watch(() => opened.value, (value: boolean) => {
-    value ? document.addEventListener('keydown', handleExcListener) : document.removeEventListener('keydown', handleExcListener);
-});
-
 onMounted(() => {
     updatemenuContentStyle();
     window.addEventListener('resize', handleResize, true);
-    // window.addEventListener('scroll', handleScroll, true);
+    window.addEventListener('scroll', handleScroll, true);
 })
 
-const setConfiguration = (props: Record<string, any>): void => {
-    Object.keys(props).forEach(
-        (key: string) => configuration[key] = props[key]
-    );
+onUnmounted(() => {
+    destroyComponent()
+})
+
+const closeMenu = (): boolean => {
+    emit('update:modelValue', false)
+    return false
 }
 
-const closeMenu = (): boolean => opened.value = false
+const handleContentClick = (): boolean => Boolean(props.closeOnContentClick) && closeMenu()
 
-const handleContentClick = (): boolean => configuration.closeOnContentClick && closeMenu()
+const resolveTarget = (): HTMLElement | null => {
+    if (typeof document === 'undefined') return null
 
-const handleExcListener = ({ key }: KeyboardEvent): boolean => key === 'Escape' && closeMenu()
+    if (typeof props.target === 'string') {
+        return (document.querySelector(props.target) || null) as HTMLElement | null
+    }
 
-const targetDOMRect = (): DOMRect => configuration.target?.getBoundingClientRect() || {}
+    return props.target ? (props.target as HTMLElement) : null
+}
+
+const targetDOMRect = (): DOMRect | null => resolveTarget()?.getBoundingClientRect() || null
+
+const focusActivator = (): void => {
+    if (props.holdFocus) return
+
+    resolveTarget()?.focus()
+}
+
+const syncMenuStack = (): void => {
+    if (!props.modelValue) return
+
+    registerMenu({
+        id: menuId,
+        activator: resolveTarget(),
+        content: (wrapper.value as HTMLElement | null) || null,
+        close: () => closeMenu(),
+    })
+}
 
 const destroyComponent = (): void => {
-    document.removeEventListener('keydown', handleExcListener);
-    window.removeEventListener('resize', handleResize);
-    // window.removeEventListener('scroll', handleScroll);
-}
-
-const openMenu = async () => {
-    updatemenuContentStyle();
-    await nextTick();
-    opened.value = true;
+    unregisterMenu(menuId)
+    window.removeEventListener('resize', handleResize, true);
+    window.removeEventListener('scroll', handleScroll, true);
 }
 
 const handleResize = (): void => {
@@ -110,88 +136,137 @@ const handleScroll = (): void => {
     }, 300);
 }
 
-const handleOutside = (evt: { target: HTMLElement }) => {
-
-    if (!insideChild(evt)) {
-        const triggerContainer: HTMLElement =
-            (evt.target as HTMLElement).closest('[aria-hasmenu="true"]') ||
-            document.createElement('div');
-
-        if (!triggerContainer.isEqualNode(targetElement())) closeMenu();
-    }
-}
-
-const insideChild = (evt: { target: HTMLElement }): boolean => {
-    let insideMenu = false
-    if (evt.target.classList.contains('e-menu-container__wrapper')) {
-        insideMenu = !!evt.target.closest(`.e-menu-container__wrapper[data-id="${configuration.dataId}"]--child`)
-    } else {
-        insideMenu = !!evt.target.closest('.e-menu-container__wrapper')?.closest(`.e-menu-container__wrapper[data-id="${configuration.dataId}--child"]`)
-    }
-    return insideMenu
-}
-
-const targetElement = (): HTMLElement => {
-    const selectorString = typeof configuration.target === 'string'
-    return selectorString ?
-        (document.querySelector(configuration.target as string) || document.createElement('div')) as HTMLElement :
-        configuration.target as HTMLElement
-
-}
-
 const updatemenuContentStyle = async (): Promise<void> => {
+    if (!resolveTarget()) return
 
-    const { width, top, left, height, right } = targetDOMRect();
+    const rect = targetDOMRect()
+    if (!rect) return
+
+    const { width, top, left, height } = rect;
     const result: Record<string, string | number> = {}
-    if (configuration.fullWidth) {
+    const menuHeight = getHeight()
+    const menuWidth = getWidth()
+    const margin = 12
+
+    if (props.fullWidth) {
         result.minWidth = `${width}px`;
         result.maxWidth = `${width}px`;
     }
 
-    const origin: Array<string> = configuration.origin.split(' ');
-    const origin_button = origin.find((position: string) => position == 'bottom')
-    const origin_right = origin.find((position: string) => position == 'right')
+    const origin: Array<string> = props.origin.split(' ');
+    const prefersBottom = origin.includes('bottom')
+    const prefersRight = origin.includes('right')
+    const viewportTop = window.pageYOffset
+    const viewportBottom = viewportTop + window.innerHeight
+    const viewportLeft = window.pageXOffset
+    const viewportRight = viewportLeft + window.innerWidth
+    const activatorTop = top + window.pageYOffset
+    const activatorBottom = activatorTop + height
+    const activatorLeft = left + window.pageXOffset
+    const activatorRight = activatorLeft + width
+    const availableBelow = viewportBottom - activatorBottom - margin
+    const availableAbove = activatorTop - viewportTop - margin
+    const availableRight = viewportRight - activatorLeft - margin
+    const availableLeft = activatorRight - viewportLeft - margin
+
+    let placeBelow = prefersBottom
+    let alignRight = prefersRight
+
+    if (placeBelow && menuHeight > availableBelow && availableAbove > availableBelow) {
+        placeBelow = false
+    }
+
+    if (!placeBelow && menuHeight > availableAbove && availableBelow > availableAbove) {
+        placeBelow = true
+    }
+
+    if (!alignRight && menuWidth > availableRight && availableLeft > availableRight) {
+        alignRight = true
+    }
+
+    if (alignRight && menuWidth > availableLeft && availableRight > availableLeft) {
+        alignRight = false
+    }
 
     let y = top + window.pageYOffset;
-    if (origin_button) {
+    if (placeBelow) {
         y += height;
+    } else {
+        y -= menuHeight;
     }
 
     let x = left + window.pageXOffset;
-    if (origin_right) {
+    if (alignRight) {
         result.transform = 'translateX(-100%)';
         x += width;
     }
 
-    if (configuration.checkOffset) {
-        const margin = 12;
-        const offsetY = window.pageYOffset + window.innerHeight - (y + getHeight() + margin)
+    if (props.checkOffset) {
+        if (y < viewportTop + margin) {
+            y = viewportTop + margin
+        }
+
+        const offsetY = viewportBottom - (y + menuHeight + margin)
 
         if (offsetY < 0) {
             y += offsetY;
         }
-        const leftOffset = (x + getWidth() + margin) - (window.pageXOffset + window.innerWidth)
-        if (!origin_right && leftOffset > 0) {
+        const leftOffset = (x + menuWidth + margin) - viewportRight
+        if (!alignRight && leftOffset > 0) {
             x -= leftOffset + margin;
         }
-        const rightOffset = getWidth() + margin - x
-        if (origin_right && (rightOffset > 0)) {
+        const rightOffset = menuWidth + margin - (x - viewportLeft)
+        if (alignRight && rightOffset > 0) {
             x += rightOffset
         }
     }
-    if (origin_right) {
-        x -= parseInt(`${configuration.offsetX}`)
+    if (alignRight) {
+        x -= parseInt(`${props.offsetX}`)
     }
-    else { x += parseInt(`${configuration.offsetX}`) }
+    else { x += parseInt(`${props.offsetX}`) }
 
-    y += parseInt(`${configuration.offsetY}`)
+    if (placeBelow) {
+        y += parseInt(`${props.offsetY}`)
+    } else {
+        y -= parseInt(`${props.offsetY}`)
+    }
     result.top = `${y}px`;
     result.left = `${x}px`;
-    configuration.maxWidth && (result.maxWidth = `${configuration.maxWidth}px`);
-    configuration.width && (result.width = `${configuration.width}px`);
+    const zIndex = getMenuZIndex(menuId)
+    if (zIndex !== null) {
+        result.zIndex = `${zIndex}`
+    }
+    props.maxWidth && (result.maxWidth = `${props.maxWidth}px`);
+    props.width && (result.width = `${props.width}px`);
     await nextTick();
     menuContentStyle.value = result
 }
+
+watch(() => [props.modelValue, wrapper.value, props.target, props.dataId] as const, ([isOpened, contentElement]) => {
+    if (!isOpened || !contentElement) return
+    syncMenuStack()
+    updatemenuContentStyle()
+}, { flush: 'post' })
+
+watch(() => props.modelValue, async (value) => {
+    if (!value) {
+        unregisterMenu(menuId)
+        focusActivator()
+        return
+    }
+
+    await nextTick()
+    await updatemenuContentStyle()
+
+    syncMenuStack()
+
+    await nextTick()
+    await updatemenuContentStyle()
+
+    if (!props.holdFocus) {
+        (wrapper.value as HTMLElement | undefined)?.focus()
+    }
+}, { immediate: true })
 
 
 const getHeight = (): number => {
@@ -260,8 +335,6 @@ const getWidth = () => {
     return wanted_width;
 }
 
-
-defineExpose({ openMenu, destroyComponent, setConfiguration, closeMenu, opened })
 provide("EMenuContainer", {
     closeMenu
 });

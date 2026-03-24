@@ -17,4 +17,49 @@
   &--disabled {
     pointer-events: none;
   }
+
+  &--size-x-small {
+    font-size: var(--e-icon-size-x-small, 18px);
+
+    .e-icon__svg {
+      height: var(--e-icon-size-x-small, 18px);
+      width: var(--e-icon-size-x-small, 18px);
+    }
+  }
+
+  &--size-small {
+    font-size: var(--e-icon-size-small, 20px);
+
+    .e-icon__svg {
+      height: var(--e-icon-size-small, 20px);
+      width: var(--e-icon-size-small, 20px);
+    }
+  }
+
+  &--size-default {
+    font-size: var(--e-icon-size-default, 24px);
+
+    .e-icon__svg {
+      height: var(--e-icon-size-default, 24px);
+      width: var(--e-icon-size-default, 24px);
+    }
+  }
+
+  &--size-large {
+    font-size: var(--e-icon-size-large, 28px);
+
+    .e-icon__svg {
+      height: var(--e-icon-size-large, 28px);
+      width: var(--e-icon-size-large, 28px);
+    }
+  }
+
+  &--size-x-large {
+    font-size: var(--e-icon-size-x-large, 32px);
+
+    .e-icon__svg {
+      height: var(--e-icon-size-x-large, 32px);
+      width: var(--e-icon-size-x-large, 32px);
+    }
+  }
 }

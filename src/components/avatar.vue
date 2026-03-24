@@ -57,6 +57,8 @@ const avatarStyle = computed(() => {
 
 .e-avatar {
     &__container {
+        --avatar-size: var(--e-avatar-size-default, 65px);
+
         flex: none;
         align-items: center;
         display: inline-flex;
@@ -69,7 +71,33 @@ const avatarStyle = computed(() => {
         transition-property: width, height;
         vertical-align: middle;
         border-radius: 50%;
+        width: var(--avatar-size);
+        height: var(--avatar-size);
         @include button-before();
+
+        &--size-x-small {
+            --avatar-size: var(--e-avatar-size-x-small, 24px);
+        }
+
+        &--size-small {
+            --avatar-size: var(--e-avatar-size-small, 32px);
+        }
+
+        &--size-default {
+            --avatar-size: var(--e-avatar-size-default, 65px);
+        }
+
+        &--size-large {
+            --avatar-size: var(--e-avatar-size-large, 80px);
+        }
+
+        &--size-x-large {
+            --avatar-size: var(--e-avatar-size-x-large, 96px);
+        }
+
+        .e-icon {
+            --e-icon-size-default: calc(var(--avatar-size) * 0.6);
+        }
 
         &::before {
             opacity: .1;

@@ -1,0 +1,28 @@
+@use '~/public/styles/_mixins.scss' as mixins;
+
+.e-row {
+	display: grid;
+	grid-template-columns: repeat(var(--e-grid-cols, 12), 1fr);
+
+	@include mixins.grid-gap-responsive;
+
+	gap: var(--e-grid-gap, 16px);
+
+	&--dense {
+		grid-auto-flow: dense;
+	}
+
+	&--auto {
+		grid-auto-rows: auto;
+	}
+
+	&--equal {
+		grid-auto-rows: 1fr;
+	}
+
+	&--no-gutters {
+		--e-grid-gap: 0;
+	}
+}
+
+@include mixins.generate-grid-classes;

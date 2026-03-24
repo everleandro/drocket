@@ -1,5 +1,17 @@
 <template>
-    <component :is="root" />
+    <slot name="activator" :onClick="handleActivatorClick" :onKeydown="handleActivatorKeydown"
+        :ref="setActivatorReference" :aria-haspopup="'menu'" :aria-expanded="String(opened)" :aria-controls="contentId"
+        :aria-disabled="String(Boolean(props.disableMenu))" :openMenu="openMenu" :closeMenu="closeMenu" />
+
+    <Teleport to="body">
+        <EMenuContainer v-model="opened" :absolute="props.absolute" :close-on-content-click="props.closeOnContentClick"
+            :full-width="props.fullWidth" :hold-focus="props.holdFocus" :check-offset="props.checkOffset"
+            :transition="props.transition" :origin="props.origin" :max-width="props.maxWidth" :offset-x="props.offsetX"
+            :offset-y="props.offsetY" :width="props.width" :elevation="props.elevation" :target="currentActivator"
+            :data-id="dataId" :content-id="contentId" :forwarded-attrs="attrs">
+            <slot />
+        </EMenuContainer>
+    </Teleport>
 </template>
 
 <script lang="ts">
@@ -7,8 +19,8 @@ export default {
     name: 'EMenu'
 }
 </script>
-<script  lang="ts" setup>
-import type { MenuTypeTarget, ContainerMenuInterface, ElevationProps } from '@/types'
+<script lang="ts" setup>
+import type { MenuTypeTarget, ElevationProps } from '@/types'
 export interface Props extends ElevationProps {
     absolute?: boolean
     closeOnContentClick?: boolean
@@ -24,86 +36,146 @@ export interface Props extends ElevationProps {
     offsetX?: string | number
     offsetY?: string | number
     width?: string | number
+    modelValue?: boolean
 }
 
 import EMenuContainer from './container.vue'
 
-import { Ref, VNode, createApp, defineComponent, h, nextTick, onMounted, onUnmounted, onUpdated, ref, useAttrs, useSlots, watch } from 'vue'
-import { ripple, clickOutside } from '@/directives'
+import { computed, nextTick, onMounted, onUnmounted, ref, useAttrs, useId, watch } from 'vue'
 
-const id = `${Math.floor(Math.random() * 999999)}-e-menu`
-const props = withDefaults(defineProps<Props>(), { origin: 'bottom left', transition: 'fade', offsetX: 0, offsetY: 0 })
-const slots = useSlots()
-const MenuReference = ref()
-const ContainerReference = ref<ContainerMenuInterface>({
-    closeMenu: () => { },
-    destroyComponent: () => { },
-    setConfiguration: (configuration: Record<string, any>) => { },
-    opened: ref(false),
-    openMenu: () => { },
-})
-const ContainerUnmounted = ref(true)
-const node = ref<HTMLElement | null>(null)
+const id = `e-menu-${useId()}`
+const contentId = `${id}-content`
+const props = withDefaults(defineProps<Props>(), { origin: 'bottom left', transition: 'fade', offsetX: 0, offsetY: 0, elevation: 'sm' })
+const MenuReference = ref<HTMLElement | null>(null)
+const externalActivator = ref<HTMLElement | null>(null)
 const attrs = useAttrs()
-const opened: Ref<boolean> = ref(false)
+const opened = ref(false)
 const emit = defineEmits<{
     (e: 'update:modelValue', evt: boolean): void
 }>()
 
-const container = (): ContainerMenuInterface => ContainerReference.value as unknown as ContainerMenuInterface
-const root: VNode = h(() => slots.activator?.({ onClick: openMenu, ref: MenuReference, 'aria-hasmenu': true }))
-
-onMounted(() => createMenu())
-
-onUpdated(() => activatorBehavior())
+onMounted(() => {
+    syncActivatorBehavior()
+})
 
 onUnmounted(() => {
-    container()?.destroyComponent?.()
-    node.value?.remove()
+    removeExternalActivatorListeners()
 })
-watch(() => ContainerReference.value.opened, (value: boolean) => {
+
+watch(() => props.activator, () => {
+    syncActivatorBehavior()
+})
+
+watch(opened, (value) => {
     emit('update:modelValue', value)
+    updateActivatorAttributes(resolveCurrentActivator())
 })
 
-const createMenu = async (): Promise<void> => {
-    if (ContainerUnmounted.value) {
-        const containerComponent = createApp(defineComponent({
-            extends: EMenuContainer,
-            setup() {
+watch(() => props.modelValue, async (value) => {
+    if (value === undefined) return
 
-                return () => h(EMenuContainer, { ref: ContainerReference }, { default: () => slots?.default?.() })
-            }
-        }), {})
-
-        node.value = document.createElement('div');
-        document.body.appendChild(node.value);
-
-        containerComponent.directive('click-outside', clickOutside)
-        containerComponent.directive('ripple', ripple)
-        // target: MenuReference.value?.$el
-        containerComponent.mount(node.value)
+    if (value) {
+        await openMenu()
+        return
     }
 
-    await activatorBehavior();
-    ContainerUnmounted.value = false
+    closeMenu()
+})
+
+const setActivatorReference = (value: unknown) => {
+    MenuReference.value = resolveActivatorElement(value)
+    syncActivatorBehavior()
 }
+
+const resolveActivatorElement = (value: unknown): HTMLElement | null => {
+    if (value instanceof HTMLElement) return value
+    if (value && typeof value === 'object' && '$el' in (value as Record<string, unknown>)) {
+        const element = (value as { $el?: unknown }).$el
+        return element instanceof HTMLElement ? element : null
+    }
+    return null
+}
+
+const updateActivatorAttributes = (target: HTMLElement | null) => {
+    if (!target) return
+    target.setAttribute('aria-haspopup', 'menu')
+    target.setAttribute('aria-expanded', String(opened.value))
+    target.setAttribute('aria-controls', contentId)
+    target.setAttribute('aria-disabled', String(Boolean(props.disableMenu)))
+}
+
+const handleActivatorKeydown = (evt: KeyboardEvent): void => {
+    if (props.disableMenu) return
+
+    if (evt.key === 'Enter' || evt.key === ' ') {
+        evt.preventDefault()
+        openMenu(evt)
+    }
+    if (evt.key === 'ArrowDown') {
+        evt.preventDefault()
+        openMenu(evt)
+    }
+}
+
+const handleActivatorClick = (evt?: Event): void => {
+    openMenu(evt)
+}
+
+const addExternalActivatorListeners = (target: HTMLElement) => {
+    target.addEventListener('click', activatorClick)
+    target.addEventListener('keydown', activatorKeydown)
+    updateActivatorAttributes(target)
+}
+
+const removeExternalActivatorListeners = () => {
+    if (!externalActivator.value) return
+    externalActivator.value.removeEventListener('click', activatorClick)
+    externalActivator.value.removeEventListener('keydown', activatorKeydown)
+}
+
+const syncActivatorBehavior = async (): Promise<void> => {
+    await nextTick()
+
+    removeExternalActivatorListeners()
+
+    const target = resolveCurrentActivator()
+    externalActivator.value = props.activator ? target : null
+
+    if (props.activator && target) {
+        addExternalActivatorListeners(target)
+    } else {
+        updateActivatorAttributes(MenuReference.value)
+    }
+}
+
+const resolveCurrentActivator = (): HTMLElement | null => {
+    if (typeof props.activator === 'string') {
+        return (document.querySelector(props.activator) || null) as HTMLElement | null
+    }
+
+    if (props.activator instanceof HTMLElement) {
+        return props.activator
+    }
+
+    return MenuReference.value
+}
+
+const currentActivator = computed(() => resolveCurrentActivator())
+
+const dataId = computed(() => {
+    const child = currentActivator.value?.closest('.e-menu-container__wrapper')?.getAttribute('data-id')
+    return child ? `${child}--child` : id
+})
 
 const openMenu = async (evt?: Event) => {
     evt?.stopPropagation()
-    evt?.preventDefault()
     if (!props.disableMenu) {
-        await createMenu();
-        container().openMenu()
+        await nextTick()
+        opened.value = true
     }
 }
-const closeMenu = () => container().closeMenu()
-
-const activator = (): HTMLElement => {
-    if (typeof props.activator === 'string') {
-        return (document.querySelector(props.activator) || document.createElement('div')) as HTMLElement
-    } else {
-        return props.activator as HTMLElement
-    }
+const closeMenu = () => {
+    opened.value = false
 }
 
 const activatorClick = (evt: Event): void => {
@@ -113,26 +185,10 @@ const activatorClick = (evt: Event): void => {
     }
 }
 
-const activatorBehavior = async (): Promise<void> => {
-    await nextTick()
-
-    let target = MenuReference.value?.$el;
-    if (props.activator) {
-        activator()?.addEventListener('click', activatorClick)
-        activator()?.setAttribute('aria-hasmenu', 'true')
-        target = activator()
-    }
-
-    const child = target?.closest('.e-menu-container__wrapper')?.getAttribute('data-id')
-    const dataId = child ? `${child}--child` : id
-
-    container().setConfiguration({ ...props, attrs: attrs, target, dataId })
-
-}
+const activatorKeydown = (evt: KeyboardEvent): void => handleActivatorKeydown(evt)
 
 defineExpose({ openMenu, closeMenu })
 
 
 </script>
 <style lang="scss" src="./style.scss"></style>
-

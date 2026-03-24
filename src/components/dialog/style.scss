@@ -1,6 +1,9 @@
 @use '~/public/styles/_mixins.scss' as *;
 
 .e-dialog {
+  background-color: var(--e-color-surface-1, #ffffff);
+  color: var(--e-contrast-surface-1, #000000);
+  border-radius: var(--e-border-radius-root, 4px);
   margin: 8px;
   overflow-y: auto;
   pointer-events: auto;

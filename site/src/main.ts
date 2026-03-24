@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import { Drocket } from "../../src";
 import "../../public/styles/main.scss";
-import "../../src/assets/sass/main.scss";
+import "../../src/style/main.scss";
 
 const app = createApp(App);
 

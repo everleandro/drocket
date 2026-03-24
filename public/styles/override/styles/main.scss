@@ -1,8 +1,0 @@
-@use "../../mixins";
-
-.e-main {
-  @include mixins.media-up('lg') {
-    padding-top: 75px;
-    padding-left: 256px;
-  }
-}

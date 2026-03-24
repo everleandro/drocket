@@ -1,0 +1,54 @@
+@use "sass:color";
+@use "sass:map";
+
+@function e-primitive-color-scale($base-color) {
+    @return (
+        50: color.mix(white, $base-color, 92%),
+        100: color.mix(white, $base-color, 84%),
+        200: color.mix(white, $base-color, 68%),
+        300: color.mix(white, $base-color, 48%),
+        400: color.mix(white, $base-color, 24%),
+        500: $base-color,
+        600: color.mix(black, $base-color, 12%),
+        700: color.mix(black, $base-color, 24%),
+        800: color.mix(black, $base-color, 38%),
+        900: color.mix(black, $base-color, 52%),
+    );
+}
+
+@function e-build-primitive-palettes($seeds, $overrides: ()) {
+    $palettes: ();
+
+    @each $palette-name, $base-color in $seeds {
+        $generated-scale: e-primitive-color-scale($base-color);
+        $override-scale: ();
+
+        @if map.has-key($overrides, $palette-name) {
+            $override-scale: map.get($overrides, $palette-name);
+        }
+
+        $palettes: map.merge($palettes, ($palette-name: map.merge($generated-scale, $override-scale)));
+    }
+
+    @return $palettes;
+}
+
+$primitive-color-seeds: (
+    "red": #ef4444,
+    "pink": #ec4899,
+    "purple": #8b5cf6,
+    "indigo": #6366f1,
+    "blue": #3b82f6,
+    "cyan": #06b6d4,
+    "teal": #14b8a6,
+    "green": #22c55e,
+    "lime": #84cc16,
+    "yellow": #eab308,
+    "amber": #f59e0b,
+    "orange": #f97316,
+    "brown": #8d6e63,
+    "neutral": #6b7280,
+) !default;
+
+$primitive-color-overrides: map.merge((), ()) !default;
+$primitive-color-palettes: e-build-primitive-palettes($primitive-color-seeds, $primitive-color-overrides) !default;

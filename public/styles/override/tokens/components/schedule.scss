@@ -1,0 +1,6 @@
+@use "../foundation/globals" as globals;
+
+$e-schedule-borderwidth: globals.$border-width !default;
+$hour-column-width: 65px !default;
+$hour-column-width-xs: calc($hour-column-width - 19px) !default;
+$header-col-height: 65px !default;

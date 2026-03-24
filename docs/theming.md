@@ -9,14 +9,14 @@ Drocket expone variables Sass y CSS custom properties para personalizar tema en 
 $border-radius-root: 6px;
 $root-font-size: 16px;
 
-$colors-light: (
+$semantic-color-tokens-light: (
   'primary': #42b883,
   'secondary': #35495e,
   'warning': #f39c12,
   'error': #e74c3c
 );
 
-$colors-dark: (
+$semantic-color-tokens-dark: (
   'primary': #58d78d,
   'secondary': #8ca0b8,
   'warning': #f8b739,
@@ -58,7 +58,7 @@ No se considera parte del contrato pasar valores literales como `#000`, `rgb(...
 
 #### API Sass
 
-En `public/styles/override/variables/index.scss` existen tres piezas:
+En `public/styles/override/tokens/index.scss` existen tres piezas:
 
 1. `$primitive-color-seeds`
 2. `$primitive-color-overrides`
@@ -140,7 +140,7 @@ Eso te permite usar la paleta directamente en tu app:
 
 ### Como se generan
 
-La fuente de verdad para tokens base vive en `public/styles/override/variables/index.scss`.
+La fuente de verdad para tokens base vive en `public/styles/override/tokens/index.scss`.
 
 Reglas actuales:
 
@@ -181,7 +181,7 @@ Eso genera:
 ### Variables disponibles
 
 ```css
-/* Colores base (derivadas de $colors-light) */
+/* Colores base (derivadas de $semantic-color-tokens-light) */
 --e-color-primary: #42b883;
 --e-color-secondary: #35495e;
 --e-color-error: #e74c3c;
@@ -221,7 +221,7 @@ Eso genera:
 
 #### Token simple
 
-Si agregas una variable simple en `public/styles/override/variables/index.scss`, no hace falta registrarla en otro lado.
+Si agregas una variable simple en `public/styles/override/tokens/index.scss`, no hace falta registrarla en otro lado.
 
 ```scss
 $field-label-gap: 6px !default;

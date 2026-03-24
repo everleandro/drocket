@@ -1,6 +1,9 @@
 @use '~/public/styles/_mixins.scss' as *;
 
 .e-list {
+  --root-indent: var(--e-space-base, 4px);
+  --list-item-prepend-width: calc(var(--e-space-base, 4px) + var(--e-list-prepend-width, 34px));
+  --padding-inline: var(--e-space-base, 4px);
   display: block;
   padding: 8px 0;
   position: static;
@@ -18,6 +21,14 @@
     max-width: 100%;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
+    &__content {
+      --group-inline-padding: var(--e-space-base, 4px);
+    }
+
+    &:not(:last-child):not(:only-child) {
+      margin-bottom: var(--e-space-base, 4px);
+    }
+
     [data-activator-node="true"][aria-selected="true"] .e-list-item__append i.e-icon {
       transform: rotate(180deg);
     }
@@ -34,6 +45,11 @@
     position: relative;
     text-decoration: none;
     color: var(--list-color);
+    padding-inline: calc(var(--padding-inline, var(--e-space-base, 4px)) + var(--group-inline-padding, 0px));
+
+    &__prepend {
+      width: var(--list-item-prepend-width, calc(var(--e-space-base, 4px) + var(--e-list-prepend-width, 34px)));
+    }
 
     &:hover:before {
       --before-opacity: 0.1;
@@ -126,11 +142,71 @@
 
       @include prefix(user-select, none);
     }
+
+    &--size-x-small {
+      --list-item-font-size: var(--e-list-item-font-size-x-small, 0.625rem);
+      --list-item-height: var(--e-list-item-height-x-small, 2.187rem);
+      --icon-font-size: var(--e-icon-size-x-small, 18px);
+    }
+
+    &--size-small {
+      --list-item-font-size: var(--e-list-item-font-size-small, 0.75rem);
+      --list-item-height: var(--e-list-item-height-small, 2.5rem);
+      --icon-font-size: var(--e-icon-size-small, 20px);
+    }
+
+    &--size-default {
+      --list-item-font-size: var(--e-list-item-font-size-default, 0.875rem);
+      --list-item-height: var(--e-list-item-height-default, 3rem);
+      --icon-font-size: var(--e-icon-size-default, 24px);
+    }
+
+    &--size-large {
+      --list-item-font-size: var(--e-list-item-font-size-large, 0.875rem);
+      --list-item-height: var(--e-list-item-height-large, 3.62rem);
+      --icon-font-size: var(--e-icon-size-large, 28px);
+    }
+
+    &--size-x-large {
+      --list-item-font-size: var(--e-list-item-font-size-x-large, 1rem);
+      --list-item-height: var(--e-list-item-height-x-large, 4rem);
+      --icon-font-size: var(--e-icon-size-x-large, 32px);
+    }
   }
 
   &--dense {
     .e-list-item {
       min-height: 40px;
+    }
+  }
+
+  &-group:has(> .e-list-item > .e-list-item__prepend) {
+    .e-list-group__content {
+      --padding-inline: calc(var(--list-item-prepend-width) + var(--root-indent));
+    }
+  }
+
+  &:has(> .e-list-item > .e-list-item__prepend) {
+    >.e-list-group:not(:has(> .e-list-item > .e-list-item__prepend)) {
+      --padding-inline: calc(var(--root-indent) + var(--list-item-prepend-width));
+    }
+
+    >.e-list-item:not(:has(> .e-list-item__prepend)) {
+      --padding-inline: calc(var(--root-indent) + var(--list-item-prepend-width));
+    }
+  }
+}
+
+.e-drawer {
+  .e-list {
+    padding-inline: calc(var(--e-space-base, 4px) * 2);
+
+    &-item {
+      border-radius: var(--e-border-radius-root, 4px);
+
+      &:not(:only-child):not(:last-child) {
+        margin-bottom: var(--e-space-base, 4px);
+      }
     }
   }
 }

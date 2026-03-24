@@ -1,5 +1,5 @@
 @use "sass:map";
-@use './override/variables/index.scss' as *;
+@use './override/tokens/index.scss' as *;
 
 @mixin prefix($property, $value, $prefixes: webkit ms moz) {
     @each $prefix in $prefixes {

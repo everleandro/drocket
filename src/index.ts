@@ -58,6 +58,6 @@ export type {
 export { datePickerViewType, ScheduleMode } from "./types";
 export * from "./utils/style";
 export { default as DateBuilder } from "./utils/date";
-import "@/assets/sass/main.scss";
+import "@/style/main.scss";
 
 export { default as Drocket } from "./framework";

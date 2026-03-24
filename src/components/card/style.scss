@@ -1,6 +1,7 @@
-@use '~/public/styles/override/variables/index' as *;
-
 .e-card {
+  border-radius: var(--e-border-radius-root, 4px);
+  background-color: var(--e-color-surface-1, #ffffff);
+  color: var(--e-contrast-surface-1, #000000);
   display: flex;
   flex-wrap: wrap;
   position: relative;
@@ -10,7 +11,7 @@
   }
 
   &__container {
-    padding: $space-base;
+    padding: var(--e-space-base, 4px);
     flex: 1;
   }
 
@@ -18,14 +19,14 @@
     flex: 1;
 
     &-content {
-      padding: $space-base;
+      padding: var(--e-space-base, 4px);
       flex: 1;
     }
   }
 
   &>.e-avatar {
     &__wrapper {
-      padding: $space-base;
+      padding: var(--e-space-base, 4px);
     }
   }
 }

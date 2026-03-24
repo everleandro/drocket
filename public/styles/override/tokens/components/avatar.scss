@@ -1,0 +1,12 @@
+@use "sass:map";
+
+$avatar-size: map.merge(
+    (
+        x-small: 24px,
+        small: 32px,
+        default: 65px,
+        large: 80px,
+        x-large: 96px,
+    ),
+    ()
+) !default;

@@ -1,4 +1,10 @@
 .e-select {
+  .e-field__icon.e-field__icon--clear {
+    .e-icon {
+      font-size: var(--e-icon-close-font-size, 24px);
+    }
+  }
+
   .flip-icon {
     font-size: 24px;
   }
@@ -13,7 +19,7 @@
     margin-bottom: -2px;
 
     &__content {
-      background-color: white;
+      background-color: var(--e-color-surface-1, #ffffff);
       position: absolute;
       display: inline-block;
       max-width: 80%;
@@ -58,7 +64,7 @@
   }
 
   &__selections {
-    color: rgba(0, 0, 0, 0.87);
+    color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
     min-height: 10px;
     align-self: center;
     align-items: center;

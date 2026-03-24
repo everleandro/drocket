@@ -6,6 +6,9 @@
   --e-form-table-field-bg: var(--e-color-surface-1, white);
   --e-form-table-border-radius: var(--e-border-radius-root);
   --e-form-table-line-width: max(1px, var(--e-grid-gap, 1px));
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-space-md, 8px);
   border-radius: var(--e-form-table-border-radius);
 
   flex: 1 1 auto;
@@ -19,7 +22,7 @@
     margin: 0;
 
     .e-field__slot {
-      background-color: white;
+      background-color: var(--e-form-table-field-bg);
     }
   }
 

@@ -6,14 +6,21 @@
 
 <style lang="scss">
 @use '~/public/styles/_mixins.scss' as *;
-@use '~/public/styles/override/variables/index' as *;
 .e-container {
   margin-right: auto;
   margin-left: auto;
   width: 100%;
-  padding: $space-base;
+  padding: var(--e-space-base, 4px);
   box-sizing: border-box;
   max-width: 1185px;
+
+  @include lg {
+    max-width: 1185px;
+  }
+
+  @include md {
+    max-width: 900px;
+  }
 
   &--fluid {
     max-width: 100%;

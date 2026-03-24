@@ -1,7 +1,7 @@
 import DefaultTheme from "vitepress/theme";
 import type { Theme } from "vitepress";
 import DatePickerDocsDemo from "./components/DatePickerDocsDemo.vue";
-import "../../../src/assets/sass/main.scss";
+import "../../../src/style/main.scss";
 import "../../../public/styles/main.scss";
 
 const theme: Theme = {

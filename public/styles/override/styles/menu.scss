@@ -1,7 +1,0 @@
-@use "../variables/index.scss" as setting;
-
-.e-menu {
-  &__content {
-    border-radius: var(--e-border-radius-root, #{setting.$border-radius-root});
-  }
-}
