@@ -13,9 +13,9 @@ export default defineComponent({
 <script lang="ts" setup>
 import { FORM_KEY } from '@/components/form/constants';
 import { useGridRow } from '@/composables/grid-row';
-import type { EField, ElevationProps, FieldConfiguration, FieldLabelBehavior, RowProps } from '@/types';
+import type { Breakpoint, ColProps, EField, ElevationProps, FieldConfiguration, FieldLabelBehavior, RowProps } from '@/types';
 import { getColorContrastCssValue, getColorCssValue, normalizeCssSize } from '@/utils/style';
-import { computed, nextTick, provide, reactive, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, provide, reactive, ref, watch } from 'vue';
 
 export interface Props extends RowProps, ElevationProps {
     modelValue?: boolean | undefined
@@ -52,6 +52,9 @@ const state = reactive({
     fieldsChild: new Array<Partial<EField>>(),
     fieldsChildError: new Array<boolean>(),
 });
+const activeBreakpoint = ref<Breakpoint>('xs')
+
+const breakpointOrder: Array<Breakpoint> = ['xs', 'sm', 'md', 'lg', 'xl']
 
 const effectiveConfiguration = computed<FieldConfiguration>(() => {
     const configuration: FieldConfiguration = {
@@ -136,6 +139,132 @@ const mergedStyle = computed<Record<string, string>>(() => ({
     ...effectiveGridRowStyle.value,
 }))
 
+const getComputedNumericCssVar = (name: string, fallback: number): number => {
+    if (typeof window === 'undefined') return fallback
+
+    const styles = getComputedStyle(document.documentElement)
+    const value = Number.parseInt(styles.getPropertyValue(name), 10)
+    return Number.isFinite(value) ? value : fallback
+}
+
+const updateActiveBreakpoint = (): void => {
+    if (typeof window === 'undefined') return
+
+    const sm = getComputedNumericCssVar('--e-grid-breakpoint-sm', 600)
+    const md = getComputedNumericCssVar('--e-grid-breakpoint-md', 960)
+    const lg = getComputedNumericCssVar('--e-grid-breakpoint-lg', 1264)
+    const xl = getComputedNumericCssVar('--e-grid-breakpoint-xl', 1904)
+    const width = window.innerWidth
+
+    if (width >= xl) {
+        activeBreakpoint.value = 'xl'
+        return
+    }
+
+    if (width >= lg) {
+        activeBreakpoint.value = 'lg'
+        return
+    }
+
+    if (width >= md) {
+        activeBreakpoint.value = 'md'
+        return
+    }
+
+    if (width >= sm) {
+        activeBreakpoint.value = 'sm'
+        return
+    }
+
+    activeBreakpoint.value = 'xs'
+}
+
+const getFormGridCols = (): number => {
+    if (typeof window === 'undefined') return 12
+
+    const target = form.value || document.documentElement
+    const value = Number.parseInt(getComputedStyle(target).getPropertyValue('--e-grid-cols'), 10)
+    return Number.isFinite(value) && value > 0 ? value : 12
+}
+
+const normalizeSpan = (value: ColProps['cols'], totalCols: number): number => {
+    if (value === 'auto') return totalCols
+
+    const parsed = Number.parseInt(`${value ?? ''}`, 10)
+
+    if (!Number.isFinite(parsed) || parsed <= 0) return totalCols
+
+    return Math.min(parsed, totalCols)
+}
+
+const resolveSpanForBreakpoint = (field: Partial<EField>, breakpoint: Breakpoint, totalCols: number): number => {
+    const activeIndex = breakpointOrder.indexOf(breakpoint)
+
+    for (let index = activeIndex; index >= 0; index -= 1) {
+        const key = breakpointOrder[index]
+        const value = field[key]
+
+        if (value !== undefined && value !== null) {
+            return normalizeSpan(value, totalCols)
+        }
+    }
+
+    return normalizeSpan(field.cols, totalCols)
+}
+
+const syncTableClasses = (): void => {
+    if (!props.table) {
+        state.fieldsChild.forEach((field) => field.setTableClasses?.([]))
+        return
+    }
+
+    const totalCols = getFormGridCols()
+    let row = 1
+    let col = 1
+
+    const layout = state.fieldsChild.map((field) => {
+        const span = resolveSpanForBreakpoint(field, activeBreakpoint.value, totalCols)
+
+        if ((col + span - 1) > totalCols) {
+            row += 1
+            col = 1
+        }
+
+        const currentField = {
+            field,
+            row,
+            colStart: col,
+            colEnd: col + span - 1,
+        }
+
+        col += span
+
+        return currentField
+    })
+
+    const lastRow = layout.at(-1)?.row || 1
+
+    layout.forEach(({ field, row: fieldRow, colStart, colEnd }) => {
+        const classes = ['e-form__child']
+        const firstRow = fieldRow === 1
+        const lastRowField = fieldRow === lastRow
+        const firstCol = colStart === 1
+        const lastCol = colEnd === totalCols
+
+        firstRow && classes.push('e-form__child--first-row')
+        lastRowField && classes.push('e-form__child--last-row')
+        firstCol && classes.push('e-form__child--first-col')
+        lastCol && classes.push('e-form__child--last-col')
+
+        if (firstRow && firstCol) classes.push('e-form__child--top-left')
+        if (firstRow && lastCol) classes.push('e-form__child--top-right')
+        if (lastRowField && firstCol) classes.push('e-form__child--bottom-left')
+        if (lastRowField && lastCol) classes.push('e-form__child--bottom-right')
+
+        field.setTableClasses?.(classes)
+    })
+}
+
 watch(() => state.fieldsChildError, (val: Array<boolean>) => {
     const valid = !val.find((e) => !!e)
     changeValue(valid)
@@ -160,6 +289,7 @@ const bindField = (component: Partial<EField>) => {
     state.fieldsChild.push(component);
     state.fieldsChildError.push(Boolean(component.hasError));
     component.setConfiguration?.(effectiveConfiguration.value);
+    syncTableClasses()
 }
 
 const unbindField = (uid: number) => {
@@ -167,13 +297,20 @@ const unbindField = (uid: number) => {
     if (index > -1) {
         state.fieldsChild.splice(index, 1);
         state.fieldsChildError.splice(index, 1);
+        syncTableClasses()
     }
 }
 
 const updateField = (component: Partial<EField>) => {
     const index = state.fieldsChild.findIndex((c) => c.uid === component.uid);
     if (index > -1) {
-        state.fieldsChildError.splice(index, 1, Boolean(component.hasError))
+        Object.assign(state.fieldsChild[index], component)
+
+        if (component.hasError !== undefined) {
+            state.fieldsChildError.splice(index, 1, Boolean(component.hasError))
+        }
+
+        syncTableClasses()
     }
 }
 
@@ -206,6 +343,23 @@ const setConfiguration = (): void => {
 }
 
 watch(effectiveConfiguration, () => setConfiguration(), { deep: true, immediate: true })
+watch(() => props.table, () => syncTableClasses(), { immediate: true })
+watch(activeBreakpoint, () => syncTableClasses())
+
+onMounted(() => {
+    updateActiveBreakpoint()
+    syncTableClasses()
+
+    if (typeof window !== 'undefined') {
+        window.addEventListener('resize', updateActiveBreakpoint)
+    }
+})
+
+onUnmounted(() => {
+    if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', updateActiveBreakpoint)
+    }
+})
 
 const getFirstInvalidField = (): Partial<EField> | undefined => {
     const invalidIndex = state.fieldsChildError.findIndex(Boolean)

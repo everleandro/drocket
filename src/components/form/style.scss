@@ -6,9 +6,6 @@
   --e-form-table-field-bg: var(--e-color-surface-1, white);
   --e-form-table-border-radius: var(--e-border-radius-root);
   --e-form-table-line-width: max(1px, var(--e-grid-gap, 1px));
-  display: flex;
-  flex-direction: column;
-  gap: var(--e-space-md, 8px);
   border-radius: var(--e-form-table-border-radius);
 
   flex: 1 1 auto;
@@ -55,78 +52,46 @@
   &--table {
     position: relative;
     isolation: isolate;
-    padding: var(--e-grid-gap);
+    overflow: hidden;
+    gap: 0;
+    padding: 0;
     border-radius: var(--e-form-table-border-radius);
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-color: var(--e-form-table-line-color);
-      opacity: var(--e-form-table-line-opacity);
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      z-index: 2;
-      box-shadow: inset 0 0 0 var(--e-grid-gap) var(--e-form-table-line-color);
-    }
+    --e-form-table-border-color: var(--e-form-table-line-color);
+    border: var(--e-form-table-line-width) solid var(--e-form-table-border-color);
 
     .e-field__line {
       display: none;
     }
 
-    @supports (box-shadow: inset 0 0 0 1px color-mix(in srgb, black 50%, transparent)) {
-      &::after {
-        box-shadow: inset 0 0 0 var(--e-grid-gap) color-mix(in srgb,
-            var(--e-form-table-line-color) calc(var(--e-form-table-line-opacity) * 100%),
-            transparent);
-      }
+    @supports (color: color-mix(in srgb, black 50%, transparent)) {
+      --e-form-table-border-color: color-mix(in srgb,
+          var(--e-form-table-line-color) calc(var(--e-form-table-line-opacity) * 100%),
+          transparent);
     }
 
-    >* {
+    >.e-form__child {
       position: relative;
-      z-index: 1;
       background-color: var(--e-form-table-field-bg);
+      border-right: var(--e-form-table-line-width) solid var(--e-form-table-border-color);
+      border-bottom: var(--e-form-table-line-width) solid var(--e-form-table-border-color);
+      box-sizing: border-box;
     }
 
     &.e-form--disabled {
-      overflow: hidden;
-      padding: 0;
-      gap: 0;
+      border-style: dashed;
 
-      &::before {
-        display: none;
+      >.e-form__child {
+        border-right-style: dashed;
+        border-bottom-style: dashed;
       }
+    }
 
-      &::after {
-        box-shadow: none;
-        border-color: var(--e-form-table-line-color);
-        border-style: dashed;
-        border-width: 0 var(--e-form-table-line-width) var(--e-form-table-line-width) 0;
-      }
+    >.e-form__child.e-form__child--last-col {
+      border-right: none;
+    }
 
-      > * {
-        position: relative;
-      }
-
-      > *::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-color: var(--e-form-table-line-color);
-        border-style: dashed;
-        border-width: var(--e-form-table-line-width) 0 0 var(--e-form-table-line-width);
-        pointer-events: none;
-        z-index: 2;
-      }
+    >.e-form__child.e-form__child--last-row {
+      border-bottom: none;
     }
 
     .e-field {

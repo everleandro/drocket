@@ -220,7 +220,6 @@
                 <p class="table-lab__label">Tinted table</p>
                 <EForm
                   table
-                  elevation="xs"
                   table-line-color="teal-900"
                   label-behavior="floating"
                   disabled
@@ -663,7 +662,6 @@ const handleReset = (): void => {
 <style scoped>
 .form-playground {
   display: grid;
-  gap: 24px;
   padding: 24px;
 }
 
@@ -730,10 +728,7 @@ const handleReset = (): void => {
   color: #a55b1b;
 }
 
-.demo-form {
-  display: grid;
-  gap: 12px;
-}
+
 
 .action-row {
   display: flex;

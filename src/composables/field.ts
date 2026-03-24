@@ -88,6 +88,7 @@ export function useField<TValue = unknown>(useFormInjection = true) {
   });
 
   const focused = ref(false);
+  const tableClasses = ref<Array<string>>([]);
 
   const idBase =
     (Vue as typeof Vue & { useId?: () => string }).useId?.() ||
@@ -270,7 +271,16 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     }
     if (focused.value) result.push(fieldClasses.focused);
 
-    return [...result, "e-field"];
+    return [...result, "e-field", ...tableClasses.value];
+  });
+
+  const getGridColConfiguration = () => ({
+    cols: props.cols,
+    xs: props.xs,
+    sm: props.sm,
+    md: props.md,
+    lg: props.lg,
+    xl: props.xl,
   });
 
   const labelStyle = computed((): Record<string, string> => {
@@ -349,6 +359,15 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     }
   });
 
+  watch(
+    () => [props.cols, props.xs, props.sm, props.md, props.lg, props.xl] as const,
+    () => {
+      if (useFormInjection) {
+        form?.updateField?.({ uid, ...getGridColConfiguration() });
+      }
+    },
+  );
+
   const handleHover = (value: boolean): void => {
     hovered.value = value;
   };
@@ -397,6 +416,10 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     configuration.labelBehavior = value.labelBehavior;
   };
 
+  const setTableClasses = (value: Array<string>): void => {
+    tableClasses.value = [...value];
+  };
+
   const validate = (): boolean => {
     validated.value = true;
     touched.value = true;
@@ -424,6 +447,8 @@ export function useField<TValue = unknown>(useFormInjection = true) {
         resetValidation,
         uid,
         setConfiguration,
+        setTableClasses,
+        ...getGridColConfiguration(),
       });
       form?.updateField?.({ hasError: hasError.value, uid });
     }
