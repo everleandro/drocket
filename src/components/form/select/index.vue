@@ -36,7 +36,9 @@
                                         :key="index" :style="selectionStyle">
                                         <slot name="selection" :selection="selectionItem(itemValue)"
                                             :attrs="selectionAttrs(itemValue)">
-                                            <EChip v-if="chip" :closable="true" @click:close="handleItemClick(selectionItem(itemValue))" :color="color">
+                                            <EChip v-if="chip" :closable="true" :clickable="isSelectedChipIndex(index)"
+                                                :selected="isSelectedChipIndex(index)" @click:close="handleItemClick(selectionItem(itemValue))"
+                                                :color="color">
                                                 {{ selectedText(itemValue) }}
                                             </EChip>
                                         </slot>
@@ -61,7 +63,7 @@
                                     :aria-controls="listboxId" :aria-activedescendant="activeDescendantId"
                                     :aria-expanded="opened" :aria-invalid="hasError" :aria-describedby="detailsId"
                                     :aria-disabled="isDisabled" :aria-readonly="inputReadonly"
-                                    :placeholder="resolvedPlaceholder" autocomplete="off" @blur="handleBlur"
+                                    :placeholder="resolvedPlaceholder" autocomplete="off" @blur="handleSelectBlur"
                                     @focus="handleSelectFocus" @input="changeSearchValue($event, true)"
                                     @keydown="handleInputKeydown" />
                             </div>
@@ -78,7 +80,7 @@
                             </transition>
                             <div class="e-field__append-inner" aria-hidden="true">
                                 <div class="e-field__icon e-field__icon--append">
-                                    <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon"></EIcon>
+                                    <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon" :color="color"></EIcon>
                                 </div>
                             </div>
                         </div>
@@ -243,6 +245,19 @@ const selectedItems = computed<Array<SelectItemType>>(() => {
     return props.multiple ? ((props.modelValue as Array<SelectItemType>) || []) : []
 })
 
+watch(selectedItems, (items) => {
+    if (items.length === 0) {
+        clearSelectedChip()
+        return
+    }
+
+    if (selectedChipIndex.value >= items.length) {
+        selectedChipIndex.value = items.length - 1
+    }
+})
+
+const selectedChipIndex = ref<number>(-1)
+
 const highlightedIndex = ref<number>(-1)
 
 const multipleModel = computed<Array<SelectItemType>>(() => {
@@ -253,6 +268,10 @@ const multipleListModel = computed<Array<string | number>>(() => {
     return multipleModel.value
         .map((item) => getListItemValue(item))
         .filter((value): value is string | number => typeof value === 'string' || typeof value === 'number')
+})
+
+const isSearchEmpty = computed((): boolean => {
+    return `${props.search ?? ''}`.length === 0
 })
 
 const areSameItems = (left: SelectItemType, right: SelectItemType): boolean => {
@@ -334,8 +353,41 @@ const setHighlightedBoundary = async (position: 'first' | 'last'): Promise<void>
     await scrollHighlightedOptionIntoView()
 }
 
+const clearSelectedChip = (): void => {
+    selectedChipIndex.value = -1
+}
+
+const isSelectedChipIndex = (index: number): boolean => {
+    return selectedChipIndex.value === index
+}
+
+const selectLastChip = (): boolean => {
+    if (!props.multiple || !props.chip || !selectedItems.value.length || !isSearchEmpty.value) {
+        return false
+    }
+
+    selectedChipIndex.value = selectedItems.value.length - 1
+    return true
+}
+
+const removeSelectedChip = (): boolean => {
+    if (!props.multiple || selectedChipIndex.value < 0 || selectedChipIndex.value >= selectedItems.value.length) {
+        return false
+    }
+
+    handleItemClick(selectedItems.value[selectedChipIndex.value])
+    clearSelectedChip()
+    focusInput()
+    return true
+}
+
 const selectionAttrs = (item?: SelectItemType) => {
-    const attrs: Record<string, unknown> = { closable: Boolean(props.chip && (props.chipClosable || props.multiple)) }
+    const chipIndex = item ? findSelectedIndex(selectedItems.value, item) : -1
+    const attrs: Record<string, unknown> = {
+        closable: Boolean(props.chip && (props.chipClosable || props.multiple)),
+        clickable: chipIndex >= 0 ? isSelectedChipIndex(chipIndex) : undefined,
+        selected: chipIndex >= 0 ? isSelectedChipIndex(chipIndex) : undefined,
+    }
 
     if (item) {
         attrs['onClick:close'] = () => handleItemClick(selectionItem(item))
@@ -366,6 +418,11 @@ const selectionItem = (value?: SelectItemType): SelectItemType => {
 const handleSelectFocus = (event: FocusEvent): void => {
     opened.value = true;
     handleFocus(event)
+}
+
+const handleSelectBlur = (event: Event): void => {
+    clearSelectedChip()
+    handleBlur(event)
 }
 
 const focusInput = (): void => {
@@ -404,6 +461,9 @@ const changeSearchValue = (value: Event | string | number, isEvent = false): voi
     const valueResult: string | number = isEvent || value instanceof Event
         ? getEventInputValue(value as Event)
         : value
+
+    clearSelectedChip()
+
     if (props.autocomplete) {
         opened.value = true
     }
@@ -418,6 +478,7 @@ const openMenu = (): void => {
 const closeMenu = (): void => {
     opened.value = false;
     focused.value = false;
+    clearSelectedChip()
 }
 const displayedText = (item: SelectItemType): string => {
     return getItemText(item)
@@ -428,6 +489,8 @@ const changeValue = (value: Event | SelectModelValue | undefined, isEvent = fals
 }
 
 const handleItemClick = (item: SelectItemType): void => {
+    clearSelectedChip()
+
     if (props.autocomplete) changeSearchValue('')
 
     if (props.multiple) {
@@ -492,6 +555,7 @@ const listStyle = computed((): Record<string, string> => {
 })
 
 const clear = (): void => {
+    clearSelectedChip()
     changeValue(props.multiple ? [] : undefined)
     changeSearchValue('')
     emit('click:clear')
@@ -501,11 +565,24 @@ const clear = (): void => {
 
 const handleSelectSlotClick = (evt: Event): void => {
     evt.stopPropagation()
+    clearSelectedChip()
     openMenu()
     focusInput()
 }
 
 const handleInputKeydown = async (evt: KeyboardEvent): Promise<void> => {
+    if (evt.key === 'Backspace' && props.multiple && props.chip && isSearchEmpty.value) {
+        evt.preventDefault()
+
+        if (selectedChipIndex.value >= 0) {
+            removeSelectedChip()
+        } else {
+            selectLastChip()
+        }
+
+        return
+    }
+
     if (evt.key === 'Escape') {
         evt.preventDefault()
         closeMenu()
@@ -519,30 +596,35 @@ const handleInputKeydown = async (evt: KeyboardEvent): Promise<void> => {
 
     if (evt.key === 'ArrowDown') {
         evt.preventDefault()
+        clearSelectedChip()
         await moveHighlightedIndex(1)
         return
     }
 
     if (evt.key === 'ArrowUp') {
         evt.preventDefault()
+        clearSelectedChip()
         await moveHighlightedIndex(-1)
         return
     }
 
     if (evt.key === 'Home') {
         evt.preventDefault()
+        clearSelectedChip()
         await setHighlightedBoundary('first')
         return
     }
 
     if (evt.key === 'End') {
         evt.preventDefault()
+        clearSelectedChip()
         await setHighlightedBoundary('last')
         return
     }
 
     if (evt.key === 'Enter') {
         evt.preventDefault()
+        clearSelectedChip()
 
         if (!opened.value) {
             openMenu()
@@ -555,6 +637,7 @@ const handleInputKeydown = async (evt: KeyboardEvent): Promise<void> => {
 
     if (evt.key === ' ' && inputReadonly.value) {
         evt.preventDefault()
+        clearSelectedChip()
         openMenu()
     }
 }

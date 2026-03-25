@@ -1,5 +1,5 @@
 <template>
-    <i v-if="mounted" ref="iconElement" v-cloak aria-hidden="true" :class="iconClass">
+    <i v-if="mounted" ref="iconElement" v-cloak aria-hidden="true" :class="iconClass" :style="iconStyle">
         <slot>
             <svg v-if="isPath" xmlns="http://www.w3.org/2000/svg" :viewBox="viewBox" role="img" aria-hidden="true"
                 class="e-icon__svg">
@@ -15,6 +15,8 @@ export default {
 </script>
 <script lang="ts" setup>
 import type { IconPath, IconProps } from '@/types';
+import { useResolvedColor } from '@/composables/color'
+import { getColorCssValue } from '@/utils/style'
 import { ComputedRef, computed, ref, useAttrs, onMounted } from 'vue';
 import { getBooleanClasses, useUtils } from "@/composables/utils"
 const { isObject } = useUtils()
@@ -70,12 +72,25 @@ const bindPathAttributes = (
     path: IconPath
 ): Object => {
     const d = typeof path === 'string' ? path : path?.d;
-    let result: IconPath = { d };
-    if (typeof path === 'object' && path?.fill) {
-        result.class = `${path.fill}--text`;
+    const result: Record<string, unknown> = { d }
+
+    if (typeof path === 'object' && path?.class) {
+        result.class = path.class
     }
-    return result;
+
+    if (typeof path === 'object' && path?.fill) {
+        const resolvedFill = getColorCssValue(path.fill) || path.fill
+        result.style = { fill: resolvedFill }
+    }
+
+    return result
 }
+
+const { colorStyles: iconStyle } = useResolvedColor({
+    color: computed(() => props.color),
+    colorVar: '--e-icon-color',
+})
+
 const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     const defaultClass = attrs.class ? `${attrs.class}` : ''
     let classes = ['e-icon', resolvedRootConfig.value.iconClass];
@@ -87,7 +102,6 @@ const iconClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     classes.push(`e-icon--size-${currentSize}`);
 
     !isPath.value && resolvedStringIcon.value && classes.push(`${resolvedPrefix.value}${resolvedStringIcon.value}`);
-    props.color && (classes.push(`${props.color}--text`));
 
     classes.push(...getBooleanClasses(props, booleanClassKeys, 'e-icon'))
 

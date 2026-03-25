@@ -492,7 +492,7 @@
       <div class="chip-group">
         <h3>Sizes</h3>
         <div class="row">
-          <EChip size="x-small">x-small</EChip>
+          <EChip size="x-small" selected>x-small</EChip>
           <EChip size="small">small</EChip>
           <EChip size="default">default</EChip>
           <EChip size="large">large</EChip>
@@ -503,7 +503,7 @@
       <div class="chip-group">
         <h3>Content</h3>
         <div class="row">
-          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft">With prepend</EChip>
+          <EChip color="primary" :prepend-icon="iconFactory.arrowLeft" selected>With prepend</EChip>
           <EChip color="secondary" :append-icon="iconFactory.clear">With append</EChip>
           <EChip color="warning" prepend-avatar="https://i.pravatar.cc/40?img=12">Avatar chip</EChip>
           <EChip text color="success">Text chip</EChip>

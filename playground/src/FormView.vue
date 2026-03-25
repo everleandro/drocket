@@ -90,9 +90,9 @@
                                 placeholder="Selecciona un rol" detail="Seleccion simple usando items con text/value."
                                 :items="roleOptions" />
 
-                            <ESelect v-model="selectState.stack" :cols="12" :md="6" multiple chip clearable
+                            <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12" :md="6" multiple chip clearable
                                 label="Stack activo" placeholder="Elige una o varias tecnologias" autocomplete
-                                detail="Seleccion multiple con chips y cierre individual." :items="stackOptions" />
+                                detail="Seleccion multiple con chips y cierre individual." :items="filteredStackOptions" />
 
                             <ESelect v-model="selectState.location" v-model:search="selectState.locationSearch"
                                 :cols="12" autocomplete clearable label="Ubicacion del equipo"
@@ -298,6 +298,7 @@ type SelectDemoModel = {
     stack2: Array<string>;
     location: string;
     locationSearch: string;
+    stackSearch: string;
 };
 
 type SubmitState = {
@@ -400,6 +401,7 @@ const selectState = reactive<SelectDemoModel>({
     stack2: ["vue"],
     location: "remote",
     locationSearch: "",
+    stackSearch: "",
 });
 
 
@@ -577,6 +579,18 @@ const filteredLocationOptions = computed(() => {
     );
 });
 
+const filteredStackOptions = computed(() => {
+    const query = selectState.stackSearch.trim().toLowerCase();
+
+    if (!query) {
+        return stackOptions;
+    }
+
+    return stackOptions.filter((item) =>
+        item.text.toLowerCase().includes(query),
+    );
+});
+
 const selectedRoleLabel = computed(() => {
     return (
         roleOptions.find((item) => item.value === selectState.role)?.text ||
@@ -609,6 +623,7 @@ const selectPreview = computed(() => {
         {
             ...selectState,
             visibleLocationOptions: filteredLocationOptions.value.map((item) => item.text),
+            visibleStackOptions: filteredStackOptions.value.map((item) => item.text),
         },
         null,
         2,
