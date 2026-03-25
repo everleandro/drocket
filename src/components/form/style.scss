@@ -55,6 +55,7 @@
     overflow: hidden;
     gap: 0;
     padding: 0;
+    --e-field-hover-overlay-opacity: 0;
     border-radius: var(--e-form-table-border-radius);
     --e-form-table-border-color: var(--e-form-table-line-color);
     border: var(--e-form-table-line-width) solid var(--e-form-table-border-color);

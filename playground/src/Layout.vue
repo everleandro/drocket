@@ -8,6 +8,7 @@
         </header>
         <nav class="nav">
             <router-link to="/">Inicio</router-link>
+            <router-link to="/card">Card</router-link>
             <router-link to="/form">Formulario</router-link>
             <router-link to="/menu">Menu</router-link>
             <router-link to="/palette">Paleta</router-link>

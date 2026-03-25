@@ -5,12 +5,59 @@
             <h1>Form Playground</h1>
             <p class="hero-copy">
                 Esta vista concentra pruebas de <strong>ETextfield</strong> y
-                <strong>ESelect</strong> para iterar validacion, foco, detalles,
-                clear y estados visuales sin mezclar otros componentes.
+                <strong>ESelect</strong> y <strong>ETimePicker</strong> para iterar
+                validacion, foco, detalles, overlay y estados visuales sin mezclar
+                otros componentes.
             </p>
         </div>
 
         <ERow dense>
+            <ECol :cols="12">
+                <ECard elevation="md" class="form-card">
+                    <div class="time-picker-lab">
+                        <div class="time-picker-lab__header">
+                            <div>
+                                <p class="section-kicker">Time picker</p>
+                                <h2>Casos base para ETimePicker</h2>
+                            </div>
+                            <p class="table-lab__copy">
+                                Este bloque deja visible la version modernizada del
+                                componente usando <strong>EMenu</strong>, color de campo,
+                                pasos distintos y variantes visuales.
+                            </p>
+                        </div>
+
+                        <EForm field-color="cyan-800" style="width:100%">
+                            <ETimePicker v-model="timePickerState.kickoff" :cols="12" :md="4" label-behavior="floating"
+                                label="Kickoff" detail="Caso base con pasos de 15 minutos." />
+
+                            <ETimePicker v-model="timePickerState.review" :cols="12" :md="4"
+                                label="Revision" color="teal-900" outlined :minutes-step="5" :prepend-icon="iconFactory.arrowRight"
+                                detail="Variante outlined con ajustes mas finos." />
+
+                            <ETimePicker v-model="timePickerState.publish" :cols="12" :md="4" :append-icon="iconFactory.arrowRight"
+                                label="Publicacion" color="secondary" :hours-step="2"
+                                :minutes-step="30"
+                                detail="Prueba saltos mas grandes para ventanas prefijadas." />
+                        </EForm>
+
+                        <div class="time-picker-lab__summary">
+                            <div>
+                                <span>Kickoff</span>
+                                <strong>{{ formatTimePreview(timePickerState.kickoff) }}</strong>
+                            </div>
+                            <div>
+                                <span>Revision</span>
+                                <strong>{{ formatTimePreview(timePickerState.review) }}</strong>
+                            </div>
+                            <div>
+                                <span>Publicacion</span>
+                                <strong>{{ formatTimePreview(timePickerState.publish) }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </ECard>
+            </ECol>
             <ECol :cols="12" :lg="8">
                 <ECard class="form-card secondary--text" elevation="md">
                     <div class="form-card__header">
@@ -91,7 +138,7 @@
                                 :items="roleOptions" />
 
                             <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12" :md="6" multiple chip clearable
-                                label="Stack activo" placeholder="Elige una o varias tecnologias" autocomplete
+                                label="Stack activo" placeholder="Elige una o varias tecnologias" autocomplete label-behavior="floating"
                                 detail="Seleccion multiple con chips y cierre individual." :items="filteredStackOptions" />
 
                             <ESelect v-model="selectState.location" v-model:search="selectState.locationSearch"
@@ -121,6 +168,8 @@
                             </div>
                         </div>
                     </div>
+
+                    
 
                     <div class="table-lab">
                         <div class="table-lab__header">
@@ -250,6 +299,12 @@
                     </ECard>
 
                     <ECard class="form-card" elevation="sm">
+                        <p class="section-kicker">Time picker state</p>
+                        <h2>Estado del ejemplo</h2>
+                        <pre class="payload-preview">{{ timePickerPreview }}</pre>
+                    </ECard>
+
+                    <ECard class="form-card" elevation="sm">
                         <p class="section-kicker">Eventos</p>
                         <h2>Traza del textfield</h2>
                         <p class="event-note">
@@ -277,8 +332,10 @@ import ECard from "../../src/components/card/index.vue";
 import EForm from "../../src/components/form/form.vue";
 import ESelect from "../../src/components/form/select/index.vue";
 import ETextfield from "../../src/components/form/textfield/index.vue";
+import ETimePicker from "../../src/components/form/time-picker/index.vue";
 import ECol from "../../src/components/grid/col.vue";
 import ERow from "../../src/components/grid/row.vue";
+import iconFactory from "../../src/utils/icons";
 
 type DemoFormModel = {
     fullName: string;
@@ -322,6 +379,12 @@ type TintedTableFormModel = {
     note: string;
 };
 
+type TimePickerDemoModel = {
+    kickoff: Date;
+    review: Date;
+    publish: Date;
+};
+
 type TextFieldValue = string | number | null;
 
 type TextFieldValueEventPayload<EventType extends Event = Event> = {
@@ -357,6 +420,12 @@ const createInitialForm = (): DemoFormModel => ({
     website: "",
     notes: "",
     inlineLabelValue: "",
+});
+
+const createInitialTimePickerState = (): TimePickerDemoModel => ({
+    kickoff: new Date("2026-03-25T09:00:00"),
+    review: new Date("2026-03-25T13:30:00"),
+    publish: new Date("2026-03-25T18:45:00"),
 });
 
 const roleOptions = [
@@ -419,6 +488,7 @@ const tintedTableForm = reactive<TintedTableFormModel>({
     window: "09:00 - 11:00",
     note: "La linea usa cyan y la celda neutral-50.",
 });
+const timePickerState = reactive<TimePickerDemoModel>(createInitialTimePickerState());
 const eventSequence = ref(0);
 const eventLog = ref<Array<EventLogEntry>>([]);
 const submitState = reactive<SubmitState>({
@@ -630,6 +700,25 @@ const selectPreview = computed(() => {
     );
 });
 
+const formatTimePreview = (value: Date): string => {
+    return new Intl.DateTimeFormat("es", {
+        hour: "2-digit",
+        minute: "2-digit",
+    }).format(value);
+};
+
+const timePickerPreview = computed(() => {
+    return JSON.stringify(
+        {
+            kickoff: timePickerState.kickoff.toISOString(),
+            review: timePickerState.review.toISOString(),
+            publish: timePickerState.publish.toISOString(),
+        },
+        null,
+        2,
+    );
+});
+
 const handleValidate = async (): Promise<void> => {
     const valid = (await formRef.value?.validate?.()) ?? false;
 
@@ -650,6 +739,7 @@ const handleSubmit = async (): Promise<void> => {
 
 const handleReset = (): void => {
     Object.assign(form, createInitialForm());
+    Object.assign(timePickerState, createInitialTimePickerState());
     formRef.value?.reset?.();
     formValid.value = false;
     submitState.kind = "idle";
@@ -735,6 +825,7 @@ const handleReset = (): void => {
 }
 
 .select-lab,
+.time-picker-lab,
 .table-lab,
 .elevation-lab {
     border-top: 1px solid rgba(23, 32, 51, 0.08);
@@ -745,6 +836,7 @@ const handleReset = (): void => {
 }
 
 .select-lab__header,
+.time-picker-lab__header,
 .table-lab__header,
 .elevation-lab__header,
 .elevation-lab__meta {
@@ -758,13 +850,26 @@ const handleReset = (): void => {
     padding: 16px;
 }
 
+.time-picker-demo-form {
+    border: 1px solid rgba(23, 32, 51, 0.08);
+    border-radius: 18px;
+    padding: 16px;
+}
+
 .select-lab__summary {
     display: grid;
     gap: 14px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.time-picker-lab__summary {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .select-lab__summary div,
+.time-picker-lab__summary div,
 .table-lab__panel {
     border: 1px solid rgba(23, 32, 51, 0.08);
     border-radius: 18px;
@@ -772,6 +877,7 @@ const handleReset = (): void => {
 }
 
 .select-lab__summary span,
+.time-picker-lab__summary span,
 .table-lab__label,
 .summary-grid span {
     color: #51617d;
@@ -784,6 +890,7 @@ const handleReset = (): void => {
 }
 
 .select-lab__summary strong,
+.time-picker-lab__summary strong,
 .summary-grid strong {
     color: #172033;
     font-size: 14px;
@@ -913,7 +1020,8 @@ const handleReset = (): void => {
     }
 
     .summary-grid,
-    .select-lab__summary {
+    .select-lab__summary,
+    .time-picker-lab__summary {
         grid-template-columns: 1fr;
     }
 

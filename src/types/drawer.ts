@@ -6,6 +6,7 @@ export type DrawerClassKeys =
   | "floating";
 
 export interface DrawerProps {
+  autoFocus?: boolean;
   modelValue?: boolean;
   floating?: boolean;
   absolute?: boolean;
@@ -14,6 +15,7 @@ export interface DrawerProps {
   devMode?: boolean;
   nav?: boolean;
   right?: boolean;
+  restoreFocus?: boolean;
   widthUnit?: string;
   width?: string | number;
 }

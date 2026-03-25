@@ -1,20 +1,18 @@
 @use '~/public/styles/_mixins.scss' as *;
+
 .e-time-picker {
     cursor: pointer;
 
     @include animation('seconds') {
-
-        30%,
-        0% {
+        33% {
             opacity: 1;
         }
 
-        50% {
+        66% {
             opacity: 0;
         }
 
-        100%,
-        70% {
+        99% {
             opacity: 1;
         }
     }
@@ -23,8 +21,9 @@
         font-size: 20px;
         display: flex;
         align-items: center;
-        width: 0;
+        min-width: 12px;
         justify-content: center;
+
         // &--animated {
         //     animation-name: seconds;
         //     animation-iteration-count: infinite;
@@ -36,67 +35,79 @@
         justify-content: center;
     }
 
-    &__fields {
-        contain: layout;
-        grid-template-areas: "label hours separator minutes icon-flip";
-        grid-template-columns: min-content minmax(0, 1fr) min-content minmax(0, 1fr) min-content;
-        display: grid;
-        height: 100%;
-        align-items: center;
-
-        label {
-            grid-area: label;
-        }
-
-        input {
-            height: 100%;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        input[data-minutes] {
-            grid-area: minutes;
-        }
-
-        input[data-hours],
-        input[data-minutes] {
-            padding: 8px 0;
-        }
-
-        input[data-hours] {
-            grid-area: hours;
-        }
-
-        .e-field__append-inner {
-            grid-area: icon-flip;
+    &:not(.e-field--label-floating) {
+        .e-time-picker__content {
+            justify-content: flex-end;
         }
     }
 
-    .e-menu {
-        left: 0;
+    &__fields {
+        min-width: 0;
+        position: relative;
+    }
+
+    &__content {
+        grid-area: field;
+        align-items: center;
+        display: flex;
+        min-width: 0;
         width: 100%;
-        margin-bottom: -3px;
+    }
 
-        &__content {
-            display: flex;
-            left: 50%;
-            transform: translateX(-50%);
-            max-width: unset;
-            padding: 0;
+    &__separator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 12px;
+    }
 
-            li {
-                list-style-type: none;
-                flex: 1 1 50%;
-            }
+    input[data-hours],
+    input[data-minutes] {
+        padding-inline: calc(var(--e-space-base, 4px) * 4);
+        padding-top: calc(var(--e-space-base) * 2);
+        padding-bottom: calc(var(--e-space-base) * 2);
+    }
 
+    &__field-icon {
+        align-items: center;
+        display: flex;
+        grid-area: suffix;
+        height: 100%;
+    }
+
+    &.e-field--label-floating:not(.e-field--label-inline) {
+        .e-time-picker__content {
+            align-items: end;
+        }
+
+        .e-time-picker__separator {
+            padding-bottom: 0.35rem;
+            padding-top: 1.5rem;
+        }
+    }
+
+    &__menu-content {
+        padding: 0;
+    }
+
+    &__menu-list {
+        display: flex;
+        max-width: unset;
+        padding: 0;
+        margin: 0;
+
+        li {
+            list-style-type: none;
+            flex: 1 1 50%;
         }
 
         .time-info {
             font-size: 20px;
             font-weight: 500;
             text-align: center;
-            color: var(--label);
+            color: var(--e-field-color);
             cursor: default;
+            display: flex;
             user-select: none;
             transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
             position: relative;
@@ -117,11 +128,18 @@
         }
     }
 
+
+
     &--is-open {
         .flip-icon {
             transform: rotate(180deg);
         }
+
+        .e-time-picker__separator {
+
+            animation-name: seconds;
+            animation-iteration-count: infinite;
+            animation-duration: 1s;
+        }
     }
-
-
 }

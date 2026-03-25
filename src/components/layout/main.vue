@@ -27,11 +27,6 @@ const { mainLayoutStyle } = useLayout()
     flex: 1 0 auto;
     max-width: 100%;
 
-    @include lg {
-        padding-top: 75px;
-        padding-left: 256px;
-    }
-
 
     &__wrapper {
         flex: 1 1 auto;

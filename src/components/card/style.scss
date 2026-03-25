@@ -1,10 +1,18 @@
 .e-card {
   border-radius: var(--e-border-radius-root, 4px);
-  background-color: var(--e-color-surface-1, #ffffff);
-  color: var(--e-contrast-surface-1, #000000);
+  --card-bg: var(--e-color-surface-1, #ffffff);
+  --card-text: var(--e-contrast-surface-1, #000000);
+  --card-border-color: var(--card-bg);
+
+  background-color: var(--card-bg);
+  color: var(--card-text);
   display: flex;
   flex-wrap: wrap;
   position: relative;
+
+  &--outlined {
+    border: thin solid var(--card-border-color);
+  }
 
   &--depressed {
     box-shadow: none;

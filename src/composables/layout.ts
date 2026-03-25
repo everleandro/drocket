@@ -1,111 +1,146 @@
-import { reactive, readonly } from "vue";
+import { computed, inject, provide, reactive, readonly, type InjectionKey } from "vue";
 
-type DrawerLayout = {
-  left: string;
-  right: string;
-};
+type LayoutSide = "left" | "right";
 
-type AppBarLayout = {
+type AppBarLayoutState = {
   enabled: boolean;
   height: number;
   clipped: boolean;
+  app: boolean;
+  absolute: boolean;
+  fixed: boolean;
 };
 
-type LayoutConfig = {
-  appBar?: Partial<AppBarLayout>;
-  drawer?: Partial<DrawerLayout>;
+type DrawerLayoutState = {
+  enabled: boolean;
+  open: boolean;
+  width: string;
+  absolute: boolean;
+  floating: boolean;
+  fixed: boolean;
 };
 
-const state = reactive({
-  appBarHeight: 0,
-  appBarClipped: false,
-  leftDrawerWidth: "0px",
-  rightDrawerWidth: "0px",
-});
-
-const mainLayoutStyle = reactive<Record<string, string>>({
-  paddingTop: "0px",
-  paddingLeft: "0px",
-  paddingRight: "0px",
-});
-
-const drawerLayoutStyle = reactive<Record<string, string>>({
-  paddingTop: "0px",
-});
-
-const barLayoutStyle = reactive<Record<string, string>>({
-  left: "0px",
-  right: "0px",
-});
-
-const applyLayout = (): void => {
-  mainLayoutStyle.paddingTop = `${state.appBarHeight}px`;
-  mainLayoutStyle.paddingLeft = state.leftDrawerWidth;
-  mainLayoutStyle.paddingRight = state.rightDrawerWidth;
-
-  drawerLayoutStyle.paddingTop = state.appBarClipped
-    ? `${state.appBarHeight}px`
-    : "0px";
-
-  barLayoutStyle.left = state.leftDrawerWidth;
-  barLayoutStyle.right = state.rightDrawerWidth;
+type LayoutState = {
+  appBar: AppBarLayoutState;
+  drawers: Record<LayoutSide, DrawerLayoutState>;
 };
 
-const setLayoutConfig = ({ appBar, drawer }: LayoutConfig): void => {
-  if (appBar) {
-    if (appBar.enabled === false) {
-      state.appBarHeight = 0;
-      state.appBarClipped = false;
-    } else {
-      if (typeof appBar.height === "number") {
-        state.appBarHeight = appBar.height;
-      }
-      if (typeof appBar.clipped === "boolean") {
-        state.appBarClipped = appBar.clipped;
-      }
-    }
-  }
+type SetAppBarLayoutPayload = Partial<AppBarLayoutState>;
 
-  if (drawer) {
-    if (typeof drawer.left === "string") {
-      state.leftDrawerWidth = drawer.left;
-    }
-    if (typeof drawer.right === "string") {
-      state.rightDrawerWidth = drawer.right;
-    }
-  }
-
-  applyLayout();
+type SetDrawerLayoutPayload = Partial<DrawerLayoutState> & {
+  side: LayoutSide;
 };
 
-const setAppBarLayout = ({ enabled, height, clipped }: AppBarLayout): void => {
-  setLayoutConfig({
-    appBar: {
-      enabled,
-      height,
-      clipped,
+const createInitialAppBarState = (): AppBarLayoutState => ({
+  enabled: false,
+  height: 0,
+  clipped: false,
+  app: false,
+  absolute: false,
+  fixed: false,
+});
+
+const createInitialDrawerState = (): DrawerLayoutState => ({
+  enabled: false,
+  open: false,
+  width: "0px",
+  absolute: false,
+  floating: false,
+  fixed: false,
+});
+
+const createLayoutStore = () => {
+  const state = reactive<LayoutState>({
+    appBar: createInitialAppBarState(),
+    drawers: {
+      left: createInitialDrawerState(),
+      right: createInitialDrawerState(),
     },
   });
-};
 
-const setDrawerLayout = ({ left, right }: DrawerLayout): void => {
-  setLayoutConfig({
-    drawer: {
-      left,
-      right,
-    },
+  const mainTopOffset = computed((): string => {
+    if (!state.appBar.enabled || !state.appBar.app) {
+      return "0px";
+    }
+
+    return `${state.appBar.height}px`;
   });
-};
 
-export default function useLayout() {
+  const getDrawerOffset = (side: LayoutSide): string => {
+    const drawer = state.drawers[side];
+
+    if (!drawer.enabled || !drawer.open || drawer.absolute) {
+      return "0px";
+    }
+
+    return drawer.width;
+  };
+
+  const mainLayoutStyle = computed<Record<string, string>>(() => ({
+    paddingTop: mainTopOffset.value,
+    paddingLeft: getDrawerOffset("left"),
+    paddingRight: getDrawerOffset("right"),
+  }));
+
+  const drawerLayoutStyle = computed<Record<string, string>>(() => ({
+    paddingTop:
+      state.appBar.enabled && state.appBar.app && state.appBar.clipped
+        ? `${state.appBar.height}px`
+        : "0px",
+  }));
+
+  const barLayoutStyle = computed<Record<string, string>>(() => ({
+    left: state.appBar.app ? getDrawerOffset("left") : "0px",
+    right: state.appBar.app ? getDrawerOffset("right") : "0px",
+  }));
+
+  const setAppBarLayout = (payload: SetAppBarLayoutPayload): void => {
+    Object.assign(state.appBar, payload);
+
+    if (payload.enabled === false) {
+      Object.assign(state.appBar, createInitialAppBarState(), payload);
+    }
+  };
+
+  const resetAppBarLayout = (): void => {
+    Object.assign(state.appBar, createInitialAppBarState());
+  };
+
+  const setDrawerLayout = ({ side, ...payload }: SetDrawerLayoutPayload): void => {
+    Object.assign(state.drawers[side], payload);
+
+    if (payload.enabled === false) {
+      Object.assign(state.drawers[side], createInitialDrawerState(), payload);
+    }
+  };
+
+  const resetDrawerLayout = (side: LayoutSide): void => {
+    Object.assign(state.drawers[side], createInitialDrawerState());
+  };
+
   return {
     layout: readonly(state),
-    mainLayoutStyle: readonly(mainLayoutStyle),
-    drawerLayoutStyle: readonly(drawerLayoutStyle),
-    barLayoutStyle: readonly(barLayoutStyle),
-    setLayoutConfig,
+    mainLayoutStyle,
+    drawerLayoutStyle,
+    barLayoutStyle,
     setAppBarLayout,
+    resetAppBarLayout,
     setDrawerLayout,
-    refreshLayout: applyLayout,
+    resetDrawerLayout,
   };
+};
+
+type LayoutStore = ReturnType<typeof createLayoutStore>;
+
+const layoutInjectionKey: InjectionKey<LayoutStore> = Symbol("e-layout");
+const fallbackLayoutStore = createLayoutStore();
+
+export const provideLayout = (): LayoutStore => {
+  const store = createLayoutStore();
+  provide(layoutInjectionKey, store);
+  return store;
+};
+
+export default function useLayout(): LayoutStore {
+  return inject(layoutInjectionKey, fallbackLayoutStore);
 }

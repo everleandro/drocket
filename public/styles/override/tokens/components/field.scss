@@ -1,0 +1,14 @@
+$field-hover-overlay-opacity: 0.04;
+$field-label-rest-y: 50%;
+$field-label-float-y: 0.45rem;
+$field-label-float-scale: 0.78;
+$field-label-inline-offset: 0.5rem;
+$field-label-current-y: var(--e-field-label-rest-y);
+$field-label-current-translate-y: -50%;
+$field-label-current-scale: 1;
+$field-rest-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+$field-placeholder-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.38));
+$field-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+$field-label: var(--e-field-rest-color);
+$field-input-placeholder: var(--e-field-placeholder-color);
+$field-border-radius: var(--e-border-radius-root, 4px);

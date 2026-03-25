@@ -33,6 +33,8 @@ export type {
   SelectRule,
 } from "./select";
 
+export type { TimePickerEmits, TimePickerProps } from "./time-picker";
+
 export type {
   EForm,
   FormInjection,

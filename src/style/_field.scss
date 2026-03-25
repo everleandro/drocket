@@ -1,19 +1,6 @@
 @use '~/public/styles/_mixins.scss' as *;
 
 .e-field {
-    --e-field-label-rest-y: 50%;
-    --e-field-label-float-y: 0.45rem;
-    --e-field-label-float-scale: 0.78;
-    --e-field-label-inline-offset: 0.5rem;
-    --e-field-label-current-y: var(--e-field-label-rest-y);
-    --e-field-label-current-translate-y: -50%;
-    --e-field-label-current-scale: 1;
-    --e-field-rest-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
-    --e-field-placeholder-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.38));
-    --e-field-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
-    --label: var(--e-field-rest-color);
-    --input-placeholder: var(--e-field-placeholder-color);
-    --e-field-border-radius: var(--e-border-radius-root, 4px);
 
     align-items: flex-start;
     color: var(--e-field-rest-color);
@@ -25,7 +12,7 @@
     text-align: left;
 
     label {
-        color: var(--label);
+        color: var(--e-field-label);
         white-space: nowrap;
     }
 
@@ -94,11 +81,11 @@
     &--retain-color,
     &--is-focused,
     &--has-error {
-        --label: var(--e-field-color);
+        --e-field-label: var(--e-field-color);
         color: var(--e-field-color);
 
         .e-field__overlay {
-            opacity: 0.08;
+            opacity: calc(var(--e-field-hover-overlay-opacity) + 0.04);
         }
     }
 
@@ -119,7 +106,7 @@
 
     &__overlay {
         background-color: currentcolor;
-        opacity: 0.04;
+        opacity: var(--e-field-hover-overlay-opacity, 0.04);
         pointer-events: none;
         position: absolute;
         top: 0px;
@@ -505,7 +492,7 @@
     ::-webkit-input-placeholder,
     :-ms-input-placeholder,
     ::placeholder {
-        color: var(--input-placeholder);
+        color: var(--e-field-input-placeholder);
     }
 
     &--is-hovered,

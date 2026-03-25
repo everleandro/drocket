@@ -46,7 +46,12 @@ export default defineConfig({
           { text: 'Chip', link: '/components/chip' },
           { text: 'Date Picker', link: '/components/date-picker' },
           { text: 'Dialog', link: '/components/dialog' },
-          { text: 'Icon', link: '/components/icon' }
+          { text: 'Form', link: '/components/form' },
+          { text: 'Icon', link: '/components/icon' },
+          { text: 'List', link: '/components/list' },
+          { text: 'Select', link: '/components/select' },
+          { text: 'Textfield', link: '/components/textfield' },
+          { text: 'Time Picker', link: '/components/time-picker' }
         ]
       }
     ],

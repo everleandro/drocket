@@ -1,10 +1,14 @@
 <template>
   <component
+    ref="drawerElement"
     :is="tag"
-    v-click-outside="handleOutside"
     :class="drawerClass"
     data-layout="true"
     :style="mergedStyle"
+    :tabindex="overlayActive ? -1 : undefined"
+    :role="overlayActive ? 'dialog' : undefined"
+    :aria-modal="overlayActive ? 'true' : undefined"
+    @keydown="handleDrawerKeydown"
   >
     <div
       class="e-drawer__content"
@@ -28,18 +32,33 @@
 </template>
 
 <script lang="ts" setup>
-import { clickOutside } from "@/directives";
-const vClickOutside = clickOutside;
 import { computed, onMounted, onUnmounted, ref, watch, useSlots } from "vue";
 import { useLayout, useOverlayService } from "@/composables";
 import { DrawerClassKeys, DrawerProps } from "@/types";
 
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'area[href]',
+  'button:not([disabled])',
+  'input:not([disabled]):not([type="hidden"])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'iframe',
+  'object',
+  'embed',
+  '[tabindex]:not([tabindex="-1"])',
+  '[contenteditable="true"]',
+].join(',')
+
 const slots = useSlots();
-const { setLayoutConfig, drawerLayoutStyle } = useLayout();
-const { openOverlay, closeOverlay } = useOverlayService();
+const { setDrawerLayout, resetDrawerLayout, drawerLayoutStyle } = useLayout();
+const { openOverlay, closeOverlay, getStackZIndex, updateOverlayContentElement } = useOverlayService();
 
 let mdBreakpoint = ref(false);
+const drawerElement = ref<HTMLElement | null>(null)
 const props = withDefaults(defineProps<DrawerProps>(), {
+  autoFocus: true,
+  restoreFocus: true,
   width: 16,
   widthUnit: "rem",
 });
@@ -59,6 +78,7 @@ const absoluteComputed = computed(() => {
   return props.absolute || mdBreakpoint.value;
 });
 const tag = computed(() => (props.nav ? "nav" : "aside"));
+const side = computed(() => (props.right ? "right" : "left"));
 const overlayActive = computed(
   () => !!props.modelValue && !!absoluteComputed.value
 );
@@ -82,7 +102,7 @@ onUnmounted(() => {
   }
 
   closeOverlay(overlayId);
-  setLayoutConfig({ drawer: { left: "0px", right: "0px" } });
+  resetDrawerLayout(side.value);
 });
 
 const drawerClass = computed((): Array<string> => {
@@ -113,15 +133,14 @@ const computedWidth = computed(() => {
 });
 
 function refreshLayoutStyle(): void {
-  const propertyValue =
-    absoluteComputed.value || !props.modelValue
-      ? "0px"
-      : `${computedWidth.value}`;
-  setLayoutConfig({
-    drawer: {
-      left: props.right ? "0px" : propertyValue,
-      right: props.right ? propertyValue : "0px",
-    },
+  setDrawerLayout({
+    side: side.value,
+    enabled: true,
+    open: !!props.modelValue,
+    width: computedWidth.value,
+    absolute: !!absoluteComputed.value,
+    floating: !!props.floating,
+    fixed: !!props.fixed,
   });
 }
 
@@ -132,6 +151,16 @@ watch(
   },
   { immediate: true }
 );
+
+watch(
+  () => props.right,
+  (isRight, wasRight) => {
+    if (isRight === wasRight) return
+
+    resetDrawerLayout(wasRight ? "right" : "left")
+    refreshLayoutStyle()
+  }
+)
 
 const changeValue = (value: boolean): void => {
   emit("update:modelValue", value);
@@ -164,7 +193,12 @@ watch(
       openOverlay({
         id: overlayId,
         dismissible: true,
+        lockScroll: true,
+        autoFocus: props.autoFocus,
+        restoreFocus: props.restoreFocus,
+        contentElement: drawerElement.value,
         onOutsideClick: handleOutside,
+        onEscape: handleOutside,
       });
       return;
     }
@@ -174,6 +208,64 @@ watch(
   { immediate: true }
 );
 
+watch(() => [overlayActive.value, drawerElement.value] as const, ([isActive, contentElement]) => {
+  if (!isActive || !contentElement) return
+
+  updateOverlayContentElement(overlayId, contentElement)
+}, { flush: 'post' })
+
+const getFocusableElements = (): HTMLElement[] => {
+  const root = drawerElement.value
+  if (!root) return []
+
+  return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter((element) => {
+    if (!element.isConnected) return false
+    if (element.getAttribute('aria-hidden') === 'true') return false
+    if ((element as HTMLButtonElement).disabled) return false
+    if (element.tabIndex < 0) return false
+    if (element.hasAttribute('hidden')) return false
+    return element.getClientRects().length > 0
+  })
+}
+
+const handleDrawerKeydown = (evt: KeyboardEvent): void => {
+  if (!overlayActive.value || evt.key !== 'Tab') return
+
+  const container = drawerElement.value
+  if (!container) return
+
+  const focusableElements = getFocusableElements()
+
+  if (!focusableElements.length) {
+    evt.preventDefault()
+    container.focus()
+    return
+  }
+
+  const firstFocusable = focusableElements[0]
+  const lastFocusable = focusableElements[focusableElements.length - 1]
+  const activeElement = document.activeElement as HTMLElement | null
+  const isContainerFocused = activeElement === container
+  const focusInsideDrawer = !!activeElement && container.contains(activeElement)
+
+  if (!focusInsideDrawer) {
+    evt.preventDefault()
+    ;(evt.shiftKey ? lastFocusable : firstFocusable).focus()
+    return
+  }
+
+  if (!evt.shiftKey && (isContainerFocused || activeElement === lastFocusable)) {
+    evt.preventDefault()
+    firstFocusable.focus()
+    return
+  }
+
+  if (evt.shiftKey && (isContainerFocused || activeElement === firstFocusable)) {
+    evt.preventDefault()
+    lastFocusable.focus()
+  }
+}
+
 const style = computed((): Record<string, string> => {
   const translateX = props.modelValue ? "0%" : `${props.right ? "" : "-"}100%`;
   const result: Record<string, string> = {
@@ -182,11 +274,17 @@ const style = computed((): Record<string, string> => {
     transform: `translateX(${translateX})`,
   };
 
+  const drawerZIndex = getStackZIndex(overlayId, 1)
+
+  if (drawerZIndex !== null) {
+    result.zIndex = `${drawerZIndex}`
+  }
+
   return { ...result };
 });
 
 const mergedStyle = computed((): Record<string, string> => ({
-  ...drawerLayoutStyle,
+  ...drawerLayoutStyle.value,
   ...style.value,
 }));
 </script>
