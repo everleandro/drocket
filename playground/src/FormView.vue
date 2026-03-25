@@ -139,7 +139,7 @@
                         <div class="table-lab__grid">
                             <div class="table-lab__panel">
                                 <p class="table-lab__label">Default table</p>
-                                <EForm table class="table-demo-form">
+                                <EForm table>
                                     <ETextfield v-model="tableForm.code" :cols="12" :md="4" label="Codigo"
                                         placeholder="TB-001" />
                                     <ETextfield v-model="tableForm.description" :cols="12" :md="8" label="Descripcion"

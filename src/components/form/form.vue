@@ -9,7 +9,7 @@ export default defineComponent({
     name: "EForm"
 })
 </script>
-  
+
 <script lang="ts" setup>
 import { FORM_KEY } from '@/components/form/constants';
 import { useGridRow } from '@/composables/grid-row';
@@ -37,7 +37,7 @@ export interface Props extends RowProps, ElevationProps {
     tableLineOpacity?: string | number
 }
 
-const props = withDefaults(defineProps<Props>(), { modelValue: undefined})
+const props = withDefaults(defineProps<Props>(), { modelValue: undefined })
 const form = ref<HTMLFormElement | null>(null)
 
 const { gridRowClass, gridRowStyle } = useGridRow(props)
@@ -87,6 +87,7 @@ const formClass = computed(() => {
     props.disabled && result.push('e-form--disabled')
     props.readonly && result.push('e-form--readonly')
     props.table && result.push('e-form--table')
+    props.tableLineColor && result.push('e-form--table--has-line-color')
     props.elevation && result.push(`e-elevation--${props.elevation}`)
     return result
 })
@@ -109,8 +110,15 @@ const formStyle = computed<Record<string, string>>(() => {
     })
     const resolvedLineOpacity = props.tableLineOpacity
 
-    result['--e-form-table-line-color'] = resolvedLineColor || 'var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87))'
-    result['--e-form-table-field-bg'] = resolvedCellBackgroundColor || resolvedLegacyContrastCellBackgroundColor || 'var(--e-color-surface-1, white)'
+    if (resolvedLineColor) {
+        result['--e-form-table-line-color'] = resolvedLineColor
+    }
+
+    const resolvedFieldBackgroundColor = resolvedCellBackgroundColor ?? resolvedLegacyContrastCellBackgroundColor
+
+    if (resolvedFieldBackgroundColor) {
+        result['--e-form-table-field-bg'] = resolvedFieldBackgroundColor
+    }
 
     if (resolvedLineOpacity !== undefined && resolvedLineOpacity !== null && resolvedLineOpacity !== '') {
         result['--e-form-table-line-opacity'] = String(resolvedLineOpacity)
