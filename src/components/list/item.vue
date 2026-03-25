@@ -1,6 +1,6 @@
 <template>
     <component ref="node" v-ripple="{ disabled: !clickeableType() }" :is="tagResult" :active-class="activeClass"
-        v-bind="liBindingOptions" :class="listItemCLass" @click="handleItemClick" @focus="handleItemFocus"
+        v-bind="liBindingOptions" :class="listItemCLass" :style="listItemStyle" @click="handleItemClick" @focus="handleItemFocus"
         @keydown="handleItemKeydown" @keyup="handleItemKeyup">
         <div v-if="hasPrepend" :class="prependClass">
             <slot name="prepend">
@@ -24,6 +24,7 @@
 
 <script lang="ts" setup>
 import { EListGroupInjection, IconPath, EListInjection, Size, SizeProps } from '@/types'
+import { useResolvedColor } from '@/composables/color'
 import EIcon from '@/components/icon/index.vue';
 import { ripple } from '@/directives'
 import EAvatar from '@/components/avatar.vue';
@@ -238,11 +239,17 @@ const appendTypeClass = computed((): string | undefined => {
     return undefined
 })
 
+const { colorStyles: listItemStyle } = useResolvedColor({
+    color: computed(() => props.color),
+    inheritedColor: computed(() => parentList?.color?.value),
+    colorVar: '--e-list-color',
+    contrastVar: '--e-list-contrast',
+})
+
 const listItemCLass = computed((): Array<unknown> => {
     const classes = [availableRootClasses.root, attrs.class || '']
     const currentSize = props.size || parentList?.size?.value || 'default'
 
-    props.color && classes.push(`${props.color}--text`)
     isDisabled.value && classes.push(availableRootClasses.disabled)
     prependTypeClass.value && classes.push(prependTypeClass.value)
     appendTypeClass.value && classes.push(appendTypeClass.value)

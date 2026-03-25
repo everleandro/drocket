@@ -91,7 +91,7 @@
                                 :items="roleOptions" />
 
                             <ESelect v-model="selectState.stack" :cols="12" :md="6" multiple chip clearable
-                                label="Stack activo" placeholder="Elige una o varias tecnologias"
+                                label="Stack activo" placeholder="Elige una o varias tecnologias" autocomplete
                                 detail="Seleccion multiple con chips y cierre individual." :items="stackOptions" />
 
                             <ESelect v-model="selectState.location" v-model:search="selectState.locationSearch"
@@ -216,7 +216,7 @@
                                 <span>Validez</span>
                                 <strong>{{
                                     formValid ? "Valido" : "Con errores o incompleto"
-                                    }}</strong>
+                                }}</strong>
                             </div>
                             <div>
                                 <span>Nombre</span>
@@ -397,9 +397,12 @@ const form = reactive<DemoFormModel>(createInitialForm());
 const selectState = reactive<SelectDemoModel>({
     role: "frontend",
     stack: ["vue", "typescript"],
+    stack2: ["vue"],
     location: "remote",
     locationSearch: "",
 });
+
+
 const tableForm = reactive<TableFormModel>({
     code: "TB-001",
     description: "Separadores construidos con gap y color del contenedor.",
@@ -735,7 +738,6 @@ const handleReset = (): void => {
 }
 
 .select-demo-form {
-    background: linear-gradient(180deg, #ffffff, #f3f8f8);
     border: 1px solid rgba(23, 32, 51, 0.08);
     border-radius: 18px;
     padding: 16px;

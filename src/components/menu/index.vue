@@ -1,6 +1,6 @@
 <template>
     <slot name="activator" :onClick="handleActivatorClick" :onKeydown="handleActivatorKeydown"
-        :ref="setActivatorReference" :aria-haspopup="'menu'" :aria-expanded="String(opened)" :aria-controls="contentId"
+        :ref="setActivatorReference" :aria-haspopup="resolvedAriaHaspopup" :aria-expanded="String(opened)" :aria-controls="resolvedAriaControls"
         :aria-disabled="String(Boolean(props.disableMenu))" :openMenu="openMenu" :closeMenu="closeMenu" />
 
     <Teleport to="body">
@@ -8,7 +8,7 @@
             :full-width="props.fullWidth" :hold-focus="props.holdFocus" :check-offset="props.checkOffset"
             :transition="props.transition" :origin="props.origin" :max-width="props.maxWidth" :offset-x="props.offsetX"
             :offset-y="props.offsetY" :width="props.width" :elevation="props.elevation" :target="currentActivator"
-            :data-id="dataId" :content-id="contentId" :forwarded-attrs="attrs">
+            :data-id="dataId" :content-id="contentId" :content-role="props.contentRole" :forwarded-attrs="attrs">
             <slot />
         </EMenuContainer>
     </Teleport>
@@ -23,7 +23,10 @@ export default {
 import type { MenuTypeTarget, ElevationProps } from '@/types'
 export interface Props extends ElevationProps {
     absolute?: boolean
+    ariaControls?: string
+    ariaHaspopup?: string
     closeOnContentClick?: boolean
+    contentRole?: string
     fullWidth?: boolean
     activator?: MenuTypeTarget
     holdFocus?: boolean
@@ -46,6 +49,10 @@ import { computed, nextTick, onMounted, onUnmounted, ref, useAttrs, useId, watch
 const id = `e-menu-${useId()}`
 const contentId = `${id}-content`
 const props = withDefaults(defineProps<Props>(), { origin: 'bottom left', transition: 'fade', offsetX: 0, offsetY: 0, elevation: 'sm' })
+const resolvedAriaControls = computed(() => props.ariaControls || contentId)
+
+const resolvedAriaHaspopup = computed(() => props.ariaHaspopup || 'menu')
+
 const MenuReference = ref<HTMLElement | null>(null)
 const externalActivator = ref<HTMLElement | null>(null)
 const attrs = useAttrs()
@@ -98,9 +105,9 @@ const resolveActivatorElement = (value: unknown): HTMLElement | null => {
 
 const updateActivatorAttributes = (target: HTMLElement | null) => {
     if (!target) return
-    target.setAttribute('aria-haspopup', 'menu')
+    target.setAttribute('aria-haspopup', resolvedAriaHaspopup.value)
     target.setAttribute('aria-expanded', String(opened.value))
-    target.setAttribute('aria-controls', contentId)
+    target.setAttribute('aria-controls', resolvedAriaControls.value)
     target.setAttribute('aria-disabled', String(Boolean(props.disableMenu)))
 }
 

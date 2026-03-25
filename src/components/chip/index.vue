@@ -4,6 +4,7 @@
         :is="rootTag"
         v-bind="rootAttributes"
         :class="chipClass"
+        :style="chipStyle"
         @click="handleRootClick"
         @keydown="handleKeydown"
         @keyup="handleKeyup">
@@ -40,6 +41,7 @@ export default { name: "Chip" }
 </script>
 <script lang="ts" setup>
 import { ElevationProps, IconPath, SizeProps } from '@/types'
+import { useResolvedColor } from '@/composables/color'
 import { ripple } from '@/directives'
 import icon from '@/utils/icons';
 import EIcon from '@/components/icon/index.vue'
@@ -145,8 +147,12 @@ const chipClass = computed(() => {
     props.appendAvatar && classes.push('e-chip--has-append-avatar')
     props.closable && classes.push('e-chip--has-close')
     props.elevation && classes.push(`e-elevation--${props.elevation}`)
-    props.color && classes.push(`${props.color}--text`)
     return classes
+})
+
+const { colorStyles: chipStyle } = useResolvedColor({
+    color: computed(() => props.color),
+    colorVar: '--e-chip-color',
 })
 
 const emit = defineEmits<{

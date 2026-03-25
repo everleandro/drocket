@@ -40,10 +40,10 @@ import {
   ElevationProps,
   SizeProps,
 } from "@/types";
+import { useResolvedColor } from "@/composables/color";
 import { ripple } from "@/directives";
 import EIcon from "@/components/icon/index.vue";
 import { getBooleanClasses, normalizeDimension } from "@/composables/utils";
-import { getColorContrastCssValue, getColorCssValue } from "@/utils/style";
 
 import { reactive, useAttrs, computed, useSlots } from "vue";
 const vRipple = { ...ripple };
@@ -240,8 +240,16 @@ const getCurrentColor = (): string | undefined => {
   return props.color;
 };
 
+const currentColor = computed(() => getCurrentColor());
+
+const { colorStyles } = useResolvedColor({
+  color: currentColor,
+  colorVar: "--btn-bg",
+  contrastVar: "--btn-text",
+});
+
 const buttonStyle = computed((): Record<string, string> => {
-  const result: Record<string, string> = {};
+  const result: Record<string, string> = { ...colorStyles.value };
   const height = normalizeDimension(props.height);
   const width = normalizeDimension(props.width);
 
@@ -251,21 +259,6 @@ const buttonStyle = computed((): Record<string, string> => {
 
   if (width) {
     result.width = width;
-  }
-
-  // Inject color CSS variables for any color (predefined or custom)
-  const currentColor = getCurrentColor();
-  if (currentColor) {
-    const backgroundColor = getColorCssValue(currentColor);
-    const textColor = getColorContrastCssValue(currentColor);
-
-    if (backgroundColor) {
-      result["--btn-bg"] = backgroundColor;
-    }
-
-    if (textColor) {
-      result["--btn-text"] = textColor;
-    }
   }
 
   return result;

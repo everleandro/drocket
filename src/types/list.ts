@@ -18,6 +18,7 @@ export interface EListInjection {
   changeGroupValue: (value: number | string | undefined | null) => void;
   modelValue: ComputedRef<ListModelProp>;
   group: ComputedRef<ListModelProp>;
+  color: ComputedRef<string | undefined>;
   size: ComputedRef<Size | undefined>;
   disabled: ComputedRef<boolean>;
   isListbox: ComputedRef<boolean>;

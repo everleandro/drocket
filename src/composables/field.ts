@@ -1,11 +1,8 @@
 import * as Vue from "vue";
 import { FORM_KEY } from "@/components/form/constants";
 import { fieldClasses } from "@/components/form/constants";
-import {
-  getColorContrastCssValue,
-  getColorCssValue,
-  normalizeCssSize,
-} from "@/utils/style";
+import { useResolvedColor } from "@/composables/color";
+import { normalizeCssSize } from "@/utils/style";
 import type {
   FieldClassKey,
   FieldConfiguration,
@@ -310,26 +307,22 @@ export function useField<TValue = unknown>(useFormInjection = true) {
     return result;
   });
 
+  const { colorStyles } = useResolvedColor({
+    color,
+    colorVar: "--e-field-color",
+    contrastVar: "--e-field-contrast",
+  });
+
   const inputStyle = computed((): Record<string, string> => {
     return props.inputAlign ? { textAlign: props.inputAlign } : {};
   });
 
   const fieldStyle = computed((): Record<string, string> => {
-    const result: Record<string, string> = {};
-    const resolvedColor = getColorCssValue(color.value);
-    const resolvedContrast = getColorContrastCssValue(color.value);
+    const result: Record<string, string> = { ...colorStyles.value };
     const shouldRetainColor = props.retainColor || configuration.retainColor;
 
-    if (resolvedColor) {
-      result["--e-field-color"] = resolvedColor;
-
-      if (shouldRetainColor) {
-        result["--e-field-rest-color"] = resolvedColor;
-      }
-    }
-
-    if (resolvedContrast) {
-      result["--e-field-contrast"] = resolvedContrast;
+    if (shouldRetainColor && result["--e-field-color"]) {
+      result["--e-field-rest-color"] = result["--e-field-color"];
     }
 
     return result;

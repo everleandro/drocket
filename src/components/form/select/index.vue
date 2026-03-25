@@ -1,16 +1,16 @@
 <template>
     <div :class="selectClass" :style="fieldStyle">
         <div class="e-field__control">
-            <EMenu v-model="opened" full-width hold-focus check-offset :close-on-content-click="false">
+            <EMenu v-model="opened" full-width hold-focus check-offset :close-on-content-click="false"
+                aria-haspopup="listbox" :aria-controls="listboxId" content-role="presentation">
                 <template #activator="{ ref: activatorRef }">
-                    <div role="button" class="e-field__slot" :ref="activatorRef" @click="handleSelectSlotClick"
-                        @keydown="handleSelectSlotKeydown">
-                        <div v-if="prependIcon" class="e-field__prepend-inner" @click="handleClickPrependIcon">
+                    <div class="e-field__slot" :ref="activatorRef" @click="handleSelectSlotClick">
+                        <div v-if="prependIcon" class="e-field__prepend-inner" aria-hidden="true" @click="handleClickPrependIcon">
                             <div class="e-field__icon e-field__icon--prepend-inner">
                                 <EIcon :icon="prependIcon" />
                             </div>
                         </div>
-                        <div class="e-field__overlay"></div>
+                        <div class="e-field__overlay" aria-hidden="true"></div>
                         <div class="e-select__slot e-field__field" @click="focusInput" @mouseenter="handleHover(true)"
                             @mouseleave="handleHover(false)">
                             <label v-if="mounted" :for="id" :class="[
@@ -22,7 +22,7 @@
                             ]" :style="labelStyle">
                                 <slot name="label"> {{ label }}</slot>
                             </label>
-                            <div v-if="prefix" class="e-field__prefix" @click="focus">
+                            <div v-if="prefix" class="e-field__prefix" aria-hidden="true" @click="focus">
                                 {{ prefix }}
                             </div>
                             <div class="e-select__selections">
@@ -56,23 +56,27 @@
                                         <span v-else>{{ selectedText() }}</span>
                                     </slot>
                                 </div>
-                                <input ref="input" :value="search" :id="id" :readonly="inputReadonly"
-                                    class="input--text" type="text" :aria-readonly="inputReadonly"
+                                <input ref="input" :value="search" :id="id" :readonly="inputReadonly" :disabled="isDisabled"
+                                    class="input--text" type="text" role="combobox" :aria-autocomplete="ariaAutocomplete"
+                                    :aria-controls="listboxId" :aria-activedescendant="activeDescendantId"
+                                    :aria-expanded="opened" :aria-invalid="hasError" :aria-describedby="detailsId"
+                                    :aria-disabled="isDisabled" :aria-readonly="inputReadonly"
                                     :placeholder="resolvedPlaceholder" autocomplete="off" @blur="handleBlur"
-                                    @focus="handleSelectFocus" @input="changeSearchValue($event, true)" />
+                                    @focus="handleSelectFocus" @input="changeSearchValue($event, true)"
+                                    @keydown="handleInputKeydown" />
                             </div>
 
-                            <div v-if="suffix" class="e-field__suffix" @click="focus">
+                            <div v-if="suffix" class="e-field__suffix" aria-hidden="true" @click="focus">
                                 {{ suffix }}
                             </div>
                             <transition name="scale">
                                 <div v-if="!empty && clearable" class="e-field__append-inner">
                                     <div class="e-field__icon e-field__icon--clear e-icon--size-default">
-                                        <EButton text :icon="icon.clear" size="small" @click.stop.prevent="clear" />
+                                        <EButton text :icon="icon.clear" size="small" aria-label="Clear selection" @click.stop.prevent="clear" />
                                     </div>
                                 </div>
                             </transition>
-                            <div class="e-field__append-inner">
+                            <div class="e-field__append-inner" aria-hidden="true">
                                 <div class="e-field__icon e-field__icon--append">
                                     <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon"></EIcon>
                                 </div>
@@ -91,11 +95,12 @@
                 </template>
 
                 <div class="e-select__menu-content">
-                    <e-list :color="color" :style="listStyle">
+                    <e-list :id="listboxId" role="listbox" :model-value="props.multiple ? multipleListModel : undefined"
+                        :aria-label="listAriaLabel" :color="color" :style="listStyle">
                         <template v-for="(item, index) in items">
                             <slot name="item" :attrs="slotItemAttrs(item, index)" :item="item">
-                                <e-list-item active-class="e-list-item--active" :isActive="active(item)"
-                                    @click="handleItemClick(item)" :key="index" :value="getListItemValue(item)">
+                                <e-list-item v-bind="slotItemAttrs(item, index)" active-class="e-list-item--active"
+                                    :isActive="active(item)" :key="index" :value="getListItemValue(item)">
                                     {{ displayedText(item) }}
                                 </e-list-item>
                             </slot>
@@ -103,7 +108,7 @@
                     </e-list>
                 </div>
             </EMenu>
-            <EDetails :details="details" :showDetails="showDetails"></EDetails>
+            <EDetails :id="detailsId" :details="details" :hasError="hasError" :showDetails="showDetails"></EDetails>
         </div>
     </div>
 </template>
@@ -119,7 +124,7 @@ import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
 import { useUtils } from "@/composables/utils"
 
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 import EButton from '@/components/button/index.vue'
 import EIcon from '@/components/icon/index.vue'
@@ -138,7 +143,7 @@ const props = withDefaults(defineProps<SelectProps>(), { itemText: 'text', itemV
 const opened = ref<boolean>(false)
 const { fieldClass, fieldStyle, id, focused, focus, blur, showDetails, color, mounted,
     details, labelStyle, handleHover, handleBlur, handleFocus, validate, reset, resetValidation,
-    isLabelFloating, shouldFloatLabel } = useField()
+    hasError, isDisabled, isLabelFloating, shouldFloatLabel } = useField()
 const { handleClickPrependIcon, handleClickAppendIcon } = useFieldActions({ emit, focus })
 const { gridColClass } = useGridCol(props)
 const { isObject } = useUtils()
@@ -166,6 +171,20 @@ const getListItemValue = (item: SelectItemType): string | number | undefined => 
 
 watch(() => opened.value, (val: boolean) => {
     if (val) focus()
+})
+
+watch(() => props.items, () => {
+    syncHighlightedIndex()
+}, { deep: true })
+
+watch(() => opened.value, async (value: boolean) => {
+    if (!value) {
+        highlightedIndex.value = -1
+        return
+    }
+
+    syncHighlightedIndex()
+    await scrollHighlightedOptionIntoView()
 })
 
 watch(() => props.loading, (val: boolean) => {
@@ -196,6 +215,21 @@ const inputReadonly = computed((): boolean => {
     return false
 })
 
+const listboxId = computed((): string => `${id}-listbox`)
+
+const detailsId = computed((): string | undefined => {
+    return showDetails.value ? `${id}-details` : undefined
+})
+
+const listAriaLabel = computed((): string | undefined => {
+    const value = props.label ?? props.placeholder
+    return value == null ? undefined : String(value)
+})
+
+const ariaAutocomplete = computed((): 'list' | 'none' => {
+    return props.autocomplete ? 'list' : 'none'
+})
+
 const resolvedPlaceholder = computed(() => {
     if (!props.placeholder) return undefined
     if (!isLabelFloating.value) return props.placeholder
@@ -209,8 +243,16 @@ const selectedItems = computed<Array<SelectItemType>>(() => {
     return props.multiple ? ((props.modelValue as Array<SelectItemType>) || []) : []
 })
 
+const highlightedIndex = ref<number>(-1)
+
 const multipleModel = computed<Array<SelectItemType>>(() => {
     return props.multiple ? [...selectedItems.value] : []
+})
+
+const multipleListModel = computed<Array<string | number>>(() => {
+    return multipleModel.value
+        .map((item) => getListItemValue(item))
+        .filter((value): value is string | number => typeof value === 'string' || typeof value === 'number')
 })
 
 const areSameItems = (left: SelectItemType, right: SelectItemType): boolean => {
@@ -237,6 +279,59 @@ const findSelectedIndex = (items: Array<SelectItemType>, item: SelectItemType): 
     }
 
     return items.findIndex((candidate) => candidate === item)
+}
+
+const getOptionId = (index: number): string => `${id}-option-${index}`
+
+const activeDescendantId = computed((): string | undefined => {
+    if (!opened.value || highlightedIndex.value < 0) return undefined
+    return getOptionId(highlightedIndex.value)
+})
+
+const findHighlightedIndex = (): number => {
+    if (props.items.length === 0) return -1
+
+    const selectedIndex = props.items.findIndex((item) => active(item))
+    return selectedIndex >= 0 ? selectedIndex : 0
+}
+
+const syncHighlightedIndex = (): void => {
+    highlightedIndex.value = findHighlightedIndex()
+}
+
+const scrollHighlightedOptionIntoView = async (): Promise<void> => {
+    if (highlightedIndex.value < 0) return
+
+    await nextTick()
+    const option = document.getElementById(getOptionId(highlightedIndex.value))
+    option?.scrollIntoView({ block: 'nearest' })
+}
+
+const moveHighlightedIndex = async (step: number): Promise<void> => {
+    if (!props.items.length) return
+
+    if (!opened.value) {
+        openMenu()
+    }
+
+    if (highlightedIndex.value < 0) {
+        highlightedIndex.value = findHighlightedIndex()
+    } else {
+        highlightedIndex.value = Math.min(
+            props.items.length - 1,
+            Math.max(0, highlightedIndex.value + step),
+        )
+    }
+
+    await scrollHighlightedOptionIntoView()
+}
+
+const setHighlightedBoundary = async (position: 'first' | 'last'): Promise<void> => {
+    if (!props.items.length) return
+
+    openMenu()
+    highlightedIndex.value = position === 'first' ? 0 : props.items.length - 1
+    await scrollHighlightedOptionIntoView()
 }
 
 const selectionAttrs = (item?: SelectItemType) => {
@@ -290,8 +385,12 @@ const showPlaceholderSelection = computed((): boolean => {
 
 const slotItemAttrs = (item: SelectItemType, index: number): Record<string, unknown> => {
     const attrs: Record<string, unknown> = {}
-    attrs.class = { 'e-list-item--active': active(item) }
+    attrs.class = {
+        'e-list-item--active': active(item),
+        'e-select__option--highlighted': index === highlightedIndex.value,
+    }
     attrs.value = getListItemValue(item)
+    attrs.id = getOptionId(index)
     attrs.onClick = () => handleItemClick(item)
     attrs.key = index
     return attrs;
@@ -337,11 +436,17 @@ const handleItemClick = (item: SelectItemType): void => {
         const value = getEmittedItemValue(item)
         index < 0 ? result.push(value) : result.splice(index, 1)
         changeValue(result);
+        syncHighlightedIndex()
         return
     }
 
     changeValue(getEmittedItemValue(item));
     closeMenu()
+}
+
+const selectHighlightedItem = (): void => {
+    if (highlightedIndex.value < 0 || highlightedIndex.value >= props.items.length) return
+    handleItemClick(props.items[highlightedIndex.value])
 }
 
 const active = (item: SelectItemType): boolean => {
@@ -400,18 +505,57 @@ const handleSelectSlotClick = (evt: Event): void => {
     focusInput()
 }
 
-const handleSelectSlotKeydown = (evt: KeyboardEvent): void => {
-    if (evt.target === input.value) return
-
+const handleInputKeydown = async (evt: KeyboardEvent): Promise<void> => {
     if (evt.key === 'Escape') {
+        evt.preventDefault()
         closeMenu()
         return
     }
 
-    if (evt.key === 'Enter' || evt.key === ' ' || evt.key === 'ArrowDown') {
+    if (evt.key === 'Tab') {
+        closeMenu()
+        return
+    }
+
+    if (evt.key === 'ArrowDown') {
+        evt.preventDefault()
+        await moveHighlightedIndex(1)
+        return
+    }
+
+    if (evt.key === 'ArrowUp') {
+        evt.preventDefault()
+        await moveHighlightedIndex(-1)
+        return
+    }
+
+    if (evt.key === 'Home') {
+        evt.preventDefault()
+        await setHighlightedBoundary('first')
+        return
+    }
+
+    if (evt.key === 'End') {
+        evt.preventDefault()
+        await setHighlightedBoundary('last')
+        return
+    }
+
+    if (evt.key === 'Enter') {
+        evt.preventDefault()
+
+        if (!opened.value) {
+            openMenu()
+            return
+        }
+
+        selectHighlightedItem()
+        return
+    }
+
+    if (evt.key === ' ' && inputReadonly.value) {
         evt.preventDefault()
         openMenu()
-        focusInput()
     }
 }
 

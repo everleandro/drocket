@@ -3,7 +3,7 @@
     <div class="e-menu-container" v-bind="forwardedAttrs" :style="menuContentStyle"
         @click="handleContentClick">
         <transition :name="props.transition">
-            <div v-show="modelValue" :id="contentId" ref="wrapper" :class="wrapperClass" :data-id="dataId" role="menu"
+            <div v-show="modelValue" :id="contentId" ref="wrapper" :class="wrapperClass" :data-id="dataId" :role="contentRole"
                 tabindex="-1" :aria-hidden="modelValue ? 'false' : 'true'">
                 <slot></slot>
             </div>
@@ -36,8 +36,10 @@ const props = withDefaults(defineProps<ElevationProps & {
     target?: MenuTypeTarget
     dataId?: string
     contentId?: string
+    contentRole?: string
     forwardedAttrs?: Record<string, unknown>
 }>(), {
+    contentRole: 'menu',
     transition: 'fade',
     origin: 'bottom left',
     offsetX: 0,

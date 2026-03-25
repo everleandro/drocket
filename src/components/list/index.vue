@@ -2,6 +2,7 @@
     <ul
         ref="listNode"
         :class="listCLass"
+        :style="listStyle"
         :role="listRole"
         :aria-disabled="props.disabled || undefined"
         :aria-orientation="listOrientation"
@@ -12,8 +13,9 @@
 </template>
   
 <script lang="ts" setup>
-import { computed, nextTick, provide, ref, useAttrs } from 'vue'
-import { ElevationProps, ListFocusMoveDirection, ListModelProp, SizeProps } from '@/types'
+import { computed, inject, nextTick, provide, ref, useAttrs } from 'vue'
+import { useResolvedColor } from '@/composables/color'
+import { EListInjection, ElevationProps, ListFocusMoveDirection, ListModelProp, SizeProps } from '@/types'
 import { LIST_KEY } from './constants';
 
 type ListValue = string | number | undefined | null
@@ -28,6 +30,7 @@ export interface Props extends ElevationProps, SizeProps {
 }
 const props = defineProps<Props>()
 const attrs = useAttrs()
+const parentList = inject<Partial<EListInjection> | undefined>(LIST_KEY, undefined)
 const listNode = ref<HTMLElement | null>(null)
 const focusedItemId = ref<string | null>(null)
 const internalGroup = ref<ListModelProp>([])
@@ -84,7 +87,6 @@ const listOrientation = computed((): 'vertical' | undefined => {
 
 const listCLass = computed((): Array<string> => {
     const classes = ['e-list']
-    props.color && classes.push(`${props.color}--text`)
     props.elevation && classes.push(`e-elevation--${props.elevation}`)
 
     booleanClassKeys.forEach((key) => {
@@ -95,6 +97,13 @@ const listCLass = computed((): Array<string> => {
 
     return classes;
 
+})
+
+const { resolvedColor, colorStyles: listStyle } = useResolvedColor({
+    color: computed(() => props.color),
+    inheritedColor: computed(() => parentList?.color?.value),
+    colorVar: '--e-list-color',
+    contrastVar: '--e-list-contrast',
 })
 
 const changeModelValue = (value: ListValue): void => {
@@ -282,6 +291,7 @@ provide(LIST_KEY, {
     changeGroupValue,
     modelValue,
     group,
+    color: resolvedColor,
     size: computed(() => props.size),
     disabled: computed(() => !!props.disabled),
     isListbox,

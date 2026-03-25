@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import { computed, ComputedRef, inject, ref, useId } from 'vue';
 import icon from '@/utils/icons';
-import { getColorCssValue } from '@/utils/style';
+import { useResolvedColor } from '@/composables/color'
 import { IconPath } from '@/types';
 import ETransitionExpand from '@/components/transition/expand.vue';
 import EIcon from '@/components/icon/index.vue';
@@ -127,25 +127,11 @@ const elevation = computed(() => {
 	return props.elevation || panelsElevation?.value || 'sm';
 });
 
-const color = computed(() => {
-	return props.color || panelsColor?.value || undefined;
-});
-
-const panelButtonHeaderStyle = computed((): Record<string, string> => {
-  const result: Record<string, string> = {};
-
-
-  // Inject color CSS variables for any color (predefined or custom)
-  if (color.value) {
-		const resolvedColor = getColorCssValue(color.value);
-
-		if (resolvedColor) {
-			result["--e-expansion-panel-button-color"] = resolvedColor;
-		}
-  }
-
-  return result;
-});
+const { resolvedColor: color, colorStyles: panelButtonHeaderStyle } = useResolvedColor({
+	color: computed(() => props.color),
+	inheritedColor: panelsColor,
+	colorVar: '--e-expansion-panel-button-color',
+})
 /**
  * Estado abierto (single source)
  */

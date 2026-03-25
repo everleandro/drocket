@@ -7,7 +7,7 @@
   appearance: none;
   align-items: center;
   background-color: transparent;
-  color: inherit;
+  color: var(--e-chip-color, inherit);
   cursor: default;
   display: inline-flex;
   font-family: inherit;
