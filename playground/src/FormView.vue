@@ -5,7 +5,7 @@
             <h1>Form Playground</h1>
             <p class="hero-copy">
                 Esta vista concentra pruebas de <strong>ETextfield</strong> y
-                <strong>ESelect</strong> y <strong>ETimePicker</strong> para iterar
+                <strong>ESelect</strong>, <strong>ETimePicker</strong> y <strong>ESwitch</strong> para iterar
                 validacion, foco, detalles, overlay y estados visuales sin mezclar
                 otros componentes.
             </p>
@@ -53,6 +53,54 @@
                             <div>
                                 <span>Publicacion</span>
                                 <strong>{{ formatTimePreview(timePickerState.publish) }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="switch-lab">
+                        <div class="switch-lab__header">
+                            <div>
+                                <p class="section-kicker">Switch</p>
+                                <h2>Casos base para ESwitch</h2>
+                            </div>
+                            <p class="table-lab__copy">
+                                Este bloque sirve para probar integracion con formulario,
+                                `detail`, estados bloqueados y valores custom sin salir del playground.
+                            </p>
+                        </div>
+
+                        <EForm class="switch-demo-form" field-color="teal-900" label-behavior="floating" dense>
+                            <ESwitch v-model="switchState.notifications" :cols="12" :md="4"
+                                label="Notificaciones" detail="Caso booleano simple para validar foco y helper text." />
+
+                            <ESwitch v-model="switchState.releaseGate" :cols="12" :md="4"
+                                label="Release gate" detail="Usa valores custom publish/draft para probar modelValue." color="secondary"
+                                true-value="publish" false-value="draft" />
+
+                            <ESwitch v-model="switchState.analytics" :cols="12" :md="4"
+                                label="Analytics en vivo" detail="Bloqueado en loading para revisar disabled + spinner." color="cyan-800"
+                                :loading="true" :true-value="1" :false-value="0" />
+
+                            <ESwitch v-model="switchState.readonlyPreview" :cols="12" readonly
+                                label="Preview solo lectura" detail="Sirve para comprobar que el valor no cambia al interactuar." />
+                        </EForm>
+
+                        <div class="switch-lab__summary">
+                            <div>
+                                <span>Notificaciones</span>
+                                <strong>{{ switchState.notifications ? "Activas" : "Pausadas" }}</strong>
+                            </div>
+                            <div>
+                                <span>Release gate</span>
+                                <strong>{{ switchState.releaseGate }}</strong>
+                            </div>
+                            <div>
+                                <span>Analytics</span>
+                                <strong>{{ switchState.analytics }}</strong>
+                            </div>
+                            <div>
+                                <span>Readonly</span>
+                                <strong>{{ switchState.readonlyPreview ? "On" : "Off" }}</strong>
                             </div>
                         </div>
                     </div>
@@ -305,6 +353,12 @@
                     </ECard>
 
                     <ECard class="form-card" elevation="sm">
+                        <p class="section-kicker">Switch state</p>
+                        <h2>Estado del ejemplo</h2>
+                        <pre class="payload-preview">{{ switchPreview }}</pre>
+                    </ECard>
+
+                    <ECard class="form-card" elevation="sm">
                         <p class="section-kicker">Eventos</p>
                         <h2>Traza del textfield</h2>
                         <p class="event-note">
@@ -331,6 +385,7 @@ import EButton from "../../src/components/button/index.vue";
 import ECard from "../../src/components/card/index.vue";
 import EForm from "../../src/components/form/form.vue";
 import ESelect from "../../src/components/form/select/index.vue";
+import ESwitch from "../../src/components/form/switch/index.vue";
 import ETextfield from "../../src/components/form/textfield/index.vue";
 import ETimePicker from "../../src/components/form/time-picker/index.vue";
 import ECol from "../../src/components/grid/col.vue";
@@ -385,6 +440,13 @@ type TimePickerDemoModel = {
     publish: Date;
 };
 
+type SwitchDemoModel = {
+    notifications: boolean;
+    releaseGate: string;
+    analytics: number;
+    readonlyPreview: boolean;
+};
+
 type TextFieldValue = string | number | null;
 
 type TextFieldValueEventPayload<EventType extends Event = Event> = {
@@ -426,6 +488,13 @@ const createInitialTimePickerState = (): TimePickerDemoModel => ({
     kickoff: new Date("2026-03-25T09:00:00"),
     review: new Date("2026-03-25T13:30:00"),
     publish: new Date("2026-03-25T18:45:00"),
+});
+
+const createInitialSwitchState = (): SwitchDemoModel => ({
+    notifications: true,
+    releaseGate: "draft",
+    analytics: 0,
+    readonlyPreview: true,
 });
 
 const roleOptions = [
@@ -489,6 +558,7 @@ const tintedTableForm = reactive<TintedTableFormModel>({
     note: "La linea usa cyan y la celda neutral-50.",
 });
 const timePickerState = reactive<TimePickerDemoModel>(createInitialTimePickerState());
+const switchState = reactive<SwitchDemoModel>(createInitialSwitchState());
 const eventSequence = ref(0);
 const eventLog = ref<Array<EventLogEntry>>([]);
 const submitState = reactive<SubmitState>({
@@ -719,6 +789,10 @@ const timePickerPreview = computed(() => {
     );
 });
 
+const switchPreview = computed(() => {
+    return JSON.stringify(switchState, null, 2);
+});
+
 const handleValidate = async (): Promise<void> => {
     const valid = (await formRef.value?.validate?.()) ?? false;
 
@@ -740,6 +814,7 @@ const handleSubmit = async (): Promise<void> => {
 const handleReset = (): void => {
     Object.assign(form, createInitialForm());
     Object.assign(timePickerState, createInitialTimePickerState());
+    Object.assign(switchState, createInitialSwitchState());
     formRef.value?.reset?.();
     formValid.value = false;
     submitState.kind = "idle";
@@ -826,6 +901,7 @@ const handleReset = (): void => {
 
 .select-lab,
 .time-picker-lab,
+.switch-lab,
 .table-lab,
 .elevation-lab {
     border-top: 1px solid rgba(23, 32, 51, 0.08);
@@ -837,6 +913,7 @@ const handleReset = (): void => {
 
 .select-lab__header,
 .time-picker-lab__header,
+.switch-lab__header,
 .table-lab__header,
 .elevation-lab__header,
 .elevation-lab__meta {
@@ -856,6 +933,12 @@ const handleReset = (): void => {
     padding: 16px;
 }
 
+.switch-demo-form {
+    border: 1px solid rgba(23, 32, 51, 0.08);
+    border-radius: 18px;
+    padding: 16px;
+}
+
 .select-lab__summary {
     display: grid;
     gap: 14px;
@@ -868,8 +951,15 @@ const handleReset = (): void => {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.switch-lab__summary {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .select-lab__summary div,
 .time-picker-lab__summary div,
+.switch-lab__summary div,
 .table-lab__panel {
     border: 1px solid rgba(23, 32, 51, 0.08);
     border-radius: 18px;
@@ -878,6 +968,7 @@ const handleReset = (): void => {
 
 .select-lab__summary span,
 .time-picker-lab__summary span,
+.switch-lab__summary span,
 .table-lab__label,
 .summary-grid span {
     color: #51617d;
@@ -891,6 +982,7 @@ const handleReset = (): void => {
 
 .select-lab__summary strong,
 .time-picker-lab__summary strong,
+.switch-lab__summary strong,
 .summary-grid strong {
     color: #172033;
     font-size: 14px;
@@ -1021,7 +1113,8 @@ const handleReset = (): void => {
 
     .summary-grid,
     .select-lab__summary,
-    .time-picker-lab__summary {
+    .time-picker-lab__summary,
+    .switch-lab__summary {
         grid-template-columns: 1fr;
     }
 

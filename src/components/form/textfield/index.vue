@@ -103,11 +103,11 @@
       <EDetails
         :counter="counter"
         :details="details"
-        :hasError="hasError"
-        :modelValue="modelValue"
+        :has-error="hasError"
+        :model-value="modelValue"
         :limit="limit"
         :id="detailsId"
-        :showDetails="showDetails"
+        :show-details="showDetails"
       >
       </EDetails>
     </div>

@@ -1,12 +1,15 @@
 .e-field {
   &-switch {
+    --e-selection-control-ripple-transform: translate(-10px, -8px);
+    --e-switch-thumb-offset: 22px;
+
     &--loading {
       pointer-events: none;
     }
 
     .e-field {
       &__selection-ripple {
-        left: -2px;
+        left: 0;
       }
 
       &__selection-control {
@@ -20,12 +23,10 @@
     }
 
     &--active {
-      .e-field__selection-ripple {
-        left: 20px;
-      }
+      --e-selection-control-ripple-transform: translate(calc(-10px + var(--e-switch-thumb-offset)), -8px);
 
       .e-field-switch__thumb {
-        transform: translate(22px) !important;
+        transform: translate(var(--e-switch-thumb-offset)) !important;
         background-color: currentColor;
 
         .e-progress-circular {

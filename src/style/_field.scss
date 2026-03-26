@@ -227,7 +227,7 @@
             left: 0;
             top: 0;
             margin: 0;
-            transform: translate(-8px, -8px);
+            transform: var(--e-selection-control-ripple-transform, translate(-8px, -8px));
             transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 
             &.v-ripple-element {

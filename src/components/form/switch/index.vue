@@ -1,19 +1,20 @@
 <template>
-    <div :class="swithcClass" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
+    <div :class="switchClass" :style="fieldStyle" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
         <div class="e-field__control">
-            <div class="e-field__slot" @click="change">
+            <div class="e-field__slot" @click="handleSlotClick">
                 <div v-if="!hideOverlay" class="e-field__overlay"></div>
-                <label v-if="mounted" class="e-label" :for="id" :style="labelStyle">
+                <label class="e-label" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
-                <div :class="['e-field__selection-control', switchColor]" :data-focused="focused">
-                    <input v-if="mounted" :value="modelValue" :aria-checked="active" :id="id" role="switch" type="checkbox"
-                        aria-disabled="false" @focus="handleFocus" @blur="handleBlur" />
-                    <div :class="['e-field__selection-ripple', switchColor]"></div>
-                    <div :class="['e-field-switch__track', switchColor]"></div>
+                <div class="e-field__selection-control" :data-focused="focused">
+                    <input ref="input" v-model="checkedModel" :value="trueValue" :aria-checked="checkedModel" :id="id" role="switch" type="checkbox"
+                        :disabled="isControlNonInteractive" :aria-invalid="hasError" :aria-describedby="detailsId" :aria-disabled="isControlNonInteractive"
+                        :aria-readonly="isReadonly" :aria-busy="isLoading || undefined" @focus="handleFocus" @blur="handleBlur" />
+                    <div class="e-field__selection-ripple"></div>
+                    <div class="e-field-switch__track"></div>
                     <div class="e-field-switch__thumb">
                         <template v-if="mounted">
-                            <div v-show="loading" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                            <div v-show="isLoading" aria-hidden="true"
                                 class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
                                 style="height: 16px; width: 16px">
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +30,7 @@
                     </div>
                 </div>
             </div>
-            <EDetails :details="details" :showDetails="showDetails" />
+            <EDetails :id="detailsId" :details="details" :hasError="hasError" :model-value="modelValue" :show-details="showDetails" />
         </div>
     </div>
 </template>
@@ -37,48 +38,75 @@
 <script lang="ts" setup>
 import { useGridCol } from "@/composables/grid-col"
 import { useField } from "@/composables/field"
+import type { SwitchProps, SwitchValue } from "@/types/switch"
 
 import EDetails from '@/components/form/details.vue'
 
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
-export interface Props {
-    disabled?: boolean; dense?: boolean; readonly?: boolean; color?: string; loading?: boolean
-    labelInline?: boolean; detail?: string; outlined?: boolean; label?: string | number;
-    detailErrors?: Array<string>; detailsOnMessageOnly?: boolean; appendIcon?: string; retainColor?: boolean;
-    labelMinWidth?: string; prependIcon?: string; rules?: Array<(param: any) => string | boolean>;
-    cols?: string | number; xs?: string | number; sm?: string | number; md?: string | number; hideOverlay?: boolean;
-    lg?: string | number; xl?: string | number; modelValue: string | number | boolean;
-    trueValue?: boolean | string | number, falseValue?: boolean | string | number
-}
-const props = withDefaults(defineProps<Props>(), { falseValue: false, trueValue: true })
+const props = withDefaults(defineProps<SwitchProps>(), {
+    falseValue: false,
+    trueValue: true,
+})
+const input = ref<HTMLInputElement | null>(null)
 
-const { fieldClass, id, showDetails, configuration, details, labelStyle, focused, mounted,
-    handleHover, handleBlur, handleFocus } = useField()
+const { fieldClass, id, showDetails, details, fieldStyle, labelStyle, focused, mounted,
+    handleHover, handleBlur, handleFocus, isDisabled, isReadonly, hasError,
+    focus, blur, validate, reset, resetValidation } = useField<SwitchValue>()
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean | string | number): void
-}>()
-
-const { gridColClass } = useGridCol(props, 'e-field')
-
-const switchColor = computed(() => {
-    const color = props.color || configuration.color
-    return color ? `${color}--text` : ''
+const emit = defineEmits({
+    'update:modelValue': (_value: SwitchValue) => true,
+    focus: (_value: FocusEvent) => true,
+    blur: (_value: Event) => true,
 })
 
-const swithcClass = computed((): Array<string> => {
+const { gridColClass } = useGridCol(props)
+const isLoading = computed((): boolean => Boolean(props.loading))
+
+const switchClass = computed((): Array<string> => {
     const classes = [...fieldClass.value, 'e-field-switch', 'e-field--selection-controls', ...gridColClass.value]
-    active.value && classes.push('e-field-switch--active')
+    checkedModel.value && classes.push('e-field-switch--active')
+    isLoading.value && classes.push('e-field-switch--loading')
     return classes
 })
-const active = computed((): boolean => props.modelValue === props.trueValue)
+const isControlNonInteractive = computed((): boolean => {
+    return isDisabled.value || isReadonly.value || isLoading.value
+})
+const checkedModel = computed({
+    get: (): boolean => props.modelValue === props.trueValue,
+    set: (checked: boolean): void => {
+        if (isControlNonInteractive.value) {
+            if (input.value) input.value.checked = checkedModel.value
+            return
+        }
 
+        emit('update:modelValue', checked ? props.trueValue : props.falseValue)
+    },
+})
+const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined)
 
-const change = (): void => {
-    if (!props.readonly)
-        emit('update:modelValue', active.value ? props.falseValue : props.trueValue)
+const isNativeSlotTarget = (target: EventTarget | null): boolean => {
+    return target instanceof Element && Boolean(target.closest('input, label'))
 }
+
+const handleSlotClick = (event: MouseEvent): void => {
+    if (isNativeSlotTarget(event.target)) return
+
+    focus()
+
+    if (isControlNonInteractive.value) return
+
+    checkedModel.value = !checkedModel.value
+}
+
+defineExpose({
+    focus,
+    blur,
+    validate,
+    reset,
+    resetValidation,
+    input,
+})
 
 </script>
 <style lang="scss" src="./style.scss"></style>
