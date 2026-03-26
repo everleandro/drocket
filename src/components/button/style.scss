@@ -37,6 +37,22 @@
 
   @include button-before();
 
+  &::before {
+    z-index: 0;
+  }
+
+  .v-ripple {
+    z-index: 0;
+  }
+
+  &__loader,
+  &__prepend,
+  &__content,
+  &__append {
+    position: relative;
+    z-index: 1;
+  }
+
   &:focus:before {
     opacity: var(--e-btn-state-focus, 0.12);
   }

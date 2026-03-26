@@ -1,3 +1,4 @@
+import type { CSSProperties } from "vue";
 import type { FieldBaseProps, FieldValidationResult } from "./field";
 import type { IconPath } from "./icon";
 
@@ -45,7 +46,7 @@ export interface TextInputBaseProps<TValue = TextInputValue>
   modelValue?: TValue;
   placeholder?: string;
   autocomplete?: string;
-  inputAlign?: string;
+  inputAlign?: CSSProperties["textAlign"];
   inputReadonly?: boolean;
   autofocus?: boolean;
 }

@@ -67,7 +67,8 @@
     "serve": "vite preview --port 5050",
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",
-    "test": "exit 0",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "docs:dev": "vitepress dev docs --port 5176",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -76,16 +77,19 @@
     "vue": "^3.3.11"
   },
   "devDependencies": {
+    "@vue/test-utils": "^2.4.6",
     "@microsoft/api-extractor": "^7.57.7",
     "@types/node": "^20.19.37",
     "@vitejs/plugin-vue": "^6.0.5",
     "concurrently": "^9.2.1",
+    "jsdom": "^26.1.0",
     "minimatch": "^10.2.4",
     "sass": "^1.98.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.1",
     "vite-plugin-css-injected-by-js": "^3.3.1",
     "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4",
     "vitepress": "^2.0.0-alpha.17",
     "vue-router": "^4.2.5",
     "vue-tsc": "^3.2.6"

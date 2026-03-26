@@ -1,13 +1,13 @@
 <template>
-    <div :class="timePickerClass" :style="fieldStyle">
+    <div ref="fieldRoot" :class="timePickerClass" :style="fieldStyle">
         <div class="e-field__control">
             <EMenu v-model="opened" full-width hold-focus check-offset :close-on-content-click="false"
                 :disable-menu="isDisabled" content-role="presentation">
-                <template #activator="{ ref: activatorRef, onClick: handleMenuActivatorClick, onKeydown: handleMenuActivatorKeydown }">
+                <template #activator="{ ref: activatorRef }">
                     <div class="e-field__slot" :ref="activatorRef" @mouseenter="handleHover(true)"
                         @mouseleave="handleHover(false)" @mousedown="handleSlotMousedown($event)"
-                        @click="handleSlotClick($event, handleMenuActivatorClick)"
-                        @keydown="handleSlotKeydown($event, handleMenuActivatorKeydown)">
+                        @click="handleSlotClick($event)"
+                        @keydown="handleSlotKeydown($event)">
                         <div v-if="prependIcon" class="e-field__prepend-inner" aria-hidden="true">
                             <div class="e-field__icon e-field__icon--prepend-inner">
                                 <EIcon :icon="prependIcon" />
@@ -63,7 +63,7 @@
                     </div>
                 </template>
 
-                <div ref="menuContent" class="e-time-picker__menu-content">
+                <div ref="menuContent" class="e-time-picker__menu-content" @mousedown.capture="handleMenuContentMousedown">
                     <ul class="e-time-picker__menu-list">
                         <li>
                             <EButton block text size="small" type="button" :color="color"
@@ -120,22 +120,25 @@ import { useField } from "@/composables/field"
 import type { TimePickerEmits, TimePickerProps as TimePickerComponentProps } from '@/types/time-picker'
 
 import icon from '@/utils/icons';
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, onUnmounted } from 'vue';
 
 const opened = ref(false);
 
 const props = withDefaults(defineProps<TimePickerComponentProps>(), { minutesStep: 15, hoursStep: 1 });
 
+const fieldRoot = ref<HTMLElement | null>(null)
 const minutes = ref<HTMLInputElement>()
 const hours = ref<HTMLInputElement>()
 const menuContent = ref<HTMLElement | null>(null)
+const skipBlurClose = ref(false)
+const skipBlurCloseTimer = ref<number>()
 const hourDraft = ref<string | null>(null)
 const minutesDraft = ref<string | null>(null)
 const globalTransition = ref('picker-transition')
 
 const emit = defineEmits<TimePickerEmits>()
 
-const { fieldClass, focused, id, showDetails, color, fieldStyle,
+const { fieldClass, focused, id, showDetails, color, fieldStyle, 
     details, labelStyle, handleHover, focus, blur, isDisabled, isReadonly,
     handleBlur: handleFieldBlur, validate, reset, resetValidation, hasError,
     isLabelFloating, shouldFloatLabel } = useField()
@@ -182,6 +185,75 @@ const timePickerContentClass = computed(() => [
   `e-time-picker__content--${resolvedInputAlign.value}`,
 ])
 
+const openMenu = (): void => {
+    if (isDisabled.value) return
+    opened.value = true
+}
+
+const closeMenu = (): void => {
+    opened.value = false
+}
+
+const setCompositeFocus = (value: boolean): void => {
+    focused.value = value
+}
+
+const resolveBlurTarget = (event: FocusEvent): HTMLElement | null => {
+    if (event.relatedTarget instanceof HTMLElement) return event.relatedTarget
+    return document.activeElement instanceof HTMLElement ? document.activeElement : null
+}
+
+const openComposite = (timeKey: 'hours' | 'minutes', event?: FocusEvent): void => {
+    getTimeDraft(timeKey).value = getNormalizedSegmentValue(timeKey)
+    openMenu()
+
+    if (focused.value) return
+
+    setCompositeFocus(true)
+
+    if (event) {
+        emit('focus', event)
+    }
+}
+
+const closeComposite = (event?: FocusEvent): void => {
+    closeMenu()
+    setCompositeFocus(false)
+
+    if (event) {
+        handleFieldBlur(event)
+    }
+}
+
+const focusInput = (timeKey: 'hours' | 'minutes'): void => {
+    if (timeKey === 'hours') {
+        hours.value?.focus()
+        return
+    }
+
+    minutes.value?.focus()
+}
+
+const scheduleInputFocus = (timeKey: 'hours' | 'minutes'): void => {
+    nextTick(() => {
+        focusInput(timeKey)
+    })
+}
+
+const openFromActivator = (): void => {
+    openMenu()
+    scheduleInputFocus('hours')
+}
+
+const clearSkipBlurCloseGuard = (): void => {
+    skipBlurClose.value = false
+
+    if (skipBlurCloseTimer.value) {
+        clearTimeout(skipBlurCloseTimer.value)
+        skipBlurCloseTimer.value = undefined
+    }
+}
+
 const arrowActions = (timeKey: 'minutes' | 'hours', actionKey: 'subtract' | 'add'): void => {
     const amount = timeKey === 'minutes' ? props.minutesStep : props.hoursStep
     const baseDate = resolvedModelDate.value
@@ -219,10 +291,7 @@ const syncTimeDraft = (timeKey: 'hours' | 'minutes', value: Date | string = mode
 const handleTimePickerFocus = (timeKey: 'hours' | 'minutes', event: FocusEvent): void => {
     if (isDisabled.value) return
 
-    getTimeDraft(timeKey).value = getNormalizedSegmentValue(timeKey)
-    opened.value = true
-    focused.value = true
-    emit('focus', event)
+    openComposite(timeKey, event)
 }
 
 const clampTimeValue = (value: number, timeKey: 'hours' | 'minutes'): number => {
@@ -247,9 +316,7 @@ const setTimeSegment = (timeKey: 'hours' | 'minutes', value: string | number): v
     model.value = dateResult
 
     if (timeKey === 'hours' && rawValue.length === 2) {
-        nextTick(() => {
-            focusMinutesInput()
-        })
+        scheduleInputFocus('minutes')
     }
 }
 
@@ -265,37 +332,27 @@ const minutesModel = computed({
 
 const isTimePickerFocusTarget = (target: EventTarget | null): boolean => {
     if (!(target instanceof HTMLElement)) return false
-    return target === hours.value || target === minutes.value || Boolean(menuContent.value?.contains(target))
+    return Boolean(fieldRoot.value?.contains(target) || menuContent.value?.contains(target))
 }
 
 const handleTimePickerBlur = (timeKey: 'hours' | 'minutes', event: FocusEvent): void => {
     getTimeDraft(timeKey).value = null
-    nextTick(() => {
-        const nextFocusedElement = event.relatedTarget instanceof HTMLElement
-            ? event.relatedTarget
-            : document.activeElement
 
-        if (isTimePickerFocusTarget(nextFocusedElement)) {
-            focused.value = true
+    nextTick(() => {
+        if (skipBlurClose.value) {
+            setCompositeFocus(true)
             return
         }
 
-        closeMenu()
-        handleFieldBlur(event)
-        emit('blur', event)
+        const nextFocusedElement = resolveBlurTarget(event)
+
+        if (isTimePickerFocusTarget(nextFocusedElement)) {
+            setCompositeFocus(true)
+            return
+        }
+
+        closeComposite(event)
     })
-}
-
-const closeMenu = (): void => {
-    opened.value = false
-}
-
-const focusHoursInput = (): void => {
-    hours.value?.focus()
-}
-
-const focusMinutesInput = (): void => {
-    minutes.value?.focus()
 }
 
 const isInputTarget = (event: Event): boolean => {
@@ -303,15 +360,11 @@ const isInputTarget = (event: Event): boolean => {
     return target instanceof HTMLElement && Boolean(target.closest('input'))
 }
 
-const handleSlotClick = (event: Event, menuActivatorClick?: (event?: Event) => void): void => {
+const handleSlotClick = (event: Event): void => {
     if (isInputTarget(event)) return
     if (isDisabled.value) return
 
-    menuActivatorClick?.(event)
-
-    nextTick(() => {
-        focusHoursInput()
-    })
+    openFromActivator()
 }
 
 const handleSlotMousedown = (event: MouseEvent): void => {
@@ -319,15 +372,28 @@ const handleSlotMousedown = (event: MouseEvent): void => {
     event.preventDefault()
 }
 
-const handleSlotKeydown = (event: KeyboardEvent, menuActivatorKeydown?: (event: KeyboardEvent) => void): void => {
+const handleMenuContentMousedown = (): void => {
+    skipBlurClose.value = true
+
+    skipBlurCloseTimer.value && clearTimeout(skipBlurCloseTimer.value)
+    skipBlurCloseTimer.value = window.setTimeout(() => {
+        clearSkipBlurCloseGuard()
+    }, 0)
+}
+
+const handleSlotKeydown = (event: KeyboardEvent): void => {
     if (isInputTarget(event)) return
-    menuActivatorKeydown?.(event)
+
+    if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+        event.preventDefault()
+        openFromActivator()
+    }
 }
 
 const handleInputKeydown = (timeKey: 'hours' | 'minutes', event: KeyboardEvent): void => {
     if (event.key === 'Enter' && timeKey === 'hours') {
         event.preventDefault()
-        focusMinutesInput()
+        focusInput('minutes')
         return
     }
 
@@ -339,13 +405,13 @@ const handleInputKeydown = (timeKey: 'hours' | 'minutes', event: KeyboardEvent):
 
     if (event.key === 'ArrowRight' && timeKey === 'hours') {
         event.preventDefault()
-        focusMinutesInput()
+        focusInput('minutes')
         return
     }
 
     if (event.key === 'ArrowLeft' && timeKey === 'minutes') {
         event.preventDefault()
-        focusHoursInput()
+        focusInput('hours')
         return
     }
 
@@ -362,9 +428,14 @@ const handleInputKeydown = (timeKey: 'hours' | 'minutes', event: KeyboardEvent):
     }
 
     if (event.key === 'Escape') {
+        event.preventDefault()
         closeMenu()
     }
 }
+
+onUnmounted(() => {
+    clearSkipBlurCloseGuard()
+})
 
 defineExpose({
     focus,

@@ -16,6 +16,9 @@
             opacity: 1;
         }
     }
+    .flip-icon{
+        transition: transform 0.3s ease;
+    }
 
     &__separator {
         font-size: 20px;
@@ -33,14 +36,6 @@
     &__fields {
         min-width: 0;
         position: relative;
-    }
-
-    &__content {
-        grid-area: field;
-        align-items: center;
-        display: flex;
-        min-width: 0;
-        width: 100%;
     }
 
     &__content {
@@ -69,7 +64,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 12px;
+        max-width: 12px;
     }
 
     input[data-hours],
@@ -79,6 +74,7 @@
         padding-bottom: calc(var(--e-space-base) * 2);
         max-width: 60px;
         text-align: center;
+        text-align: inherit;
     }
 
     &__field-icon {
@@ -98,6 +94,10 @@
 
     &__menu-content {
         padding: 0;
+
+        .e-btn::before {
+            transition: none;
+        }
     }
 
     &__menu-list {

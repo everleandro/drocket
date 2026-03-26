@@ -24,7 +24,7 @@ import { ETimePicker } from 'drocket'
 
 | Prop | Tipo | Default | Descripcion |
 | --- | --- | --- | --- |
-| `modelValue` | `Date \| string` | `undefined` | Valor actual del componente. Internamente trabaja con horas y minutos del valor recibido. |
+| `modelValue` | `Date \| string` | `undefined` | Valor actual del componente. Si se pasa `string`, debe ser un valor parseable por `Date`. Internamente trabaja con horas y minutos del valor recibido. |
 | `hoursStep` | `number` | `1` | Cantidad usada por las flechas del menu para incrementar o decrementar horas. |
 | `minutesStep` | `number` | `15` | Cantidad usada por las flechas del menu para incrementar o decrementar minutos. |
 | `hourReadonly` | `boolean` | `false` | Vuelve readonly solo el segmento de horas. |
@@ -32,7 +32,7 @@ import { ETimePicker } from 'drocket'
 | `minReadonly` | `boolean` | `false` | Alias legado de `minuteReadonly`. Se mantiene por compatibilidad. |
 | `arrowDown` | `string \| IconPath \| IconPath[]` | `undefined` | Reemplaza el icono decorativo del activador. |
 
-Ademas hereda las props base de campo definidas por `FieldBaseProps`, como `label`, `detail`, `color`, `outlined`, `disabled`, `readonly`, `labelBehavior`, `prependIcon`, `appendIcon` y props de grid como `cols` o `md`.
+Ademas hereda las props base de campo definidas por `FieldBaseProps`, como `label`, `detail`, `color`, `outlined`, `disabled`, `readonly`, `labelBehavior`, `prependIcon`, `appendIcon`, `inputAlign` y props de grid como `cols` o `md`.
 
 ## Eventos
 
@@ -129,5 +129,6 @@ const value = ref(new Date())
 
 - Pasar `disabled` esperando solo bloquear escritura manual: en `ETimePicker` tambien bloquea la apertura del menu.
 - Usar `minReadonly` en codigo nuevo: funciona, pero el nombre recomendado es `minuteReadonly`.
+- Pasar strings ambiguos como `10:30` o dependientes de locale en `modelValue`: usa un `Date` o una cadena parseable por `Date` de forma consistente, idealmente ISO.
 - Esperar que `prependIcon` o `appendIcon` emitan eventos: en este componente son solo decorativos.
 - Pasar un `modelValue` invalido o vacio esperando que el componente preserve una hora previa interna: `ETimePicker` normaliza el valor y resuelve una fecha segura solo para su logica interna.

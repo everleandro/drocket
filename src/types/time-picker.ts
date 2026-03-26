@@ -1,18 +1,21 @@
 import type { FieldBaseProps } from "./field";
 import type { IconPath } from "./icon";
 
-export interface TimePickerProps extends FieldBaseProps<Date | string> {
-  modelValue: Date | string;
+export type TimePickerValue = Date | string;
+
+export interface TimePickerProps extends FieldBaseProps<TimePickerValue> {
+  modelValue: TimePickerValue;
   hoursStep?: number;
   minutesStep?: number;
   hourReadonly?: boolean;
   minuteReadonly?: boolean;
+  /** @deprecated Use minuteReadonly instead. */
   minReadonly?: boolean;
   arrowDown?: string | Array<IconPath> | IconPath;
 }
 
 export interface TimePickerEmits {
-  (e: "update:modelValue", value: string | Date): void;
-  (e: "focus", value: Event): void;
-  (e: "blur", value: Event): void;
+  (e: "update:modelValue", value: TimePickerValue): void;
+  (e: "focus", value: FocusEvent): void;
+  (e: "blur", value: FocusEvent): void;
 }
