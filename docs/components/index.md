@@ -19,6 +19,7 @@ Esta seccion documenta cada componente publico exportado por Drocket.
 
 - [Form (`EForm`)](./form.md)
 - [Select (`ESelect`)](./select.md)
+- [Switch (`ESwitch`)](./switch.md)
 - [Textfield (`ETextfield`)](./textfield.md)
 - [Time Picker (`ETimePicker`)](./time-picker.md)
 
