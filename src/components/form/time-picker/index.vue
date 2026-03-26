@@ -24,8 +24,8 @@
                             ]" :style="labelStyle">
                                 <slot name="label">{{ label }}</slot>
                             </label>
-                            <div class="e-time-picker__content" role="group" :aria-labelledby="labelId"
-                                :aria-describedby="detailsId">
+                            <div :class="timePickerContentClass" role="group" :aria-labelledby="labelId"
+                                :aria-describedby="detailsId" >
                                 <input ref="hours" :id="`${id}-hours`" class="input--text" v-model="hourModel"
                                     data-hours :readonly="hourInputReadonly" :disabled="isDisabled" limit="2" type="text"
                                     inputmode="numeric" pattern="[0-9]*" placeholder="00" autocomplete="off"
@@ -45,13 +45,14 @@
                                     @blur="handleTimePickerBlur('minutes', $event)"
                                     @keydown="handleInputKeydown('minutes', $event)" />
                             </div>
-                            <div class="e-time-picker__field-icon e-field__append-inner" aria-hidden="true">
+                            
+                        </div>
+                        <div class="e-time-picker__field-icon e-field__append-inner" aria-hidden="true">
                                 <div class="e-field__icon e-field__icon--append">
                                     <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon"
                                         :color="color" />
                                 </div>
                             </div>
-                        </div>
 
                         <div v-if="appendIcon" class="e-field__append-inner" aria-hidden="true">
                             <div class="e-field__icon e-field__icon--append">
@@ -173,6 +174,13 @@ const timePickerClass = computed(() => {
     opened.value && result.push('e-time-picker--is-open')
     return result
 })
+
+const resolvedInputAlign = computed(() => props.inputAlign ?? (shouldFloatLabel.value ? 'start' : 'end'))
+
+const timePickerContentClass = computed(() => [
+  "e-time-picker__content",
+  `e-time-picker__content--${resolvedInputAlign.value}`,
+])
 
 const arrowActions = (timeKey: 'minutes' | 'hours', actionKey: 'subtract' | 'add'): void => {
     const amount = timeKey === 'minutes' ? props.minutesStep : props.hoursStep

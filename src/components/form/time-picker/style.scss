@@ -23,23 +23,12 @@
         align-items: center;
         min-width: 12px;
         justify-content: center;
-
-        // &--animated {
-        //     animation-name: seconds;
-        //     animation-iteration-count: infinite;
-        //     animation-duration: 1s;
-        // }
     }
 
     .e-field__slot {
         justify-content: center;
     }
 
-    &:not(.e-field--label-floating) {
-        .e-time-picker__content {
-            justify-content: flex-end;
-        }
-    }
 
     &__fields {
         min-width: 0;
@@ -54,6 +43,28 @@
         width: 100%;
     }
 
+    &__content {
+        grid-area: field;
+        align-items: center;
+        display: flex;
+        min-width: 0;
+        width: 100%;
+    }
+
+    &__content--left,
+    &__content--start {
+        justify-content: flex-start;
+    }
+
+    &__content--center {
+        justify-content: center;
+    }
+
+    &__content--right,
+    &__content--end {
+        justify-content: flex-end;
+    }
+
     &__separator {
         display: flex;
         align-items: center;
@@ -66,6 +77,8 @@
         padding-inline: calc(var(--e-space-base, 4px) * 4);
         padding-top: calc(var(--e-space-base) * 2);
         padding-bottom: calc(var(--e-space-base) * 2);
+        max-width: 60px;
+        text-align: center;
     }
 
     &__field-icon {
@@ -76,9 +89,6 @@
     }
 
     &.e-field--label-floating:not(.e-field--label-inline) {
-        .e-time-picker__content {
-            align-items: end;
-        }
 
         .e-time-picker__separator {
             padding-bottom: 0.35rem;

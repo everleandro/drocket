@@ -73,7 +73,7 @@
                     <EForm ref="formRef" label-behavior="floating" v-model="formValid" class="demo-form"
                         field-color="cyan-800" label-min-width="136" dense @submit="handleSubmit">
                         <ETextfield v-model.trim="form.fullName" label-behavior="floating" :cols="12" :md="6" clearable
-                            label="Nombre completo" placeholder="Ada Lovelace"
+                            label="Nombre completo" placeholder="Ada Lovelace" :prepend-icon="iconFactory.arrowRight"
                             detail="Se usa para personalizar la experiencia." :rules="nameRules" />
 
                         <ETextfield v-model.trim="form.email" label-behavior="floating" :cols="12" :md="6" clearable

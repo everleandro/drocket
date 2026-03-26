@@ -1,5 +1,6 @@
 import type { ColProps } from "./grid";
 import type { IconPath } from "./icon";
+import type { CSSProperties } from "vue";
 
 export type FieldValidationResult = true | string;
 export type FieldLabelBehavior = "static" | "floating";
@@ -32,6 +33,7 @@ export interface FieldBaseProps<TValue = unknown> extends ColProps {
   color?: string;
   detailErrors?: Array<string>;
   detailsOnMessageOnly?: boolean;
+  inputAlign?: CSSProperties['textAlign'];
   labelMinWidth?: string | number;
   rules?: Array<FieldRule<TValue>>;
 }
@@ -39,7 +41,6 @@ export interface FieldBaseProps<TValue = unknown> extends ColProps {
 export interface UseFieldProps<TValue = unknown>
   extends FieldBaseProps<TValue> {
   clearable?: boolean;
-  inputAlign?: string;
   modelValue?: TValue;
 }
 
