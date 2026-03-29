@@ -12,6 +12,7 @@
 import { ComputedRef, Ref, computed, onMounted, onBeforeUnmount, onUnmounted, ref, watch, useSlots, nextTick } from 'vue'
 import { BarProps } from '@/types'
 import { useLayout, useResolvedColor } from '@/composables'
+import { normalizeCssSize } from '@/utils/style'
 
 let el: Ref<HTMLHeadElement | null> = ref(null)
 let resizeObserver: ResizeObserver | null = null
@@ -27,7 +28,7 @@ const { colorStyles } = useResolvedColor({
     contrastVar: '--e-bar-color',
 })
 
-watch(() => [props.clipped, props.fixed, props.absolute, props.app, props.dense], () => {
+watch(() => [props.clipped, props.fixed, props.absolute, props.app, props.dense, computedHeight.value], () => {
     nextTick(() => {
         refreshLayoutStyle()
     })
@@ -68,12 +69,7 @@ const barClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     return classes
 })
 const computedHeight = computed(() => {
-    if (typeof props.height === 'number') {
-        return `${props.height}px`
-    } else if (typeof props.height === 'string' && props.height.length === parseInt(props.height, 10).toString().length) {
-        return `${props.height}px`
-    }
-    return props.dense ? '48px' : '64px'
+    return normalizeCssSize(props.height) || (props.dense ? '48px' : '64px')
 })
 
 const style = computed((): Record<string, string> => {
