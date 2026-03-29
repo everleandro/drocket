@@ -18,6 +18,10 @@ export const mainLinks = [
         to: "/#actions-demo",
       },
       {
+        text: "Checkbox",
+        to: "/#forms-demo",
+      },
+      {
         text: "Chip",
         to: "/#feedback-demo",
       },
@@ -50,11 +54,19 @@ export const mainLinks = [
         to: "/#forms-demo",
       },
       {
+        text: "Radio",
+        to: "/#forms-demo",
+      },
+      {
         text: "Textfield",
         to: "/#forms-demo",
       },
       {
         text: "Select",
+        to: "/#forms-demo",
+      },
+      {
+        text: "Switch",
         to: "/#forms-demo",
       },
       {

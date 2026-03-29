@@ -35,6 +35,7 @@ export type {
 
 export type { TimePickerEmits, TimePickerProps } from "./time-picker";
 export type { SwitchEmits, SwitchProps, SwitchValue } from "./switch";
+export type { CheckboxEmits, CheckboxProps, CheckboxValue } from "./checkbox";
 
 export type {
   EForm,

@@ -181,7 +181,7 @@ const timePickerClass = computed(() => {
 const resolvedInputAlign = computed(() => props.inputAlign ?? (shouldFloatLabel.value ? 'start' : 'end'))
 
 const timePickerContentClass = computed(() => [
-  "e-time-picker__content e-field__slot-field-info-wrapper",
+  "e-time-picker__content  e-field__field-control",
   `e-time-picker__content--${resolvedInputAlign.value}`,
 ])
 

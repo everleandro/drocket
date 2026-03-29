@@ -1,9 +1,14 @@
 .e-checkbox-field {
+    --e-icon-color: var(--e-field-color);
+
     label {
         flex-grow: 1;
     }
 
-    .e-field__selection-control {
-        margin-top: 12px;
+
+    &--active {
+        .e-field__selection-control {
+            color: var(--e-field-color, currentColor);
+        }
     }
 }

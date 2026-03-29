@@ -6,7 +6,7 @@
                 <label class="e-label" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
-                <div class="e-field__selection-control" :data-focused="focused">
+                <div class="e-field__selection-control e-field__control-wrapper" :data-focused="focused">
                     <input ref="input" v-model="checkedModel" :value="trueValue" :aria-checked="checkedModel" :id="id" role="switch" type="checkbox"
                         :disabled="isControlNonInteractive" :aria-invalid="hasError" :aria-describedby="detailsId" :aria-disabled="isControlNonInteractive"
                         :aria-readonly="isReadonly" :aria-busy="isLoading || undefined" @focus="handleFocus" @blur="handleBlur" />

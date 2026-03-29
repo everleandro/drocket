@@ -177,10 +177,10 @@
                         <div class="radio-lab__header">
                             <div>
                                 <p class="section-kicker">Radio Group</p>
-                                <h2>Casos base para ERadioGroup</h2>
+                                <h2>Casos base para ERadioGroup y ECheckbox</h2>
                             </div>
                             <p class="table-lab__copy">
-                                Esta seccion sirve para probar seleccion simple,
+                                Esta seccion sirve para probar selection controls,
                                 integracion con <strong>EForm</strong>, herencia de estados
                                 y el comportamiento de <strong>labelBehavior</strong> en modo row.
                             </p>
@@ -214,6 +214,21 @@
                             </ERadioGroup>
                         </EForm>
 
+                        <EForm class="radio-demo-form" field-color="teal-900" label-behavior="floating" dense>
+                            <ECheckbox v-model="checkboxState.termsAccepted" :cols="12" :md="4"
+                                label="Acepto terminos"
+                                detail="Caso booleano simple para revisar color, focus y detalles." />
+
+                            <ECheckbox v-model="checkboxState.releaseChecklist" :cols="12" :md="4"
+                                label="Checklist de release"
+                                detail="Usa valores custom ready/hold para probar modelValue."
+                                color="secondary" true-value="ready" false-value="hold" />
+
+                            <ECheckbox v-model="checkboxState.readonlyAudit" :cols="12" :md="4" readonly
+                                label="Auditoria readonly"
+                                detail="Sirve para comprobar que readonly mantiene el valor." />
+                        </EForm>
+
                         <div class="radio-lab__summary">
                             <div>
                                 <span>Canal</span>
@@ -226,6 +241,18 @@
                             <div>
                                 <span>Aprobacion</span>
                                 <strong>{{ radioState.approvalStage }}</strong>
+                            </div>
+                            <div>
+                                <span>Terminos</span>
+                                <strong>{{ checkboxState.termsAccepted ? "Aceptados" : "Pendientes" }}</strong>
+                            </div>
+                            <div>
+                                <span>Release checklist</span>
+                                <strong>{{ checkboxState.releaseChecklist }}</strong>
+                            </div>
+                            <div>
+                                <span>Readonly</span>
+                                <strong>{{ checkboxState.readonlyAudit ? "On" : "Off" }}</strong>
                             </div>
                         </div>
                     </div>
@@ -516,6 +543,7 @@ import { computed, reactive, ref } from "vue";
 
 import EButton from "../../src/components/button/index.vue";
 import ECard from "../../src/components/card/index.vue";
+import ECheckbox from "../../src/components/form/checkbox/index.vue";
 import EForm from "../../src/components/form/form.vue";
 import ERadio from "../../src/components/form/radio/index.vue";
 import ERadioGroup from "../../src/components/form/radio/group.vue";
@@ -588,6 +616,12 @@ type RadioDemoModel = {
     approvalStage: string;
 };
 
+type CheckboxDemoModel = {
+    termsAccepted: boolean;
+    releaseChecklist: string;
+    readonlyAudit: boolean;
+};
+
 type TextFieldValue = string | number | null;
 
 type TextFieldValueEventPayload<EventType extends Event = Event> = {
@@ -642,6 +676,12 @@ const createInitialRadioState = (): RadioDemoModel => ({
     contactChannel: "slack",
     releaseTrack: "beta",
     approvalStage: "pending",
+});
+
+const createInitialCheckboxState = (): CheckboxDemoModel => ({
+    termsAccepted: true,
+    releaseChecklist: "hold",
+    readonlyAudit: true,
 });
 
 const roleOptions = [
@@ -707,6 +747,7 @@ const tintedTableForm = reactive<TintedTableFormModel>({
 const timePickerState = reactive<TimePickerDemoModel>(createInitialTimePickerState());
 const switchState = reactive<SwitchDemoModel>(createInitialSwitchState());
 const radioState = reactive<RadioDemoModel>(createInitialRadioState());
+const checkboxState = reactive<CheckboxDemoModel>(createInitialCheckboxState());
 const eventSequence = ref(0);
 const eventLog = ref<Array<EventLogEntry>>([]);
 const submitState = reactive<SubmitState>({

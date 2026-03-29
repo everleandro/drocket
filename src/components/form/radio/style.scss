@@ -3,7 +3,6 @@
   display: flex;
   height: 2.5rem;
   outline: none;
-  --e-field-color: var(--radio-group-color, var(--e-contrast-surface-1, currentColor));
   --e-icon-color: var(--e-field-color);
 
   .e-field__selection-control {
@@ -17,6 +16,7 @@
   }
 
   label.e-label {
+    margin-top: 0;
     align-self: center;
   }
 }

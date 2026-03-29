@@ -1,17 +1,12 @@
 <template>
-    <div :class="componentClass">
+    <div :class="gridColClass">
         <slot></slot>
     </div>
 </template>
 <script lang="ts" setup>
 import { useGridCol } from "@/composables/grid-col"
-import { computed } from "vue";
+import type { ColProps } from "@/types"
 
-const props = defineProps<{
-    cols?: string | number; xs?: string | number; sm?: string | number;
-    md?: string | number; lg?: string | number; xl?: string | number;
-}>()
+const props = defineProps<ColProps>()
 const { gridColClass } = useGridCol(props, 'e-field')
-
-const componentClass = computed(() => gridColClass.value)
 </script>

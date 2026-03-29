@@ -13,7 +13,7 @@
                     <slot name="label"> {{ label }} </slot>
                 </label>
                 <div role="radiogroup" :aria-labelledby="labelId" :aria-describedby="detailsId" :aria-invalid="hasError"
-                    :aria-disabled="isDisabled" :aria-readonly="isReadonly" class="e-field--radio-group__field e-field__slot-field-info-wrapper">
+                    :aria-disabled="isDisabled" :aria-readonly="isReadonly" class="e-field--radio-group__field e-field--selection-controls e-field__control-wrapper">
                     <slot></slot>
                 </div>
                 <div v-if="!outlined && !flat" class="e-field__line"></div>
@@ -49,12 +49,15 @@ const { fieldClass, id, isDisabled, isReadonly, isLabelFloating, shouldFloatLabe
 
 const labelId = computed(() => `${id}-label`)
 const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined)
-const shouldRowFloatLabel = computed(() => Boolean(props.row && shouldFloatLabel.value))
 
-const { gridColClass } = useGridCol(props, 'e-field')
+const { gridColClass } = useGridCol(props)
 
 const radioGroupClass = computed(() => {
-    const result = [...fieldClass.value, 'e-field--selection-controls e-field e-field--radio-group', ...gridColClass.value]
+    const result = [
+        ...fieldClass.value,
+        'e-field--radio-group',
+        ...gridColClass.value.filter((className) => className !== 'e-field'),
+    ]
     props.row ? result.push('e-field--radio-group--row') : result.push('e-field--radio-group--column')
     return result
 })
