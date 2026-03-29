@@ -40,7 +40,7 @@
 
     &__content {
         grid-area: field;
-        align-items: center;
+        align-items: flex-end;
         display: flex;
         min-width: 0;
         width: 100%;
@@ -70,8 +70,6 @@
     input[data-hours],
     input[data-minutes] {
         padding-inline: calc(var(--e-space-base, 4px) * 4);
-        padding-top: calc(var(--e-space-base) * 2);
-        padding-bottom: calc(var(--e-space-base) * 2);
         max-width: 60px;
         text-align: center;
         text-align: inherit;
@@ -84,13 +82,7 @@
         height: 100%;
     }
 
-    &.e-field--label-floating:not(.e-field--label-inline) {
 
-        .e-time-picker__separator {
-            padding-bottom: 0.35rem;
-            padding-top: 1.5rem;
-        }
-    }
 
     &__menu-content {
         padding: 0;

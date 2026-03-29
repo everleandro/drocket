@@ -1,9 +1,10 @@
 .e-radio {
   align-items: center;
   display: flex;
-  height: auto;
+  height: 2.5rem;
   outline: none;
   --e-field-color: var(--radio-group-color, var(--e-contrast-surface-1, currentColor));
+  --e-icon-color: var(--e-field-color);
 
   .e-field__selection-control {
     color: inherit;
@@ -38,15 +39,6 @@
 
 
 
-    .e-field__slot {
-      height: auto;
-    }
-
-    .e-radio {
-      &:not(:last-child):not(:only-child) {
-        margin-bottom: 16px;
-      }
-    }
 
     .e-field--radio-group__field {
       flex-direction: column;

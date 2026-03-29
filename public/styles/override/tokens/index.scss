@@ -16,6 +16,7 @@
 
 @use "./foundation/layout" as layout;
 @use "./components/button" as button;
+@use "./components/chip" as chip;
 @use "./components/icon" as icon;
 @use "./components/list" as list;
 
@@ -47,5 +48,12 @@ $theme-base-css-var-groups: (
   "e-list-item-icon-size": list.$list-item-icon-size,
   "e-list-item-dense": list.$list-item-dense,
   "e-list-item-state": list.$list-item-states,
+  "e-chip-font-size": chip.$chip-font-sizes,
+  "e-chip-height": chip.$chip-height,
+  "e-chip-padding-x": chip.$chip-padding-x,
+  "e-chip-content-padding-x": chip.$chip-content-padding-x,
+  "e-chip-edge-padding-x": chip.$chip-edge-padding-x,
+  "e-chip-avatar-size": chip.$chip-avatar-size,
+  "e-chip-icon-size": chip.$chip-icon-size,
   "e-elevation": layout.$elevation,
 ) !default;

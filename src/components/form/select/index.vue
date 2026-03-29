@@ -17,7 +17,7 @@
                                 'e-label',
                                 {
                                     'e-label--floating': isLabelFloating,
-                                    'e-label--floated': shouldFloatLabel,
+                                    'e-label--floated': shouldFloatSelectLabel,
                                 },
                             ]" :style="labelStyle">
                                 <slot name="label"> {{ label }}</slot>
@@ -36,7 +36,7 @@
                                         :key="index" :style="selectionStyle">
                                         <slot name="selection" :selection="selectionItem(itemValue)"
                                             :attrs="selectionAttrs(itemValue)">
-                                            <EChip v-if="chip" :closable="true" :clickable="isSelectedChipIndex(index)" :size="chipSize"
+                                            <EChip v-if="chip" :closable="true" :clickable="isSelectedChipIndex(index)" 
                                                 :selected="isSelectedChipIndex(index)" @click:close="handleItemClick(selectionItem(itemValue))"
                                                 :color="color">
                                                 {{ selectedText(itemValue) }}
@@ -208,8 +208,10 @@ const chipSize = computed(() => {
 const selectClass = computed(() => {
     const result = [...fieldClass.value, 'e-select', ...gridColClass.value]
     opened.value && result.push('e-select--is-open')
+    shouldFloatSelectLabel.value && result.push('e-field--label-floated')
     props.itemCol && result.push('e-select--columns-variant')
     props.multiple && result.push('e-select--multiple')
+    props.chip && result.push('e-select--chip')
     props.autocomplete && result.push('e-select--autocomplete')
     props.loading && result.push('e-select--loading')
     return result
@@ -236,11 +238,19 @@ const ariaAutocomplete = computed((): 'list' | 'none' => {
     return props.autocomplete ? 'list' : 'none'
 })
 
+const hasSearchValue = computed((): boolean => {
+    return `${props.search ?? ''}`.length > 0
+})
+
+const shouldFloatSelectLabel = computed((): boolean => {
+    return isLabelFloating.value && (focused.value || hasSearchValue.value || !empty.value)
+})
+
 const resolvedPlaceholder = computed(() => {
     if (!props.placeholder) return undefined
     if (!isLabelFloating.value) return props.placeholder
 
-    return shouldFloatLabel.value ? props.placeholder : undefined
+    return shouldFloatSelectLabel.value ? props.placeholder : undefined
 })
 
 const hasObjectItems = computed((): boolean => isItemObject(props.items[0]))

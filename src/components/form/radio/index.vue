@@ -18,7 +18,7 @@
             <div v-ripple="{ center: true }" class="e-field__selection-ripple">
             </div>
         </div>
-        <label class="e-label" :for="id" :labelStyle="labelStyle">
+        <label class="e-label ignore-field-color" :for="id" :labelStyle="labelStyle">
             <slot name="label"> {{ label }} </slot>
         </label>
     </div>

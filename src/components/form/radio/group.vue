@@ -1,5 +1,5 @@
 <template>
-    <div :class="radioGroupClass" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
+    <div :class="radioGroupClass" :style="fieldStyle" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
         <div class="e-field__control">
             <div class="e-field__slot ">
                 <div v-if="showOverlay" class="e-field__overlay"></div>
@@ -13,12 +13,12 @@
                     <slot name="label"> {{ label }} </slot>
                 </label>
                 <div role="radiogroup" :aria-labelledby="labelId" :aria-describedby="detailsId" :aria-invalid="hasError"
-                    :aria-disabled="isDisabled" :aria-readonly="isReadonly" class="e-field--radio-group__field">
+                    :aria-disabled="isDisabled" :aria-readonly="isReadonly" class="e-field--radio-group__field e-field__slot-field-info-wrapper">
                     <slot></slot>
                 </div>
                 <div v-if="!outlined && !flat" class="e-field__line"></div>
             </div>
-            <EDetails :id="detailsId" :details="details" :hasError="hasError" :modelValue="modelValue" :showDetails="showDetails" />
+            <EDetails :id="detailsId" :details="details" :hasError="hasError" :model-value="modelValue" :show-details="showDetails" />
         </div>
     </div>
 </template>
@@ -45,7 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { fieldClass, id, isDisabled, isReadonly, isLabelFloating, shouldFloatLabel, showDetails, hasError,
-    handleBlur, details, labelStyle, handleHover, handleFocus, configuration } = useField()
+    handleBlur, details, labelStyle, handleHover, handleFocus, configuration,fieldStyle } = useField()
 
 const labelId = computed(() => `${id}-label`)
 const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined)

@@ -1,12 +1,18 @@
 .e-select {
   .e-field__icon.e-field__icon--clear {
     .e-icon {
-      font-size: var(--e-icon-close-font-size, 24px);
+      font-size: var(--e-icon-close-font-size, 1.5rem);
+    }
+  }
+
+  &--chip {
+    .e-chip--size-default {
+      --e-chip-height: var(--e-field-chip-height);
     }
   }
 
   .flip-icon {
-    font-size: 24px;
+    font-size: 1.5rem;
     transition: transform 0.3s ease;
   }
 
@@ -109,7 +115,7 @@
     }
   }
 
- 
+
 
   &--columns-variant {
     .e-list {
@@ -124,12 +130,14 @@
   }
 
   &--autocomplete {
-    &.e-field input[aria-readonly="false"] {
-      position: relative;
-      pointer-events: all;
-      max-width: unset;
-      min-width: 50%;
-      flex: 1 1 auto;
+    &.e-select--is-open {
+      &.e-field input[aria-readonly="false"] {
+        position: relative;
+        pointer-events: all;
+        max-width: unset;
+        min-width: 50%;
+        flex: 1 1 auto;
+      }
     }
   }
 
