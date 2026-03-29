@@ -10,10 +10,16 @@
     letter-spacing: normal;
     max-width: 100%;
     text-align: left;
+    --field-slot-items-padding-top: var(--e-field-slot-padding-base);
 
     label {
         color: var(--e-field-label);
         white-space: nowrap;
+    }
+
+    &__selection-control {
+        margin-right: 20px;
+        align-self: center;
     }
 
     .e-btn--text.e-btn--no-invert-color {
@@ -23,6 +29,7 @@
     &--dense {
         --e-field-label-float-y: 0.3rem;
         --e-field-label-float-scale: 0.74;
+        --e-field-height: var(--e-field-height-dense);
 
         .e-field__slot {
             margin-bottom: 0;
@@ -30,10 +37,15 @@
     }
 
     input {
-        line-height: 20px;
-        padding: 0.5rem 0 0.5rem 0.5rem;
         min-width: 0;
         font-size: 1rem;
+    }
+
+    .e-field__slot-field-info-wrapper {
+        line-height: var(--e-field-input-line-height, 1.25rem);
+        padding-top: var(--field-slot-items-padding-top);
+        padding-bottom: var(--e-field-slot-padding-base);
+        padding-left: var(--e-field-slot-padding-base);
     }
 
     &__line {
@@ -150,8 +162,10 @@
 
     .e-label {
         font-weight: 400;
-        line-height: 18px;
-        margin-top: 15px;
+        line-height: var(--e-field-label-line-height, 1.125rem);
+        --field-mid: calc(var(--e-field-height, 3.25rem) / 2);
+        --label-mid: calc(var(--e-field-label-line-height, 1.125rem) / 2);
+        margin-top: calc(var(--field-mid) - var(--label-mid));
         margin-bottom: 0;
         align-self: flex-start;
         backface-visibility: hidden;
@@ -334,9 +348,8 @@
         max-width: 100%;
         color: inherit;
         display: flex;
-        height: 3rem;
         padding: 0 0.75rem;
-        min-height: inherit;
+        height: var(--e-field-height, 3.25rem);
         position: relative;
         transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
         width: 100%;
@@ -397,16 +410,9 @@
         }
     }
 
-    &--label-floating:not(.e-field--label-inline) {
-        .e-field__slot {
-            height: auto;
-            min-height: 3.75rem;
-            width: auto;
-        }
-
-        .e-field__control {
-            min-height: 3.75rem;
-        }
+    &--label-floating {
+        --e-field-height: var(--e-field-height-default-with-label-floating);
+        --field-slot-items-padding-top: calc(var(--e-field-height) - var(--e-field-input-line-height) - var(--e-field-slot-padding-base) );
 
         .e-field__field {
             position: relative;
@@ -430,15 +436,6 @@
             z-index: 1;
         }
 
-        input,
-        textarea,
-        select,
-        .e-field__prefix,
-        .e-field__suffix {
-            padding-top: 1.5rem;
-            padding-bottom: 0.35rem;
-        }
-
         .e-field__prefix,
         .e-field__suffix {
             opacity: var(--e-field-affix-opacity, 0);
@@ -459,13 +456,7 @@
     }
 
     &--dense.e-field--label-floating {
-        .e-field__slot {
-            min-height: 3.25rem;
-        }
-
-        .e-field__control {
-            min-height: 3.25rem;
-        }
+        --e-field-height: var(--e-field-height-dense-with-label-floating);
     }
 
     .e-counter {

@@ -25,7 +25,7 @@
                             <div v-if="prefix" class="e-field__prefix" aria-hidden="true" @click="focus">
                                 {{ prefix }}
                             </div>
-                            <div class="e-select__selections">
+                            <div class="e-select__selections e-field__slot-field-info-wrapper">
                                 <div v-if="showPlaceholderSelection" class="e-select__selection" :style="selectionStyle">
                                     <span class="e-select__selection-placeholder">
                                         {{ resolvedPlaceholder }}
@@ -36,7 +36,7 @@
                                         :key="index" :style="selectionStyle">
                                         <slot name="selection" :selection="selectionItem(itemValue)"
                                             :attrs="selectionAttrs(itemValue)">
-                                            <EChip v-if="chip" :closable="true" :clickable="isSelectedChipIndex(index)"
+                                            <EChip v-if="chip" :closable="true" :clickable="isSelectedChipIndex(index)" :size="chipSize"
                                                 :selected="isSelectedChipIndex(index)" @click:close="handleItemClick(selectionItem(itemValue))"
                                                 :color="color">
                                                 {{ selectedText(itemValue) }}
@@ -199,6 +199,10 @@ watch(() => props.loading, (val: boolean) => {
 
 const lineStyle = computed(() => {
     return props.lineWidth ? { '--v-field-border-width': `${props.lineWidth}px` } : {}
+})
+
+const chipSize = computed(() => {
+    return (props.chip && props.dense) ? 'x-small' : 'small'
 })
 
 const selectClass = computed(() => {

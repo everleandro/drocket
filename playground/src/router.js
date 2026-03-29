@@ -4,11 +4,13 @@ import CardView from './CardView.vue';
 import FormView from './FormView.vue';
 import MenuView from './MenuView.vue';
 import PaletteView from './PaletteView.vue';
+import RadioView from './RadioView.vue';
 
 const routes = [
   { path: '/', component: App },
   { path: '/card', component: CardView },
   { path: '/form', component: FormView },
+  { path: '/radio', component: RadioView },
   { path: '/menu', component: MenuView },
   { path: '/palette', component: PaletteView },
 ];

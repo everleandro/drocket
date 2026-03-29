@@ -10,7 +10,74 @@
                 otros componentes.
             </p>
         </div>
+        <e-card class="p-4" elevation="md">
 
+            <EForm field-color="teal-900">
+                <ESelect v-model="selectState.role" :cols="12" :md="6" clearable label="Rol principal"
+                    placeholder="Selecciona un rol" detail="dense" :items="roleOptions" />
+
+                <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12" :md="6"
+                    multiple chip clearable label="floating dense multiple" placeholder="Elige una o varias tecnologias"
+                    autocomplete label-behavior="floating" dense
+                    detail="Seleccion multiple con chips y cierre individual." :items="filteredStackOptions" />
+
+                <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12" :md="6"
+                    multiple chip clearable label="floating chip multiple" placeholder="Elige una o varias tecnologias"
+                    autocomplete label-behavior="floating"
+                    detail="Seleccion multiple con chips y cierre individual." :items="filteredStackOptions" />
+
+                <ESelect v-model="selectState.location" v-model:search="selectState.locationSearch" :cols="12"
+                    autocomplete clearable label="default" placeholder="Escribe para filtrar"
+                    detail="Autocomplete con filtro local usando update:search." :items="filteredLocationOptions" />
+
+                <ESelect v-model="selectState.stack2" :cols="12" :md="6" clearable label="default floating"
+                    label-behavior="floating" placeholder="Elige una o varias tecnologias"
+                    detail="Seleccion multiple sin chips." :items="stackOptions2" />
+
+            </EForm>
+        </e-card>
+
+        <e-card>
+            <EForm ref="formRef" v-model="formValid" class="demo-form" field-color="cyan-800" label-min-width="136"
+                @submit="handleSubmit">
+                <ETextfield v-model.trim="form.fullName" :cols="12" :md="6" clearable dense label="dense"
+                    placeholder="Ada Lovelace" :prepend-icon="iconFactory.arrowRight"
+                    detail="Se usa para personalizar la experiencia." :rules="nameRules" />
+
+                <ETextfield v-model.trim="form.email" label-behavior="floating" :cols="12" :md="6" clearable dense
+                    label="dense floating" placeholder="ada@analytical.engine" autocomplete="email"
+                    detail="Te enviaremos confirmaciones y alertas importantes." :rules="emailRules" />
+
+                <ETextfield v-model="form.company" :cols="12" :md="6" label="default"
+                    placeholder="Analytical Engines Lab" prepend-icon=""
+                    detail="Prueba label, helper message y comportamiento ." :rules="companyRules" />
+
+                <ETextfield v-model.number="form.hourlyRate" :cols="12" :md="6" label="default floating" prefix="$"
+                    label-behavior="floating" suffix="USD" placeholder="120" detail="Solo numeros, sin separadores."
+                    :rules="rateRules" />
+
+                <ETextfield v-model="form.username" :cols="12" clearable label="Identificador publico" prefix="@"
+                    placeholder="ada-l" detail="Debe ser unico y sin espacios." :rules="usernameRules"
+                    @input="pushEvent('input', $event)" @change="pushEvent('change', $event)"
+                    @keydown="pushKeyboardEvent('keydown', $event)" @keyup="pushKeyboardEvent('keyup', $event)"
+                    @keydown:enter="pushKeyboardEvent('keydown:enter', $event)" />
+
+                <ETextfield v-model="form.phone" :cols="12" :md="6" clearable label="Telefono"
+                    placeholder="+34 600 000 000" detail="Ejemplo de mascara libre con validacion simple."
+                    :rules="phoneRules" />
+
+                <ETextfield v-model="form.website" :cols="12" :md="6" clearable label="Sitio o portfolio"
+                    placeholder="https://portfolio.dev" detail="Puedes dejarlo vacio o usar una URL valida."
+                    :rules="websiteRules" />
+
+                <ETextfield v-model="form.notes" :cols="12" clearable counter :limit="160" label-behavior="floating"
+                    label="Notas para el equipo" placeholder="Objetivos, contexto, restricciones o ideas clave"
+                    detail="Aqui puedes probar contador, mensajes y clear." :rules="notesRules" />
+
+                <ETextfield v-model="form.inlineLabelValue" :cols="12" label="Codigo interno" placeholder="TF-ALPHA-01"
+                    detail="Prueba label inline y ancho minimo de etiqueta." :rules="inlineRules" />
+            </EForm>
+        </e-card>
         <ERow dense>
             <ECol :cols="12">
                 <ECard elevation="md" class="form-card">
@@ -31,13 +98,13 @@
                             <ETimePicker v-model="timePickerState.kickoff" :cols="12" :md="4" label-behavior="floating"
                                 label="Kickoff" detail="Caso base con pasos de 15 minutos." />
 
-                            <ETimePicker v-model="timePickerState.review" :cols="12" :md="4"
-                                label="Revision" color="teal-900" outlined :minutes-step="5" :prepend-icon="iconFactory.arrowRight"
+                            <ETimePicker v-model="timePickerState.review" :cols="12" :md="4" label="Revision"
+                                color="teal-900" outlined :minutes-step="5" :prepend-icon="iconFactory.arrowRight"
                                 detail="Variante outlined con ajustes mas finos." />
 
-                            <ETimePicker v-model="timePickerState.publish" :cols="12" :md="4" :append-icon="iconFactory.arrowRight"
-                                label="Publicacion" color="secondary" :hours-step="2"
-                                :minutes-step="30"
+                            <ETimePicker v-model="timePickerState.publish" :cols="12" :md="4"
+                                :append-icon="iconFactory.arrowRight" label="Publicacion" color="secondary"
+                                :hours-step="2" :minutes-step="30"
                                 detail="Prueba saltos mas grandes para ventanas prefijadas." />
                         </EForm>
 
@@ -70,19 +137,20 @@
                         </div>
 
                         <EForm class="switch-demo-form" field-color="teal-900" label-behavior="floating" dense>
-                            <ESwitch v-model="switchState.notifications" :cols="12" :md="4"
-                                label="Notificaciones" detail="Caso booleano simple para validar foco y helper text." />
+                            <ESwitch v-model="switchState.notifications" :cols="12" :md="4" label="Notificaciones"
+                                detail="Caso booleano simple para validar foco y helper text." />
 
-                            <ESwitch v-model="switchState.releaseGate" :cols="12" :md="4"
-                                label="Release gate" detail="Usa valores custom publish/draft para probar modelValue." color="secondary"
+                            <ESwitch v-model="switchState.releaseGate" :cols="12" :md="4" label="Release gate"
+                                detail="Usa valores custom publish/draft para probar modelValue." color="secondary"
                                 true-value="publish" false-value="draft" />
 
-                            <ESwitch v-model="switchState.analytics" :cols="12" :md="4"
-                                label="Analytics en vivo" detail="Bloqueado en loading para revisar disabled + spinner." color="cyan-800"
+                            <ESwitch v-model="switchState.analytics" :cols="12" :md="4" label="Analytics en vivo"
+                                detail="Bloqueado en loading para revisar disabled + spinner." color="cyan-800"
                                 :loading="true" :true-value="1" :false-value="0" />
 
                             <ESwitch v-model="switchState.readonlyPreview" :cols="12" readonly
-                                label="Preview solo lectura" detail="Sirve para comprobar que el valor no cambia al interactuar." />
+                                label="Preview solo lectura"
+                                detail="Sirve para comprobar que el valor no cambia al interactuar." />
                         </EForm>
 
                         <div class="switch-lab__summary">
@@ -101,6 +169,63 @@
                             <div>
                                 <span>Readonly</span>
                                 <strong>{{ switchState.readonlyPreview ? "On" : "Off" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="radio-lab">
+                        <div class="radio-lab__header">
+                            <div>
+                                <p class="section-kicker">Radio Group</p>
+                                <h2>Casos base para ERadioGroup</h2>
+                            </div>
+                            <p class="table-lab__copy">
+                                Esta seccion sirve para probar seleccion simple,
+                                integracion con <strong>EForm</strong>, herencia de estados
+                                y el comportamiento de <strong>labelBehavior</strong> en modo row.
+                            </p>
+                        </div>
+
+                        <EForm class="radio-demo-form" field-color="teal-900" label-behavior="floating" dense>
+                            <ERadioGroup v-model="radioState.contactChannel" :cols="12" :md="6" row
+                                label="Canal de contacto"
+                                detail="En modo row el label floating debe seguir el comportamiento del field.">
+                                <ERadio model-value="email" label="Email" />
+                                <ERadio model-value="slack" label="Slack" />
+                                <ERadio model-value="meet" label="Meet" />
+                            </ERadioGroup>
+
+                            <ERadioGroup v-model="radioState.releaseTrack" :cols="12" :md="6" label="Release track"
+                                detail="En columna el label se mantiene estatico aunque el form use floating."
+                                color="secondary">
+                                <ERadio model-value="stable" label="Stable" />
+                                <ERadio model-value="beta" label="Beta" />
+                                <ERadio model-value="canary" label="Canary" />
+                            </ERadioGroup>
+                        </EForm>
+
+                        <EForm class="radio-demo-form" field-color="cyan-800" disabled>
+                            <ERadioGroup v-model="radioState.approvalStage" :cols="12" row outlined
+                                label="Aprobacion final"
+                                detail="Este grupo hereda disabled desde el formulario para validar la integracion.">
+                                <ERadio model-value="pending" label="Pending" />
+                                <ERadio model-value="approved" label="Approved" />
+                                <ERadio model-value="rejected" label="Rejected" />
+                            </ERadioGroup>
+                        </EForm>
+
+                        <div class="radio-lab__summary">
+                            <div>
+                                <span>Canal</span>
+                                <strong>{{ radioState.contactChannel }}</strong>
+                            </div>
+                            <div>
+                                <span>Track</span>
+                                <strong>{{ radioState.releaseTrack }}</strong>
+                            </div>
+                            <div>
+                                <span>Aprobacion</span>
+                                <strong>{{ radioState.approvalStage }}</strong>
                             </div>
                         </div>
                     </div>
@@ -185,9 +310,11 @@
                                 placeholder="Selecciona un rol" detail="Seleccion simple usando items con text/value."
                                 :items="roleOptions" />
 
-                            <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12" :md="6" multiple chip clearable
-                                label="Stack activo" placeholder="Elige una o varias tecnologias" autocomplete label-behavior="floating"
-                                detail="Seleccion multiple con chips y cierre individual." :items="filteredStackOptions" />
+                            <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12"
+                                :md="6" multiple chip clearable label="Stack activo"
+                                placeholder="Elige una o varias tecnologias" autocomplete label-behavior="floating"
+                                detail="Seleccion multiple con chips y cierre individual."
+                                :items="filteredStackOptions" />
 
                             <ESelect v-model="selectState.location" v-model:search="selectState.locationSearch"
                                 :cols="12" autocomplete clearable label="Ubicacion del equipo"
@@ -217,7 +344,7 @@
                         </div>
                     </div>
 
-                    
+
 
                     <div class="table-lab">
                         <div class="table-lab__header">
@@ -313,7 +440,7 @@
                                 <span>Validez</span>
                                 <strong>{{
                                     formValid ? "Valido" : "Con errores o incompleto"
-                                }}</strong>
+                                    }}</strong>
                             </div>
                             <div>
                                 <span>Nombre</span>
@@ -359,6 +486,12 @@
                     </ECard>
 
                     <ECard class="form-card" elevation="sm">
+                        <p class="section-kicker">Radio state</p>
+                        <h2>Estado del ejemplo</h2>
+                        <pre class="payload-preview">{{ radioPreview }}</pre>
+                    </ECard>
+
+                    <ECard class="form-card" elevation="sm">
                         <p class="section-kicker">Eventos</p>
                         <h2>Traza del textfield</h2>
                         <p class="event-note">
@@ -384,6 +517,8 @@ import { computed, reactive, ref } from "vue";
 import EButton from "../../src/components/button/index.vue";
 import ECard from "../../src/components/card/index.vue";
 import EForm from "../../src/components/form/form.vue";
+import ERadio from "../../src/components/form/radio/index.vue";
+import ERadioGroup from "../../src/components/form/radio/group.vue";
 import ESelect from "../../src/components/form/select/index.vue";
 import ESwitch from "../../src/components/form/switch/index.vue";
 import ETextfield from "../../src/components/form/textfield/index.vue";
@@ -447,6 +582,12 @@ type SwitchDemoModel = {
     readonlyPreview: boolean;
 };
 
+type RadioDemoModel = {
+    contactChannel: string;
+    releaseTrack: string;
+    approvalStage: string;
+};
+
 type TextFieldValue = string | number | null;
 
 type TextFieldValueEventPayload<EventType extends Event = Event> = {
@@ -495,6 +636,12 @@ const createInitialSwitchState = (): SwitchDemoModel => ({
     releaseGate: "draft",
     analytics: 0,
     readonlyPreview: true,
+});
+
+const createInitialRadioState = (): RadioDemoModel => ({
+    contactChannel: "slack",
+    releaseTrack: "beta",
+    approvalStage: "pending",
 });
 
 const roleOptions = [
@@ -559,6 +706,7 @@ const tintedTableForm = reactive<TintedTableFormModel>({
 });
 const timePickerState = reactive<TimePickerDemoModel>(createInitialTimePickerState());
 const switchState = reactive<SwitchDemoModel>(createInitialSwitchState());
+const radioState = reactive<RadioDemoModel>(createInitialRadioState());
 const eventSequence = ref(0);
 const eventLog = ref<Array<EventLogEntry>>([]);
 const submitState = reactive<SubmitState>({
@@ -793,6 +941,10 @@ const switchPreview = computed(() => {
     return JSON.stringify(switchState, null, 2);
 });
 
+const radioPreview = computed(() => {
+    return JSON.stringify(radioState, null, 2);
+});
+
 const handleValidate = async (): Promise<void> => {
     const valid = (await formRef.value?.validate?.()) ?? false;
 
@@ -815,6 +967,7 @@ const handleReset = (): void => {
     Object.assign(form, createInitialForm());
     Object.assign(timePickerState, createInitialTimePickerState());
     Object.assign(switchState, createInitialSwitchState());
+    Object.assign(radioState, createInitialRadioState());
     formRef.value?.reset?.();
     formValid.value = false;
     submitState.kind = "idle";
@@ -902,6 +1055,7 @@ const handleReset = (): void => {
 .select-lab,
 .time-picker-lab,
 .switch-lab,
+.radio-lab,
 .table-lab,
 .elevation-lab {
     border-top: 1px solid rgba(23, 32, 51, 0.08);
@@ -914,6 +1068,7 @@ const handleReset = (): void => {
 .select-lab__header,
 .time-picker-lab__header,
 .switch-lab__header,
+.radio-lab__header,
 .table-lab__header,
 .elevation-lab__header,
 .elevation-lab__meta {
@@ -939,6 +1094,12 @@ const handleReset = (): void => {
     padding: 16px;
 }
 
+.radio-demo-form {
+    border: 1px solid rgba(23, 32, 51, 0.08);
+    border-radius: 18px;
+    padding: 16px;
+}
+
 .select-lab__summary {
     display: grid;
     gap: 14px;
@@ -957,9 +1118,16 @@ const handleReset = (): void => {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.radio-lab__summary {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .select-lab__summary div,
 .time-picker-lab__summary div,
 .switch-lab__summary div,
+.radio-lab__summary div,
 .table-lab__panel {
     border: 1px solid rgba(23, 32, 51, 0.08);
     border-radius: 18px;
@@ -969,6 +1137,7 @@ const handleReset = (): void => {
 .select-lab__summary span,
 .time-picker-lab__summary span,
 .switch-lab__summary span,
+.radio-lab__summary span,
 .table-lab__label,
 .summary-grid span {
     color: #51617d;
@@ -983,6 +1152,7 @@ const handleReset = (): void => {
 .select-lab__summary strong,
 .time-picker-lab__summary strong,
 .switch-lab__summary strong,
+.radio-lab__summary strong,
 .summary-grid strong {
     color: #172033;
     font-size: 14px;
@@ -1114,7 +1284,8 @@ const handleReset = (): void => {
     .summary-grid,
     .select-lab__summary,
     .time-picker-lab__summary,
-    .switch-lab__summary {
+    .switch-lab__summary,
+    .radio-lab__summary {
         grid-template-columns: 1fr;
     }
 

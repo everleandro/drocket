@@ -2,7 +2,7 @@
     <div :class="switchClass" :style="fieldStyle" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
         <div class="e-field__control">
             <div class="e-field__slot" @click="handleSlotClick">
-                <div v-if="!hideOverlay" class="e-field__overlay"></div>
+                <div v-if="showOverlay" class="e-field__overlay"></div>
                 <label class="e-label" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
@@ -47,6 +47,7 @@ import { computed, ref } from "vue";
 const props = withDefaults(defineProps<SwitchProps>(), {
     falseValue: false,
     trueValue: true,
+    showOverlay: false,
 })
 const input = ref<HTMLInputElement | null>(null)
 

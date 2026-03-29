@@ -3,6 +3,17 @@
   display: flex;
   height: auto;
   outline: none;
+  --e-field-color: var(--radio-group-color, var(--e-contrast-surface-1, currentColor));
+
+  .e-field__selection-control {
+    color: inherit;
+  }
+
+  &--active {
+    .e-field__selection-control {
+      color: var(--e-field-color, currentColor);
+    }
+  }
 
   label.e-label {
     align-self: center;
@@ -12,16 +23,20 @@
 .e-field--radio-group {
 
   >.e-field__control>.e-field__slot {
-    >label {
+    >label:not(.e-label--floating) {
       padding-right: 8px;
     }
   }
 
   &--column {
-    >.e-field__control>.e-field__slot>label {
-      margin-top: -20px;
-      position: absolute;
+    &.e-field--label-floating {
+      .e-field--radio-group__field {
+        padding-top: 1.8rem;
+      }
+
     }
+
+
 
     .e-field__slot {
       height: auto;
@@ -45,15 +60,20 @@
     cursor: default;
     display: flex;
     width: 100%;
+
+
   }
 
   &--row {
-    .e-field__selection-control {
-      margin-top: 12px;
+    &.e-field--label-floating {
+      .e-field--radio-group__field {
+
+        padding-top: 1.25rem;
+      }
     }
 
     >.e-field__control>.e-field__slot {
-      >label {
+      >label:not(.e-label--floating) {
         display: block;
         flex: 1 1 100%;
       }
@@ -69,6 +89,7 @@
       flex-direction: row;
       flex-wrap: nowrap;
       flex: 1;
+
     }
   }
 }

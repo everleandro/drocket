@@ -44,7 +44,7 @@
             :value="inputValue"
             :readonly="isReadonly"
             :disabled="disabled"
-            class="input--text"
+            class="input--text e-field__slot-field-info-wrapper"
             :maxlength="limit"
             :style="inputStyle"
             :type="type"

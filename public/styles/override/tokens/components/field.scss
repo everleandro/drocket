@@ -1,5 +1,10 @@
+@use "sass:math";
 $field-hover-overlay-opacity: 0.04;
-$field-label-rest-y: 50%;
+
+
+
+$field-label-rest-y:50%;
+
 $field-label-float-y: 0.45rem;
 $field-label-float-scale: 0.78;
 $field-label-inline-offset: 0.5rem;
@@ -12,3 +17,12 @@ $field-color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
 $field-label: var(--e-field-rest-color);
 $field-input-placeholder: var(--e-field-placeholder-color);
 $field-border-radius: var(--e-border-radius-root, 4px);
+
+$field-height: 3.25rem;
+$field-height-dense: 3rem;
+$field-height-default-with-label-floating: 3.75rem;
+$field-height-dense-with-label-floating: 3.25rem;
+$field-label-line-height: 1.125rem;
+$field-slot-padding-base: 0.5rem;
+$field-input-line-height: 1.25rem;
+

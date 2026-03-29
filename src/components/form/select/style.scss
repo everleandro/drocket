@@ -47,10 +47,8 @@
     display: flex;
     flex: 1 1;
     flex-wrap: wrap;
-    line-height: 20px;
     max-width: 100%;
     min-width: 0;
-    padding: 0.5rem 0 0.5rem 0.5rem;
   }
 
   &__selection {
@@ -101,8 +99,6 @@
     }
 
     .e-field__slot {
-      height: unset;
-      min-height: 3rem;
       align-items: unset;
     }
 
@@ -113,12 +109,7 @@
     }
   }
 
-  &.e-field--label-floating:not(.e-field--label-inline) {
-    .e-select__selections {
-      padding-top: 1.5rem;
-      padding-bottom: 0.35rem;
-    }
-  }
+ 
 
   &--columns-variant {
     .e-list {
@@ -137,7 +128,6 @@
       position: relative;
       pointer-events: all;
       max-width: unset;
-      height: 2.5rem;
       min-width: 50%;
       flex: 1 1 auto;
     }

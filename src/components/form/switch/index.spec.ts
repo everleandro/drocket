@@ -3,6 +3,11 @@ import { defineComponent, h, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import ESwitch from "./index.vue";
 
+type FocusableInputElement = {
+  focus: () => void;
+  blur: () => void;
+};
+
 const EDetailsStub = defineComponent({
   name: "EDetails",
   props: {
@@ -76,14 +81,17 @@ describe("ESwitch", () => {
     await nextTick();
 
     const input = wrapper.get('input[role="switch"]');
+    const inputElement = input.element as unknown as FocusableInputElement;
     const selectionControl = wrapper.get(".e-field__selection-control");
 
     expect(selectionControl.attributes("data-focused")).toBe("false");
 
+    inputElement.focus();
     await input.trigger("focus");
     await nextTick();
     expect(selectionControl.attributes("data-focused")).toBe("true");
 
+    inputElement.blur();
     await input.trigger("blur");
     await nextTick();
     expect(selectionControl.attributes("data-focused")).toBe("false");

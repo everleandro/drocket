@@ -355,9 +355,14 @@ export function useField<TValue = unknown>(useFormInjection = true) {
   };
 
   const focus = (event?: FocusEvent): void => {
-    const element = getFocusableElement();
+    const eventTarget = event
+      ? resolveFocusableElement(event.target)
+      : undefined;
+    const element = eventTarget || getFocusableElement();
 
-    if (element) {
+    if (eventTarget) {
+      syncFocusedState(eventTarget);
+    } else if (element) {
       element.focus();
       syncFocusedState(element);
     } else {

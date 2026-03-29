@@ -1,8 +1,8 @@
 <template>
-    <div :class="radioClass" @click="changeModelValue(true)">
-        <div :class="['e-field__selection-control']" :data-focused="controlFocused">
-            <span aria-hidden="true" class="e-icon" :class="radioColor"><svg xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24" width="24" height="24 " role="img" aria-hidden="true" class="e-icon__svg">
+    <div :class="radioClass" :style="fieldStyle" @click="handleRadioClick">
+        <div :class="['e-field__selection-control']" :data-focused="focused">
+            <span aria-hidden="true" class="e-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                    width="24" height="24 " role="img" aria-hidden="true" class="e-icon__svg">
                     <path v-if="active"
                         d="M12,20C7.58,20 4,16.42 4,12C4,7.58 7.58,4 12,4C16.42,4 20,7.58 20,12C20,16.42 16.42,20 12,20M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,7C9.24,7 7,9.24 7,12C7,14.76 9.24,17 12,17C14.76,17 17,14.76 17,12C17,9.24 14.76,7 12,7Z">
                     </path>
@@ -11,69 +11,97 @@
                     </path>
                 </svg>
             </span>
-            <input v-if="mounted" ref="input" :aria-checked="active" :id="id" role="radio" type="radio" :name="id"
-                :value="modelValue" @input="changeModelValue()" @focus="handleFocus" @blur="handleBlur" />
+            <input ref="input" v-model="selectedModel" :aria-checked="active" :id="id" role="radio" type="radio"
+                :name="radioGroup.name" :value="modelValue" :disabled="isDisabled" :aria-disabled="isDisabled"
+                :aria-readonly="isReadonly" @focus="handleFocus" @blur="handleBlur" />
 
-            <div v-ripple="{ center: true }" :class="['e-field__selection-ripple', radioColor]">
+            <div v-ripple="{ center: true }" class="e-field__selection-ripple">
             </div>
         </div>
-        <label v-if="mounted" class="e-label" :for="id" :labelStyle="labelStyle">
+        <label class="e-label" :for="id" :labelStyle="labelStyle">
             <slot name="label"> {{ label }} </slot>
         </label>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, getCurrentInstance, inject, onMounted, ref } from "vue";
-import type { ERadioGroup, ERadioType } from "@/types"
+import { computed, getCurrentInstance, inject, onMounted, onUnmounted, ref } from "vue";
+import type { ERadioType } from "@/types"
 import { useField } from "@/composables/field"
+import { ripple } from "@/directives";
+import { RADIO_GROUP_KEY } from "./constants"
 
 export interface Props {
-    retainColor?: boolean;
-    isActive?: boolean;
-    disabled?: boolean; readonly?: boolean; label?: string | number;
-    modelValue: ERadioType; color?: string; labelMinWidth?: string;
+    label?: string | number;
+    modelValue: ERadioType;
 }
-const controlFocused = ref(false)
 const input = ref<HTMLInputElement>()
-const { fieldClass, id, labelStyle, setConfiguration, configuration, mounted } = useField(false)
+const { fieldClass, fieldStyle, focused, id, isDisabled, isReadonly, labelStyle, setConfiguration,
+    handleFocus: handleFieldFocus, handleBlur: handleFieldBlur } = useField(false)
 
-const radioGroup = inject<Partial<ERadioGroup> | undefined>("ERadioGroup", undefined);
+const radioGroup = inject(RADIO_GROUP_KEY, null);
+const vRipple = { ...ripple };
+if (!radioGroup) {
+    throw new Error("ERadio must be used within ERadioGroup.")
+}
 
 const props = defineProps<Props>()
 
-const radioClass = computed(() => [...fieldClass.value, 'e-radio'])
+const radioClass = computed(() => [...fieldClass.value, 'e-radio', { 'e-radio--active': active.value }])
+const isNonInteractive = computed(() => isDisabled.value || isReadonly.value)
 
-const radioColor = computed(() => {
-    const color = props.color || configuration.color
-    return color ? `${color}--text` : ''
+const selectedModel = computed({
+    get: () => radioGroup.modelValue.value,
+    set: (value: ERadioType) => {
+        if (isNonInteractive.value) {
+            if (input.value) input.value.checked = active.value
+            return
+        }
+
+        radioGroup.changeModelValue(value)
+    }
 })
 
 const active = computed(() => {
-    if (props.isActive !== undefined) return props.isActive;
-    return radioGroup?.modelValue?.value === props.modelValue
+    return selectedModel.value === props.modelValue
 })
+
+const isNativeTarget = (target: EventTarget | null): boolean => {
+    return target instanceof Element && Boolean(target.closest('input, label'))
+}
 
 const changeModelValue = (forceFocus = false): void => {
     forceFocus && input.value?.focus();
-    radioGroup?.changeModelValue?.(props.modelValue)
+    if (isNonInteractive.value) return
+    selectedModel.value = props.modelValue
+}
+
+const handleRadioClick = (event: MouseEvent): void => {
+    if (isNativeTarget(event.target)) return
+
+    changeModelValue(true)
 }
 
 const handleFocus = (evt: FocusEvent): void => {
-    controlFocused.value = true
-    radioGroup?.handleFocus?.(evt)
+    handleFieldFocus(evt)
+    radioGroup.handleFocus(evt)
 }
 
 const handleBlur = (evt: FocusEvent): void => {
-    controlFocused.value = false
-    radioGroup?.handleBlur?.(evt)
+    handleFieldBlur(evt)
+    radioGroup.handleBlur(evt)
 }
 
 const uid = getCurrentInstance()?.uid;
 
 onMounted(() => {
-    radioGroup?.bindRadio?.({ uid: uid || -1, setConfiguration, modelValue: props.modelValue });
+    radioGroup.bindRadio({ uid: uid || -1, setConfiguration, modelValue: props.modelValue });
 });
+
+onUnmounted(() => {
+    radioGroup.unbindRadio(uid || -1)
+})
 
 
 </script>
+<style lang="scss" src="./style.scss"></style>

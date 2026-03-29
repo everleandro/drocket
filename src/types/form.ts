@@ -30,6 +30,7 @@ export interface ERadioGroup {
   handleFocus: (value?: FocusEvent) => void;
   handleBlur: (value?: Event) => void;
   modelValue: ComputedRef<ERadioType>;
+  name: string;
 }
 
 export type ERadioType = string | number | undefined | null;
