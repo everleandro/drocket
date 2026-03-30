@@ -21,7 +21,7 @@ export interface Props {
     color?: string
     value?: number
 }
-const props = withDefaults(defineProps<Props>(), { height: 4, color: 'primary', value: 0, indeterminate: true })
+const props = withDefaults(defineProps<Props>(), { height: 4, color: 'primary', value: 0, indeterminate: false })
 const isIndeterminate = computed(() => Boolean(props.indeterminate))
 const normalizedValue = computed(() => {
     const parsed = Number(props.value)

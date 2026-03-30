@@ -12,6 +12,7 @@
             <router-link to="/form">Formulario</router-link>
             <router-link to="/progress">Progress</router-link>
             <router-link to="/radio">Radios</router-link>
+            <router-link to="/schedule">Schedule</router-link>
             <router-link to="/menu">Menu</router-link>
             <router-link to="/palette">Paleta</router-link>
         </nav>

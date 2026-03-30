@@ -14,6 +14,7 @@ Esta seccion documenta cada componente publico exportado por Drocket.
 - [Dialog (`EDialog`)](./dialog.md)
 - [Icon (`EIcon`)](./icon.md)
 - [List (`EList`, `EListItem`, `EListGroup`)](./list.md)
+- [Progress Linear (`EProgressLinear`)](./progress.md)
 
 ### Form Controls
 

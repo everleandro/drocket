@@ -18,7 +18,5 @@ html.dark,
   --e-app-background: #{map.get(setting.$semantic-color-tokens-dark, "surface-0")};
   --e-app-color: #{map.get(setting.$semantic-contrast-tokens-dark, "surface-0")};
 
-  // Schedule
-  --e-schedule-border-color: #{map.get(setting.$semantic-color-tokens-dark, "schedule-border")};
-  --e-schedule-bg: #{map.get(setting.$semantic-color-tokens-dark, "schedule-bg")};
+
 }

@@ -1,7 +1,8 @@
 @use '~/public/styles/_mixins.scss' as mixins;
 
 .e-schedule {
-  padding-top: var(--e-header-col-height, 65px);
+  color: var(--e-schedule-color, currentColor);
+  padding-top: var(--e-header-col-height, 4.0625rem);
   background: var(--e-schedule-bg, #ffffff);
   display: flex;
 
@@ -55,7 +56,12 @@
     }
 
     &-container {
+      appearance: none;
+      background: transparent;
+      border: 0;
       box-sizing: border-box;
+      cursor: pointer;
+      display: block;
       padding: 4px;
       height: 100%;
       width: 100%;
@@ -77,6 +83,11 @@
 
       &:hover::after {
         opacity: 0.1;
+      }
+
+      &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: -2px;
       }
 
       .event {
@@ -111,7 +122,7 @@
     }
   }
 
-  [role="cell"] {
+  &__cell {
     position: relative;
 
     text-align: center;
@@ -125,48 +136,46 @@
   }
 
   &__header {
-    color: var(--label);
+    color: var(--e-schedule-color, var(--label));
 
-    &[role="cell"] {
-      height: 0;
+    height: 0;
 
-      &>span {
-        display: block;
-        width: 100%;
-        margin: auto;
-        font-size: 26px;
-        font-weight: 400;
-        position: absolute;
-        bottom: 0;
-        z-index: 1;
-        height: calc(var(--e-header-col-height, 65px) + 10px);
-        padding-top: 10px;
-        background-color: var(--e-schedule-bg, #ffffff);
+    &>span {
+      display: block;
+      width: 100%;
+      margin: auto;
+      font-size: 26px;
+      font-weight: 400;
+      position: absolute;
+      bottom: 0;
+      z-index: 1;
+      height: calc(var(--e-header-col-height, 65px) + 10px);
+      padding-top: 10px;
+      background-color: var(--e-schedule-bg, #ffffff);
 
-        &.action-container {
-          display: flex;
+      &.action-container {
+        display: flex;
 
-          .e-btn {
-            height: 100%;
-            box-shadow: none;
-            flex: 1 1 50%;
-            color: currentColor;
-            padding: 0;
-            min-width: unset;
-            margin: 0;
-          }
+        .e-btn {
+          height: 100%;
+          box-shadow: none;
+          flex: 1 1 50%;
+          color: currentColor;
+          padding: 0;
+          min-width: unset;
+          margin: 0;
         }
       }
+    }
 
-      [data-day-of-week="true"] {
-        font-size: 12px;
-        display: block;
-        text-transform: uppercase;
-      }
+    [data-day-of-week="true"] {
+      font-size: 12px;
+      display: block;
+      text-transform: uppercase;
     }
   }
 
-  div[role="col"] {
+  &__column {
     flex: 1;
     background-color: var(--e-schedule-bg, #ffffff);
 
@@ -182,6 +191,7 @@
   }
 
   .hour-label {
+    color: var(--e-schedule-color, currentColor);
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -227,22 +237,21 @@
       position: sticky;
       top: var(--header-stiky-top);
     }
+
+    &:has(.tab-reverse-transition-enter-active),
+    &:has(.tab-reverse-transition-leave-active),
+    &:has(.tab-transition-enter-active),
+    &:has(.tab-transition-leave-active) {
+      .e-schedule__header {
+        position: relative;
+        top: 0;
+      }
+    }
   }
 
   &:has(.tab-reverse-transition-leave-active),
   &:has(.tab-transition-leave-active) {
     overflow: hidden;
-    position: relative;
-
-    .e-schedule__header {
-      position: relative;
-      top: 10px;
-    }
-
-    .e-schedule__body {
-      top: var(--e-header-col-height, 65px);
-      transition-duration: 0.3s !important;
-    }
   }
 
   &--loading {
@@ -250,18 +259,24 @@
     position: relative;
   }
 
+  &__empty-slot.e-btn {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    color: var(--e-schedule-color, currentColor);
+    cursor: pointer;
+  }
+
   .e-progress-linear {
     position: absolute;
-    top: 70px;
+    top: var(--e-header-col-height);
     z-index: 3;
   }
 
   @include mixins.xs {
-    div[role="col"] {
-      &.col-hour-info {
-        max-width: var(--e-hour-column-width-xs, 46px);
-        min-width: var(--e-hour-column-width-xs, 46px);
-      }
+    .e-schedule__column.col-hour-info {
+      max-width: var(--e-hour-column-width-xs, 46px);
+      min-width: var(--e-hour-column-width-xs, 46px);
     }
 
     &__body {
@@ -271,7 +286,7 @@
 
   @include mixins.xs {
     .e-schedule {
-      &__header[role="cell"] [data-day-of-week="true"] {
+      &__header [data-day-of-week="true"] {
         font-size: 11px;
         text-transform: capitalize;
       }

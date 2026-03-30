@@ -6,6 +6,7 @@ import MenuView from './MenuView.vue';
 import PaletteView from './PaletteView.vue';
 import ProgressView from './ProgressView.vue';
 import RadioView from './RadioView.vue';
+import ScheduleView from './ScheduleView.vue';
 
 const routes = [
   { path: '/', component: App },
@@ -13,6 +14,7 @@ const routes = [
   { path: '/form', component: FormView },
   { path: '/progress', component: ProgressView },
   { path: '/radio', component: RadioView },
+  { path: '/schedule', component: ScheduleView },
   { path: '/menu', component: MenuView },
   { path: '/palette', component: PaletteView },
 ];

@@ -2,83 +2,87 @@
 <template>
     <div class="e-schedule-container">
         <transition name="fade" mode="out-in">
-            <div :key="mode" :class="scheduleClass" :style="componentStyle">
+            <div :key="mode" :class="scheduleClass" :style="scheduleStyle" role="region"
+                aria-label="Schedule" :aria-busy="loading ? 'true' : 'false'">
                 <span>
                     <EProgressLinear v-show="loading" :indeterminate="loading" height="4" />
                 </span>
-                <div role="col" class="col-hour-info">
-                    <div role="cell" class="e-schedule__header">
-                        <span v-if="chunk(headerLabels).length > 1" :class="['action-container', `${color}--text`]">
-                            <button v-ripple class="e-btn" type="button" @click="changeSubPage('-')">
+                <div class="e-schedule__column col-hour-info">
+                    <div class="e-schedule__header e-schedule__cell">
+                        <span v-if="chunk(headerLabels).length > 1" class="action-container">
+                            <button v-ripple class="e-btn" type="button" aria-label="Previous schedule page"
+                                title="Previous schedule page" @click="changeSubPage('-')">
                                 <EIcon :icon="icon.arrowLeft" />
                             </button>
-                            <button v-ripple class="e-btn" type="button" @click="changeSubPage('+')">
+                            <button v-ripple class="e-btn" type="button" aria-label="Next schedule page"
+                                title="Next schedule page" @click="changeSubPage('+')">
                                 <EIcon :icon="icon.arrowRight" />
                             </button>
                         </span>
                         <span v-else></span>
                     </div>
-                    <div role="cell" v-for="(hour, hourIndex) in hourList" :key="hourIndex" class="e-schedule__hour">
+                    <div v-for="(hour, hourIndex) in hourList" :key="hourIndex" class="e-schedule__hour e-schedule__cell">
                         <span>
                             <span class="hour-label e-vue-input--text">{{ hour }}</span>
                         </span>
                     </div>
                 </div>
-                <transition-group :name="local.globalContentAnimation">
-                    <div v-for="(subPageList, chunkIndex) in chunk(headerLabels)" :key="chunkIndex" class="e-schedule__body"
-                        v-show="chunkIndex == local.page">
-                        <transition-group :name="local.globalContentAnimation">
-                            <div v-for="(data, colIndex) in subPageList" :key="colKey(data)" role="col">
-                                <div role="cell" class="e-schedule__header">
-                                    <span v-if="computedMode === ScheduleMode.schedule">
-                                        <EButton class="e-schedule-btn--space" :color="color" text depressed
-                                            @click="handleHeaderLabelClick(data.date, data.entityId)">
-                                            {{ data.label }}
-                                        </EButton>
-                                    </span>
-                                    <span v-else>
-                                        <span data-day-of-week="true"> {{ data.dayOfWeek }}</span>
-                                        <EButton class="mt-1 e-schedule-btn--day" :color="color" :text="!data.today"
-                                            depressed @click="handleHeaderLabelClick(data.date)">
-                                            {{ data.dayOfMonth }}
-                                        </EButton>
-                                    </span>
-                                </div>
-                                <div role="cell" v-for="(hour, hourIndex) in hourList" :key="hourIndex"
-                                    class="e-schedule__event">
-                                    <div v-if="hasEvent(getEventPoint(hourIndex, colIndex, chunkIndex))"
-                                        class="e-schedule__event"
-                                        :style="eventStyle(getEventPoint(hourIndex, colIndex, chunkIndex))">
-                                        <slot name="event" :event="getEvent(getEventPoint(hourIndex, colIndex, chunkIndex))">
-                                            <div v-ripple
-                                                :class="eventClass(getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)))"
-                                                @click="handleEventClick(getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)), $event)">
-                                                <span class="event-name">{{
-                                                    getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)).name
-                                                }}</span>
-                                                <span class="event-subtitle">{{
-                                                    getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)).subtitle
-                                                }}</span>
-                                                <span class="event-footer">{{
-                                                    getEvent(getEventPoint(hourIndex, colIndex, chunkIndex)).footer
-                                                }}</span>
-                                            </div>
-                                        </slot>
-                                    </div>
-                                    <slot v-else name="empty-slot" :data="getEmptySlotData(getEmptyPoint(hourIndex, colIndex))">
-                                        <div v-ripple :class="[
-                                            `${color}--text`,
-                                            'v-ripple-element',
-                                            'e-schedule__empty-slot',
-                                            'e-btn',
-                                            'e-btn--text'
-                                        ]" @click="emptySlotClickHandler(getEmptyPoint(hourIndex, colIndex), $event)"></div>
+                <transition :name="local.globalContentAnimation" mode="out-in">
+                    <div :key="schedulePageKey" class="e-schedule__body">
+                        <div v-for="(data, colIndex) in visibleHeaderLabels" :key="colKey(data)" class="e-schedule__column">
+                            <div class="e-schedule__header e-schedule__cell">
+                                <span v-if="computedMode === ScheduleMode.schedule">
+                                    <EButton class="e-schedule-btn--space" :color="color" text depressed
+                                        :aria-label="scheduleHeaderAriaLabel(data)"
+                                        @click="handleHeaderLabelClick(data.date, data.entityId)">
+                                        {{ data.label }}
+                                    </EButton>
+                                </span>
+                                <span v-else>
+                                    <span data-day-of-week="true"> {{ data.dayOfWeek }}</span>
+                                    <EButton class="mt-1 e-schedule-btn--day" :color="color" :text="!data.today"
+                                        :aria-current="data.today ? 'date' : undefined"
+                                        :aria-label="calendarHeaderAriaLabel(data)"
+                                        depressed @click="handleHeaderLabelClick(data.date)">
+                                        {{ data.dayOfMonth }}
+                                    </EButton>
+                                </span>
+                            </div>
+                            <div v-for="(hour, hourIndex) in hourList" :key="hourIndex"
+                                class="e-schedule__event-cell e-schedule__cell">
+                                <div v-if="hasEvent(getVisibleEventPoint(hourIndex, colIndex))"
+                                    class="e-schedule__event"
+                                    :style="eventStyle(getVisibleEventPoint(hourIndex, colIndex))">
+                                    <slot name="event" :event="getEvent(getVisibleEventPoint(hourIndex, colIndex))">
+                                        <button v-ripple type="button"
+                                            :aria-label="eventAriaLabel(getEvent(getVisibleEventPoint(hourIndex, colIndex)))"
+                                            :class="eventClass(getEvent(getVisibleEventPoint(hourIndex, colIndex)))"
+                                            @click="handleEventClick(getEvent(getVisibleEventPoint(hourIndex, colIndex)), $event)">
+                                            <span class="event-name">{{
+                                                getEvent(getVisibleEventPoint(hourIndex, colIndex)).name
+                                            }}</span>
+                                            <span class="event-subtitle">{{
+                                                getEvent(getVisibleEventPoint(hourIndex, colIndex)).subtitle
+                                            }}</span>
+                                            <span class="event-footer">{{
+                                                getEvent(getVisibleEventPoint(hourIndex, colIndex)).footer
+                                            }}</span>
+                                        </button>
                                     </slot>
                                 </div>
+                                <slot v-else name="empty-slot" :data="getEmptySlotData(getVisibleEmptyPoint(hourIndex, colIndex))">
+                                    <button v-ripple type="button" :aria-label="emptySlotAriaLabel(getEmptySlotData(getVisibleEmptyPoint(hourIndex, colIndex)))"
+                                        :class="[
+                                        'v-ripple-element',
+                                        'e-schedule__empty-slot',
+                                        'e-btn',
+                                        'e-btn--text'
+                                    ]" @click="emptySlotClickHandler(getVisibleEmptyPoint(hourIndex, colIndex), $event)"></button>
+                                </slot>
                             </div>
-                        </transition-group>
+                        </div>
                     </div>
-                </transition-group>
+                </transition>
             </div>
         </transition>
     </div>
@@ -89,6 +93,8 @@ import type { ScheduleEvent, ScheduleSpace, Point, ScheduleSlotEvent } from "@/t
 import { ScheduleMode } from "@/types";
 import { Lng as Lnguage, suportedLng } from '@/locales/index';
 import EProgressLinear from '@/components/progress/linear.vue';
+import { useResolvedColor } from '@/composables/color';
+import { normalizeCssSize } from '@/utils/style';
 
 import UtilDate from '@/utils/date';
 import icon from '@/utils/icons';
@@ -147,7 +153,7 @@ const changeValue = (value: Date): void => {
 }
 
 const changeSubPage = (sign: '+' | '-') => {
-    const lastPage = chunk(headerLabels.value).length - 1
+    const lastPage = headerChunks.value.length - 1
     local.globalContentAnimation = sign === '+' ? 'tab-transition' : 'tab-reverse-transition'
     let nextPage = local.page + parseInt(`${sign}1`)
     if (nextPage < 0) nextPage = lastPage
@@ -168,9 +174,34 @@ const computedSelectedSpace = computed((): ScheduleSpace | undefined => {
     return props.selectedSpace != undefined ? props.selectedSpace : local.selectedSpace;
 })
 
+const resolvedSelectedSpace = computed((): ScheduleSpace | undefined => {
+    return computedSelectedSpace.value ?? props.spaces[0]
+})
+
 const changeSelectedSpace = (value: ScheduleSpace | undefined) => {
     local.selectedSpace = value;
     emit('update:selected-space', value);
+}
+
+const formatScheduleTime = (value: Date | string): string => {
+    return new UtilDate(value).format('hour-hh:minutes-mm')
+}
+
+const eventAriaLabel = (event: ScheduleEvent): string => {
+    const footer = event.footer ? `, ${String(event.footer)}` : ''
+    return `${event.name}, ${formatScheduleTime(event.start)} to ${formatScheduleTime(event.end)}${footer}`
+}
+
+const emptySlotAriaLabel = (slot: ScheduleSlotEvent): string => {
+    return `Create event for ${String(slot.entityId ?? 'schedule')} from ${formatScheduleTime(slot.start)} to ${formatScheduleTime(slot.end)}`
+}
+
+const scheduleHeaderAriaLabel = (data: { label: string }) => {
+    return `Open schedule column ${data.label}`
+}
+
+const calendarHeaderAriaLabel = (data: { dayOfWeek: string; dayOfMonth: string | number }) => {
+    return `Open ${data.dayOfWeek} ${data.dayOfMonth}`
 }
 
 watch(() => props.selectedSpace, () => setLocalEvents())
@@ -211,7 +242,7 @@ const setLocalEvents = (): void => {
 
     if (modeDay.value) {
         events = events.filter(
-            ({ start, entityId }: ScheduleEvent) => (new UtilDate(start).date.getDay() == dateFrom.getDay()) && (entityId === computedSelectedSpace.value?.id)
+            ({ start, entityId }: ScheduleEvent) => (new UtilDate(start).date.getDay() == dateFrom.getDay()) && (entityId === resolvedSelectedSpace.value?.id)
 
         );
     } else if (computedMode.value === ScheduleMode.schedule) {
@@ -220,7 +251,7 @@ const setLocalEvents = (): void => {
         );
     } else if (computedMode.value === ScheduleMode.week) {
         events = events.filter(
-            ({ entityId }: ScheduleEvent) => entityId === computedSelectedSpace.value?.id
+            ({ entityId }: ScheduleEvent) => entityId === resolvedSelectedSpace.value?.id
         );
     }
 
@@ -261,9 +292,24 @@ const getEventPoint = (
     chunkIndex: string | number,
 ): Point => ({ x: toPointIndex(hourIndex), y: toPointIndex(colIndex) + toPointIndex(chunkIndex) })
 
+const currentChunkOffset = computed(() => {
+    if (computedMode.value !== ScheduleMode.schedule || !props.scheduleColumn) return 0
+    return local.page * parseInt(`${props.scheduleColumn}`, 10)
+})
+
+const getVisibleEventPoint = (
+    hourIndex: string | number,
+    colIndex: string | number,
+): Point => ({ x: toPointIndex(hourIndex), y: toPointIndex(colIndex) + currentChunkOffset.value })
+
 const getEmptyPoint = (hourIndex: string | number, colIndex: string | number): Point => ({
     x: toPointIndex(hourIndex),
     y: toPointIndex(colIndex),
+})
+
+const getVisibleEmptyPoint = (hourIndex: string | number, colIndex: string | number): Point => ({
+    x: toPointIndex(hourIndex),
+    y: toPointIndex(colIndex) + currentChunkOffset.value,
 })
 
 const getEvent = ({ x, y }: Point) => local.events[x][y]
@@ -288,10 +334,9 @@ const getEmptySlotData = ({ x, y }: Point): ScheduleSlotEvent => {
         .set(endHours, 'hours')
         .set(endMinutes, 'minutes').date;
 
-    // const space: ScheduleSpace = (computedSelectedSpace.value as ScheduleSpace);
     const space: ScheduleSpace = computedMode.value === ScheduleMode.schedule
         ? props.spaces[y]
-        : (computedSelectedSpace.value as ScheduleSpace);
+        : (resolvedSelectedSpace.value as ScheduleSpace);
     return {
         entityId: space?.id,
         start,
@@ -310,9 +355,9 @@ const eventStyle = (point: Point): Record<string, string> => {
     const from = secondsByDate(new UtilDate(start).date);
     const to = secondsByDate(new UtilDate(end).date);
     const displacement = ((to - from) / props.step)
-    const height = parseInt(props.rowHeight) * (displacement == 0 ? 0 : displacement);
+    const height = rowHeightNumber.value * (displacement == 0 ? 0 : displacement);
     const fillPercent = (from % props.step) / props.step;
-    const top = parseInt(props.rowHeight) * fillPercent - 1;
+    const top = rowHeightNumber.value * fillPercent - 1;
     const backgroundColor = (color || '').indexOf('#') == -1 ? '' : color;
 
     return { height: `${height}px`, top: `${top}px`, backgroundColor, marginTop: '0' };
@@ -358,9 +403,23 @@ const t = (): Lnguage => {
     return new Lnguage(props.lng, 1);
 }
 
-const componentStyle = computed((): Record<string, string> => (
-    { '--row-height': props.rowHeight + 'px', '--header-stiky-top': props.stickyTopHeader + 'px' }
-))
+const normalizedRowHeight = computed(() => normalizeCssSize(props.rowHeight) || '97px')
+const normalizedStickyTopHeader = computed(() => normalizeCssSize(props.stickyTopHeader) || '0px')
+const rowHeightNumber = computed(() => {
+    const parsed = Number.parseFloat(normalizedRowHeight.value)
+    return Number.isNaN(parsed) ? 97 : parsed
+})
+
+const { colorStyles } = useResolvedColor({
+    color: computed(() => props.color),
+    colorVar: '--e-schedule-color',
+})
+
+const scheduleStyle = computed((): Record<string, string> => ({
+    ...colorStyles.value,
+    '--row-height': normalizedRowHeight.value,
+    '--header-stiky-top': normalizedStickyTopHeader.value,
+}))
 
 const hourList = computed((): Array<string> => {
     const result: Array<string> = [];
@@ -408,6 +467,23 @@ const chunk = (array: Array<Record<string, any>>) => {
         return [array]
     }
 }
+
+const headerChunks = computed(() => chunk(headerLabels.value))
+
+const visibleHeaderLabels = computed(() => headerChunks.value[local.page] ?? headerChunks.value[0] ?? [])
+
+const schedulePageKey = computed(() => {
+    const dateKey = new UtilDate(props.modelValue).setTime(0, 0, 0).date.toISOString()
+    const labelsKey = visibleHeaderLabels.value.map(colKey).join('|')
+    return `${computedMode.value}:${dateKey}:${local.page}:${labelsKey}`
+})
+
+watch(headerChunks, (chunks) => {
+    const lastPage = chunks.length - 1
+    if (local.page > lastPage) {
+        local.page = Math.max(lastPage, 0)
+    }
+}, { immediate: true })
 
 
 </script>

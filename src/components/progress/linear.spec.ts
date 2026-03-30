@@ -12,8 +12,20 @@ const mountProgress = (props: Record<string, unknown> = {}) => {
 };
 
 describe("EProgressLinear", () => {
-  it("renders indeterminate mode by default without aria-valuenow", async () => {
+  it("renders determinate mode by default with aria-valuenow set to 0", async () => {
     const wrapper = mountProgress();
+    await nextTick();
+
+    const progressbar = wrapper.get('[role="progressbar"]');
+
+    expect(wrapper.classes()).not.toContain("e-progress-linear--active");
+    expect(wrapper.find(".e-progress-linear__indeterminate").exists()).toBe(false);
+    expect(wrapper.find(".e-progress-linear__determinate").exists()).toBe(true);
+    expect(progressbar.attributes("aria-valuenow")).toBe("0");
+  });
+
+  it("renders indeterminate mode explicitly without aria-valuenow", async () => {
+    const wrapper = mountProgress({ indeterminate: true });
     await nextTick();
 
     const progressbar = wrapper.get('[role="progressbar"]');
