@@ -134,7 +134,7 @@
         position: relative;
         pointer-events: all;
         max-width: unset;
-        min-width: 50%;
+        min-width: min(50%, 200px);
         flex: 1 1 auto;
       }
     }

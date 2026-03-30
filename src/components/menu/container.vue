@@ -52,6 +52,8 @@ const emit = defineEmits<{
 const wrapper = ref()
 const timerResize = ref<number>(0);
 const timerScroll = ref<number>(0);
+const observedActivator = ref<HTMLElement | null>(null)
+let activatorResizeObserver: ResizeObserver | null = null
 const fallbackMenuId = `menu-${useId()}`
 const menuId = computed(() => props.dataId || fallbackMenuId)
 const menuContentStyle: Ref<Record<string, string | number>> = ref({
@@ -69,6 +71,7 @@ const wrapperClass = computed(() => {
 
 onMounted(() => {
     updatemenuContentStyle();
+    syncActivatorResizeObserver()
     window.addEventListener('resize', handleResize, true);
     window.addEventListener('scroll', handleScroll, true);
 })
@@ -114,9 +117,42 @@ const syncMenuStack = (): void => {
 }
 
 const destroyComponent = (): void => {
+    stopActivatorResizeObserver()
     unregisterMenu(menuId.value)
     window.removeEventListener('resize', handleResize, true);
     window.removeEventListener('scroll', handleScroll, true);
+}
+
+const stopActivatorResizeObserver = (): void => {
+    if (activatorResizeObserver && observedActivator.value) {
+        activatorResizeObserver.unobserve(observedActivator.value)
+    }
+
+    activatorResizeObserver?.disconnect()
+    activatorResizeObserver = null
+    observedActivator.value = null
+}
+
+const syncActivatorResizeObserver = (): void => {
+    const target = resolveTarget()
+
+    if (!props.modelValue || !target || typeof ResizeObserver === 'undefined') {
+        stopActivatorResizeObserver()
+        return
+    }
+
+    if (observedActivator.value === target && activatorResizeObserver) return
+
+    stopActivatorResizeObserver()
+
+    activatorResizeObserver = new ResizeObserver(() => {
+        nextTick(() => {
+            updatemenuContentStyle()
+        })
+    })
+
+    activatorResizeObserver.observe(target)
+    observedActivator.value = target
 }
 
 const handleResize = (): void => {
@@ -246,13 +282,19 @@ const updatemenuContentStyle = async (): Promise<void> => {
 }
 
 watch(() => [props.modelValue, wrapper.value, props.target, props.dataId] as const, ([isOpened, contentElement]) => {
-    if (!isOpened || !contentElement) return
+    if (!isOpened || !contentElement) {
+        stopActivatorResizeObserver()
+        return
+    }
+
     syncMenuStack()
+    syncActivatorResizeObserver()
     updatemenuContentStyle()
 }, { flush: 'post' })
 
 watch(() => props.modelValue, async (value) => {
     if (!value) {
+        stopActivatorResizeObserver()
         unregisterMenu(menuId.value)
         focusActivator()
         return
@@ -262,6 +304,7 @@ watch(() => props.modelValue, async (value) => {
     await updatemenuContentStyle()
 
     syncMenuStack()
+    syncActivatorResizeObserver()
 
     await nextTick()
     await updatemenuContentStyle()
