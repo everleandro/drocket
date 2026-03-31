@@ -121,14 +121,14 @@ describe("ERadioGroup", () => {
     expect(controls[0].attributes("data-focused")).toBe("false");
     expect(controls[1].attributes("data-focused")).toBe("false");
 
-    inputs[1].element.focus();
+    (inputs[1].element as HTMLInputElement).focus();
     await inputs[1].trigger("focus");
     await nextTick();
 
     expect(controls[0].attributes("data-focused")).toBe("false");
     expect(controls[1].attributes("data-focused")).toBe("true");
 
-    inputs[0].element.focus();
+    (inputs[0].element as HTMLInputElement).focus();
     await inputs[0].trigger("focus");
     await nextTick();
 

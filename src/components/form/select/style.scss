@@ -45,7 +45,7 @@
   }
 
   &__selections {
-    color: var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87));
+    color: var(--e-field-select-selection-color, var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87)));
     grid-area: field;
     min-height: 10px;
     align-self: center;
@@ -68,7 +68,7 @@
     }
 
     &-placeholder {
-      color: var(--input-placeholder);
+      color: var(--e-field-placeholder-color, var(--input-placeholder));
     }
   }
 
@@ -134,7 +134,7 @@
         position: relative;
         pointer-events: all;
         max-width: unset;
-        min-width: min(50%, 200px);
+        min-width: min(50%, 30rem);
         flex: 1 1 auto;
       }
     }
