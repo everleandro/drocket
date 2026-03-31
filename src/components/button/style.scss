@@ -10,12 +10,11 @@
   transition-duration: var(--e-btn-transition-duration, 0.28s);
   border-radius: var(--e-btn-border-radius, 4px);
   font-family: var(--e-root-font-family, inherit);
-  --btn-bg: var(--e-color-surface-1, #ffffff);
-  --btn-text: var(--e-contrast-surface-1, #000000);
+ 
 
-  color: var(--btn-text);
-  background-color: var(--btn-bg);
-  border-color: var(--btn-bg);
+  color: var(--e-btn-text);
+  background-color: var(--e-btn-bg);
+  border-color: var(--e-btn-bg);
 
   @include button-reset();
 
@@ -91,24 +90,20 @@
   }
 
   &--focused:not(.e-btn--disabled):not(.e-btn--loading) {
-    outline: 2px solid var(--btn-bg);
+    outline: 2px solid var(--e-btn-bg);
     outline-offset: 2px;
   }
 
   &--text {
     background-color: transparent;
-    color: var(--btn-bg);
+    color: var(--e-btn-bg);
   }
 
-  &--text.e-btn--no-invert-color {
-    color: var(--btn-text);
+  &--text.e-btn--use-contrast-color {
+    color: var(--e-btn-text);
   }
 
-  &--outlined.e-btn--no-invert-color {
-    color: var(--btn-text);
-    border-color: var(--btn-text);
-  }
-
+ 
   &--block {
     &:not(.e-btn--fab):not(.e-btn--icon) {
       display: flex;
@@ -140,7 +135,7 @@
   }
 
   &--icon {
-    color: var(--btn-text);
+    color: var(--e-btn-text);
     background-color: transparent;
     padding: 0;
     width: var(--btn-height, unset);
@@ -176,8 +171,8 @@
   }
 
   &--disabled {
-    --btn-bg: var(--e-color-disabled, rgba(0, 0, 0, 0.38));
-    --btn-text: var(--e-contrast-disabled, white);
+    --e-btn-bg: var(--e-color-disabled, rgba(0, 0, 0, 0.38));
+    --e-btn-text: var(--e-contrast-disabled, white);
     pointer-events: none;
     cursor: not-allowed;
   }
@@ -185,8 +180,8 @@
   &.e-btn--outlined {
     border: var(--e-btn-border-width, 1px) var(--e-btn-border-style, solid);
     background-color: unset;
-    border-color: var(--btn-bg);
-    color: var(--btn-bg);
+    border-color: var(--e-btn-bg);
+    color: var(--e-btn-bg);
   }
 
   &--size-x-small {
@@ -289,4 +284,9 @@
     top: 0;
     width: 100%;
   }
+   &--outlined.e-btn--use-contrast-color {
+    color: var(--btn-text);
+    border-color: var(--btn-text);
+  }
+
 }

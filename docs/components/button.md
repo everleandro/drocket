@@ -25,7 +25,7 @@ import { EButton } from 'drocket'
 | `fab` | `boolean` | `false` | Variante circular flotante. |
 | `depressed` | `boolean` | `false` | Quita sombra. |
 | `text` | `boolean` | `false` | Variante texto (fondo transparente). |
-| `noInvertColor` | `boolean` | `false` | En variante `text`, usa `--btn-text` y evita invertir color con `--btn-bg`. |
+| `useContrastColor` | `boolean` | `false` | En variantes transparentes como `text` y `outlined`, usa el color de contraste resuelto para `color`. |
 | `outlined` | `boolean` | `false` | Variante outlined. |
 | `block` | `boolean` | `false` | Ocupa todo el ancho disponible. |
 | `size` | `'x-small' \| 'small' \| 'default' \| 'large' \| 'x-large'` | `'default'` | Define el tamano visual del boton e iconos internos. |
@@ -104,7 +104,7 @@ const saving = ref(false)
 
 ```vue
 <template>
-  <EButton text color="surface-1" no-invert-color>
+  <EButton text color="surface-1" use-contrast-color>
     Accion secundaria
   </EButton>
 </template>

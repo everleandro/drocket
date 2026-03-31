@@ -62,7 +62,7 @@ export interface ButtonProps extends ElevationProps, SizeProps {
   depressed?: boolean;
   text?: boolean;
   outlined?: boolean;
-  noInvertColor?: boolean;
+  useContrastColor?: boolean;
   block?: boolean;
   type?: string;
   rounded?: boolean;
@@ -186,8 +186,8 @@ const btnClass = computed((): Array<string> => {
   // Handle boolean classes
   classes.push(...getBooleanClasses(props, booleanClassKeys, "e-btn"));
 
-  if (props.noInvertColor || (!props.color && (props.text || props.outlined))) {
-    classes.push("e-btn--no-invert-color");
+  if (props.useContrastColor || (!props.color && (props.text || props.outlined))) {
+    classes.push("e-btn--use-contrast-color");
   }
 
   if (isIconOnly.value) {
@@ -244,8 +244,8 @@ const currentColor = computed(() => getCurrentColor());
 
 const { colorStyles } = useResolvedColor({
   color: currentColor,
-  colorVar: "--btn-bg",
-  contrastVar: "--btn-text",
+  colorVar: "--e-btn-bg",
+  contrastVar: "--e-btn-text",
 });
 
 const buttonStyle = computed((): Record<string, string> => {
