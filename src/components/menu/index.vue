@@ -7,7 +7,7 @@
         <EMenuContainer v-model="opened" :absolute="props.absolute" :close-on-content-click="props.closeOnContentClick"
             :full-width="props.fullWidth" :hold-focus="props.holdFocus" :check-offset="props.checkOffset"
             :transition="props.transition" :origin="props.origin" :max-width="props.maxWidth" :offset-x="props.offsetX"
-            :offset-y="props.offsetY" :width="props.width" :elevation="props.elevation" :target="currentActivator"
+            :offset-y="props.offsetY" :width="props.width" :elevation="props.elevation" :color="props.color" :target="currentActivator"
             :data-id="dataId" :content-id="contentId" :content-role="props.contentRole" :forwarded-attrs="attrs">
             <slot />
         </EMenuContainer>
@@ -26,6 +26,7 @@ export interface Props extends ElevationProps {
     ariaControls?: string
     ariaHaspopup?: string
     closeOnContentClick?: boolean
+    color?: string
     contentRole?: string
     fullWidth?: boolean
     activator?: MenuTypeTarget

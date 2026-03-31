@@ -207,7 +207,7 @@ describe("ESchedule", () => {
     const wrapper = mountSchedule({ elevation: "lg" });
     await nextTick();
 
-    expect(wrapper.get(".e-schedule").classes()).toContain("e-elevation--lg");
+    expect(wrapper.get(".e-schedule-container").classes()).toContain("e-elevation--lg");
   });
 
   it("allows returning to week after drilling down into a day", async () => {

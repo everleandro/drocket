@@ -8,6 +8,7 @@ export type SelectModelValue = SelectItemType | Array<SelectItemType>;
 
 export interface SelectProps extends UseFieldProps<SelectModelValue> {
   arrowDown?: string | IconPath | Array<IconPath>;
+  menuColor?: string;
   multiple?: boolean;
   returnObject?: boolean;
   loading?: boolean;

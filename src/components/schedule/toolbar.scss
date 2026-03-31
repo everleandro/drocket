@@ -1,28 +1,30 @@
-@use '~/public/styles/_mixins.scss' as mixins;
-
 .e-schedule-toolbar {
+    // Theme contract
+    --schedule-toolbar-local-gap: var(--e-schedule-toolbar-gap);
+    --schedule-toolbar-local-radius: var(--e-schedule-border-radius);
+    --schedule-toolbar-local-select-view-max-width: 12rem;
+
     height: auto;
     margin-bottom: 0;
-    --schedule-toolbar-gap: calc(var(--e-space-base) * 2);
+    border-top-left-radius: var(--schedule-toolbar-local-radius);
+    border-top-right-radius: var(--schedule-toolbar-local-radius);
 
+    // Layout
     .e-bar__content {
-        gap: var(--schedule-toolbar-gap);
+        gap: var(--schedule-toolbar-local-gap);
     }
 
+    // Controls
     &__select-view {
-        --e-field-max-width: 12rem;
+        --e-field-max-width: var(--schedule-toolbar-local-select-view-max-width);
     }
 
     &__pager {
-        padding-inline: var(--e-schedule-toolbar-gap);
-        display: flex;
         align-items: center;
+        display: flex;
 
         &-label {
-
-            margin-inline: var(--e-schedule-toolbar-gap);
+            margin-inline: var(--schedule-toolbar-local-gap);
         }
     }
-
-
 }

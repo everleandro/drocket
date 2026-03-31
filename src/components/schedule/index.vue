@@ -1,14 +1,12 @@
 <template>
-    <div class="e-schedule-container">
+    <div :class="scheduleContainerClass">
+        <div v-if="hasToolbarSlot" class="e-schedule__toolbar">
+            <slot name="toolbar" v-bind="toolbarSlotProps" />
+            <EProgressLinear v-show="loading" :color="color" indeterminate use-contrast-color height="4" />
+        </div>
         <transition name="fade" mode="out-in">
             <div :key="`${computedView}:${computedScale ?? 'none'}`" :class="scheduleClass" :style="scheduleStyle"
                 role="region" aria-label="Schedule" :aria-busy="loading ? 'true' : 'false'">
-
-                <div v-if="$slots.toolbar" class="e-schedule__toolbar">
-                    <slot name="toolbar" v-bind="toolbarSlotProps" />
-                    <EProgressLinear v-show="loading" :color="color" indeterminate use-contrast-color height="4" />
-                </div>
-
                 <div class="e-schedule__header-strip">
                     <div class="e-schedule__header-spacer col-hour-info">
                         <div class="e-schedule__header-content e-schedule__header-content--actions">
@@ -33,7 +31,7 @@
                                 </button>
                             </span>
                         </div>
-                        <EProgressLinear v-show="loading && !$slots.toolbar" indeterminate height="4" />
+                        <EProgressLinear v-show="loading && !hasToolbarSlot" indeterminate height="4" />
                     </div>
                     <div class="e-schedule__header-viewport">
                         <transition :name="local.globalContentAnimation" mode="out-in">
@@ -92,13 +90,13 @@
                                                     @click="handleEventClick(getEvent(getVisibleEventPoint(hourIndex, colIndex)), $event)">
                                                     <span class="event-name">{{
                                                         getEvent(getVisibleEventPoint(hourIndex, colIndex)).name
-                                                    }}</span>
+                                                        }}</span>
                                                     <span class="event-subtitle">{{
                                                         getEvent(getVisibleEventPoint(hourIndex, colIndex)).subtitle
-                                                    }}</span>
+                                                        }}</span>
                                                     <span class="event-footer">{{
                                                         getEvent(getVisibleEventPoint(hourIndex, colIndex)).footer
-                                                    }}</span>
+                                                        }}</span>
                                                 </button>
                                             </slot>
                                         </div>
@@ -172,9 +170,21 @@ const scheduleClass = computed(() => {
     isCalendarView.value && classes.push('e-schedule--calendar')
     isDayScale.value && classes.push('e-schedule--calendar-day')
     isResourceView.value && classes.push('e-schedule--resource')
-    props.elevation && classes.push(`e-elevation--${props.elevation}`)
     if (props.stickyTopHeader) classes.push('e-schedule--header-stiky')
     if (props.loading) classes.push('e-schedule--loading')
+    return classes
+})
+
+const scheduleContainerClass = computed(() => {
+    const classes = ['e-schedule-container']
+
+    if (props.elevation) {
+        classes.push(`e-elevation--${props.elevation}`)
+    }
+    if (!hasToolbarSlot.value) {
+        classes.push('e-schedule-container--without-toolbar')
+    }
+
     return classes
 })
 

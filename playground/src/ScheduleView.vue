@@ -128,6 +128,7 @@
                         :spaces="spaces"
                         :events="slotScenario.events"
                         color="secondary"
+                        :elevation="'sm'"
                         row-height="64"
                         :start="9 * 60 * 60"
                         :end="14 * 60 * 60"

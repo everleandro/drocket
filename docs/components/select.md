@@ -43,6 +43,7 @@ import { ESelect } from 'drocket'
 | `lineWidth` | `string \| number` | `undefined` | Grosor personalizado de la linea inferior cuando no es outlined. |
 | `limit` | `string \| number` | `undefined` | Reservado para el contrato compartido del field; no limita el numero de items seleccionados. |
 | `arrowDown` | `string \| IconPath \| IconPath[]` | `undefined` | Reemplaza el icono decorativo del activador. |
+| `menuColor` | `string` | `undefined` | Color heredable del dropdown. Prioriza `menuColor` y si no existe reutiliza `color` del componente. |
 
 Ademas hereda props base de field como `label`, `detail`, `outlined`, `disabled`, `readonly`, `clearable`, `prependIcon`, `appendIcon`, `color`, `rules` y props de grid.
 

@@ -6,6 +6,7 @@
         full-width
         hold-focus
         check-offset
+        :color="resolvedMenuColor"
         :close-on-content-click="false"
         aria-haspopup="listbox"
         :aria-controls="listboxId"
@@ -216,7 +217,6 @@
             role="listbox"
             :model-value="props.multiple ? multipleListModel : undefined"
             :aria-label="listAriaLabel"
-            :color="color"
             :style="listStyle"
           >
             <template v-for="(item, index) in items">
@@ -386,6 +386,10 @@ const lineStyle = computed(() => {
   return props.lineWidth
     ? { "--v-field-border-width": `${props.lineWidth}px` }
     : {};
+});
+
+const resolvedMenuColor = computed(() => {
+  return props.menuColor ?? color.value;
 });
 
 const selectClass = computed(() => {

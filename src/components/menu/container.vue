@@ -3,7 +3,7 @@
     <div class="e-menu-container" v-bind="forwardedAttrs" :style="menuContentStyle"
         @click="handleContentClick">
         <transition :name="props.transition">
-            <div v-show="modelValue" :id="contentId" ref="wrapper" :class="wrapperClass" :data-id="dataId" :role="contentRole"
+            <div v-show="modelValue" :id="contentId" ref="wrapper" :class="wrapperClass" :style="menuStyle" :data-id="dataId" :role="contentRole"
                 tabindex="-1" :aria-hidden="modelValue ? 'false' : 'true'">
                 <slot></slot>
             </div>
@@ -17,12 +17,14 @@ export default {
 </script>
 <script setup lang="ts">
 import { Ref, computed, nextTick, onMounted, onUnmounted, provide, ref, useId, watch } from 'vue';
+import { useResolvedColor } from '@/composables/color'
 import type { ElevationProps, MenuTypeTarget } from '@/types'
 import { useMenuStack } from '@/composables/menu-stack'
 
 const props = withDefaults(defineProps<ElevationProps & {
     absolute?: boolean
     closeOnContentClick?: boolean
+    color?: string
     fullWidth?: boolean
     holdFocus?: boolean
     checkOffset?: boolean
@@ -68,6 +70,15 @@ const wrapperClass = computed(() => {
     }
     return classes
 })
+
+const { colorStyles } = useResolvedColor({
+    color: computed(() => props.color),
+    colorVar: '--e-menu-color',
+})
+
+const menuStyle = computed(() => ({
+    ...colorStyles.value,
+}))
 
 onMounted(() => {
     updatemenuContentStyle();

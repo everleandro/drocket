@@ -1,11 +1,11 @@
 <template>
     <EBar class="e-schedule-toolbar" :color="color">
         <ESelect :label="labels.view" :items="localizedViewOptions" dense class="e-schedule-toolbar__select-view"
-            :model-value="activeViewOption" @update:model-value="handleViewChange" />
+            :model-value="activeViewOption" @update:model-value="handleViewChange" :menu-color="color"/>
 
         <ESelect v-if="spaces.length && view !== ScheduleView.Resource" dense class="e-schedule-toolbar__select-space"
             :label="labels.space" :items="spaceOptions" :model-value="selectedSpaceId"
-            @update:model-value="handleSpaceChange" />
+            @update:model-value="handleSpaceChange" :menu-color="color" />
 
         <div v-if="canPaginateResources" class="e-schedule-toolbar__pager">
             <EButton size="small" text use-contrast-color :icon="icon.arrowLeft" :aria-label="labels.previousResourcePage"
@@ -18,7 +18,7 @@
         </div>
         <ESpacer />
         <EMenu v-model="datePickerOpen" :close-on-content-click="false" content-role="presentation"
-            origin="bottom right">
+            origin="bottom right" :color="color">
             <template #activator="activator">
                 <EButton outlined  :prepend-icon="icon.calendar"
                     v-bind="buildActivatorBindings(activator)">
@@ -26,7 +26,7 @@
                 </EButton>
             </template>
 
-            <EDatePicker :model-value="date" :lng="datePickerLanguage" :color="color" close-on-change
+            <EDatePicker :model-value="date" :lng="datePickerLanguage" close-on-change
                 @update:model-value="handleDateChange" />
         </EMenu>
     </EBar>
