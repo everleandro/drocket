@@ -34,7 +34,8 @@
                             <strong>{{ example.color }} / {{ example.height }}px / {{ example.indeterminate ? 'indeterminate' : `${example.value}%` }}</strong>
                         </div>
                         <EProgressLinear :color="example.color" :height="example.height"
-                            :indeterminate="example.indeterminate" :value="example.value" />
+                            :indeterminate="example.indeterminate" :value="example.value"
+                            :use-contrast-color="example.useContrastColor" />
                     </div>
                 </div>
             </ECard>
@@ -116,6 +117,26 @@
                     </div>
                 </div>
 
+                <div class="control-group">
+                    <span class="control-group__label">Resolución de color</span>
+                    <div class="pill-group">
+                        <button
+                            :class="['pill-button', { 'pill-button--active': !sandbox.useContrastColor }]"
+                            type="button"
+                            @click="sandbox.useContrastColor = false"
+                        >
+                            Base
+                        </button>
+                        <button
+                            :class="['pill-button', { 'pill-button--active': sandbox.useContrastColor }]"
+                            type="button"
+                            @click="sandbox.useContrastColor = true"
+                        >
+                            Contrast
+                        </button>
+                    </div>
+                </div>
+
                 <div v-if="!sandbox.indeterminate" class="control-group">
                     <label class="control-group__label" for="progress-value">Valor</label>
                     <div class="progress-slider-row">
@@ -128,7 +149,8 @@
                 <div :class="['progress-stage', `progress-stage--${sandbox.surface}`]">
                     <div class="progress-stage__frame">
                         <EProgressLinear :color="sandbox.color" :height="sandbox.height"
-                            :indeterminate="sandbox.indeterminate" :value="sandbox.value" />
+                            :indeterminate="sandbox.indeterminate" :value="sandbox.value"
+                            :use-contrast-color="sandbox.useContrastColor" />
                     </div>
                 </div>
             </ECard>
@@ -168,6 +190,7 @@ type SandboxState = {
     color: ProgressColor;
     height: number;
     surface: ProgressSurface;
+    useContrastColor: boolean;
     indeterminate: boolean;
     value: number;
 };
@@ -180,18 +203,19 @@ const surfaceOptions: Array<{ label: string; value: ProgressSurface }> = [
     { label: "Strong", value: "strong" },
 ];
 
-const examples: Array<{ label: string; color: ProgressColor; height: number; indeterminate: boolean; value: number }> = [
-    { label: "Base loading", color: "primary", height: 4, indeterminate: true, value: 0 },
-    { label: "Compact upload", color: "secondary", height: 2, indeterminate: false, value: 24 },
-    { label: "Dense sync", color: "teal-900", height: 6, indeterminate: false, value: 56 },
-    { label: "High emphasis", color: "cyan-800", height: 10, indeterminate: false, value: 82 },
-    { label: "Alert recovery", color: "error", height: 14, indeterminate: true, value: 0 },
+const examples: Array<{ label: string; color: ProgressColor; height: number; indeterminate: boolean; value: number; useContrastColor: boolean }> = [
+    { label: "Base loading", color: "primary", height: 4, indeterminate: true, value: 0, useContrastColor: false },
+    { label: "Compact upload", color: "secondary", height: 2, indeterminate: false, value: 24, useContrastColor: false },
+    { label: "Dense sync", color: "teal-900", height: 6, indeterminate: false, value: 56, useContrastColor: false },
+    { label: "High emphasis", color: "cyan-800", height: 10, indeterminate: false, value: 82, useContrastColor: false },
+    { label: "Alert recovery", color: "error", height: 14, indeterminate: true, value: 0, useContrastColor: true },
 ];
 
 const sandbox = reactive<SandboxState>({
     color: "primary",
     height: 6,
     surface: "light",
+    useContrastColor: false,
     indeterminate: true,
     value: 64,
 });

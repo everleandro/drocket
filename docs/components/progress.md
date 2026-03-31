@@ -27,6 +27,7 @@ import { EProgressLinear } from 'drocket'
 | `value` | `number` | `0` | Valor de progreso usado en modo determinate. El componente lo limita al rango `0..100`. |
 | `height` | `string \| number` | `4` | Altura visual de la barra. Acepta numero o valor CSS valido. |
 | `color` | `string` | `'primary'` | Color resuelto mediante el sistema compartido de CSS variables. |
+| `useContrastColor` | `boolean` | `false` | Usa el color de contraste asociado a `color` en lugar del color base resuelto. |
 
 ## Eventos
 
@@ -66,6 +67,19 @@ import { EProgressLinear } from 'drocket'
 </template>
 ```
 
+### Usando el color de contraste
+
+```vue
+<template>
+  <EProgressLinear
+    indeterminate
+    color="primary"
+    use-contrast-color
+    :height="6"
+  />
+</template>
+```
+
 ## Accesibilidad
 
 - Renderiza un contenedor con `role="progressbar"`.
@@ -78,3 +92,4 @@ import { EProgressLinear } from 'drocket'
 - Esperar animacion continua sin pasar `indeterminate`: ahora el default es `false`, por lo que el componente arranca en modo determinate.
 - Pasar `value` fuera de rango: el componente lo limita internamente a `0..100`, pero conviene enviar datos ya normalizados desde la capa de negocio.
 - Usar utilidades legacy como `primary--text` para el color: `EProgressLinear` ya consume el sistema nuevo de color resuelto por CSS variables.
+- Activar `use-contrast-color` sin pasar `color`: sin un color base no existe un token de contraste asociado que resolver.

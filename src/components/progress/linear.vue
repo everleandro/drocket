@@ -11,17 +11,17 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import { useResolvedColor } from '@/composables/color';
-import { normalizeCssSize } from '@/utils/style';
+import { normalizeCssSize, getColorContrastCssValue, getColorCssValue } from '@/utils/style';
 
 const mounted = ref(false);
 export interface Props {
     indeterminate?: boolean
     height?: string | number
     color?: string
+    useContrastColor?: boolean
     value?: number
 }
-const props = withDefaults(defineProps<Props>(), { height: 4, color: 'primary', value: 0, indeterminate: false })
+const props = withDefaults(defineProps<Props>(), { height: 4, value: 0, indeterminate: false })
 const isIndeterminate = computed(() => Boolean(props.indeterminate))
 const normalizedValue = computed(() => {
     const parsed = Number(props.value)
@@ -38,9 +38,12 @@ const progressClass = computed(() => {
     return classes
 })
 
-const { colorStyles } = useResolvedColor({
-    color: computed(() => props.color),
-    colorVar: '--e-progress-linear-color',
+const resolvedProgressColor = computed(() => {
+    if (!props.color) return undefined
+
+    return props.useContrastColor
+        ? getColorContrastCssValue(props.color)
+        : getColorCssValue(props.color)
 })
 
 const determinateStyle = computed(() => ({ width: `${normalizedValue.value}%` }))
@@ -49,9 +52,16 @@ const ariaValueNow = computed(() => isIndeterminate.value ? undefined : String(n
 onMounted(() => {
     mounted.value = true;
 });
-const progressStyle = computed(() => ({
-    ...colorStyles.value,
-    '--e-progress-linear-height': normalizeCssSize(props.height) || '4px',
-}))
+const progressStyle = computed(() => {
+    const result: Record<string, string> = {
+        '--e-progress-linear-height': normalizeCssSize(props.height) || '4px',
+    }
+
+    if (resolvedProgressColor.value) {
+        result['--e-progress-linear-color'] = resolvedProgressColor.value
+    }
+
+    return result
+})
 </script>
 <style lang="scss" src="./style.scss"></style>
