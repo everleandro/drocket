@@ -15,10 +15,10 @@ export default function () {
   let timer = 0;
 
   onMounted(() => {
-    xs.value = integerFromKey("--xs");
-    sm.value = integerFromKey("--sm");
-    md.value = integerFromKey("--md");
-    lg.value = integerFromKey("--lg");
+    xs.value = integerFromKeys(["--e-grid-breakpoint-xs", "--xs"], 0);
+    sm.value = integerFromKeys(["--e-grid-breakpoint-sm", "--sm"], 600);
+    md.value = integerFromKeys(["--e-grid-breakpoint-md", "--md"], 960);
+    lg.value = integerFromKeys(["--e-grid-breakpoint-lg", "--lg"], 1264);
     observeBreakpoint();
     if (typeof window === "undefined") return;
     window?.addEventListener("resize", observeBreakpoint);
@@ -26,8 +26,17 @@ export default function () {
 
   onUnmounted(() => window?.removeEventListener("resize", observeBreakpoint));
 
-  const integerFromKey = (key: string): number => {
-    return parseInt(getComputedStyle(document.body).getPropertyValue(key), 10);
+  const integerFromKeys = (keys: string[], fallback: number): number => {
+    const styles = getComputedStyle(document.documentElement);
+
+    for (const key of keys) {
+      const value = parseInt(styles.getPropertyValue(key), 10);
+      if (!Number.isNaN(value)) {
+        return value;
+      }
+    }
+
+    return fallback;
   };
 
   const observeBreakpoint = (): void => {

@@ -15,60 +15,56 @@
                 <div class="schedule-card__header">
                     <div>
                         <p class="section-kicker">Escenario interactivo</p>
-                        <h2>Day, week y schedule</h2>
+                        <h2>Day, week y resource</h2>
                     </div>
                     <p class="card-copy">
-                        Cambia el modo, avanza la fecha base y selecciona un espacio
-                        para comprobar el filtrado y la navegación entre vistas.
+                        Usa el toolbar dentro del header para cambiar la vista,
+                        navegar por periodos, seleccionar el espacio activo y
+                        validar labels localizadas del toolbar.
                     </p>
-                </div>
-
-                <div class="control-toolbar">
-                    <div class="pill-group">
-                        <button
-                            v-for="modeOption in modeOptions"
-                            :key="modeOption.value"
-                            :class="['pill-button', { 'pill-button--active': scheduleState.mode === modeOption.value }]"
-                            type="button"
-                            @click="scheduleState.mode = modeOption.value"
-                        >
-                            {{ modeOption.label }}
-                        </button>
-                    </div>
-
-                    <div class="pill-group">
-                        <button class="pill-button" type="button" @click="moveBaseDate(-1)">
-                            Prev
-                        </button>
-                        <button class="pill-button" type="button" @click="resetBaseDate">
-                            Today
-                        </button>
-                        <button class="pill-button" type="button" @click="moveBaseDate(1)">
-                            Next
-                        </button>
-                    </div>
                 </div>
 
                 <div class="control-grid">
                     <label class="control-field">
-                        <span>Espacio seleccionado</span>
-                        <select v-model="selectedSpaceId">
-                            <option
-                                v-for="space in spaces"
-                                :key="String(space.id)"
-                                :value="String(space.id)"
-                            >
-                                {{ space.label }}
-                            </option>
+                        <span>Idioma</span>
+                        <select v-model="scheduleState.lng">
+                            <option value="en">en</option>
+                            <option value="es">es</option>
+                            <option value="fr">fr</option>
                         </select>
                     </label>
 
                     <label class="control-field">
-                        <span>Columnas en schedule</span>
-                        <select v-model.number="scheduleState.scheduleColumn">
+                        <span>Columnas en recursos</span>
+                        <select v-model.number="scheduleState.resourceColumns">
                             <option :value="1">1</option>
                             <option :value="2">2</option>
                             <option :value="3">3</option>
+                        </select>
+                    </label>
+
+                    <label class="control-field">
+                        <span>Elevation</span>
+                        <select v-model="scheduleState.elevation">
+                            <option value="">None</option>
+                            <option value="xs">xs</option>
+                            <option value="sm">sm</option>
+                            <option value="md">md</option>
+                            <option value="lg">lg</option>
+                            <option value="xl">xl</option>
+                        </select>
+                    </label>
+
+                    <label class="control-field">
+                        <span>Color</span>
+                        <select v-model="scheduleState.color">
+                            <option value="primary">primary</option>
+                            <option value="secondary">secondary</option>
+                            <option value="success">success</option>
+                            <option value="error">error</option>
+                            <option value="teal-900">teal-900</option>
+                            <option value="teal-300">teal-300</option>
+                            <option value="cyan-800">cyan-800</option>
                         </select>
                     </label>
 
@@ -77,34 +73,37 @@
                         <span>Loading</span>
                     </label>
 
-                    <label class="control-field control-field--checkbox">
-                        <input v-model="scheduleState.scheduleAfterWeek" type="checkbox" />
-                        <span>Week → schedule</span>
-                    </label>
                 </div>
 
                 <div class="schedule-shell">
                     <ESchedule
                         v-model="scheduleState.date"
-                        :mode="scheduleState.mode"
+                        :view="scheduleState.view"
+                        :scale="scheduleState.scale"
                         :selected-space="selectedSpace"
                         :spaces="spaces"
                         :events="scheduleEvents"
                         :loading="scheduleState.loading"
-                        :schedule-column="scheduleState.scheduleColumn"
-                        :schedule-after-week="scheduleState.scheduleAfterWeek"
-                        color="teal-900"
+                        :resource-columns="scheduleState.resourceColumns"
+                        :elevation="scheduleState.elevation || undefined"
+                        :lng="scheduleState.lng"
+                        :color="scheduleState.color"
                         row-height="72"
                         :sticky-top-header="8"
                         :start="8 * 60 * 60"
                         :end="18 * 60 * 60"
                         :step="60 * 60"
-                        @update:mode="scheduleState.mode = $event"
+                        @update:view="scheduleState.view = $event"
+                        @update:scale="scheduleState.scale = $event"
                         @update:selected-space="handleSelectedSpaceUpdate"
                         @click:event="handleEventClick"
                         @click:empty-slot="handleEmptySlotClick"
-                        @click:header-label="handleHeaderClick"
-                    />
+                        @click:header="handleHeaderClick"
+                    >
+                        <template #toolbar="toolbar">
+                            <EScheduleToolbar v-bind="toolbar" />
+                        </template>
+                    </ESchedule>
                 </div>
             </ECard>
 
@@ -123,7 +122,8 @@
                 <div class="schedule-shell schedule-shell--compact">
                     <ESchedule
                         :model-value="slotScenario.date"
-                        :mode="ScheduleMode.day"
+                        view="calendar"
+                        scale="day"
                         :selected-space="slotSelectedSpace"
                         :spaces="spaces"
                         :events="slotScenario.events"
@@ -180,13 +180,10 @@ import { computed, reactive, ref } from "vue";
 
 import ECard from "../../src/components/card/index.vue";
 import ESchedule from "../../src/components/schedule/index.vue";
-import type { ScheduleEvent, ScheduleSlotEvent, ScheduleSpace } from "../../src/types";
-import { ScheduleMode } from "../../src/types";
-
-type ModeOption = {
-    label: string;
-    value: ScheduleMode;
-};
+import EScheduleToolbar from "../../src/components/schedule/toolbar.vue";
+import { CalendarScale, ScheduleView } from "../../src/types";
+import type { ElevationLevel, ScheduleEvent, ScheduleSlotEvent, ScheduleSpace } from "../../src/types";
+import type { suportedLng } from "../../src/locales";
 
 type LogEntry = {
     id: number;
@@ -294,18 +291,15 @@ const slotScenario = {
     ] satisfies ScheduleEvent[],
 };
 
-const modeOptions: ModeOption[] = [
-    { label: "Day", value: ScheduleMode.day },
-    { label: "Week", value: ScheduleMode.week },
-    { label: "Schedule", value: ScheduleMode.schedule },
-];
-
 const scheduleState = reactive({
     date: new Date(baseMonday),
-    mode: ScheduleMode.day,
+    view: ScheduleView.Calendar as ScheduleView,
+    scale: CalendarScale.Day as CalendarScale,
+    lng: "en" as suportedLng,
+    color: "teal-900",
     loading: false,
-    scheduleColumn: 2,
-    scheduleAfterWeek: true,
+    resourceColumns: 2,
+    elevation: "md" as ElevationLevel | "",
 });
 
 const slotSelectedSpace = spaces[0];
@@ -321,11 +315,14 @@ const statePreview = computed(() => {
     return JSON.stringify(
         {
             date: scheduleState.date.toISOString(),
-            mode: modeOptions.find((item) => item.value === scheduleState.mode)?.label,
+            view: scheduleState.view,
+            scale: scheduleState.view === ScheduleView.Calendar ? scheduleState.scale : undefined,
+            lng: scheduleState.lng,
+            color: scheduleState.color,
             selectedSpace: selectedSpace.value,
             loading: scheduleState.loading,
-            scheduleColumn: scheduleState.scheduleColumn,
-            scheduleAfterWeek: scheduleState.scheduleAfterWeek,
+            resourceColumns: scheduleState.resourceColumns,
+            elevation: scheduleState.elevation || undefined,
         },
         null,
         2,
@@ -346,16 +343,6 @@ const pushLog = (type: string, title: string, detail: string) => {
     ].slice(0, 8);
 };
 
-const moveBaseDate = (days: number) => {
-    const nextDate = new Date(scheduleState.date);
-    nextDate.setDate(nextDate.getDate() + days);
-    scheduleState.date = nextDate;
-};
-
-const resetBaseDate = () => {
-    scheduleState.date = new Date(baseMonday);
-};
-
 const handleSelectedSpaceUpdate = (value: ScheduleSpace | undefined) => {
     if (!value) return;
     selectedSpaceId.value = String(value.id);
@@ -374,8 +361,8 @@ const handleEmptySlotClick = ({ data }: { data: ScheduleSlotEvent }) => {
     );
 };
 
-const handleHeaderClick = ({ date, entityId }: { date: Date; entityId?: number | string }) => {
-    pushLog("click:header-label", date.toDateString(), entityId ? `Entity: ${entityId}` : "Calendar header");
+const handleHeaderClick = ({ date, entityId, view, scale }: { date: Date; entityId?: number | string; view: ScheduleView; scale?: CalendarScale }) => {
+    pushLog("click:header", `${view}${scale ? `:${scale}` : ""}`, entityId ? `Entity: ${entityId} · ${date.toDateString()}` : date.toDateString());
 };
 
 const emitSyntheticEmptySlot = (data: ScheduleSlotEvent) => {
@@ -447,7 +434,6 @@ const slotEventStyle = (event: ScheduleEvent) => ({
 }
 
 .schedule-shell {
-    border: 1px solid rgba(23, 32, 51, 0.08);
     border-radius: 18px;
     overflow: hidden;
     padding: 12px;

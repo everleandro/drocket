@@ -13,6 +13,12 @@ export const iconFactory: Record<string, IconPath> = {
   arrowUp: {
     d: "M7,15L12,10L17,15H7Z",
   },
+  menuDown: {
+    d: "M7,10L12,15L17,10H7Z",
+  },
+  menu: {
+    d: "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z",
+  },
   chevronDown: {
     d: "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z",
   },
@@ -21,6 +27,9 @@ export const iconFactory: Record<string, IconPath> = {
   },
   clear: {
     d: "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z",
+  },
+  calendar: {
+    d: "M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z",
   },
 };
 

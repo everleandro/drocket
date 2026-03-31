@@ -4,6 +4,25 @@ import { fr } from "@/locales/fr.json";
 
 export type suportedLng = "es" | "en" | "fr";
 
+export interface ScheduleToolbarLocale {
+  view: string;
+  day: string;
+  week: string;
+  resource: string;
+  space: string;
+  today: string;
+  previousPeriod: string;
+  nextPeriod: string;
+  previousResourcePage: string;
+  nextResourcePage: string;
+  backToWeek: string;
+  resourcePage: string;
+}
+
+export interface ScheduleLocale {
+  toolbar: ScheduleToolbarLocale;
+}
+
 export interface Locale {
   months: Array<string>;
   monthsShort: Array<string>;
@@ -11,6 +30,7 @@ export interface Locale {
   weekdaysShort: Array<string>;
   weekdaysMin: Array<string>;
   start: number;
+  schedule: ScheduleLocale;
 }
 
 export class Lng {

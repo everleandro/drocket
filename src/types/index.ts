@@ -64,9 +64,11 @@ export type {
   ScheduleSpace,
   ScheduleSlotEvent,
   ScheduleEvent,
+  ScheduleToolbarLabels,
+  ScheduleToolbarSlotProps,
   Point,
 } from "./schedule";
-export { ScheduleMode } from "./schedule";
+export { ScheduleView, CalendarScale } from "./schedule";
 export type {
   EListGroupInjection,
   EListInjection,

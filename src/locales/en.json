@@ -5,6 +5,22 @@
         "weekdaysMin": ["So","Mo","Tu","We","Th","Fr","Sa"],
         "monthsShort": ["jan.","feb.","mar.","apr.","may.","jun.","jul.","aug.","sep.","oct.","nov.","dec."],
         "weekdaysShort":[ "son","mon","tue","Wed","thu","fri","sat"],
-        "weekdays": ["sonday","monday","tuesday","wednesday","thursday","friday","saturday"]
+        "weekdays": ["sonday","monday","tuesday","wednesday","thursday","friday","saturday"],
+        "schedule": {
+            "toolbar": {
+                "view": "View",
+                "day": "Day",
+                "week": "Week",
+                "resource": "Resource",
+                "space": "Space",
+                "today": "Today",
+                "previousPeriod": "Previous period",
+                "nextPeriod": "Next period",
+                "previousResourcePage": "Previous resource page",
+                "nextResourcePage": "Next resource page",
+                "backToWeek": "Back to week view",
+                "resourcePage": "Resource page"
+            }
+        }
     }
 }

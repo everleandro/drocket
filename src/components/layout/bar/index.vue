@@ -28,6 +28,10 @@ const { colorStyles } = useResolvedColor({
     contrastVar: '--e-bar-color',
 })
 
+const computedHeight = computed(() => {
+    return normalizeCssSize(props.height) || (props.dense ? '48px' : '64px')
+})
+
 watch(() => [props.clipped, props.fixed, props.absolute, props.app, props.dense, computedHeight.value], () => {
     nextTick(() => {
         refreshLayoutStyle()
@@ -67,9 +71,6 @@ const barClass: ComputedRef<Array<string>> = computed((): Array<string> => {
     })
 
     return classes
-})
-const computedHeight = computed(() => {
-    return normalizeCssSize(props.height) || (props.dense ? '48px' : '64px')
 })
 
 const style = computed((): Record<string, string> => {

@@ -27,6 +27,7 @@ export { default as EListGroup } from "./list/group.vue";
 export { default as EListItem } from "./list/item.vue";
 export { default as EProgressLinear } from "./progress/linear.vue";
 export { default as ESchedule } from "./schedule/index.vue";
+export { default as EScheduleToolbar } from "./schedule/toolbar.vue";
 export { default as ETab } from "./tab/index.vue";
 export { default as ETabGroup } from "./tab/group.vue";
 export { default as EWindow } from "./window/index.vue";

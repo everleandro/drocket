@@ -1,10 +1,18 @@
 @use '~/public/styles/_mixins.scss' as mixins;
 
 .e-schedule {
+  --e-schedule-header-frame-height: calc(var(--e-header-col-height, 4.0625rem) + 1.25rem);
   color: var(--e-schedule-color, currentColor);
-  padding-top: var(--e-header-col-height, 4.0625rem);
   background: var(--e-schedule-bg, #ffffff);
-  display: flex;
+  display: grid;
+  grid-template-rows: auto 1fr;
+
+  &__toolbar {
+    background: var(--e-schedule-bg, #ffffff);
+    border-bottom: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    position: relative;
+    z-index: 1;
+  }
 
   &__empty-slot {
     width: 100%;
@@ -15,15 +23,126 @@
     flex: 1;
   }
 
+  &__content {
+    display: flex;
+    min-width: 0;
+  }
+
   &__body {
     display: flex;
     flex: 1 1 100%;
-    min-width: calc(100% - var(--e-hour-column-width, 65px));
+    width: 100%;
 
     .tab-reverse-transition-leave-active,
     .tab-transition-leave-active {
       z-index: -1;
     }
+  }
+
+  &__viewport {
+    flex: 1 1 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: visible;
+    position: relative;
+  }
+
+  &__header-strip {
+    align-items: stretch;
+    display: flex;
+    min-width: 0;
+    background-color: var(--e-schedule-bg, #ffffff);
+  }
+
+  &__header-viewport {
+    flex: 1 1 100%;
+    min-height: var(--e-schedule-header-frame-height);
+    min-width: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  &__header-track {
+    display: flex;
+    min-height: var(--e-schedule-header-frame-height);
+    width: 100%;
+  }
+
+  &__header-spacer,
+  &__header-column {
+    background-color: var(--e-schedule-bg, #ffffff);
+    border-bottom: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    box-sizing: border-box;
+    height: var(--e-schedule-header-frame-height);
+    min-height: var(--e-schedule-header-frame-height);
+  }
+
+  &__header-spacer {
+    border-right: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    flex: 0 0 var(--e-hour-column-width, 65px);
+    max-width: var(--e-hour-column-width, 65px);
+    min-width: var(--e-hour-column-width, 65px);
+  }
+
+  &__header-column {
+    flex: 1;
+
+    &:not(:last-child) {
+      border-right: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    }
+  }
+
+  &__header-content {
+    align-items: center;
+    box-sizing: border-box;
+    color: var(--e-schedule-color, var(--label));
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    height: var(--e-schedule-header-frame-height);
+    justify-content: center;
+    min-height: var(--e-schedule-header-frame-height);
+    text-align: center;
+
+    &--actions {
+      padding: 0;
+
+
+
+      .action-container {
+        box-sizing: border-box;
+        display: flex;
+        height: 100%;
+        min-height: 100%;
+        padding-bottom: 1px;
+        width: 100%;
+
+        .e-btn {
+          box-shadow: none;
+          color: currentColor;
+          flex: 1 1 50%;
+          height: 100%;
+          margin: 0;
+          min-width: unset;
+          padding: 0;
+
+          &::before {
+            transition: none;
+
+          }
+        }
+      }
+    }
+  }
+
+  &-btn--day,
+  &__day-chip {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
   }
 
   &-btn--day {
@@ -33,6 +152,17 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
+    }
+  }
+
+  &__day-chip {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+
+    &[aria-current="date"] {
+      background-color: var(--e-schedule-color, currentColor);
+      color: var(--e-schedule-bg, #ffffff);
     }
   }
 
@@ -135,44 +265,10 @@
     }
   }
 
-  &__header {
-    color: var(--e-schedule-color, var(--label));
-
-    height: 0;
-
-    &>span {
-      display: block;
-      width: 100%;
-      margin: auto;
-      font-size: 26px;
-      font-weight: 400;
-      position: absolute;
-      bottom: 0;
-      z-index: 1;
-      height: calc(var(--e-header-col-height, 65px) + 10px);
-      padding-top: 10px;
-      background-color: var(--e-schedule-bg, #ffffff);
-
-      &.action-container {
-        display: flex;
-
-        .e-btn {
-          height: 100%;
-          box-shadow: none;
-          flex: 1 1 50%;
-          color: currentColor;
-          padding: 0;
-          min-width: unset;
-          margin: 0;
-        }
-      }
-    }
-
-    [data-day-of-week="true"] {
-      font-size: 12px;
-      display: block;
-      text-transform: uppercase;
-    }
+  [data-day-of-week="true"] {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
   }
 
   &__column {
@@ -219,7 +315,7 @@
     pointer-events: none;
   }
 
-  &--day {
+  &--calendar-day {
     .event {
       &-footer {
         display: block;
@@ -231,27 +327,21 @@
     // }
   }
 
+  &__hours-column {
+    border-right: var(--e-schedule-borderwidth, thin) solid var(--e-schedule-border-color, rgb(218, 220, 224));
+    flex: 0 0 var(--e-hour-column-width, 65px);
+    max-width: var(--e-hour-column-width, 65px);
+    min-width: var(--e-hour-column-width, 65px);
+    z-index: 1;
+  }
+
   &--header-stiky {
-    .e-schedule__header {
+    .e-schedule__header-strip {
       z-index: 2;
       position: sticky;
       top: var(--header-stiky-top);
+      left: 0;
     }
-
-    &:has(.tab-reverse-transition-enter-active),
-    &:has(.tab-reverse-transition-leave-active),
-    &:has(.tab-transition-enter-active),
-    &:has(.tab-transition-leave-active) {
-      .e-schedule__header {
-        position: relative;
-        top: 0;
-      }
-    }
-  }
-
-  &:has(.tab-reverse-transition-leave-active),
-  &:has(.tab-transition-leave-active) {
-    overflow: hidden;
   }
 
   &--loading {
@@ -269,24 +359,27 @@
 
   .e-progress-linear {
     position: absolute;
-    top: var(--e-header-col-height);
+    bottom: 0;
     z-index: 3;
   }
 
   @include mixins.xs {
-    .e-schedule__column.col-hour-info {
+
+    .e-schedule__header-spacer,
+    .e-schedule__hours-column {
       max-width: var(--e-hour-column-width-xs, 46px);
       min-width: var(--e-hour-column-width-xs, 46px);
     }
 
-    &__body {
-      min-width: calc(100% - var(--e-hour-column-width-xs, 46px));
+    .e-schedule__header-content {
+      height: var(--e-schedule-header-frame-height);
+      min-height: var(--e-schedule-header-frame-height);
     }
   }
 
   @include mixins.xs {
     .e-schedule {
-      &__header [data-day-of-week="true"] {
+      [data-day-of-week="true"] {
         font-size: 11px;
         text-transform: capitalize;
       }
@@ -300,6 +393,12 @@
       }
 
       &-btn--day {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+      }
+
+      &__day-chip {
         width: 25px;
         height: 25px;
         font-size: 12px;

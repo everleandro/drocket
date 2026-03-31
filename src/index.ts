@@ -39,6 +39,8 @@ export type {
 	ScheduleSpace,
 	ScheduleSlotEvent,
 	ScheduleEvent,
+	ScheduleToolbarLabels,
+	ScheduleToolbarSlotProps,
 	Point,
 	EListInjection,
 	ListModelProp,
@@ -54,7 +56,8 @@ export type {
 	DrawerClassKeys,
 	DrawerProps,
 } from "./types";
-export { datePickerViewType, ScheduleMode } from "./types";
+export { ScheduleView, CalendarScale } from "./types";
+export { datePickerViewType } from "./types";
 export * from "./utils/style";
 export { default as DateBuilder } from "./utils/date";
 import "@/style/main.scss";

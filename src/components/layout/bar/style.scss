@@ -1,8 +1,8 @@
 .e-bar {
   margin-bottom: calc(var(--e-space-base, 4px) * 4);
   height: var(--e-bar-height, 64px);
-  background-color: var(--e-bar-bg, var(--e-color-surface-1, #ffffff));
-  color: var(--e-bar-color, var(--e-contrast-surface-1, #000000));
+  background-color: var(--e-bar-bg, var(--e-color-surface-2, #ffffff));
+  color: var(--e-bar-color, var(--e-contrast-surface-2, #000000));
   flex-grow: 1;
   display: block;
   contain: layout;
@@ -16,7 +16,7 @@
 
   &--outlined {
     border: thin solid;
-    border-color:var(--e-color-border, currentColor);
+    border-color: var(--e-color-border, currentColor);
   }
 
   &--outlined,
@@ -32,6 +32,7 @@
     z-index: 1;
     height: 100%;
     flex-wrap: wrap;
+    padding: calc(var(--e-space-base, 4px) * 2) calc(var(--e-space-base, 4px) * 4);
   }
 
   &--app {

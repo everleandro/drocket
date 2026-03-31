@@ -1,0 +1,28 @@
+@use '~/public/styles/_mixins.scss' as mixins;
+
+.e-schedule-toolbar {
+    height: auto;
+    margin-bottom: 0;
+    --schedule-toolbar-gap: calc(var(--e-space-base) * 2);
+
+    .e-bar__content {
+        gap: var(--schedule-toolbar-gap);
+    }
+
+    &__select-view {
+        --e-field-max-width: 12rem;
+    }
+
+    &__pager {
+        padding-inline: var(--e-schedule-toolbar-gap);
+        display: flex;
+        align-items: center;
+
+        &-label {
+
+            margin-inline: var(--e-schedule-toolbar-gap);
+        }
+    }
+
+
+}

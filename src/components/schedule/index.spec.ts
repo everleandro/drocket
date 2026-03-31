@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { defineComponent, h, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 
-import { ScheduleMode, type ScheduleEvent, type ScheduleSpace } from "@/types";
+import { CalendarScale } from "@/types";
+import type { ScheduleEvent, ScheduleSpace } from "@/types";
 
 import ESchedule from "./index.vue";
 
@@ -58,18 +59,25 @@ const spaces: ScheduleSpace[] = [
 
 const modelValue = new Date(2024, 0, 2, 0, 0, 0);
 
-const mountSchedule = (props: Record<string, unknown> = {}) => {
+const mountSchedule = (
+  props: Record<string, unknown> = {},
+  options: any = {},
+) => {
+  const { global: globalOptions, ...mountOptions } = options;
+
   return mount(ESchedule, {
     attachTo: document.body,
     props: {
       modelValue,
-      mode: ScheduleMode.day,
+      view: "calendar",
+      scale: "day",
       spaces,
       start: 9 * 60 * 60,
       end: 11 * 60 * 60,
       step: 60 * 60,
       ...props,
     },
+    ...mountOptions,
     global: {
       directives: {
         ripple: {},
@@ -79,6 +87,7 @@ const mountSchedule = (props: Record<string, unknown> = {}) => {
         EIcon: EIconStub,
         EProgressLinear: EProgressLinearStub,
       },
+      ...globalOptions,
     },
   });
 };
@@ -102,6 +111,7 @@ describe("ESchedule", () => {
   it("falls back to the first space when day mode has no selectedSpace", async () => {
     const events: ScheduleEvent[] = [
       {
+        id: "checkup-room-a",
         entityId: "room-a",
         name: "Checkup",
         start: new Date(2024, 0, 2, 9, 0, 0),
@@ -122,6 +132,7 @@ describe("ESchedule", () => {
 
   it("renders default events as buttons and emits click:event", async () => {
     const event: ScheduleEvent = {
+      id: "consultation-room-a",
       entityId: "room-a",
       name: "Consultation",
       subtitle: "General medicine",
@@ -138,8 +149,10 @@ describe("ESchedule", () => {
     const eventButton = wrapper.get("button.e-schedule__event-container");
     await eventButton.trigger("click");
 
-    expect(wrapper.emitted("click:event")).toHaveLength(1);
-    expect(wrapper.emitted("click:event")?.[0]?.[0].data).toMatchObject({
+    const emittedClickEvent = wrapper.emitted("click:event") as Array<[{ data: ScheduleEvent }]> | undefined;
+
+    expect(emittedClickEvent).toHaveLength(1);
+    expect(emittedClickEvent?.[0]?.[0].data).toMatchObject({
       name: "Consultation",
       entityId: "room-a",
     });
@@ -153,23 +166,142 @@ describe("ESchedule", () => {
     const emptySlotButton = wrapper.get("button.e-schedule__empty-slot");
     await emptySlotButton.trigger("click");
 
+    const emittedEmptySlot = wrapper.emitted("click:empty-slot") as Array<[{ data: ScheduleEvent }]> | undefined;
+
     expect(emptySlotButton.attributes("aria-label")).toContain("Create event for room-a");
-    expect(wrapper.emitted("click:empty-slot")).toHaveLength(1);
-    expect(wrapper.emitted("click:empty-slot")?.[0]?.[0].data).toMatchObject({
+    expect(emittedEmptySlot).toHaveLength(1);
+    expect(emittedEmptySlot?.[0]?.[0].data).toMatchObject({
       entityId: "room-a",
       name: "",
       color: "primary",
     });
   });
 
-  it("labels pagination controls when the schedule spans multiple pages", async () => {
+  it("labels pagination controls when the resource view spans multiple pages", async () => {
     const wrapper = mountSchedule({
-      mode: ScheduleMode.schedule,
-      scheduleColumn: 1,
+      view: "resource",
+      resourceColumns: 1,
     });
     await nextTick();
 
-    expect(wrapper.get('button[aria-label="Previous schedule page"]').attributes("title")).toBe("Previous schedule page");
-    expect(wrapper.get('button[aria-label="Next schedule page"]').attributes("title")).toBe("Next schedule page");
+    expect(wrapper.get('button[aria-label="Previous resource page"]').attributes("title")).toBe("Previous resource page");
+    expect(wrapper.get('button[aria-label="Next resource page"]').attributes("title")).toBe("Next resource page");
+  });
+
+  it("returns to calendar with the selected resource when a resource header is clicked", async () => {
+    const wrapper = mountSchedule({
+      view: "resource",
+      scale: "week",
+      resourceColumns: 1,
+    });
+    await nextTick();
+
+    await wrapper.get('button[aria-label="Select resource column Room A"]').trigger("click");
+    await nextTick();
+
+    expect(wrapper.emitted("update:selected-space")).toEqual([[spaces[0]]]);
+    expect(wrapper.emitted("update:view")).toEqual([["calendar"]]);
+  });
+
+  it("applies elevation classes like card", async () => {
+    const wrapper = mountSchedule({ elevation: "lg" });
+    await nextTick();
+
+    expect(wrapper.get(".e-schedule").classes()).toContain("e-elevation--lg");
+  });
+
+  it("allows returning to week after drilling down into a day", async () => {
+    const wrapper = mountSchedule({ scale: "week" });
+    await nextTick();
+
+    const weekDayButtons = wrapper.findAll("button.e-schedule-btn--day");
+    expect(weekDayButtons).toHaveLength(7);
+
+    await weekDayButtons[2].trigger("click");
+    await nextTick();
+
+    expect(wrapper.emitted("update:scale")).toEqual([["day"]]);
+    await wrapper.setProps({ scale: CalendarScale.Day });
+    await nextTick();
+
+    expect(wrapper.find('button[aria-label="Back to week view"]').exists()).toBe(true);
+    expect(wrapper.findAll("button.e-schedule-btn--day")).toHaveLength(0);
+
+    await wrapper.get('button[aria-label="Back to week view"]').trigger("click");
+    await nextTick();
+
+    expect(wrapper.emitted("update:scale")).toEqual([["day"], ["week"]]);
+    await wrapper.setProps({ scale: CalendarScale.Week });
+    await nextTick();
+
+    expect(wrapper.find('button[aria-label="Back to week view"]').exists()).toBe(false);
+    expect(wrapper.findAll("button.e-schedule-btn--day")).toHaveLength(7);
+  });
+
+  it("exposes toolbar slot actions and hides duplicate header actions", async () => {
+    const wrapper = mountSchedule(
+      { scale: "week" },
+      {
+        slots: {
+          toolbar: ({ canReturnToWeek, goToNextPeriod, returnToWeekView }: { canReturnToWeek: boolean; goToNextPeriod: () => void; returnToWeekView: () => void }) =>
+            h("div", [
+              h("span", { "data-return-to-week": String(canReturnToWeek) }),
+              h(
+                "button",
+                {
+                  type: "button",
+                  class: "toolbar-next-period",
+                  onClick: () => goToNextPeriod(),
+                },
+                "Next period",
+              ),
+              h(
+                "button",
+                {
+                  type: "button",
+                  class: "toolbar-return-to-week",
+                  onClick: () => returnToWeekView(),
+                },
+                "Return to week",
+              ),
+            ]),
+        },
+      },
+    );
+    await nextTick();
+
+    await wrapper.get(".toolbar-next-period").trigger("click");
+
+    const emittedModelValue = wrapper.emitted("update:modelValue") as Array<[Date]> | undefined;
+    expect(emittedModelValue).toHaveLength(1);
+    expect(emittedModelValue?.[0]?.[0].getDate()).toBe(9);
+
+    const weekDayButtons = wrapper.findAll("button.e-schedule-btn--day");
+    await weekDayButtons[1].trigger("click");
+    await nextTick();
+    await wrapper.setProps({ scale: CalendarScale.Day });
+    await nextTick();
+
+    expect(wrapper.find('button[aria-label="Back to week view"]').exists()).toBe(false);
+    expect(wrapper.find('[data-return-to-week="true"]').exists()).toBe(true);
+
+    await wrapper.get(".toolbar-return-to-week").trigger("click");
+
+    expect(wrapper.emitted("update:scale")).toEqual([["day"], ["week"]]);
+  });
+
+  it("passes localized toolbar labels through slot props", async () => {
+    const wrapper = mountSchedule(
+      { lng: "es" },
+      {
+        slots: {
+          toolbar: ({ labels }: { labels: { today: string; view: string } }) =>
+            h("div", { class: "toolbar-i18n" }, `${labels.view} · ${labels.today}`),
+        },
+      },
+    );
+    await nextTick();
+
+    expect(wrapper.get(".toolbar-i18n").text()).toBe("Vista · Hoy");
   });
 });
