@@ -1,8 +1,8 @@
 <template>
     <div :class="scheduleContainerClass">
-        <div v-if="hasToolbarSlot" class="e-schedule__toolbar">
+        <div v-if="hasToolbarSlot" class="e-schedule__toolbar-slot">
             <slot name="toolbar" v-bind="toolbarSlotProps" />
-            <EProgressLinear v-show="loading" :color="color" indeterminate use-contrast-color height="4" />
+            <EProgressLinear v-show="loading" :color="color" indeterminate height="4" />
         </div>
         <transition name="fade" mode="out-in">
             <div :key="`${computedView}:${computedScale ?? 'none'}`" :class="scheduleClass" :style="scheduleStyle"
@@ -80,13 +80,13 @@
                                     <div v-for="(hour, hourIndex) in hourList" :key="hourIndex"
                                         class="e-schedule__event-cell e-schedule__cell">
                                         <div v-if="hasEvent(getVisibleEventPoint(hourIndex, colIndex))"
-                                            class="e-schedule__event"
+                                            :class="eventWrapperClass"
                                             :style="eventStyle(getVisibleEventPoint(hourIndex, colIndex))">
                                             <slot name="event"
                                                 :event="getEvent(getVisibleEventPoint(hourIndex, colIndex))">
                                                 <button v-ripple type="button"
                                                     :aria-label="eventAriaLabel(getEvent(getVisibleEventPoint(hourIndex, colIndex)))"
-                                                    :class="eventClass(getEvent(getVisibleEventPoint(hourIndex, colIndex)))"
+                                                    :class="eventClass()"
                                                     @click="handleEventClick(getEvent(getVisibleEventPoint(hourIndex, colIndex)), $event)">
                                                     <span class="event-name">{{
                                                         getEvent(getVisibleEventPoint(hourIndex, colIndex)).name
@@ -125,12 +125,12 @@
 
 <script lang="ts" setup>
 import { CalendarScale, ScheduleView } from "@/types";
-import type { ElevationProps, ScheduleEvent, ScheduleSpace, Point, ScheduleSlotEvent, ScheduleToolbarSlotProps } from "@/types";
+import type { ElevationLevel, ElevationProps, ScheduleEvent, ScheduleSpace, Point, ScheduleSlotEvent, ScheduleToolbarSlotProps } from "@/types";
 import { ripple } from "@/directives";
 import { Lng as Lnguage, suportedLng } from '@/locales/index';
 import EProgressLinear from '@/components/progress/linear.vue';
 import { useResolvedColor } from '@/composables/color';
-import { normalizeCssSize } from '@/utils/style';
+import { getColorContrastCssValue, getColorCssValue, normalizeCssSize } from '@/utils/style';
 const vRipple = { ...ripple };
 import UtilDate from '@/utils/date';
 import icon from '@/utils/icons';
@@ -140,14 +140,18 @@ import EIcon from '@/components/icon/index.vue'
 import { computed, nextTick, onMounted, reactive, useSlots, watch } from "vue";
 
 
+type ScheduleEventElevation = ElevationLevel | 'none';
+
 export interface Props extends ElevationProps {
     lng?: suportedLng; color?: string; stickyTopHeader?: string | number; loading?: boolean; resourceColumns?: string | number;
     rowHeight?: string | number; step?: number; start?: number; events?: ScheduleEvent[];
     end?: number; spaces?: ScheduleSpace[]; selectedSpace?: ScheduleSpace; modelValue: Date; view?: ScheduleView; scale?: CalendarScale;
+    eventElevation?: ScheduleEventElevation;
 }
 const props = withDefaults(defineProps<Props>(),
     {
         lng: 'en', color: 'primary', rowHeight: '97',
+        eventElevation: 'md',
         step: 60 * 60, start: 0, events: () => [], stickyTopHeader: 0,
         end: 60 * 60 * 24, spaces: () => []
     })
@@ -170,7 +174,7 @@ const scheduleClass = computed(() => {
     isCalendarView.value && classes.push('e-schedule--calendar')
     isDayScale.value && classes.push('e-schedule--calendar-day')
     isResourceView.value && classes.push('e-schedule--resource')
-    if (props.stickyTopHeader) classes.push('e-schedule--header-stiky')
+    if (props.stickyTopHeader) classes.push('e-schedule--header-sticky')
     if (props.loading) classes.push('e-schedule--loading')
     return classes
 })
@@ -183,6 +187,16 @@ const scheduleContainerClass = computed(() => {
     }
     if (!hasToolbarSlot.value) {
         classes.push('e-schedule-container--without-toolbar')
+    }
+
+    return classes
+})
+
+const eventWrapperClass = computed(() => {
+    const classes = ['e-schedule__event']
+
+    if (props.eventElevation && props.eventElevation !== 'none') {
+        classes.push(`e-elevation--${props.eventElevation}`)
     }
 
     return classes
@@ -497,9 +511,16 @@ const eventStyle = (point: Point): Record<string, string> => {
     const height = rowHeightNumber.value * (displacement == 0 ? 0 : displacement);
     const fillPercent = (from % props.step) / props.step;
     const top = rowHeightNumber.value * fillPercent - 1;
-    const backgroundColor = (color || '').indexOf('#') == -1 ? '' : color;
+    const backgroundColor = getColorCssValue(color);
+    const contrastColor = getColorContrastCssValue(color);
 
-    return { height: `${height}px`, top: `${top}px`, backgroundColor, marginTop: '0' };
+    return {
+        height: `${height}px`,
+        top: `${top}px`,
+        marginTop: '0',
+        ...(backgroundColor ? { '--schedule-local-event-bg': backgroundColor } : {}),
+        ...(contrastColor ? { '--schedule-local-event-color': contrastColor } : {}),
+    };
 }
 
 const handleEventClick = (event: ScheduleEvent, nativeEvent: MouseEvent): void => {
@@ -511,10 +532,8 @@ const hasEvent = ({ x, y }: Point): boolean => {
     return !!local.events?.[x]?.[y];
 }
 
-const eventClass = (event: ScheduleEvent): string => {
-    const { color } = event;
-    const extraClass = color.indexOf('#') == -1 ? color : '';
-    return ['e-schedule__event-container', extraClass].join(' ').trim();
+const eventClass = (): string => {
+    return 'e-schedule__event-container';
 }
 
 
@@ -564,7 +583,7 @@ const { colorStyles } = useResolvedColor({
 const scheduleStyle = computed((): Record<string, string> => ({
     ...colorStyles.value,
     '--row-height': normalizedRowHeight.value,
-    '--header-stiky-top': normalizedStickyTopHeader.value,
+    '--header-sticky-top': normalizedStickyTopHeader.value,
 }))
 
 const hourList = computed((): Array<string> => {

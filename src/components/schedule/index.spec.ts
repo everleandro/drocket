@@ -158,6 +158,82 @@ describe("ESchedule", () => {
     });
   });
 
+  it("injects palette-backed event colors through css variables", async () => {
+    const event: ScheduleEvent = {
+      id: "palette-color-room-a",
+      entityId: "room-a",
+      name: "Palette color",
+      start: new Date(2024, 0, 2, 9, 0, 0),
+      end: new Date(2024, 0, 2, 10, 0, 0),
+      color: "primary",
+    };
+
+    const wrapper = mountSchedule({ events: [event] });
+    await nextTick();
+    await nextTick();
+
+    const eventWrapper = wrapper.get(".e-schedule__event");
+    const eventButton = wrapper.get("button.e-schedule__event-container");
+    const wrapperStyle = eventWrapper.attributes("style");
+
+    expect(wrapperStyle).toContain("--schedule-local-event-bg: var(--e-color-primary);");
+    expect(wrapperStyle).toContain("--schedule-local-event-color: var(--e-contrast-primary, white);");
+    expect(eventButton.classes()).toContain("e-schedule__event-container");
+    expect(eventButton.classes()).not.toContain("primary");
+  });
+
+  it("applies md elevation to events by default", async () => {
+    const event: ScheduleEvent = {
+      id: "elevation-default-room-a",
+      entityId: "room-a",
+      name: "Default elevation",
+      start: new Date(2024, 0, 2, 9, 0, 0),
+      end: new Date(2024, 0, 2, 10, 0, 0),
+      color: "primary",
+    };
+
+    const wrapper = mountSchedule({ events: [event] });
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.get(".e-schedule__event").classes()).toContain("e-elevation--md");
+  });
+
+  it("allows overriding event elevation", async () => {
+    const event: ScheduleEvent = {
+      id: "elevation-override-room-a",
+      entityId: "room-a",
+      name: "Override elevation",
+      start: new Date(2024, 0, 2, 9, 0, 0),
+      end: new Date(2024, 0, 2, 10, 0, 0),
+      color: "primary",
+    };
+
+    const wrapper = mountSchedule({ events: [event], eventElevation: "xl" });
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.get(".e-schedule__event").classes()).toContain("e-elevation--xl");
+  });
+
+  it("allows disabling event elevation explicitly", async () => {
+    const event: ScheduleEvent = {
+      id: "elevation-none-room-a",
+      entityId: "room-a",
+      name: "No elevation",
+      start: new Date(2024, 0, 2, 9, 0, 0),
+      end: new Date(2024, 0, 2, 10, 0, 0),
+      color: "primary",
+    };
+
+    const wrapper = mountSchedule({ events: [event], eventElevation: "none" });
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.get(".e-schedule__event").classes()).not.toContain("e-elevation--md");
+    expect(wrapper.get(".e-schedule__event").classes()).not.toContain("e-elevation--none");
+  });
+
   it("renders default empty slots as buttons and emits click:empty-slot with the resolved space", async () => {
     const wrapper = mountSchedule();
     await nextTick();

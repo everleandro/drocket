@@ -38,17 +38,18 @@ Los props `view` y `scale` siguen aceptando los valores serializados (`"calendar
 | `scale` | `CalendarScale` | `CalendarScale.Day` interno | Escala activa cuando `view="calendar"`. |
 | `spaces` | `ScheduleSpace[]` | `[]` | Espacios o recursos visibles en la agenda. |
 | `selectedSpace` | `ScheduleSpace \| undefined` | `undefined` | Espacio seleccionado en vistas que lo requieren. Si falta en `CalendarScale.Day` o `CalendarScale.Week`, usa el primero disponible. |
-| `events` | `ScheduleEvent[]` | `[]` | Eventos renderizados dentro de la grilla. |
+| `events` | `ScheduleEvent[]` | `[]` | Eventos renderizados dentro de la grilla. `event.color` debe existir en la paleta o tokens del sistema para resolver fondo y contraste. |
 | `resourceColumns` | `string \| number` | `undefined` | Cantidad de columnas visibles por página en vista `ScheduleView.Resource`. |
 | `loading` | `boolean` | `false` | Desactiva interacción y muestra `EProgressLinear` en el header. |
 | `color` | `string` | `'primary'` | Color base del componente y acciones internas. |
 | `lng` | `suportedLng` | `'en'` | Idioma usado para labels del header y del toolbar. |
 | `rowHeight` | `string \| number` | `'97'` | Altura visual por bloque de tiempo. |
-| `stickyTopHeader` | `string \| number` | `0` | Offset superior cuando el header se vuelve sticky. |
+| `stickyTopHeader` | `string \| number` | `0` | Offset superior cuando el header se vuelve sticky. Para verlo en accion debe existir un contenedor scrollable sobre el que el header pueda fijarse. |
 | `step` | `number` | `3600` | Duración de cada celda en segundos. |
 | `start` | `number` | `0` | Inicio del rango visible en segundos desde `00:00`. |
 | `end` | `number` | `86400` | Fin del rango visible en segundos desde `00:00`. |
 | `elevation` | `ElevationLevel` | `undefined` | Sombra aplicada al contenedor principal, igual que en `ECard`. |
+| `eventElevation` | `ElevationLevel \| 'none'` | `'md'` | Sombra aplicada al wrapper visual de cada evento, incluyendo eventos renderizados mediante el slot `event`. Usa `'none'` para quitarla explicitamente. |
 
 ## Eventos
 
@@ -67,7 +68,7 @@ Los props `view` y `scale` siguen aceptando los valores serializados (`"calendar
 | Slot | Descripcion |
 | --- | --- |
 | `toolbar` | Permite inyectar una barra superior. Recibe `ScheduleToolbarSlotProps` con estado, labels localizadas y callbacks de navegación. |
-| `event` | Personaliza el render de cada evento. Recibe `{ event }`. |
+| `event` | Personaliza el render de cada evento. Recibe `{ event }`. El wrapper visual sigue aplicando `eventElevation` y las variables CSS resueltas desde `event.color`. |
 | `empty-slot` | Personaliza el render de cada bloque vacío. Recibe `{ data }`. |
 
 ### Contracto de `toolbar`
@@ -78,6 +79,7 @@ El slot `toolbar` recibe, entre otras, estas propiedades:
 | --- | --- | --- |
 | `date` | `Date` | Fecha base actual. |
 | `locale` | `string` | Idioma actual (`en`, `es`, `fr`). |
+| `color` | `string` | Color heredado por la toolbar para selects, menu y acciones internas. |
 | `labels` | `ScheduleToolbarLabels` | Labels ya resueltas para UI y accesibilidad. |
 | `view` | `ScheduleView` | Vista activa. |
 | `scale` | `CalendarScale` | Escala activa en vista calendario. |
@@ -106,10 +108,12 @@ Comportamiento:
 
 - Usa `EBar` como contenedor.
 - Muestra selector de vista (`CalendarScale.Day`, `CalendarScale.Week`, `ScheduleView.Resource`).
-- Integra navegación temporal anterior/siguiente.
-- Abre `EDatePicker` desde un campo de solo lectura.
-- Muestra selector de espacio solo en vista calendario y paginación cuando aplica en vista de recursos.
+- Muestra selector de espacio solo en vista calendario cuando hay espacios disponibles.
+- Muestra paginación solo cuando la vista de recursos necesita más de una página.
+- Abre `EDatePicker` desde un `EButton` con el periodo actual como label.
 - Respeta `lng` mediante `labels` y `locale` entregados por `ESchedule`.
+
+No renderiza por defecto acciones de `goToPreviousPeriod`, `goToNextPeriod`, `goToToday` ni `returnToWeekView`. Esas capacidades siguen estando disponibles en `ScheduleToolbarSlotProps` para toolbars custom.
 
 Uso recomendado:
 
@@ -218,6 +222,7 @@ import { ScheduleView } from 'drocket'
 - El toolbar recibe labels localizadas para mantener consistencia entre texto visible y atributos ARIA.
 - El drill-down `CalendarScale.Week -> CalendarScale.Day` conserva una acción explícita para volver a semana.
 - En `ScheduleView.Resource`, seleccionar un encabezado de recurso permite volver a la vista calendario con ese espacio seleccionado.
+- Cuando `stickyTopHeader` se usa sin un contenedor con scroll observable, el header no mostrará un efecto sticky visible aunque el prop esté configurado.
 
 ## Errores comunes
 
@@ -225,3 +230,4 @@ import { ScheduleView } from 'drocket'
 - No enviar `spaces` en `day` o `week`: el filtro por espacio necesita al menos un recurso disponible para resolver eventos y empty slots.
 - Usar `resourceColumns` sin escuchar el toolbar o sin dejar acciones internas visibles: si sustituyes el `toolbar`, tu barra debe exponer navegación de páginas si hay más de una.
 - Intentar usar `EScheduleToolbar` fuera del slot `toolbar` sin props equivalentes: el componente no crea estado interno y depende del contrato `ScheduleToolbarSlotProps`.
+- Pasar colores hardcodeados en `event.color`: el schedule resuelve fondo y contraste desde la paleta del sistema, por lo que el color debe existir en los tokens o variables de la libreria.

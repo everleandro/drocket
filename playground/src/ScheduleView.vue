@@ -56,6 +56,29 @@
                     </label>
 
                     <label class="control-field">
+                        <span>Event elevation</span>
+                        <select v-model="scheduleState.eventElevation">
+                            <option value="none">None</option>
+                            <option value="xs">xs</option>
+                            <option value="sm">sm</option>
+                            <option value="md">md</option>
+                            <option value="lg">lg</option>
+                            <option value="xl">xl</option>
+                        </select>
+                    </label>
+
+                    <label class="control-field">
+                        <span>Sticky header</span>
+                        <select v-model.number="scheduleState.stickyTopHeader">
+                            <option :value="0">Off</option>
+                            <option :value="8">8px</option>
+                            <option :value="16">16px</option>
+                            <option :value="24">24px</option>
+                            <option :value="48">48px</option>
+                        </select>
+                    </label>
+
+                    <label class="control-field">
                         <span>Color</span>
                         <select v-model="scheduleState.color">
                             <option value="primary">primary</option>
@@ -75,7 +98,7 @@
 
                 </div>
 
-                <div class="schedule-shell">
+                <div class="schedule-shell" :class="{ 'schedule-shell--sticky-preview': scheduleState.stickyTopHeader > 0 }">
                     <ESchedule
                         v-model="scheduleState.date"
                         :view="scheduleState.view"
@@ -86,10 +109,11 @@
                         :loading="scheduleState.loading"
                         :resource-columns="scheduleState.resourceColumns"
                         :elevation="scheduleState.elevation || undefined"
+                        :event-elevation="scheduleState.eventElevation"
                         :lng="scheduleState.lng"
                         :color="scheduleState.color"
                         row-height="72"
-                        :sticky-top-header="8"
+                        :sticky-top-header="scheduleState.stickyTopHeader"
                         :start="8 * 60 * 60"
                         :end="18 * 60 * 60"
                         :step="60 * 60"
@@ -301,6 +325,8 @@ const scheduleState = reactive({
     loading: false,
     resourceColumns: 2,
     elevation: "md" as ElevationLevel | "",
+    eventElevation: "md" as ElevationLevel | "none",
+    stickyTopHeader: 8,
 });
 
 const slotSelectedSpace = spaces[0];
@@ -324,6 +350,8 @@ const statePreview = computed(() => {
             loading: scheduleState.loading,
             resourceColumns: scheduleState.resourceColumns,
             elevation: scheduleState.elevation || undefined,
+            eventElevation: scheduleState.eventElevation,
+            stickyTopHeader: scheduleState.stickyTopHeader || undefined,
         },
         null,
         2,
@@ -438,6 +466,11 @@ const slotEventStyle = (event: ScheduleEvent) => ({
     border-radius: 18px;
     overflow: hidden;
     padding: 12px;
+}
+
+.schedule-shell--sticky-preview {
+    max-height: 760px;
+    overflow: auto;
 }
 
 .schedule-shell--compact {
