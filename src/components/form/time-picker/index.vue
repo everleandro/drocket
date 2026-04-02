@@ -1,20 +1,19 @@
 <template>
     <div ref="fieldRoot" :class="timePickerClass" :style="fieldStyle">
-        <div class="e-field__control">
+        <div class="e-time-picker__control e-field__control">
             <EMenu v-model="opened" full-width hold-focus check-offset :close-on-content-click="false"
                 :disable-menu="isDisabled" content-role="presentation">
                 <template #activator="{ ref: activatorRef }">
-                    <div class="e-field__slot" :ref="activatorRef" @mouseenter="handleHover(true)"
+                    <div class="e-time-picker__slot e-field__slot" :ref="activatorRef" @mouseenter="handleHover(true)"
                         @mouseleave="handleHover(false)" @mousedown="handleSlotMousedown($event)"
-                        @click="handleSlotClick($event)"
-                        @keydown="handleSlotKeydown($event)">
-                        <div v-if="prependIcon" class="e-field__prepend-inner" aria-hidden="true">
+                        @click="handleSlotClick($event)" @keydown="handleSlotKeydown($event)">
+                        <div v-if="prependIcon" class="e-time-picker__prepend e-field__prepend-inner" aria-hidden="true">
                             <div class="e-field__icon e-field__icon--prepend-inner">
                                 <EIcon :icon="prependIcon" />
                             </div>
                         </div>
                         <div class="e-field__overlay"></div>
-                        <div class="e-time-picker__fields e-field__field">
+                        <div class="e-time-picker__body e-field__field">
                             <label :id="labelId" :for="`${id}-hours`" :class="[
                                 'e-label',
                                 {
@@ -24,37 +23,35 @@
                             ]" :style="labelStyle">
                                 <slot name="label">{{ label }}</slot>
                             </label>
-                            <div :class="timePickerContentClass" role="group" :aria-labelledby="labelId"
-                                :aria-describedby="detailsId" >
-                                <input ref="hours" :id="`${id}-hours`" class="input--text" v-model="hourModel"
-                                    data-hours :readonly="hourInputReadonly" :disabled="isDisabled" limit="2" type="text"
-                                    inputmode="numeric" pattern="[0-9]*" placeholder="00" autocomplete="off"
-                                    aria-label="Hours" :aria-describedby="detailsId"
-                                    @click.stop
-                                    @focus="handleTimePickerFocus('hours', $event)" @blur="handleTimePickerBlur('hours', $event)"
+                            <div :class="timePickerGroupClass" role="group" :aria-labelledby="labelId"
+                                :aria-describedby="detailsId">
+                                <input ref="hours" :id="`${id}-hours`" class="e-time-picker__input e-time-picker__input--hours input--text" v-model="hourModel"
+                                    data-hours :readonly="hourInputReadonly" :disabled="isDisabled" limit="2"
+                                    type="text" inputmode="numeric" pattern="[0-9]*" placeholder="00" autocomplete="off"
+                                    aria-label="Hours" :aria-describedby="detailsId" @click.stop
+                                    @focus="handleTimePickerFocus('hours', $event)"
+                                    @blur="handleTimePickerBlur('hours', $event)"
                                     @keydown="handleInputKeydown('hours', $event)" />
                                 <div class="e-time-picker__separator">
-                                    <slot name="separator"><span class="mt-n1">:</span></slot>
+                                    <slot name="separator"><span>:</span></slot>
                                 </div>
-                                <input ref="minutes" :id="`${id}-minutes`" class="input--text" v-model="minutesModel"
-                                    data-minutes :readonly="minutesInputReadonly" :disabled="isDisabled"
-                                    limit="2" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="00" autocomplete="off"
-                                    aria-label="Minutes" :aria-describedby="detailsId"
-                                    @click.stop
+                                <input ref="minutes" :id="`${id}-minutes`" class="e-time-picker__input e-time-picker__input--minutes input--text" v-model="minutesModel"
+                                    data-minutes :readonly="minutesInputReadonly" :disabled="isDisabled" limit="2"
+                                    type="text" inputmode="numeric" pattern="[0-9]*" placeholder="00" autocomplete="off"
+                                    aria-label="Minutes" :aria-describedby="detailsId" @click.stop
                                     @focus="handleTimePickerFocus('minutes', $event)"
                                     @blur="handleTimePickerBlur('minutes', $event)"
                                     @keydown="handleInputKeydown('minutes', $event)" />
                             </div>
-                            
-                        </div>
-                        <div class="e-time-picker__field-icon e-field__append-inner" aria-hidden="true">
-                                <div class="e-field__icon e-field__icon--append">
-                                    <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon"
-                                        :color="color" />
-                                </div>
-                            </div>
 
-                        <div v-if="appendIcon" class="e-field__append-inner" aria-hidden="true">
+                        </div>
+                        <div class="e-time-picker__append e-time-picker__append--toggle e-field__append-inner" aria-hidden="true">
+                            <div class="e-field__icon e-field__icon--append">
+                                <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon" :color="color" />
+                            </div>
+                        </div>
+
+                        <div v-if="appendIcon" class="e-time-picker__append e-field__append-inner" aria-hidden="true">
                             <div class="e-field__icon e-field__icon--append">
                                 <EIcon :icon="appendIcon" />
                             </div>
@@ -63,42 +60,43 @@
                     </div>
                 </template>
 
-                <div ref="menuContent" class="e-time-picker__menu-content" @mousedown.capture="handleMenuContentMousedown">
+                <div ref="menuContent" class="e-time-picker__menu-content"
+                    @mousedown.capture="handleMenuContentMousedown">
                     <ul class="e-time-picker__menu-list">
-                        <li>
-                            <EButton block text size="small" type="button" :color="color"
-                                @mousedown.prevent @click="arrowActions('hours', 'add')">
+                        <li class="e-time-picker__menu-segment">
+                            <EButton block text size="small" type="button" :color="color" @mousedown.prevent
+                                @click="arrowActions('hours', 'add')">
                                 <EIcon :icon="icon.arrowUp" />
                             </EButton>
-                            <div class="time-info">
+                            <div class="e-time-picker__menu-value">
                                 <transition :name="globalTransition">
                                     <div :key="hourLabel">
                                         {{ hourLabel }}
                                     </div>
                                 </transition>
                             </div>
-                            <EButton block text size="small" type="button" :color="color"
-                                @mousedown.prevent @click="arrowActions('hours', 'subtract')">
+                            <EButton block text size="small" type="button" :color="color" @mousedown.prevent
+                                @click="arrowActions('hours', 'subtract')">
                                 <EIcon :icon="icon.arrowDown" />
                             </EButton>
                         </li>
                         <li class="e-time-picker__separator e-time-picker__separator--animated" aria-hidden="true">
                             <slot name="separator"><span>:</span></slot>
                         </li>
-                        <li>
-                            <EButton block text size="small" type="button" :color="color"
-                                @mousedown.prevent @click="arrowActions('minutes', 'add')">
+                        <li class="e-time-picker__menu-segment">
+                            <EButton block text size="small" type="button" :color="color" @mousedown.prevent
+                                @click="arrowActions('minutes', 'add')">
                                 <EIcon :icon="icon.arrowUp" />
                             </EButton>
-                            <div class="time-info">
+                            <div class="e-time-picker__menu-value">
                                 <transition :name="globalTransition">
                                     <div :key="minutesLabel">
                                         {{ minutesLabel }}
                                     </div>
                                 </transition>
                             </div>
-                            <EButton block text size="small" type="button" :color="color"
-                                @mousedown.prevent @click="arrowActions('minutes', 'subtract')">
+                            <EButton block text size="small" type="button" :color="color" @mousedown.prevent
+                                @click="arrowActions('minutes', 'subtract')">
                                 <EIcon :icon="icon.arrowDown" />
                             </EButton>
                         </li>
@@ -138,7 +136,7 @@ const globalTransition = ref('picker-transition')
 
 const emit = defineEmits<TimePickerEmits>()
 
-const { fieldClass, focused, id, showDetails, color, fieldStyle, 
+const { fieldClass, focused, id, showDetails, color, fieldStyle,
     details, labelStyle, handleHover, focus, blur, isDisabled, isReadonly,
     handleBlur: handleFieldBlur, validate, reset, resetValidation, hasError,
     isLabelFloating, shouldFloatLabel } = useField()
@@ -180,9 +178,9 @@ const timePickerClass = computed(() => {
 
 const resolvedInputAlign = computed(() => props.inputAlign ?? (shouldFloatLabel.value ? 'start' : 'end'))
 
-const timePickerContentClass = computed(() => [
-  "e-time-picker__content  e-field__field-control",
-  `e-time-picker__content--${resolvedInputAlign.value}`,
+const timePickerGroupClass = computed(() => [
+    "e-time-picker__group  e-field__field-control",
+    `e-time-picker__group--${resolvedInputAlign.value}`,
 ])
 
 const openMenu = (): void => {

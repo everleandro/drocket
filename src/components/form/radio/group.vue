@@ -1,19 +1,30 @@
 <template>
     <div :class="radioGroupClass" :style="fieldStyle" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
-        <div class="e-field__control">
-            <div class="e-field__slot ">
+        <div class="e-radio-group-field__control e-field__control">
+            <div class="e-radio-group-field__slot e-field__slot">
                 <div v-if="showOverlay" class="e-field__overlay"></div>
-                <label :id="labelId" :class="[
-                    'e-label',
-                    {
-                        'e-label--floating': isLabelFloating,
-                        'e-label--floated': shouldFloatLabel,
-                    },
-                ]" :style="labelStyle">
+                <label
+                    :id="labelId"
+                    :class="[
+                        'e-label',
+                        {
+                            'e-label--floating': isLabelFloating,
+                            'e-label--floated': shouldFloatLabel,
+                        },
+                    ]"
+                    :style="labelStyle"
+                >
                     <slot name="label"> {{ label }} </slot>
                 </label>
-                <div role="radiogroup" :aria-labelledby="labelId" :aria-describedby="detailsId" :aria-invalid="hasError"
-                    :aria-disabled="isDisabled" :aria-readonly="isReadonly" class="e-field--radio-group__field e-field--selection-controls e-field__control-wrapper">
+                <div
+                    role="radiogroup"
+                    :aria-labelledby="labelId"
+                    :aria-describedby="detailsId"
+                    :aria-invalid="hasError"
+                    :aria-disabled="isDisabled"
+                    :aria-readonly="isReadonly"
+                    class="e-radio-group-field__group"
+                >
                     <slot></slot>
                 </div>
                 <div v-if="!outlined && !flat" class="e-field__line"></div>
@@ -25,11 +36,11 @@
   
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, provide, reactive, watch } from "vue";
-import type { ERadio, ERadioType, FieldBaseProps, FieldConfiguration } from "@/types"
-import { normalizeCssSize } from "@/utils/style"
+import type { ERadio, ERadioType, FieldBaseProps, FieldConfiguration } from "@/types";
+import { normalizeCssSize } from "@/utils/style";
 
-import EDetails from '@/components/form/details.vue'
-import { RADIO_GROUP_KEY } from "./constants"
+import EDetails from "@/components/form/details.vue";
+import { RADIO_GROUP_KEY } from "./constants";
 
 export interface Props extends FieldBaseProps<ERadioType> {
     mandatory?: boolean;
@@ -38,43 +49,63 @@ export interface Props extends FieldBaseProps<ERadioType> {
     showOverlay?: boolean;
     flat?: boolean;
 }
-import { useField } from "@/composables/field"
-import { useGridCol } from "@/composables/grid-col"
+import { useField } from "@/composables/field";
+import { useGridCol } from "@/composables/grid-col";
 const props = withDefaults(defineProps<Props>(), {
     showOverlay: false,
-})
+});
 
-const { fieldClass, id, isDisabled, isReadonly, isLabelFloating, shouldFloatLabel, showDetails, hasError,
-    handleBlur, details, labelStyle, handleHover, handleFocus, configuration,fieldStyle } = useField()
+const {
+    fieldClass,
+    id,
+    isDisabled,
+    isReadonly,
+    isLabelFloating,
+    shouldFloatLabel,
+    showDetails,
+    hasError,
+    handleBlur,
+    details,
+    labelStyle,
+    handleHover,
+    handleFocus,
+    configuration,
+    fieldStyle,
+    isOutlined: outlined,
+} = useField();
 
-const labelId = computed(() => `${id}-label`)
-const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined)
+const labelId = computed(() => `${id}-label`);
+const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined);
 
-const { gridColClass } = useGridCol(props)
+const { gridColClass } = useGridCol(props);
 
 const radioGroupClass = computed(() => {
     const result = [
         ...fieldClass.value,
-        'e-field--radio-group',
+        "e-radio-group-field",
         ...gridColClass.value.filter((className) => className !== 'e-field'),
-    ]
-    props.row ? result.push('e-field--radio-group--row') : result.push('e-field--radio-group--column')
-    return result
-})
+    ];
+    if (props.row) {
+        result.push("e-radio-group-field--row");
+    } else {
+        result.push("e-radio-group-field--column");
+    }
+    return result;
+});
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: ERadioType): void
-    (e: 'focus', event: FocusEvent): void
-    (e: 'blur', event: Event): void
-}>()
+    (e: "update:modelValue", value: ERadioType): void
+    (e: "focus", event: FocusEvent): void
+    (e: "blur", event: Event): void
+}>();
 
-const state = reactive<{ radioChilds: Array<Partial<ERadio>> }>({ radioChilds: [] })
+const state = reactive<{ radioChilds: Array<Partial<ERadio>> }>({ radioChilds: [] });
 const hasSelectedRadio = computed(() => {
-    return state.radioChilds.some((radio) => Object.is(radio.modelValue, props.modelValue))
-})
+    return state.radioChilds.some((radio) => Object.is(radio.modelValue, props.modelValue));
+});
 const canInitializeMandatoryValue = computed(() => {
-    return props.mandatory && !isDisabled.value && !isReadonly.value && !hasSelectedRadio.value
-})
+    return props.mandatory && !isDisabled.value && !isReadonly.value && !hasSelectedRadio.value;
+});
 
 const radioConfiguration = computed((): FieldConfiguration => {
     const nextConfiguration: FieldConfiguration = {
@@ -83,65 +114,73 @@ const radioConfiguration = computed((): FieldConfiguration => {
         readonly: Boolean(props.readonly || configuration.readonly),
     }
 
-    const labelMinWidth = normalizeCssSize(props.labelMinWidth)
-    const inheritedLabelStyle = configuration.labelStyle ? { ...configuration.labelStyle } : {}
+    const labelMinWidth = normalizeCssSize(props.labelMinWidth);
+    const inheritedLabelStyle = configuration.labelStyle ? { ...configuration.labelStyle } : {};
 
     if (labelMinWidth) {
-        inheritedLabelStyle.minWidth = labelMinWidth
+        inheritedLabelStyle.minWidth = labelMinWidth;
     }
 
     if (Object.keys(inheritedLabelStyle).length > 0) {
-        nextConfiguration.labelStyle = inheritedLabelStyle
+        nextConfiguration.labelStyle = inheritedLabelStyle;
     }
 
-    const resolvedColor = props.color || configuration.color
+    const resolvedColor = props.color || configuration.color;
 
     if (resolvedColor) {
-        nextConfiguration.color = resolvedColor
+        nextConfiguration.color = resolvedColor;
     }
 
-    return nextConfiguration
-})
+    return nextConfiguration;
+});
 
 const applyRadioConfiguration = (component?: Partial<ERadio>): void => {
     if (component) {
-        component.setConfiguration?.(radioConfiguration.value)
-        return
+        component.setConfiguration?.(radioConfiguration.value);
+        return;
     }
 
     state.radioChilds.forEach((vueComponent) => {
-        vueComponent.setConfiguration?.(radioConfiguration.value)
-    })
-}
+        vueComponent.setConfiguration?.(radioConfiguration.value);
+    });
+};
 
 const bindRadio = (component: Partial<ERadio>) => {
-    state.radioChilds.push(component)
-    applyRadioConfiguration(component)
-}
+    state.radioChilds.push(component);
+    applyRadioConfiguration(component);
+};
 
 const unbindRadio = (uid: number) => {
     const index = state.radioChilds.findIndex((c) => c.uid === uid);
-    (index > -1) && (state.radioChilds.splice(index, 1))
-}
-const changeModelValue = (value: ERadioType): void => emit('update:modelValue', value)
+    (index > -1) && (state.radioChilds.splice(index, 1));
+};
+const changeModelValue = (value: ERadioType): void => emit("update:modelValue", value);
 
-provide(RADIO_GROUP_KEY, { bindRadio, unbindRadio, handleFocus, handleBlur, changeModelValue, modelValue: computed(() => props.modelValue), name: id });
+provide(RADIO_GROUP_KEY, {
+    bindRadio,
+    unbindRadio,
+    handleFocus,
+    handleBlur,
+    changeModelValue,
+    modelValue: computed(() => props.modelValue),
+    name: id,
+});
 
-onMounted(() => init())
+onMounted(() => init());
 
-watch(radioConfiguration, () => applyRadioConfiguration(), { deep: true, immediate: true })
+watch(radioConfiguration, () => applyRadioConfiguration(), { deep: true, immediate: true });
 
 const init = async (): Promise<void> => {
-    await nextTick()
+    await nextTick();
 
-    if (!canInitializeMandatoryValue.value) return
+    if (!canInitializeMandatoryValue.value) return;
 
-    const firstRadioValue = state.radioChilds[0]?.modelValue
+    const firstRadioValue = state.radioChilds[0]?.modelValue;
 
-    if (firstRadioValue === undefined) return
+    if (firstRadioValue === undefined) return;
 
-    changeModelValue(firstRadioValue)
-}
+    changeModelValue(firstRadioValue);
+};
 
 </script>
 <style lang="scss" src="./style.scss"></style>
