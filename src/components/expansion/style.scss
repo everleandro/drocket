@@ -46,6 +46,13 @@
   &-panel {
     --panel-border-radius: var(--e-expansion-panel-border-radius, 4px);
     --panel-space-base: 0px;
+    --panel-header-height: var(--e-expansion-header-height, 2.5rem);
+    --panel-inline-padding: calc(var(--e-space-base, 4px) * 3);
+    --panel-body-padding-inline: calc(var(--e-space-base, 4px) * 3);
+    --panel-body-padding-bottom: calc(var(--e-space-base, 4px) * 2);
+    --panel-margin-transition: margin-top 0.3s ease;
+    --panel-content-transition: height 0.3s ease;
+    --panel-icon-transition: transform 0.5s ease;
 
     border-top: var(--e-expansion-panel-border-width, thin) solid var(--e-color-border, rgb(0, 0, 0));
     background-color: var(--e-expansion-panel-background-color, var(--e-color-surface-1, #ffffff));
@@ -53,7 +60,7 @@
     margin-top: var(--panel-space-base);
     border-radius: var(--panel-border-radius);
     width: 100%;
-    transition: margin-top 0.3s ease;
+    transition: var(--panel-margin-transition);
     overflow: hidden;
 
     &--disabled {
@@ -80,30 +87,18 @@
         color: var(--e-expansion-panel-button-color, var(--e-contrast-surface-1, #000000));
         background-color: var(--e-expansion-panel-button-background-color, var(--e-color-surface-1, #ffffff));
         font-size: var(--e-expansion-header-font-size, 0.875rem);
-        padding: 0px calc(var(--e-space-base, 4px) * 3);
+        padding: 0 var(--panel-inline-padding);
         @include prefix(user-select, none);
         @include button-reset();
-        @include button-before();
-
-        &:focus:before {
-          opacity: var(--e-btn-state-focus, 0.12);
-        }
-
-        &:hover:before {
-          opacity: var(--e-btn-state-hover, 0.08);
-        }
-
-        &:active:before {
-          opacity: var(--e-btn-state-active, 0.12);
-        }
+        @include button-before($interactive: true);
 
         &-content {
-          transition: height 0.3s ease;
+          transition: var(--panel-content-transition);
           flex: 1 1 auto;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          height: var(--e-expansion-header-height, 2.5rem);
+          height: var(--panel-header-height);
         }
 
         &-icon {
@@ -112,7 +107,7 @@
           justify-content: center;
 
           i {
-            transition: transform 0.5s ease;
+            transition: var(--panel-icon-transition);
             display: flex;
           }
 
@@ -126,17 +121,17 @@
         height: 100%;
 
         >* {
-          height: var(--e-expansion-header-height, 2.5rem);
+          height: var(--panel-header-height);
         }
       }
 
     }
 
     &__body {
-      padding-top: 0px;
+      padding-top: 0;
 
       &-content-wrapper {
-        padding: var(--e-space-base, 4px) calc(var(--e-space-base, 4px) * 3) calc(var(--e-space-base, 4px) * 2);
+        padding: var(--e-space-base, 4px) var(--panel-body-padding-inline) var(--panel-body-padding-bottom);
       }
 
       &-content {

@@ -38,7 +38,11 @@
 
 @mixin button-before($bg: currentColor,
     $opacity: 0,
-    $transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1)) {
+    $transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1),
+    $interactive: false,
+    $hover-opacity: var(--e-btn-state-hover, 0.08),
+    $focus-opacity: var(--e-btn-state-focus, 0.12),
+    $active-opacity: var(--e-btn-state-active, 0.12)) {
     &::before {
         content: '';
         position: absolute;
@@ -50,7 +54,21 @@
         opacity: $opacity;
         pointer-events: none;
 
-        // transition: $transition;
+        transition: $transition;
+    }
+
+    @if $interactive {
+        &:focus:before {
+            opacity: $focus-opacity;
+        }
+
+        &:hover:before {
+            opacity: $hover-opacity;
+        }
+
+        &:active:before {
+            opacity: $active-opacity;
+        }
     }
 }
 

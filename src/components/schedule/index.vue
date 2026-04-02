@@ -40,7 +40,7 @@
                                     class="e-schedule__header-column">
                                     <div class="e-schedule__header-content">
                                         <EButton v-if="isResourceView" class="e-schedule-btn--space" :color="color" text
-                                            depressed :aria-label="resourceHeaderAriaLabel(data)"
+                                            :aria-label="resourceHeaderAriaLabel(data)"
                                             @click="handleHeaderLabelClick(data.date, data.entityId)">
                                             {{ data.label }}
                                         </EButton>
@@ -48,7 +48,7 @@
                                             <span data-day-of-week="true"> {{ data.dayOfWeek }}</span>
                                             <EButton v-if="isWeekScale" class="e-schedule-btn--day" :color="color"
                                                 :text="!data.today" :aria-current="data.today ? 'date' : undefined"
-                                                :aria-label="calendarHeaderAriaLabel(data)" depressed
+                                                :aria-label="calendarHeaderAriaLabel(data)"
                                                 @click="handleHeaderLabelClick(data.date)">
                                                 {{ data.dayOfMonth }}
                                             </EButton>
