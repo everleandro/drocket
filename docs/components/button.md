@@ -23,7 +23,7 @@ import { EButton } from 'drocket'
 | `color` | `string` | `undefined` | Color base. Resuelve `--e-color-{color}` y `--e-contrast-{color}`. |
 | `hoverColor` | `string` | `undefined` | Color al hover. Si existe, reemplaza `color` mientras hover esta activo. |
 | `fab` | `boolean` | `false` | Variante circular flotante. |
-| `depressed` | `boolean` | `false` | Quita sombra. |
+| `elevation` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| 'none'` | `undefined` | Define la elevacion explicita. Usa `none` para forzar un boton plano. |
 | `text` | `boolean` | `false` | Variante texto (fondo transparente). |
 | `useContrastColor` | `boolean` | `false` | En variantes transparentes como `text` y `outlined`, usa el color de contraste resuelto para `color`. |
 | `outlined` | `boolean` | `false` | Variante outlined. |
@@ -53,6 +53,16 @@ import { EButton } from 'drocket'
 | `loading` | Loader personalizado cuando `loading=true`. |
 
 ## Ejemplos
+
+### Elevacion por variable CSS
+
+```css
+:root {
+  --e-btn-elevation: var(--e-elevation-md);
+}
+```
+
+Sin pasar `elevation`, el boton contenido usa `--e-btn-elevation` como sombra base. Si necesitas quitarla por completo, usa `elevation="none"`.
 
 ### Basico
 

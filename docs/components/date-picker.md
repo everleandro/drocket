@@ -30,6 +30,8 @@ import { EDatePicker } from 'drocket'
 | `format` | `string` | `undefined` | Formato de texto usado para la fecha del encabezado. |
 | `lng` | `suportedLng` | `'en'` | Idioma usado por nombres de meses y dias. |
 | `color` | `string` | `'primary'` | Color base para estados visuales. |
+| `elevation` | `ElevationLevel` | `undefined` | Aplica sombra al contenedor del picker. |
+| `gridButtonElevation` | `ElevationLevel` | `undefined` | Aplica sombra a los botones seleccionados de dias, meses y anios. |
 | `landscape` | `boolean` | `false` | Activa layout horizontal (`e-picker--landscape`). |
 | `noTitle` | `boolean` | `false` | Oculta el bloque superior con anio y fecha. |
 | `onlyYear` | `boolean` | `false` | Limita la seleccion a anio. |
@@ -74,6 +76,8 @@ import { EDatePicker } from 'drocket'
     :disabled="disabledConfig"
     :highlighted="highlightedConfig"
     color="secondary"
+    elevation="md"
+    grid-button-elevation="sm"
   />
 </template>
 ```

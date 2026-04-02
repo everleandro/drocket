@@ -18,7 +18,7 @@
         </div>
         <ESpacer />
         <EMenu v-model="datePickerOpen" :close-on-content-click="false" content-role="presentation"
-            origin="bottom right" :color="color">
+            origin="bottom right">
             <template #activator="activator">
                 <EButton outlined  :prepend-icon="icon.calendar"
                     v-bind="buildActivatorBindings(activator)">
@@ -27,7 +27,7 @@
             </template>
 
             <EDatePicker :model-value="date" :lng="datePickerLanguage" close-on-change
-                @update:model-value="handleDateChange" />
+                @update:model-value="handleDateChange" :color="color"/>
         </EMenu>
     </EBar>
 </template>

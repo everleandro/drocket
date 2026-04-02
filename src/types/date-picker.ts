@@ -1,4 +1,5 @@
 import { IconPath } from "./icon";
+import type { ElevationLevel, ElevationProps } from "./elevation";
 import { suportedLng } from "@/locales/index";
 export interface DatesRange {
   from: Date;
@@ -51,9 +52,10 @@ export interface Year {
   isCurrent: boolean;
   isDisabled: boolean;
 }
-export interface DatePickerProps {
+export interface DatePickerProps extends ElevationProps {
   landscape?: boolean;
   color?: string;
+  gridButtonElevation?: ElevationLevel;
   noTitle?: boolean;
   onlyYear?: boolean;
   onlyMonth?: boolean;

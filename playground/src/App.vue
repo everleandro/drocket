@@ -453,40 +453,6 @@
     </section>
 
     <section class="block">
-      <h2>Date Picker</h2>
-
-      <div class="date-picker-grid">
-        <div class="date-picker-card">
-          <h3>Inline Selection</h3>
-          <p class="playground-note">
-            Selected date: {{ formatPlaygroundDate(selectedDate) }}
-          </p>
-          <e-card>
-            <EDatePicker v-model="selectedDate" color="primary" :highlighted="highlightedDates"
-              :disabled="disabledDates" />
-          </e-card>
-        </div>
-
-        <div class="date-picker-card">
-          <h3>Inside Dialog</h3>
-          <p class="playground-note">
-            Meeting date: {{ formatPlaygroundDate(dialogDate) }}
-          </p>
-          <div class="row">
-            <EButton color="primary" @click="dateDialog = true">Choose Date</EButton>
-          </div>
-
-          <EDialog v-model="dateDialog" elevation="xl">
-            <ECard>
-              <EDatePicker v-model="dialogDate" landscape color="secondary" close-on-change
-                :highlighted="highlightedDates" />
-            </ECard>
-          </EDialog>
-        </div>
-      </div>
-    </section>
-
-    <section class="block">
       <h2>Chip</h2>
 
       <div class="chip-group">
@@ -542,7 +508,6 @@ import { ref, onMounted, watch } from "vue";
 import EAvatar from "../../src/components/avatar.vue";
 import EButton from "../../src/components/button/index.vue";
 import EChip from "../../src/components/chip/index.vue";
-import EDatePicker from "../../src/components/date-picker/index.vue";
 import EIcon from "../../src/components/icon/index.vue";
 import EDialog from "../../src/components/dialog/index.vue";
 import ECard from "../../src/components/card/index.vue";
@@ -567,9 +532,6 @@ const dialogPersistent = ref(false);
 const dialogFullscreen = ref(false);
 const dialogParent = ref(false);
 const dialogChild = ref(false);
-const dateDialog = ref(false);
-const selectedDate = ref(new Date(2026, 2, 14));
-const dialogDate = ref(new Date(2026, 2, 21));
 const selectedFilters = ref(["vue", "scss"]);
 const tags = ref(["Vue 3", "TypeScript", "SCSS", "Autocomplete"]);
 const chipMessage = ref("Try the chip interactions below.");
@@ -625,16 +587,6 @@ const keyboardNavigationItems = [
   },
 ];
 
-const highlightedDates = {
-  from: new Date(2026, 2, 18),
-  to: new Date(2026, 2, 22),
-};
-
-const disabledDates = {
-  days: [0, 6],
-  dates: [new Date(2026, 2, 17)],
-};
-
 const filterChips = [
   { label: "Vue", value: "vue" },
   { label: "TypeScript", value: "typescript" },
@@ -659,21 +611,6 @@ const toggleFilter = (value) => {
 const removeTag = (tag) => {
   tags.value = tags.value.filter((current) => current !== tag);
   chipMessage.value = `Removed ${tag}`;
-};
-
-const formatPlaygroundDate = (value) => {
-  if (!value) {
-    return "No date selected";
-  }
-
-  const date = value instanceof Date ? value : new Date(value);
-
-  return new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
 };
 
 const toggleTheme = () => {
@@ -825,20 +762,10 @@ onMounted(() => {
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.dialog-card--datepicker {
-  min-width: 0;
-}
-
 .dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
-}
-
-.date-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
 }
 
 .list-demo-grid {
@@ -858,21 +785,6 @@ onMounted(() => {
 }
 
 .playground[data-theme="dark"] .list-demo-card {
-  background: rgba(17, 24, 39, 0.55);
-  border-color: rgba(148, 163, 184, 0.16);
-}
-
-.date-picker-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(148, 163, 184, 0.2);
-}
-
-.playground[data-theme="dark"] .date-picker-card {
   background: rgba(17, 24, 39, 0.55);
   border-color: rgba(148, 163, 184, 0.16);
 }

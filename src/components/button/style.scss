@@ -1,23 +1,72 @@
 @use '~/public/styles/_mixins.scss' as *;
+
+$button-sizes: x-small, small, default, large, x-large;
+
+@mixin button-size-variant($size) {
+  &--size-#{$size} {
+    --btn-font-size: var(--e-btn-font-size-#{$size});
+    --btn-height: var(--e-btn-height-#{$size});
+
+    &.e-btn--icon {
+      --btn-font-size: var(--e-icon-size-#{$size});
+    }
+
+    &.e-btn--fab {
+      --btn-height: var(--e-fab-height-#{$size});
+      --btn-font-size: var(--e-fab-font-size-#{$size});
+    }
+
+    &.e-btn--stacked {
+      --btn-height: var(--e-stacked-height-#{$size});
+    }
+  }
+}
+
 .e-btn {
+  // Theme contract
+  --button-local-height: var(--btn-height, unset);
+  --button-local-height-responsive: var(--btn-height-responsive, var(--btn-height, unset));
+  --button-local-font-size: var(--btn-font-size, inherit);
+  --button-local-font-weight: var(--e-btn-font-weight, 500);
+  --button-local-letter-spacing: var(--e-btn-letter-spacing, 0.089em);
+  --button-local-text-transform: var(--e-btn-text-transform, uppercase);
+  --button-local-transition-duration: var(--e-btn-transition-duration, 0.28s);
+  --button-local-radius: var(--e-btn-border-radius, 4px);
+  --button-local-rounded-radius: var(--e-btn-rounded-border-radius, 28px);
+  --button-local-font-family: var(--e-root-font-family, inherit);
+  --button-local-bg: var(--e-btn-color);
+  --button-local-text: var(--e-btn-contrast-color);
+  --button-local-state-focus: var(--e-btn-state-focus, 0.12);
+  --button-local-state-hover: var(--e-btn-state-hover, 0.08);
+  --button-local-state-active: var(--e-btn-state-active, 0.12);
+  --button-local-border-width: var(--e-btn-border-width, 1px);
+  --button-local-border-style: var(--e-btn-border-style, solid);
+  --button-local-default-elevation: var(--e-btn-elevation,
+      var(--e-elevation-sm,
+        0 1px 3px 0 rgba(0, 0, 0, 0.2),
+        0 1px 1px 0 rgba(0, 0, 0, 0.14),
+        0 2px 1px -1px rgba(0, 0, 0, 0.12)));
+  --button-local-inline-gap: 0.5rem;
+  --button-local-stacked-gap: 0.25rem;
 
-  height: var(--btn-height, unset);
-  font-size: var(--btn-font-size, inherit);
-  font-weight: var(--e-btn-font-weight, 500);
-  letter-spacing: var(--e-btn-letter-spacing, 0.089em);
-  text-indent: var(--e-btn-letter-spacing, 0.089em);
-  text-transform: var(--e-btn-text-transform, uppercase);
-  transition-duration: var(--e-btn-transition-duration, 0.28s);
-  border-radius: var(--e-btn-border-radius, 4px);
-  font-family: var(--e-root-font-family, inherit);
- 
-
-  color: var(--e-btn-text);
-  background-color: var(--e-btn-bg);
-  border-color: var(--e-btn-bg);
+  height: var(--button-local-height);
+  font-size: var(--button-local-font-size);
+  font-weight: var(--button-local-font-weight);
+  letter-spacing: var(--button-local-letter-spacing);
+  text-indent: var(--button-local-letter-spacing);
+  text-transform: var(--button-local-text-transform);
+  transition-duration: var(--button-local-transition-duration);
+  border-radius: var(--button-local-radius);
+  font-family: var(--button-local-font-family);
+  color: var(--button-local-text);
+  background-color: var(--button-local-bg);
+  border-color: var(--button-local-bg);
 
   @include button-reset();
+  @include prefix(user-select, none);
+  @include button-before($interactive: true);
 
+  // Shell
   +.e-btn {
     margin-left: var(--e-space-base, 4px);
   }
@@ -30,11 +79,6 @@
     line-height: initial;
     flex-direction: column;
   }
-
-  @include prefix(user-select, none);
-  
-
-  @include button-before();
 
   &::before {
     z-index: 0;
@@ -52,23 +96,6 @@
     z-index: 1;
   }
 
-  &:focus:before {
-    opacity: var(--e-btn-state-focus, 0.12);
-  }
-
-  &:hover:before {
-    opacity: var(--e-btn-state-hover, 0.08);
-  }
-
-  &:active:before {
-    opacity: var(--e-btn-state-active, 0.12);
-  }
-
-  &:focus,
-  &:active {
-    text-decoration: none;
-  }
-
   &.e-btn {
 
     &--icon,
@@ -79,11 +106,15 @@
     }
   }
 
+  // Variants
   &--rounded {
-    border-radius: var(--e-btn-rounded-border-radius, 28px);
+    border-radius: var(--button-local-rounded-radius);
   }
 
-  &--depressed,
+  &--elevated {
+    box-shadow: var(--button-local-default-elevation);
+  }
+
   &--disabled,
   &--text {
     box-shadow: none;
@@ -96,14 +127,9 @@
 
   &--text {
     background-color: transparent;
-    color: var(--e-btn-bg);
+    color: var(--button-local-bg);
   }
 
-  &--text.e-btn--use-contrast-color {
-    color: var(--e-btn-text);
-  }
-
- 
   &--block {
     &:not(.e-btn--fab):not(.e-btn--icon) {
       display: flex;
@@ -113,11 +139,11 @@
   }
 
   &__prepend {
-    margin-right: 0.5rem;
+    margin-right: var(--button-local-inline-gap);
   }
 
   &__append {
-    margin-left: 0.5rem;
+    margin-left: var(--button-local-inline-gap);
   }
 
   &--stacked {
@@ -125,20 +151,22 @@
 
     .e-btn {
       &__prepend {
-        margin: 0 0 0.25rem 0;
+        margin: 0 0 var(--button-local-stacked-gap) 0;
       }
 
       &__append {
-        margin: 0.25rem 0 0 0;
+        margin: var(--button-local-stacked-gap) 0 0 0;
       }
     }
   }
 
+  // Icon-like variants
+
   &--icon {
-    color: var(--e-btn-text);
+    color: var(--button-local-text);
     background-color: transparent;
     padding: 0;
-    width: var(--btn-height, unset);
+    width: var(--button-local-height);
   }
 
   &--fab {
@@ -148,7 +176,7 @@
 
   &--fab,
   &--icon {
-    width: var(--btn-height-responsive, var(--btn-height, unset));
+    width: var(--button-local-height-responsive);
 
     .e-btn__content {
       display: flex;
@@ -161,7 +189,6 @@
     pointer-events: none;
 
     .e-btn {
-
       &__content,
       &__append,
       &__prepend {
@@ -170,108 +197,10 @@
     }
   }
 
-  &--disabled {
-    --e-btn-bg: var(--e-color-disabled, rgba(0, 0, 0, 0.38));
-    --e-btn-text: var(--e-contrast-disabled, white);
-    pointer-events: none;
-    cursor: not-allowed;
-  }
+  // Sizes
 
-  &.e-btn--outlined {
-    border: var(--e-btn-border-width, 1px) var(--e-btn-border-style, solid);
-    background-color: unset;
-    border-color: var(--e-btn-bg);
-    color: var(--e-btn-bg);
-  }
-
-  &--size-x-small {
-    --btn-font-size: var(--e-btn-font-size-x-small, 0.625rem);
-    --btn-height: var(--e-btn-height-x-small, 2.187rem);
-
-    &.e-btn--icon {
-      --btn-font-size: var(--e-icon-size-x-small, 18px);
-    }
-
-    &.e-btn--fab {
-      --btn-height: var(--e-fab-height-x-small, 2em);
-      --btn-font-size: var(--e-fab-font-size-x-small, 1.25rem);
-    }
-
-    &.e-btn--stacked {
-      --btn-height: var(--e-stacked-height-x-small, 2em);
-    }
-  }
-
-  &--size-small {
-    --btn-font-size: var(--e-btn-font-size-small, 0.75rem);
-    --btn-height: var(--e-btn-height-small, 2.5rem);
-
-    &.e-btn--icon {
-      --btn-font-size: var(--e-icon-size-small, 20px);
-    }
-
-    &.e-btn--fab {
-      --btn-height: var(--e-fab-height-small, 2.5em);
-      --btn-font-size: var(--e-fab-font-size-small, 1.25rem);
-    }
-
-    &.e-btn--stacked {
-      --btn-height: var(--e-stacked-height-small, 2.5em);
-    }
-  }
-
-  &--size-default {
-    --btn-font-size: var(--e-btn-font-size-default, 0.875rem);
-    --btn-height: var(--e-btn-height-default, 3rem);
-
-    &.e-btn--icon {
-      --btn-font-size: var(--e-icon-size-default, 24px);
-    }
-
-    &.e-btn--fab {
-      --btn-height: var(--e-fab-height-default, 3.5em);
-      --btn-font-size: var(--e-fab-font-size-default, 1.5rem);
-    }
-
-    &.e-btn--stacked {
-      --btn-height: var(--e-stacked-height-default, 4.5em);
-    }
-  }
-
-  &--size-large {
-    --btn-font-size: var(--e-btn-font-size-large, 0.875rem);
-    --btn-height: var(--e-btn-height-large, 3.125rem);
-
-    &.e-btn--icon {
-      --btn-font-size: var(--e-icon-size-large, 28px);
-    }
-
-    &.e-btn--fab {
-      --btn-height: var(--e-fab-height-large, 4em);
-      --btn-font-size: var(--e-fab-font-size-large, 0.714rem);
-    }
-
-    &.e-btn--stacked {
-      --btn-height: var(--e-stacked-height-large, 5.5em);
-    }
-  }
-
-  &--size-x-large {
-    --btn-font-size: var(--e-btn-font-size-x-large, 1rem);
-    --btn-height: var(--e-btn-height-x-large, 3.4375rem);
-
-    &.e-btn--icon {
-      --btn-font-size: var(--e-icon-size-x-large, 32px);
-    }
-
-    &.e-btn--fab {
-      --btn-height: var(--e-fab-height-x-large, 4.5em);
-      --btn-font-size: var(--e-fab-font-size-x-large, 2rem);
-    }
-
-    &.e-btn--stacked {
-      --btn-height: var(--e-stacked-height-x-large, 8em);
-    }
+  @each $size in $button-sizes {
+    @include button-size-variant($size);
   }
 
   &__loader {
@@ -284,9 +213,24 @@
     top: 0;
     width: 100%;
   }
-   &--outlined.e-btn--use-contrast-color {
-    color: var(--btn-text);
-    border-color: var(--btn-text);
+
+  // State variants
+
+  &--disabled {
+    --e-btn-bg: var(--e-color-disabled, rgba(0, 0, 0, 0.38));
+    --e-btn-text: var(--e-contrast-disabled, white);
+    pointer-events: none;
+    cursor: not-allowed;
   }
 
+  &--outlined {
+    border: var(--button-local-border-width) var(--button-local-border-style);
+    background-color: unset;
+    color: var(--button-local-bg);
+    border-color: currentColor;
+  }
+
+  &--use-contrast-color {
+    color: var(--button-local-text);
+  }
 }

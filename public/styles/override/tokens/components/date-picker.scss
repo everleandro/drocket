@@ -1,3 +1,27 @@
 @use "../foundation/globals" as globals;
 
-$date-picker-border-radius: globals.$border-radius-root !default;
+$date-picker-radius: globals.$border-radius-root !default;
+$date-picker-body-width: 18.125rem !default;
+$date-picker-landscape-title-width: 10.625rem !default;
+$date-picker-title-padding: 1rem !default;
+$date-picker-header-padding-block: 0.25rem !default;
+$date-picker-header-padding-inline: 1rem !default;
+$date-picker-grid-padding-inline: 0.75rem !default;
+$date-picker-grid-gap: 0.125rem !default;
+$date-picker-grid-height: 17.25rem !default;
+$date-picker-grid-date-leave-height: 14.6875rem !default;
+$date-picker-grid-date-leave-width: 16.625rem !default;
+$date-picker-grid-header-padding-bottom: 0.25rem !default;
+$date-picker-header-button-min-height: 2.5rem !default;
+$date-picker-header-value-padding-inline: 0.5rem !default;
+$date-picker-day-button-size: 2.25rem !default;
+$date-picker-day-button-radius: 9999px !default;
+$date-picker-grid-header-cell-padding-block: 0.5rem !default;
+$date-picker-title-button-inactive-opacity: 0.6 !default;
+$date-picker-muted-opacity: 0.4 !default;
+$date-picker-transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) !default;
+$date-picker-title-year-font-size: 0.875rem !default;
+$date-picker-title-year-spacing: 0.5rem !default;
+$date-picker-title-date-font-size: 2.125rem !default;
+$date-picker-title-date-padding-bottom: 0.5rem !default;
+$date-picker-grid-button-font-size: 0.75rem !default;

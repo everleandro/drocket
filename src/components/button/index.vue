@@ -37,7 +37,7 @@
 import {
   IconProps,
   IconPath,
-  ElevationProps,
+  ElevationLevel,
   SizeProps,
 } from "@/types";
 import { useResolvedColor } from "@/composables/color";
@@ -48,7 +48,9 @@ import { getBooleanClasses, normalizeDimension } from "@/composables/utils";
 import { reactive, useAttrs, computed, useSlots } from "vue";
 const vRipple = { ...ripple };
 
-export interface ButtonProps extends ElevationProps, SizeProps {
+type ButtonElevation = ElevationLevel | "none";
+
+export interface ButtonProps extends SizeProps {
   disabled?: boolean;
   link?: boolean;
   ripple?: boolean;
@@ -59,7 +61,7 @@ export interface ButtonProps extends ElevationProps, SizeProps {
   color?: string;
   hoverColor?: string;
   fab?: boolean;
-  depressed?: boolean;
+  elevation?: ButtonElevation;
   text?: boolean;
   outlined?: boolean;
   useContrastColor?: boolean;
@@ -78,13 +80,11 @@ const configuration = reactive({
 });
 const attrs = useAttrs();
 const props = withDefaults(defineProps<ButtonProps>(), {
-  elevation: "sm",
   ripple: true,
 });
 
 const booleanClassKeys = [
   "disabled",
-  "depressed",
   "text",
   "fab",
   "block",
@@ -195,8 +195,10 @@ const btnClass = computed((): Array<string> => {
   }
 
   // Handle elevation
-  if (props.elevation && !props.depressed && !props.text && !props.outlined) {
+  if (props.elevation && props.elevation !== "none" && !props.text && !props.outlined) {
     classes.push(`e-elevation--${props.elevation}`);
+  } else if (props.elevation === undefined && !props.text && !props.outlined) {
+    classes.push("e-btn--elevated");
   }
 
   return classes;
@@ -244,8 +246,8 @@ const currentColor = computed(() => getCurrentColor());
 
 const { colorStyles } = useResolvedColor({
   color: currentColor,
-  colorVar: "--e-btn-bg",
-  contrastVar: "--e-btn-text",
+  colorVar: "--e-btn-color",
+  contrastVar: "--e-btn-contrast-color",
 });
 
 const buttonStyle = computed((): Record<string, string> => {

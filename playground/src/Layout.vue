@@ -9,6 +9,7 @@
         <nav class="nav">
             <router-link to="/">Inicio</router-link>
             <router-link to="/card">Card</router-link>
+            <router-link to="/date-picker">Date Picker</router-link>
             <router-link to="/form">Formulario</router-link>
             <router-link to="/progress">Progress</router-link>
             <router-link to="/radio">Radios</router-link>
