@@ -1,19 +1,18 @@
 <template>
     <div :class="switchClass" :style="fieldStyle" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
-        <div class="e-switch-field__control-shell e-field__control">
-            <div class="e-switch-field__slot e-field__slot" @click="handleSlotClick">
+        <div class="e-field__control">
+            <div class="e-field__slot" @click="handleSlotClick">
                 <div v-if="showOverlay" class="e-field__overlay"></div>
-                <label class="e-switch-field__label e-label" :for="id" :style="labelStyle">
+                <label class="e-label" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
-                <div class="e-switch-field__control" :data-focused="focused">
-                    <input class="e-switch-field__input" ref="input" v-model="checkedModel" :value="trueValue" :aria-checked="checkedModel" :id="id" role="switch" type="checkbox"
+                <div class="e-field__selection-control e-field__control-wrapper" :data-focused="focused">
+                    <input ref="input" v-model="checkedModel" :value="trueValue" :aria-checked="checkedModel" :id="id" role="switch" type="checkbox"
                         :disabled="isControlNonInteractive" :aria-invalid="hasError" :aria-describedby="detailsId" :aria-disabled="isControlNonInteractive"
                         :aria-readonly="isReadonly" :aria-busy="isLoading || undefined" @focus="handleFocus" @blur="handleBlur" />
-                    <div class="e-switch-field__ripple"></div>
-                    <div class="e-switch-field__visual">
-                        <div class="e-switch-field__track"></div>
-                        <div class="e-switch-field__thumb">
+                    <div class="e-field__selection-ripple"></div>
+                    <div class="e-field-switch__track"></div>
+                    <div class="e-field-switch__thumb">
                         <template v-if="mounted">
                             <div v-show="isLoading" aria-hidden="true"
                                 class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
@@ -28,7 +27,6 @@
                                 </svg>
                             </div>
                         </template>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -67,9 +65,9 @@ const { gridColClass } = useGridCol(props)
 const isLoading = computed((): boolean => Boolean(props.loading))
 
 const switchClass = computed((): Array<string> => {
-    const classes = [...fieldClass.value, 'e-switch-field', ...gridColClass.value]
-    checkedModel.value && classes.push('e-switch-field--active')
-    isLoading.value && classes.push('e-switch-field--loading')
+    const classes = [...fieldClass.value, 'e-field-switch', 'e-field--selection-controls', ...gridColClass.value]
+    checkedModel.value && classes.push('e-field-switch--active')
+    isLoading.value && classes.push('e-field-switch--loading')
     return classes
 })
 const isControlNonInteractive = computed((): boolean => {

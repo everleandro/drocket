@@ -1,17 +1,17 @@
 <template>
   <div :class="textFieldClass" :style="fieldStyle">
-    <div class="e-text-field__control e-field__control">
-      <div class="e-text-field__slot e-field__slot" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
-        <div v-if="hasPrependSlot" class="e-text-field__prepend e-field__prepend-inner" aria-hidden="true">
+    <div class="e-field__control">
+      <div class="e-field__slot" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
+        <div v-if="hasPrependSlot" class="e-field__prepend-inner" aria-hidden="true">
           <slot name="prepend"></slot>
         </div>
-        <div v-if="prependIcon" class="e-text-field__prepend e-field__prepend-inner" aria-hidden="true">
+        <div v-if="prependIcon" class="e-field__prepend-inner" aria-hidden="true">
           <div class="e-field__icon e-field__icon--prepend-inner">
             <EIcon :icon="prependIcon" />
           </div>
         </div>
         <div class="e-field__overlay"></div>
-        <div v-if="mounted" class="e-text-field__body e-field__field">
+        <div v-if="mounted" class="e-text-field__slot e-field__field">
           <label :for="id" :class="[
             'e-label',
             {
@@ -21,35 +21,35 @@
           ]" :style="labelStyle">
             <slot name="label">{{ label }}</slot>
           </label>
-          <div v-if="prefix" class="e-text-field__prefix e-field__prefix" aria-hidden="true">
+          <div v-if="prefix" class="e-field__prefix" aria-hidden="true">
             {{ prefix }}
           </div>
 
           <input ref="input" :id="id" :value="inputValue" :readonly="isReadonly" :disabled="disabled"
-            class="e-text-field__input input--text e-field__field-control" :maxlength="limit" :style="inputStyle" :type="type"
+            class="input--text e-field__field-control" :maxlength="limit" :style="inputStyle" :type="type"
             :placeholder="resolvedPlaceholder" :name="name" :autocomplete="autocomplete" :inputmode="inputmode"
             :spellcheck="spellcheck" :autocapitalize="autocapitalize" :enterkeyhint="enterkeyhint"
             :aria-invalid="hasError" :aria-describedby="detailsId" :aria-disabled="disabled" :aria-readonly="isReadonly"
             @blur="handleBlur" @change="handleChange" @input="handleInput" @focus="handleFocus" @keydown="handleKeydown"
             @keyup="handleKeyup" @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd" />
 
-          <div v-if="suffix" class="e-text-field__suffix e-field__suffix" aria-hidden="true">
+          <div v-if="suffix" class="e-field__suffix" aria-hidden="true">
             {{ suffix }}
           </div>
         </div>
         <transition name="scale">
-          <div v-show="canClear" class="e-text-field__clear e-field__append-inner">
+          <div v-show="canClear" class="e-field__append-inner">
             <div class="e-field__icon e-field__icon--clear">
               <EButton :icon="iconClear || icon.clear" size="x-small" text @click.stop.prevent="clear" />
             </div>
           </div>
         </transition>
-        <div v-if="appendIcon" class="e-text-field__append e-field__append-inner" aria-hidden="true">
+        <div v-if="appendIcon" class="e-field__append-inner" aria-hidden="true">
           <div class="e-field__icon e-field__icon--append">
             <EIcon :icon="appendIcon" />
           </div>
         </div>
-        <div v-if="hasAppendSlot" class="e-text-field__append e-field__append-inner" aria-hidden="true">
+        <div v-if="hasAppendSlot" class="e-field__append-inner" aria-hidden="true">
           <slot name="append"></slot>
         </div>
         <div v-if="!outlined" class="e-field__line"></div>

@@ -1,90 +1,17 @@
-@use '~/public/styles/_mixins.scss' as *;
-
-.e-switch-field {
+.e-field {
+  &-switch {
     --e-selection-control-ripple-transform: translate(-10px, -8px);
     --e-switch-thumb-offset: 22px;
-
-    &__ripple {
-      --control-local-height: calc(var(--e-field-control-height) - 2px);
-      border-radius: 50%;
-      color: var(--e-field-color);
-      cursor: pointer;
-      height: var(--control-local-height);
-      left: 0;
-      margin: 0;
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      transform: var(--e-selection-control-ripple-transform, translate(-8px, -8px));
-      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      width: var(--control-local-height);
-
-      &.v-ripple-element {
-        position: absolute;
-      }
-
-      &:before,
-      &:after {
-        border-radius: inherit;
-        bottom: 0;
-        content: "";
-        left: 0;
-        opacity: 0.1;
-        position: absolute;
-        right: 0;
-        top: 0;
-        transform: scale(0.2);
-        transform-origin: center center;
-        transition: inherit;
-      }
-    }
-
-    &__control {
-      color: inherit;
-      display: inline-flex;
-      flex: 0 0 auto;
-      height: 24px;
-      margin-right: calc(var(--e-space-base) * 2);
-      position: relative;
-      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-      transition-property: transform;
-      width: 24px;
-      @include prefix(user-select, none);
-
-      .e-icon {
-        min-width: 100%;
-      }
-
-      input {
-        max-height: 2rem;
-        width: 100%;
-      }
-
-      &:hover,
-      &[data-focused="true"] {
-        .e-switch-field__ripple:before {
-          background: currentColor;
-          transform: scale(1.2);
-        }
-      }
-    }
-
-    &__input,
-    input[role="switch"] {
-      cursor: pointer;
-      height: 100%;
-      margin: 0;
-      opacity: 0;
-      position: absolute;
-      width: 100%;
-      @include prefix(user-select, none);
-    }
 
     &--loading {
       pointer-events: none;
     }
 
     .e-field {
+      &__selection-ripple {
+        left: 0;
+      }
+
       &__slot {
         justify-content: space-between;
       }
@@ -93,7 +20,7 @@
     &--active {
       --e-selection-control-ripple-transform: translate(calc(-10px + var(--e-switch-thumb-offset)), -8px);
 
-      .e-switch-field__thumb {
+      .e-field-switch__thumb {
         transform: translate(var(--e-switch-thumb-offset)) !important;
         background-color: currentColor;
 
@@ -152,4 +79,5 @@
       pointer-events: none;
       transition: inherit;
     }
+  }
 }

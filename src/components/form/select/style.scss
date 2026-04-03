@@ -1,5 +1,4 @@
-.e-select,
-.e-select-field {
+.e-select {
   .e-field__icon.e-field__icon--clear {
     .e-icon {
       font-size: var(--e-icon-close-font-size, 1.5rem);
@@ -33,17 +32,19 @@
     }
   }
 
-  .e-select-field__body {
-    cursor: pointer;
-    position: relative;
-    align-items: baseline;
-    display: flex;
-    max-width: 100%;
-    min-width: 0;
-    width: 100%;
+  .e-select {
+    &__slot {
+      cursor: pointer;
+      position: relative;
+      align-items: baseline;
+      display: flex;
+      max-width: 100%;
+      min-width: 0;
+      width: 100%;
+    }
   }
 
-  .e-select-field__selections {
+  &__selections {
     color: var(--e-field-select-selection-color, var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87)));
     grid-area: field;
     min-height: 10px;
@@ -56,7 +57,7 @@
     min-width: 0;
   }
 
-  .e-select-field__selection {
+  &__selection {
     padding: 0;
     max-width: 100%;
     flex: 1 1 auto;
@@ -71,7 +72,7 @@
     }
   }
 
-  .e-select-field__selection-text {
+  &__selection-text {
     display: block;
     max-width: 100%;
     min-width: 0;
@@ -93,7 +94,7 @@
 
   &--multiple,
   &--autocomplete {
-    .e-select-field__selection {
+    .e-select__selection {
       flex: unset;
       padding: 0;
       display: block;
@@ -107,7 +108,7 @@
       align-items: unset;
     }
 
-    .e-select-field__selections {
+    .e-select__selections {
       gap: 0.25rem;
       height: 100%;
     }
@@ -157,7 +158,7 @@
   }
 }
 
-.e-select-field__menu-content {
+.e-select__menu-content {
   background-color: var(--e-color-surface-1, #ffffff);
   max-height: 304px;
   min-width: 100%;
@@ -167,7 +168,7 @@
   .e-list {
     min-width: 100%;
 
-    // .e-select-field__option--highlighted {
+    // .e-select__option--highlighted {
     //   background-color: color-mix(in srgb,
     //       var(--e-list-color, var(--e-color-primary, #1976d2)) 12%,
     //       transparent);

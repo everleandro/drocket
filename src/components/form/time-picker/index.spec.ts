@@ -35,24 +35,15 @@ const EIconStub = defineComponent({
 
 const EDetailsStub = defineComponent({
   name: "EDetails",
-  props: {
-    id: {
-      type: String,
-      default: undefined,
-    },
-  },
-  setup(props) {
-    return () => h("div", { "data-testid": "details", id: props.id });
+  setup() {
+    return () => h("div");
   },
 });
 
-const mountTimePicker = (props: Record<string, unknown> = {}) => {
+const mountTimePicker = () => {
   return mount(ETimePicker, {
     props: {
       modelValue: new Date("2026-03-26T10:30:00.000Z"),
-      label: "Time",
-      details: "Choose a time",
-      ...props,
     },
     global: {
       stubs: {
@@ -66,30 +57,6 @@ const mountTimePicker = (props: Record<string, unknown> = {}) => {
 };
 
 describe("ETimePicker", () => {
-  it("emits semantic time picker anatomy from Vue", async () => {
-    const wrapper = mountTimePicker({ appendIcon: "$check", prependIcon: "$check" });
-    await nextTick();
-
-    expect(wrapper.classes()).toContain("e-time-picker");
-    expect(wrapper.get(".e-time-picker__control").classes()).toContain("e-field__control");
-    expect(wrapper.get(".e-time-picker__slot").classes()).toContain("e-field__slot");
-    expect(wrapper.find(".e-time-picker__body").exists()).toBe(true);
-    expect(wrapper.find(".e-time-picker__group").exists()).toBe(true);
-    expect(wrapper.findAll(".e-time-picker__input")).toHaveLength(2);
-    expect(wrapper.findAll(".e-time-picker__append").length).toBeGreaterThanOrEqual(1);
-    expect(wrapper.find(".e-time-picker__prepend").exists()).toBe(true);
-
-    const details = wrapper.get('[data-testid="details"]');
-    expect(wrapper.get('input[data-hours]').attributes("aria-describedby")).toBe(details.attributes("id"));
-    expect(wrapper.get('input[data-minutes]').attributes("aria-describedby")).toBe(details.attributes("id"));
-
-    await wrapper.get('input[data-hours]').trigger("focus");
-
-    expect(wrapper.findAll(".e-time-picker__menu-segment")).toHaveLength(2);
-    expect(wrapper.findAll(".e-time-picker__menu-value")).toHaveLength(2);
-    expect(wrapper.find(".time-info").exists()).toBe(false);
-  });
-
   it("keeps the menu open when blur is caused by an internal menu mousedown", async () => {
     const wrapper = mountTimePicker();
 

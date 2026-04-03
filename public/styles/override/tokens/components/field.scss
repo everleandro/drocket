@@ -1,7 +1,8 @@
 @use "sass:math";
-@use "../foundation/globals" as globals;
-
 $field-hover-overlay-opacity: 0.04;
+
+
+
 $field-label-rest-y: 50%;
 
 $field-label-float-y: 0.45rem;
@@ -28,4 +29,3 @@ $field-input-line-height: 1.5rem;
 $field-chip-height: $field-input-line-height;
 $field-max-width: 100%;
 
-$field-control-height: 3rem;

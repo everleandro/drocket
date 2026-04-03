@@ -1,139 +1,71 @@
-@use '~/public/styles/_mixins.scss' as *;
-
 .e-radio {
   align-items: center;
   display: flex;
-  height: var(--radio-control-height, var(--e-field-control-height));
+  height: 2.5rem;
   outline: none;
   --e-icon-color: var(--e-field-color);
 
-  &__ripple {
-    --control-local-height: calc(var(--e-field-control-height) - 2px);
-    border-radius: 50%;
-    color: var(--e-field-color);
-    cursor: pointer;
-    height: var(--control-local-height);
-    left: 0;
-    margin: 0;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    transform: var(--e-selection-control-ripple-transform, translate(-8px, -8px));
-    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-    width: var(--control-local-height);
-
-    &.v-ripple-element {
-      position: absolute;
-    }
-
-    &:before,
-    &:after {
-      border-radius: inherit;
-      bottom: 0;
-      content: "";
-      left: 0;
-      opacity: 0.1;
-      position: absolute;
-      right: 0;
-      top: 0;
-      transform: scale(0.2);
-      transform-origin: center center;
-      transition: inherit;
-    }
-  }
-
-  &__control {
+  .e-field__selection-control {
     color: inherit;
-    display: inline-flex;
-    flex: 0 0 auto;
-    height: 24px;
-    margin-right: calc(var(--e-space-base) * 2);
-    position: relative;
-    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-    transition-property: transform;
-    width: 24px;
-    @include prefix(user-select, none);
-
-    .e-icon {
-      min-width: 100%;
-    }
-
-    input {
-      max-height: 2rem;
-      width: 100%;
-    }
-
-    &:hover,
-    &[data-focused="true"] {
-      .e-radio__ripple:before {
-        background: currentColor;
-        transform: scale(1.2);
-      }
-    }
-  }
-
-  &__input,
-  input[role="radio"] {
-    cursor: pointer;
-    height: 100%;
-    margin: 0;
-    opacity: 0;
-    position: absolute;
-    width: 100%;
-    @include prefix(user-select, none);
   }
 
   &--active {
-    .e-radio__control {
+    .e-field__selection-control {
       color: var(--e-field-color, currentColor);
     }
   }
 
-  &__label,
   label.e-label {
-    align-self: center;
-    color: var(--e-field-rest-color, currentColor);
     margin-top: 0;
+    align-self: center;
   }
 }
 
-.e-radio-group-field {
-  > .e-field__control > .e-field__slot {
-    > label:not(.e-label--floating) {
-      padding-right: 0.5rem;
+.e-field--radio-group {
+
+  >.e-field__control>.e-field__slot {
+    >label:not(.e-label--floating) {
+      padding-right: 8px;
     }
   }
 
   &--column {
     &.e-field--label-floating {
-      .e-radio-group-field__group {
+      .e-field--radio-group__field {
         padding-top: 1.8rem;
       }
+
     }
 
-    .e-radio-group-field__group {
+
+
+
+    .e-field--radio-group__field {
       flex-direction: column;
-      padding-bottom: 12px;
       padding-top: 12px;
+      padding-bottom: 12px;
     }
   }
 
-  &__group {
+  &__field {
     border: none;
     cursor: default;
     display: flex;
     width: 100%;
+
+
   }
 
   &--row {
     &.e-field--label-floating {
-      .e-radio-group-field__group {
+      .e-field--radio-group__field {
+
         padding-top: 1.25rem;
       }
     }
 
-    > .e-field__control > .e-field__slot {
-      > label:not(.e-label--floating) {
+    >.e-field__control>.e-field__slot {
+      >label:not(.e-label--floating) {
         display: block;
         flex: 1 1 100%;
       }
@@ -145,11 +77,11 @@
       }
     }
 
-    .e-radio-group-field__group {
-      align-items: center;
-      flex: 1;
+    .e-field--radio-group__field {
       flex-direction: row;
       flex-wrap: nowrap;
+      flex: 1;
+      align-items: center;
     }
   }
 }

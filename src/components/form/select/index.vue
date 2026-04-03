@@ -1,6 +1,6 @@
 <template>
   <div :class="selectClass" :style="fieldStyle">
-    <div class="e-select-field__control e-field__control">
+    <div class="e-field__control">
       <EMenu
         v-model="opened"
         full-width
@@ -14,13 +14,13 @@
       >
         <template #activator="{ ref: activatorRef }">
           <div
-            class="e-select-field__slot e-field__slot"
+            class="e-field__slot"
             :ref="activatorRef"
             @click="handleSelectSlotClick"
           >
             <div
               v-if="prependIcon"
-              class="e-select-field__prepend e-field__prepend-inner"
+              class="e-field__prepend-inner"
               aria-hidden="true"
               @click="handleClickPrependIcon"
             >
@@ -30,7 +30,7 @@
             </div>
             <div class="e-field__overlay" aria-hidden="true"></div>
             <div
-              class="e-select-field__body e-field__field"
+              class="e-select__slot e-field__field"
               @click="focusInput"
               @mouseenter="handleHover(true)"
               @mouseleave="handleHover(false)"
@@ -51,28 +51,28 @@
               </label>
               <div
                 v-if="prefix"
-                class="e-select-field__prefix e-field__prefix"
+                class="e-field__prefix"
                 aria-hidden="true"
                 @click="focus"
               >
                 {{ prefix }}
               </div>
               <div
-                class="e-select-field__selections e-field__field-control"
+                class="e-select__selections e-field--selection-controls  e-field__field-control"
               >
                 <div
                   v-if="showPlaceholderSelection"
-                  class="e-select-field__selection"
+                  class="e-select__selection"
                   :style="selectionStyle"
                 >
-                  <span class="e-select-field__selection-placeholder">
+                  <span class="e-select__selection-placeholder">
                     {{ resolvedPlaceholder }}
                   </span>
                 </div>
                 <template v-else-if="multiple && chip">
                   <div
                     v-for="(itemValue, index) in selectedItems"
-                    class="e-select-field__selection"
+                    class="e-select__selection"
                     :key="index"
                     :style="selectionStyle"
                   >
@@ -96,11 +96,11 @@
                 </template>
                 <div
                   v-else-if="multiple"
-                  class="e-select-field__selection e-select-field__selection--text"
+                  class="e-select__selection e-select__selection--text"
                   :style="selectionStyle"
                 >
                   <span
-                    class="e-select-field__selection-text"
+                    class="e-select__selection-text"
                     :title="multipleSelectedText"
                   >
                     {{ multipleSelectedText }}
@@ -108,7 +108,7 @@
                 </div>
                 <div
                   v-else-if="!empty"
-                  class="e-select-field__selection"
+                  class="e-select__selection"
                   :style="selectionStyle"
                 >
                   <slot
@@ -133,7 +133,7 @@
                   :id="id"
                   :readonly="inputReadonly"
                   :disabled="isDisabled"
-                  class="e-select-field__input input--text"
+                  class="input--text"
                   type="text"
                   role="combobox"
                   :aria-autocomplete="ariaAutocomplete"
@@ -155,14 +155,14 @@
 
               <div
                 v-if="suffix"
-                class="e-select-field__suffix e-field__suffix"
+                class="e-field__suffix"
                 aria-hidden="true"
                 @click="focus"
               >
                 {{ suffix }}
               </div>
               <transition name="scale">
-                <div v-if="!empty && clearable" class="e-select-field__clear e-field__append-inner">
+                <div v-if="!empty && clearable" class="e-field__append-inner">
                   <div
                     class="e-field__icon e-field__icon--clear e-icon--size-default"
                   >
@@ -176,7 +176,7 @@
                   </div>
                 </div>
               </transition>
-              <div class="e-select-field__append e-field__append-inner" aria-hidden="true">
+              <div class="e-field__append-inner" aria-hidden="true">
                 <div class="e-field__icon e-field__icon--append">
                   <EIcon
                     :icon="arrowDown || icon.arrowDown"
@@ -189,7 +189,7 @@
 
             <div
               v-if="appendIcon"
-              class="e-select-field__append e-field__append-inner"
+              class="e-field__append-inner"
               @click="handleClickAppendIcon"
             >
               <div class="e-field__icon e-field__icon--append">
@@ -211,7 +211,7 @@
           </div>
         </template>
 
-        <div class="e-select-field__menu-content">
+        <div class="e-select__menu-content">
           <e-list
             :id="listboxId"
             role="listbox"
@@ -393,12 +393,7 @@ const resolvedMenuColor = computed(() => {
 });
 
 const selectClass = computed(() => {
-  const result = [
-    ...fieldClass.value,
-    "e-select",
-    "e-select-field",
-    ...gridColClass.value,
-  ];
+  const result = [...fieldClass.value, "e-select", ...gridColClass.value];
   opened.value && result.push("e-select--is-open");
   shouldFloatSelectLabel.value && result.push("e-field--label-floated");
   props.itemCol && result.push("e-select--columns-variant");
@@ -687,7 +682,7 @@ const slotItemAttrs = (
   const attrs: Record<string, unknown> = {};
   attrs.class = {
     "e-list-item--active": active(item),
-    "e-select-field__option--highlighted": index === highlightedIndex.value,
+    "e-select__option--highlighted": index === highlightedIndex.value,
   };
   attrs.value = getListItemValue(item);
   attrs.id = getOptionId(index);

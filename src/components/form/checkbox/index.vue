@@ -5,12 +5,11 @@
         @mouseenter="handleHover(true)"
         @mouseleave="handleHover(false)"
     >
-        <div class="e-checkbox-field__control-shell e-field__control">
-            <div class="e-checkbox-field__slot e-field__slot" @click="handleSlotClick">
+        <div class="e-field__control">
+            <div class="e-field__slot" @click="handleSlotClick">
                 <div v-if="showOverlay" class="e-field__overlay"></div>
-                <div class="e-checkbox-field__control" :data-focused="focused">
-                    <div class="e-checkbox-field__visual" aria-hidden="true">
-                        <span class="e-checkbox-field__icon e-icon"><svg
+                <div class="e-field__selection-control" :data-focused="focused">
+                    <span aria-hidden="true" class="e-icon"><svg
                             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img"
                             aria-hidden="true" class="e-icon__svg">
                             <path v-if="checkedModel"
@@ -20,11 +19,9 @@
                                             d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z">
                             </path>
                         </svg>
-                        </span>
-                    </div>
+                    </span>
 
                     <input
-                        class="e-checkbox-field__input"
                         ref="input"
                         v-model="checkedModel"
                         :value="trueValue"
@@ -42,10 +39,10 @@
                     />
                     <div
                         v-ripple="{ center: true }"
-                        class="e-checkbox-field__ripple"
+                        class="e-field__selection-ripple"
                     ></div>
                 </div>
-                <label class="e-checkbox-field__label e-label ignore-field-color" :for="id" :style="labelStyle">
+                <label class="e-label ignore-field-color" :for="id" :style="labelStyle">
                     <slot name="label"> {{ label }} </slot>
                 </label>
             </div>
@@ -103,6 +100,7 @@ const { gridColClass } = useGridCol(props);
 
 const checkboxClass = computed(() => [
     ...fieldClass.value,
+    "e-field--selection-controls",
     "e-checkbox-field",
     checkedModel.value && "e-checkbox-field--active",
     ...gridColClass.value,

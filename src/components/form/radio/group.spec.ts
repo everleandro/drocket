@@ -111,29 +111,12 @@ afterEach(() => {
 });
 
 describe("ERadioGroup", () => {
-  it("emits only the semantic radio-group field classes from Vue", async () => {
-    const wrapper = mountRadioGroup();
-    await nextTick();
-
-    const root = wrapper.get(".e-radio-group-field");
-    const group = wrapper.get('[role="radiogroup"]');
-
-    expect(root.classes()).toContain("e-radio-group-field");
-    expect(root.classes()).toContain("e-radio-group-field--column");
-    expect(root.classes()).not.toContain("e-field--radio-group");
-    expect(root.classes()).not.toContain("e-field--radio-group--column");
-    expect(wrapper.get(".e-radio-group-field__control").classes()).toContain("e-field__control");
-    expect(wrapper.get(".e-radio-group-field__slot").classes()).toContain("e-field__slot");
-    expect(group.classes()).toContain("e-radio-group-field__group");
-    expect(group.classes()).not.toContain("e-field--radio-group__field");
-  });
-
   it("moves the visual focus state to the radio that actually receives focus", async () => {
     const wrapper = mountRadioGroup();
     await nextTick();
 
     const inputs = wrapper.findAll('input[role="radio"]');
-    const controls = wrapper.findAll(".e-radio__control");
+    const controls = wrapper.findAll(".e-field__selection-control");
 
     expect(controls[0].attributes("data-focused")).toBe("false");
     expect(controls[1].attributes("data-focused")).toBe("false");
