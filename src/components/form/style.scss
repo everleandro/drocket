@@ -25,7 +25,6 @@
 
   &--outlined {
     .e-field {
-      @include e-field-outlined;
 
       .e-field__line {
         display: none;

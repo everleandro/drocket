@@ -1,11 +1,16 @@
 export type {
   EField,
+  EFieldProps,
   FieldBaseProps,
   FieldConfiguration,
   FieldClassKey,
+  FieldStateKey,
+  FieldVariantKey,
+  FieldLabelProps,
   FieldLabelBehavior,
   FieldRule,
   FieldValidationResult,
+  FieldWrapperProps,
   UseFieldProps,
 } from "./field";
 

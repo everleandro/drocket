@@ -2,30 +2,38 @@
 @use "../foundation/globals" as globals;
 
 $field-hover-overlay-opacity: 0.04;
-$field-label-rest-y: 50%;
+$field-transition-duration: 0.3s !default;
 
-$field-label-float-y: 0.45rem;
-$field-label-float-scale: 0.78;
-$field-label-inline-offset: 0.5rem;
-$field-label-current-y: var(--e-field-label-rest-y);
-$field-label-current-translate-y: -50%;
-$field-label-current-scale: 1;
+
 $field-rest-color: currentColor;
 $field-placeholder-color: $field-rest-color;
 $field-color: $field-rest-color;
-$field-label: $field-rest-color;
 $field-input-placeholder: $field-rest-color;
 $field-select-selection-color: $field-rest-color;
 $field-border-radius: var(--e-border-radius-root, 4px);
+$field-border-width: 1px;
+$field-focus-line-opacity: 0.38;
 
 $field-height: 3.25rem;
 $field-height-dense: 3rem;
 $field-height-default-with-label-floating: 3.75rem;
 $field-height-dense-with-label-floating: 3.25rem;
-$field-label-line-height: 1.125rem;
+$field-input-line-height: 1.125rem;
 $field-slot-padding-base: 0.25rem;
-$field-input-line-height: 1.5rem;
 $field-chip-height: $field-input-line-height;
 $field-max-width: 100%;
 
 $field-control-height: 3rem;
+$field-control-height-dense: 2.5rem;
+
+$field-label-float-y: 0.45rem;
+$field-label-float-scale: 0.78;
+$field-label-inline-offset: 0.5rem;
+$field-label-current-translate-y: -50%;
+$field-label-current-scale: 1;
+$field-label: $field-rest-color;
+$field-label-line-height: $field-input-line-height;
+$field-label-rest-y: calc(($field-height - $field-label-line-height) / 2);
+$field-label-rest-y-dense: calc(($field-height-dense - $field-label-line-height) / 2);
+
+

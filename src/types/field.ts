@@ -3,7 +3,7 @@ import type { IconPath } from "./icon";
 import type { CSSProperties } from "vue";
 
 export type FieldValidationResult = true | string;
-export type FieldLabelBehavior = "static" | "floating";
+export type FieldLabelBehavior = "static" | "floating" | "inline";
 
 export type FieldRule<T = unknown> = (value: T) => FieldValidationResult;
 
@@ -18,7 +18,7 @@ export interface FieldConfiguration {
   labelBehavior?: FieldLabelBehavior;
 }
 
-export interface FieldBaseProps<TValue = unknown> extends ColProps {
+export interface EFieldProps<TValue = unknown> extends ColProps {
   retainColor?: boolean;
   disabled?: boolean;
   dense?: boolean;
@@ -26,23 +26,29 @@ export interface FieldBaseProps<TValue = unknown> extends ColProps {
   labelBehavior?: FieldLabelBehavior;
   prependIcon?: Array<IconPath> | IconPath | string;
   appendIcon?: Array<IconPath> | IconPath | string;
-  labelInline?: boolean;
   detail?: string;
   outlined?: boolean;
-  label?: string | number;
+  modelValue?: TValue;
   color?: string;
   detailErrors?: Array<string>;
   detailsOnMessageOnly?: boolean;
-  inputAlign?: CSSProperties['textAlign'];
-  labelMinWidth?: string | number;
   rules?: Array<FieldRule<TValue>>;
+  label?: string | number;
+  labelMinWidth?: string | number;
+  inputAlign?: CSSProperties["textAlign"];
+  clearable?: boolean;
 }
 
-export interface UseFieldProps<TValue = unknown>
-  extends FieldBaseProps<TValue> {
-  clearable?: boolean;
-  modelValue?: TValue;
-}
+export type FieldWrapperProps<TValue = unknown> = Omit<
+  EFieldProps<TValue>,
+  "label" | "labelMinWidth" | "inputAlign" | "clearable"
+>;
+
+export type FieldLabelProps = Pick<EFieldProps, "label" | "labelMinWidth">;
+
+export interface FieldBaseProps<TValue = unknown> extends EFieldProps<TValue> {}
+
+export interface UseFieldProps<TValue = unknown> extends FieldBaseProps<TValue> {}
 
 export interface EField {
   setConfiguration: (value: FieldConfiguration) => void;
@@ -62,16 +68,20 @@ export interface EField {
   xl?: ColProps["xl"];
 }
 
-export type FieldClassKey =
+export type FieldStateKey =
   | "disabled"
   | "readonly"
   | "hasError"
   | "hasValue"
-  | "outlined"
   | "focused"
-  | "labelFloating"
   | "labelFloated"
   | "retainColor"
+  | "hovered";
+
+export type FieldVariantKey =
+  | "outlined"
+  | "labelFloating"
   | "labelInline"
-  | "hovered"
   | "dense";
+
+export type FieldClassKey = FieldStateKey | FieldVariantKey;

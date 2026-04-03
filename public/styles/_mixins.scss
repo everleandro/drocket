@@ -106,32 +106,7 @@
     @include force-sizes($size, (width, height));
 }
 
-@mixin e-field-outlined() {
-    $active-states: (
-        ".e-field--is-hovered",
-        ".e-field--is-focused",
-        ".e-field--retain-color",
-        ".e-field--has-error"
-    );
 
-&.e-field--is-disabled {
-    .e-field__slot {
-        border-style: dashed;
-    }
-}
-
-.e-field__slot {
-    border: 1px solid var(--e-color-border, rgba(0, 0, 0, 0.38));
-}
-
-@each $state in $active-states {
-    &#{$state} {
-        .e-field__slot {
-            border-color: currentColor;
-        }
-    }
-}
-}
 
 
 //grid

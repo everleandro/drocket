@@ -1,12 +1,14 @@
 import * as Vue from "vue";
 import { FORM_KEY } from "@/components/form/constants";
-import { fieldClasses } from "@/components/form/constants";
+import { fieldStateClasses, fieldVariantClasses } from "@/components/form/constants";
 import { useResolvedColor } from "@/composables/color";
+import { getFocusableElementInRoot, hasFieldValue, isDomFocused, resolveFocusableElement } from "@/utils/field";
 import { normalizeCssSize } from "@/utils/style";
+import type { FocusableElement } from "@/utils/field";
 import type {
-  FieldClassKey,
   FieldConfiguration,
   FieldLabelBehavior,
+  FieldVariantKey,
   UseFieldProps,
 } from "@/types";
 import {
@@ -34,29 +36,14 @@ type FieldConfigurationState = {
   labelBehavior?: FieldLabelBehavior;
 };
 
-type FocusableElement = {
-  focus: () => void;
-  blur?: () => void;
-};
+type PropDrivenFieldVariantKey = Extract<FieldVariantKey, "dense" | "outlined">;
 
-type PropDrivenFieldClassKey = Extract<
-  FieldClassKey,
-  "dense" | "disabled" | "labelInline" | "outlined" | "readonly"
->;
-
-const propDrivenClassKeys: Array<PropDrivenFieldClassKey> = [
-  "disabled",
-  "readonly",
+const propDrivenVariantKeys: Array<PropDrivenFieldVariantKey> = [
   "outlined",
-  "labelInline",
   "dense",
 ];
 
 const fieldFocusRefKeys = ["input", "hours", "minutes"] as const;
-
-const isElementNode = (value: unknown): value is Element => {
-  return typeof Element !== "undefined" && value instanceof Element;
-};
 
 export function useField<TValue = unknown>(useFormInjection = true) {
   const instance = getCurrentInstance();
@@ -94,35 +81,6 @@ export function useField<TValue = unknown>(useFormInjection = true) {
 
   const form = inject(FORM_KEY, undefined);
 
-  const resolveFocusableElement = (
-    target: unknown,
-  ): FocusableElement | undefined => {
-    if (!target) return undefined;
-
-    if (Array.isArray(target)) {
-      for (const item of target) {
-        const element = resolveFocusableElement(item);
-        if (element) return element;
-      }
-      return undefined;
-    }
-
-    if (
-      typeof target === "object" &&
-      target !== null &&
-      "focus" in target &&
-      typeof (target as FocusableElement).focus === "function"
-    ) {
-      return target as FocusableElement;
-    }
-
-    if (typeof target === "object" && target !== null && "$el" in target) {
-      return resolveFocusableElement((target as { $el?: unknown }).$el);
-    }
-
-    return undefined;
-  };
-
   const getInstanceRootElement = (): HTMLElement | undefined => {
     const element = instance.vnode.el;
     return element instanceof HTMLElement ? element : undefined;
@@ -148,13 +106,7 @@ export function useField<TValue = unknown>(useFormInjection = true) {
       '[tabindex]:not([tabindex="-1"])',
     ].join(", ");
 
-    const element = rootElement.querySelector<HTMLElement>(selector);
-    return element ? resolveFocusableElement(element) : undefined;
-  };
-
-  const isDomFocused = (element?: FocusableElement): boolean => {
-    if (!element || typeof document === "undefined") return false;
-    return isElementNode(element) && document.activeElement === element;
+    return getFocusableElementInRoot(rootElement, selector);
   };
 
   const syncFocusedState = (element?: FocusableElement): void => {
@@ -165,20 +117,15 @@ export function useField<TValue = unknown>(useFormInjection = true) {
   const externalErrorMessage = computed(
     (): string => props.detailErrors?.[0] || "",
   );
-  const hasValue = computed((): boolean => {
-    const value = props.modelValue;
-
-    if (value === undefined || value === null) return false;
-    if (typeof value === "string") return value.length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-
-    return true;
-  });
+  const hasValue = computed((): boolean => hasFieldValue(props.modelValue));
   const effectiveLabelBehavior = computed<FieldLabelBehavior | undefined>(
     () => props.labelBehavior || configuration.labelBehavior,
   );
+  const isLabelInline = computed((): boolean => {
+    return effectiveLabelBehavior.value === "inline";
+  });
   const isLabelFloating = computed((): boolean => {
-    return effectiveLabelBehavior.value === "floating" && !props.labelInline;
+    return effectiveLabelBehavior.value === "floating";
   });
   const shouldFloatLabel = computed((): boolean => {
     return isLabelFloating.value && (focused.value || hasValue.value);
@@ -240,32 +187,31 @@ export function useField<TValue = unknown>(useFormInjection = true) {
   });
 
   const fieldClass = computed((): Array<string> => {
-    const result = propDrivenClassKeys.reduce<Array<string>>((classes, key) => {
+    const result = propDrivenVariantKeys.reduce<Array<string>>((classes, key) => {
       const isActive =
         key === "dense"
           ? isDense.value
-          : key === "disabled"
-            ? isDisabled.value
-            : key === "readonly"
-              ? isReadonly.value
-              : key === "outlined"
-                ? isOutlined.value
-                : Boolean(props[key]);
+          : key === "outlined"
+            ? isOutlined.value
+            : false;
 
-      if (isActive) classes.push(fieldClasses[key]);
+      if (isActive) classes.push(fieldVariantClasses[key]);
 
       return classes;
     }, []);
 
-    if (hasError.value) result.push(fieldClasses.hasError);
-    if (hasValue.value) result.push(fieldClasses.hasValue);
-    if (hovered.value) result.push(fieldClasses.hovered);
-    if (isLabelFloating.value) result.push(fieldClasses.labelFloating);
-    if (shouldFloatLabel.value) result.push(fieldClasses.labelFloated);
+    if (isDisabled.value) result.push(fieldStateClasses.disabled);
+    if (isReadonly.value) result.push(fieldStateClasses.readonly);
+    if (hasError.value) result.push(fieldStateClasses.hasError);
+    if (hasValue.value) result.push(fieldStateClasses.hasValue);
+    if (hovered.value) result.push(fieldStateClasses.hovered);
+    if (isLabelInline.value) result.push(fieldVariantClasses.labelInline);
+    if (isLabelFloating.value) result.push(fieldVariantClasses.labelFloating);
+    if (shouldFloatLabel.value) result.push(fieldStateClasses.labelFloated);
     if (props.retainColor || configuration.retainColor) {
-      result.push(fieldClasses.retainColor);
+      result.push(fieldStateClasses.retainColor);
     }
-    if (focused.value) result.push(fieldClasses.focused);
+    if (focused.value) result.push(fieldStateClasses.focused);
 
     return [...result, "e-field", ...tableClasses.value];
   });

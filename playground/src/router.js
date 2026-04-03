@@ -8,12 +8,14 @@ import PaletteView from './PaletteView.vue';
 import ProgressView from './ProgressView.vue';
 import RadioView from './RadioView.vue';
 import ScheduleView from './ScheduleView.vue';
+import TextareaView from './TextareaView.vue';
 
 const routes = [
   { path: '/', component: App },
   { path: '/card', component: CardView },
   { path: '/date-picker', component: DatePickerView },
   { path: '/form', component: FormView },
+  { path: '/textarea', component: TextareaView },
   { path: '/progress', component: ProgressView },
   { path: '/radio', component: RadioView },
   { path: '/schedule', component: ScheduleView },

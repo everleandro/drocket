@@ -1,20 +1,23 @@
 import type { InjectionKey } from "vue";
 
-import type { FieldClassKey, FormInjection } from "@/types";
+import type { FieldStateKey, FieldVariantKey, FormInjection } from "@/types";
 
-export const fieldClasses = {
+export const fieldStateClasses = {
   disabled: "e-field--is-disabled",
   readonly: "e-field--is-readonly",
   hasError: "e-field--has-error",
   hasValue: "e-field--has-value",
-  outlined: "e-field--outlined",
   focused: "e-field--is-focused",
-  labelFloating: "e-field--label-floating",
   labelFloated: "e-field--label-floated",
   retainColor: "e-field--retain-color",
-  labelInline: "e-field--label-inline",
   hovered: "e-field--is-hovered",
+} satisfies Record<FieldStateKey, string>;
+
+export const fieldVariantClasses = {
+  outlined: "e-field--outlined",
+  labelFloating: "e-field--label-floating",
+  labelInline: "e-field--label-inline",
   dense: "e-field--dense",
-} satisfies Record<FieldClassKey, string>;
+} satisfies Record<FieldVariantKey, string>;
 
 export const FORM_KEY: InjectionKey<FormInjection> = Symbol("EForm");
