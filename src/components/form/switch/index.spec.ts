@@ -56,11 +56,23 @@ afterEach(() => {
 });
 
 describe("ESwitch", () => {
+  it("emits only the semantic switch field classes from Vue", async () => {
+    const wrapper = mountSwitch({ loading: true });
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("e-switch-field");
+    expect(wrapper.classes()).toContain("e-switch-field--loading");
+    expect(wrapper.get(".e-switch-field__control-shell").classes()).toContain("e-field__control");
+    expect(wrapper.get(".e-switch-field__slot").classes()).toContain("e-field__slot");
+    expect(wrapper.classes()).not.toContain("e-field-switch");
+    expect(wrapper.classes()).not.toContain("e-field-switch--loading");
+  });
+
   it("toggles through the native input when the slot is clicked", async () => {
     const wrapper = mountSwitch();
     await nextTick();
 
-    await wrapper.get(".e-field__slot").trigger("click");
+    await wrapper.get(".e-switch-field__slot").trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toEqual([[true]]);
   });
@@ -82,7 +94,7 @@ describe("ESwitch", () => {
 
     const input = wrapper.get('input[role="switch"]');
     const inputElement = input.element as unknown as FocusableInputElement;
-    const selectionControl = wrapper.get(".e-field__selection-control");
+    const selectionControl = wrapper.get(".e-switch-field__control");
 
     expect(selectionControl.attributes("data-focused")).toBe("false");
 
@@ -107,7 +119,7 @@ describe("ESwitch", () => {
     expect(input.attributes("aria-disabled")).toBe("true");
     expect(input.attributes("aria-readonly")).toBe("true");
 
-    await wrapper.get(".e-field__slot").trigger("click");
+    await wrapper.get(".e-switch-field__slot").trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
@@ -120,13 +132,13 @@ describe("ESwitch", () => {
     expect(input.attributes("disabled")).toBeDefined();
     expect(input.attributes("aria-disabled")).toBe("true");
     expect(input.attributes("aria-busy")).toBe("true");
-    expect(wrapper.classes()).toContain("e-field-switch--loading");
+    expect(wrapper.classes()).toContain("e-switch-field--loading");
     expect(wrapper.find('[role="progressbar"]').exists()).toBe(false);
 
     const spinner = wrapper.get(".e-progress-circular");
     expect(spinner.attributes("aria-hidden")).toBe("true");
 
-    await wrapper.get(".e-field__slot").trigger("click");
+    await wrapper.get(".e-switch-field__slot").trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toBeUndefined();
   });
