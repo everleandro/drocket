@@ -1,14 +1,9 @@
-@use "sass:math";
-@use "../foundation/globals" as globals;
-
 $field-hover-overlay-opacity: 0.04;
-$field-transition-duration: 0.3s !default;
+$field-transition-duration: 0.2s !default;
 
 
 $field-rest-color: currentColor;
-$field-placeholder-color: $field-rest-color;
 $field-color: $field-rest-color;
-$field-input-placeholder: $field-rest-color;
 $field-select-selection-color: $field-rest-color;
 $field-border-radius: var(--e-border-radius-root, 4px);
 $field-border-width: 1px;
@@ -28,12 +23,8 @@ $field-control-height-dense: 2.5rem;
 
 $field-label-float-y: 0.45rem;
 $field-label-float-scale: 0.78;
-$field-label-inline-offset: 0.5rem;
-$field-label-current-translate-y: -50%;
-$field-label-current-scale: 1;
 $field-label: $field-rest-color;
 $field-label-line-height: $field-input-line-height;
-$field-label-rest-y: calc(($field-height - $field-label-line-height) / 2);
-$field-label-rest-y-dense: calc(($field-height-dense - $field-label-line-height) / 2);
+
 
 

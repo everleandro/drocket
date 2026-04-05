@@ -1,28 +1,5 @@
 @use '~/public/styles/_mixins.scss' as *;
 
-$active-states: (
-    ".e-field--is-hovered",
-    ".e-field--is-focused",
-    ".e-field--retain-color",
-    ".e-field--has-error"
-);
-
-@mixin e-field-outlined() {
-
-
-
-    .e-field__slot {
-        border: 1px solid var(--e-color-border, rgba(0, 0, 0, 0.38));
-    }
-
-    @each $state in $active-states {
-        &#{$state} {
-            .e-field__slot {
-                border-color: currentColor;
-            }
-        }
-    }
-}
 
 .e-field {
     display: flex;
@@ -31,25 +8,42 @@ $active-states: (
     flex-grow: 1;
     position: relative;
     color: var(--e-field-rest-color);
+    font-size: 1rem;
+    letter-spacing: normal;
+    text-align: left;
     width: 100%;
     max-width: var(--e-field-max-width, 100%);
-    --field-slot-items-padding-top: var(--e-field-slot-padding-base);
-    --e-field-label-current-y: var(--e-field-label-rest-y);
+    --field-layout-active-height: var(--e-field-height);
+    --field-field-control-padding-inline-start: calc(var(--e-field-slot-padding-base) * 2);
+    --field-layout-control-padding-inline: calc(var(--e-field-slot-padding-base) * 3);
+    --field-layout-label-rest-y: calc((var(--field-layout-active-height) - var(--e-field-label-line-height)) / 2);
+    --field-layout-content-padding-top: var(--e-field-slot-padding-base);
+    --field-label-state-y: var(--field-layout-label-rest-y);
+    --field-label-state-translate-y: 0;
+    --field-label-state-scale: 1;
+    --field-state-input-color: var(--e-color-input);
+    --field-state-border-style: solid;
+    --field-state-border-width: var(--e-field-border-width);
+    --field-state-border-color: var(--e-color-border);
+
 
     input {
-        line-height: var(--field-input-line-height);
+        line-height: var(--e-field-input-line-height);
         min-width: 0;
         font-size: 1rem;
     }
 
     &--dense {
+        --field-layout-active-height: var(--e-field-height-dense);
         --e-field-label-float-y: 0.3rem;
         --e-field-label-float-scale: 0.74;
-        --e-field-height: var(--e-field-height-dense);
+    }
 
-        .e-field__slot {
-            margin-bottom: 0;
-        }
+    &__content {
+        align-items: flex-start;
+        color: inherit;
+        display: flex;
+        width: 100%;
     }
 
 
@@ -63,6 +57,7 @@ $active-states: (
         position: absolute;
         right: 0px;
         width: 100%;
+        top: 0;
 
         &:before {
             opacity: var(--e-field-focus-line-opacity);
@@ -96,18 +91,12 @@ $active-states: (
     &--retain-color,
     &--is-focused,
     &--has-error {
-        --e-field-label: var(--e-field-color);
         color: var(--e-field-color);
-
-        .e-field__overlay {
-            opacity: calc(var(--e-field-hover-overlay-opacity) + 0.04);
-        }
+        --e-field-label: currentColor;
+        --field-state-border-color: currentColor;
+        --e-field-hover-overlay-opacity: var(--e-field-hover-overlay-opacity, 0.04);
     }
 
-    &--retain-color {
-        --e-field-rest-color: var(--e-field-color);
-        --e-field-placeholder-color: color-mix(in srgb, var(--e-field-color) 38%, transparent);
-    }
 
     &--is-focused {
         .e-field__line {
@@ -120,7 +109,8 @@ $active-states: (
     }
 
     &__overlay {
-        background-color: currentcolor;
+        color: currentColor;
+        background-color: currentColor;
         opacity: var(--e-field-hover-overlay-opacity, 0.04);
         pointer-events: none;
         position: absolute;
@@ -131,12 +121,22 @@ $active-states: (
 
     &__suffix,
     &__prefix {
+        color: var(--field-state-input-color);
         line-height: var(--e-field-input-line-height);
         align-self: center;
         cursor: default;
         transition: color var(--e-field-transition-duration) cubic-bezier(0.25, 0.8, 0.5, 1);
         white-space: nowrap;
         padding-left: 4px;
+    }
+
+    &__prepend,
+    &__append {
+        align-items: flex-start;
+        color: currentColor;
+        display: inline-flex;
+        flex: 0 0 auto;
+        padding-top: var(--field-layout-content-padding-top);
     }
 
     &__prefix {
@@ -149,33 +149,33 @@ $active-states: (
     }
 
     &__icon {
-        --field-local-icon-size: 1.25em;
+        --field-metric-icon-size: 1.25em;
         align-items: center;
+        color: currentColor;
         display: inline-flex;
-        height: var(--field-local-icon-size);
+        height: var(--field-metric-icon-size);
         flex: 1 0 auto;
         justify-content: center;
-        min-width: var(--field-local-icon-size);
-        width: var(--field-local-icon-size);
+        min-width: var(--field-metric-icon-size);
+        width: var(--field-metric-icon-size);
     }
 
     .e-label {
-        line-height: var(--e-field-label-line-height, 1.125rem);
-        margin-top: var(--e-field-label-rest-y);
+        line-height: var(--e-field-label-line-height);
+        margin-top: var(--field-layout-label-rest-y);
         margin-bottom: 0;
         align-self: flex-start;
         backface-visibility: hidden;
+        position: relative;
         transition:
             color var(--e-field-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+            left var(--e-field-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
             top var(--e-field-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
             transform var(--e-field-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
             opacity var(--e-field-transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
-        color: var(--e-color-label);
+        color: var(--e-field-label, var(--e-color-label));
         white-space: nowrap;
-
-        &.ignore-field-color {
-            color: var(--e-field-rest-color);
-        }
+        z-index: 1;
     }
 
     &__prepend-inner {
@@ -193,6 +193,7 @@ $active-states: (
         align-self: center;
         display: inline-flex;
         line-height: 1;
+        color: currentColor;
         @include prefix(user-select, none);
     }
 
@@ -206,65 +207,67 @@ $active-states: (
     }
 
     .e-counter {
-        --field-local-counter-size: 0.75rem;
+        --field-metric-counter-size: 0.75rem;
         white-space: nowrap;
         flex: 0 1 auto;
-        font-size: var(--field-local-counter-size);
-        min-height: var(--field-local-counter-size);
-        line-height: var(--field-local-counter-size);
+        font-size: var(--field-metric-counter-size);
+        min-height: var(--field-metric-counter-size);
+        line-height: var(--field-metric-counter-size);
         margin-left: calc(var(--e-space-base) * 2);
     }
 
     &__field-control {
-        display: flex;
-        flex-direction: column;
-        height: auto;
-        flex-grow: 1;
-        flex-wrap: wrap;
-        position: relative;
+        background: transparent;
+        border: 0;
+        box-sizing: border-box;
+        display: block;
+        line-height: var(--e-field-input-line-height);
         min-width: 0;
         width: 100%;
+        padding-inline-start: var(--field-field-control-padding-inline-start);
     }
 
     &__control {
-        line-height: var(--e-field-input-line-height, 1.25rem);
-        padding-top: var(--field-slot-items-padding-top);
-        padding-bottom: var(--e-field-slot-padding-base);
-        padding-left: calc(var(--e-field-slot-padding-base) * 2);
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        flex-wrap: nowrap;
+        line-height: var(--e-field-input-line-height);
+        min-width: 0;
+        cursor: text;
         position: relative;
+        width: 100%;
+        padding: var(--field-layout-content-padding-top) var(--field-layout-control-padding-inline) var(--e-field-slot-padding-base);
+        border-top-left-radius: var(--e-field-border-radius);
+        border-top-right-radius: var(--e-field-border-radius);
+
+        input,
+        textarea {
+            color: var(--field-state-input-color);
+        }
     }
 
     &--is-disabled {
         pointer-events: none;
         color: var(--e-color-disabled);
-
-        .e-field {
-            &__line::before {
-                border-bottom-style: dashed;
-            }
-        }
+        --field-state-border-style: dashed;
     }
 
     &--outlined {
+        --field-layout-floating-label-padding-inline: 0.5rem;
 
-        .e-field {
-            &--is-disabled {
-                .e-field_control {
-                    border-style: dashed;
-                }
-            }
+        .e-field__control {
+            border: var(--field-state-border-width) var(--field-state-border-style) var(--field-state-border-color);
+            border-radius: var(--e-field-border-radius);
         }
 
         &.e-field--label-floating {
             .e-label--floating {
-                padding-inline: 0.25rem;
+                left: calc(var(--field-layout-control-padding-inline) - var(--field-layout-floating-label-padding-inline));
+                padding-inline: var(--field-layout-floating-label-padding-inline);
             }
         }
 
-        .e-field__slot {
-            border-bottom-left-radius: var(--e-field-border-radius);
-            border-bottom-right-radius: var(--e-field-border-radius);
-        }
     }
 
     &--is-readonly {
@@ -290,32 +293,34 @@ $active-states: (
     }
 
     &--label-floating {
-        --e-field-height: var(--e-field-height-default-with-label-floating);
-        --field-slot-items-padding-top: calc(var(--e-field-height) - var(--e-field-input-line-height) - var(--e-field-slot-padding-base));
+        --field-layout-active-height: var(--e-field-height-default-with-label-floating);
+        --field-layout-content-padding-top: calc(var(--e-field-label-float-scale) * var(--e-field-label-line-height) + var(--e-field-label-float-y) + var(--e-field-slot-padding-base));
+        --field-label-state-translate-y: 0;
+        --field-label-state-scale: 1;
+        --field-field-control-inline-padding: 0;
 
-        .e-field__field {
-            position: relative;
-            grid-template-areas: "prefix field suffix";
-            grid-template-columns: min-content minmax(0, 1fr) min-content;
+        .e-field__control {
+            min-height: var(--field-layout-active-height);
         }
 
         .e-field__suffix,
         .e-field__prefix {
             align-self: self-start;
-            padding-top: var(--field-slot-items-padding-top);
+            padding-top: var(--field-layout-content-padding-top);
         }
 
         .e-label--floating {
-            left: var(--e-field-label-inline-offset);
+            left: 0;
             margin-top: 0;
-            max-width: calc(100% - 1rem);
+            max-width: calc(100% - (var(--field-layout-control-padding-inline) * 2));
             opacity: 0.78;
             overflow: hidden;
+            padding-inline-start: var(--field-layout-control-padding-inline);
             pointer-events: none;
             position: absolute;
             text-overflow: ellipsis;
-            top: var(--e-field-label-current-y);
-            transform: translate3d(0, var(--e-field-label-current-translate-y), 0) scale(var(--e-field-label-current-scale));
+            top: var(--field-label-state-y);
+            transform: translate3d(0, var(--field-label-state-translate-y), 0) scale(var(--field-label-state-scale));
             transform-origin: left center;
             white-space: nowrap;
             z-index: 1;
@@ -326,13 +331,14 @@ $active-states: (
             opacity: var(--e-field-affix-opacity, 0);
             transition: opacity var(--e-field-transition-duration) cubic-bezier(0.25, 0.8, 0.5, 1);
         }
+
     }
 
     &--label-floated {
         --e-field-affix-opacity: 1;
-        --e-field-label-current-y: var(--e-field-label-float-y);
-        --e-field-label-current-translate-y: 0;
-        --e-field-label-current-scale: var(--e-field-label-float-scale);
+        --field-label-state-y: var(--e-field-label-float-y);
+        --field-label-state-translate-y: 0;
+        --field-label-state-scale: var(--e-field-label-float-scale);
 
         .e-label--floated {
             opacity: 1;
@@ -341,10 +347,8 @@ $active-states: (
     }
 
     &--dense {
-        --e-field-label-current-y: var(--e-field-label-rest-y-dense);
-
         &.e-field--label-floating {
-            --e-field-height: var(--e-field-height-dense-with-label-floating);
+            --field-layout-active-height: var(--e-field-height-dense-with-label-floating);
         }
     }
 
@@ -353,12 +357,6 @@ $active-states: (
         width: auto;
     }
 
-    input:active,
-    input:focus,
-    textarea:active,
-    textarea:focus {
-        outline: none;
-    }
 
     &--label-inline {
         .e-label {
@@ -366,19 +364,22 @@ $active-states: (
         }
     }
 
-    ::-webkit-input-placeholder,
-    :-ms-input-placeholder,
-    ::placeholder {
-        color: var(--e-field-input-placeholder);
+    input,
+    textarea {
+
+        &:active,
+        &:focus {
+            outline: none;
+        }
+
+        &::placeholder,
+        &::-webkit-input-placeholder,
+        &:-ms-input-placeholder {
+            color: color-mix(in srgb, var(--field-state-input-color) 38%, transparent);
+        }
     }
 
-    &--is-hovered,
-    &--is-focused {
-
-        ::-webkit-input-placeholder,
-        :-ms-input-placeholder,
-        ::placeholder {
-            color: currentColor;
-        }
+    textarea {
+        overflow: hidden;
     }
 }

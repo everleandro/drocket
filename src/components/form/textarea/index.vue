@@ -1,5 +1,9 @@
 <template>
     <EField ref="field" v-bind="fieldProps" class="e-textarea">
+        <template v-if="$slots.label" #label>
+            <slot name="label"></slot>
+        </template>
+
         <template v-if="$slots.prepend" #prepend>
             <slot name="prepend"></slot>
         </template>
@@ -11,18 +15,33 @@
         <template #control="{
             controlClass, controlId, detailsId, handleBlur,
             handleFocus, hasError, isDisabled,
-            isLabelFloating, isReadonly, shouldFloatLabel,
+            isLabelFloating, shouldFloatLabel,
         }">
+            <div v-if="prefix" class="e-textarea__prefix e-field__prefix" aria-hidden="true" @click="focus">
+                {{ prefix }}
+            </div>
 
             <textarea ref="input" :id="controlId" :value="inputValue" :rows="rows" :maxlength="limit" :name="name"
-                :readonly="isReadonly" :disabled="isDisabled" :autocomplete="autocomplete"
+                :readonly="textInputReadonly" :disabled="isDisabled" :autocomplete="autocomplete"
                 :placeholder="resolvePlaceholder(isLabelFloating, shouldFloatLabel)" :spellcheck="spellcheck"
                 :autocapitalize="autocapitalize" :enterkeyhint="enterkeyhint" :aria-invalid="hasError"
-                :aria-describedby="detailsId" :aria-disabled="isDisabled" :aria-readonly="isReadonly"
+                :aria-describedby="detailsId" :aria-disabled="isDisabled" :aria-readonly="textInputReadonly"
                 :class="['e-textarea__input', controlClass]" :style="inputStyle" @blur="handleBlur"
                 @change="handleChange" @focus="handleFocus" @input="handleInput" @keydown="handleKeydown"
                 @keyup="handleKeyup" @compositionstart="handleCompositionStart"
                 @compositionend="handleCompositionEnd"></textarea>
+
+            <div v-if="suffix" class="e-textarea__suffix e-field__suffix" aria-hidden="true" @click="focus">
+                {{ suffix }}
+            </div>
+
+            <transition name="scale">
+                <div v-show="canClear" class="e-textarea__clear e-field__append-inner">
+                    <div class="e-field__icon e-field__icon--clear">
+                        <EButton :icon="iconClear || icon.clear" size="x-small" text @click.stop.prevent="clear" />
+                    </div>
+                </div>
+            </transition>
 
         </template>
 
@@ -39,6 +58,7 @@
 <script setup lang="ts">
 import { computed, ref, useSlots } from "vue";
 
+import EButton from "@/components/button/index.vue";
 import EDetails from "@/components/form/details.vue";
 import EField from "@/components/form/field/index.vue";
 import { useTextInput } from "@/composables/text-input";
@@ -50,6 +70,7 @@ import type {
     UseTextInputProps,
 } from "@/types";
 import type { EField as EFieldContract } from "@/types";
+import icon from "@/utils/icons";
 
 export interface Props extends UseTextInputProps<TextInputValue> {
     counter?: boolean;
@@ -140,12 +161,14 @@ const resolvePlaceholder = (
 
 const {
     inputValue,
+    isReadonly: textInputReadonly,
     handleChange,
     handleCompositionEnd,
     handleCompositionStart,
     handleInput,
     handleKeydown,
     handleKeyup,
+    clear,
 } = useTextInput({
     props,
     emit,

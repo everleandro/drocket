@@ -11,10 +11,10 @@
                 </div>
             </div>
 
-            <div class="e-field__control">
+            <div class="e-field__control" @mousedown="handleControlMousedown" @click="handleControlClick">
                 <div class="e-field__overlay" aria-hidden="true"></div>
                 <label :id="labelId" :for="id" :class="labelClass" :style="labelStyle">
-                    {{ label }}
+                    <slot name="label">{{ label }}</slot>
                 </label>
                 <slot name="control" v-bind="controlSlotProps"></slot>
                 <div v-if="!isOutlined" class="e-field__line"></div>
@@ -40,16 +40,16 @@
 
 <script setup lang="ts">
 import * as Vue from "vue";
-import { computed, ref, reactive, useSlots, getCurrentInstance } from "vue";
+import { computed, ref, reactive, useSlots, getCurrentInstance, inject, onMounted, onUnmounted, watch } from "vue";
 import { useGridCol } from "@/composables/grid-col";
 import { useResolvedColor } from "@/composables/color";
-import { fieldStateClasses, fieldVariantClasses } from "@/components/form/constants";
+import { FORM_KEY, fieldStateClasses, fieldVariantClasses } from "@/components/form/constants";
 import EDetails from "@/components/form/details.vue";
 import EIcon from "@/components/icon/index.vue";
-import { hasFieldValue, isDomFocused, resolveFocusableElement } from "@/utils/field";
+import { getFocusableElementInRoot, hasFieldValue, isDomFocused, resolveFocusableElement } from "@/utils/field";
 import type { FocusableElement } from "@/utils/field";
 import { normalizeCssSize } from "@/utils/style";
-import type { FieldConfiguration, FieldLabelBehavior, EFieldProps } from "@/types";
+import type { EField as EFieldContract, FieldConfiguration, FieldLabelBehavior, EFieldProps, FormInjection } from "@/types";
 
 export interface Props extends EFieldProps<unknown> {
     prefix?: string;
@@ -71,6 +71,7 @@ if (!instance) {
 const slots = useSlots();
 const hasPrependSlot = computed(() => Boolean(slots.prepend));
 const hasAppendSlot = computed(() => Boolean(slots.append));
+const form = inject<FormInjection | undefined>(FORM_KEY, undefined);
 
 type FieldConfigurationState = {
     labelStyle: Record<string, string>;
@@ -93,7 +94,16 @@ const getFocusableElement = (): FocusableElement | undefined => {
 
     if (!rootElement) return undefined;
 
-    return resolveFocusableElement(rootElement.querySelector<HTMLElement>(`#${id}`));
+    return getFocusableElementInRoot(rootElement, [
+        `#${id}`,
+        `#${id}-hours`,
+        `#${id}-minutes`,
+        "input",
+        "textarea",
+        "select",
+        "button",
+        '[tabindex]:not([tabindex="-1"])',
+    ].join(", "));
 };
 
 const configuration = reactive<FieldConfigurationState>({
@@ -116,6 +126,7 @@ const touched = ref(false);
 const validated = ref(false);
 const hovered = ref(false);
 const focused = ref(false);
+const tableClasses = ref<Array<string>>([]);
 
 const helperMessage = computed(() => props.detail || "");
 const externalErrorMessage = computed(() => props.detailErrors?.[0] || "");
@@ -133,9 +144,8 @@ const shouldShowValidation = computed(() => dirty.value || touched.value || vali
 const labelClass = computed(() => [
     "e-label",
     "e-field__label",
-    isLabelInline.value && fieldVariantClasses.labelInline,
-    isLabelFloating.value && fieldVariantClasses.labelFloating,
-    shouldFloatLabel.value && fieldStateClasses.labelFloated,
+    isLabelFloating.value && "e-label--floating",
+    shouldFloatLabel.value && "e-label--floated",
 ]);
 
 const validationMessage = computed(() => {
@@ -209,6 +219,50 @@ const handleHover = (value: boolean): void => {
     hovered.value = value;
 };
 
+const isInteractiveControlTarget = (target: EventTarget | null): boolean => {
+    if (!(target instanceof Element)) return false;
+
+    return Boolean(target.closest([
+        "input",
+        "textarea",
+        "select",
+        "button",
+        "a[href]",
+        "label",
+        "[contenteditable='true']",
+        "[role='button']",
+        "[role='link']",
+        "[role='option']",
+        "[role='checkbox']",
+        "[role='radio']",
+        "[data-field-control-ignore-focus]",
+    ].join(", ")));
+};
+
+const handleControlMousedown = (event: MouseEvent): void => {
+    if (isDisabled.value) return;
+    if (isInteractiveControlTarget(event.target)) return;
+
+    event.preventDefault();
+    focus();
+};
+
+const handleControlClick = (event: MouseEvent): void => {
+    if (isDisabled.value) return;
+    if (isInteractiveControlTarget(event.target)) return;
+
+    focus();
+};
+
+const getGridColConfiguration = (): Pick<EFieldContract, "cols" | "xs" | "sm" | "md" | "lg" | "xl"> => ({
+    cols: props.cols,
+    xs: props.xs,
+    sm: props.sm,
+    md: props.md,
+    lg: props.lg,
+    xl: props.xl,
+});
+
 const syncFocusedState = (element?: FocusableElement): void => {
     focused.value = element ? isDomFocused(element) : false;
 };
@@ -261,6 +315,10 @@ const setConfiguration = (value: FieldConfiguration): void => {
     configuration.labelBehavior = value.labelBehavior;
 };
 
+const setTableClasses = (value: Array<string>): void => {
+    tableClasses.value = [...value];
+};
+
 const validate = (): boolean => {
     validated.value = true;
     touched.value = true;
@@ -278,10 +336,21 @@ const reset = (): void => {
     resetValidation();
 };
 
-Vue.watch(
+watch(
     () => props.modelValue,
     (value) => {
         dirty.value = !Object.is(value, initialValue.value);
+    },
+);
+
+watch(hasError, (value) => {
+    form?.updateField?.({ hasError: value, uid: instance.uid });
+});
+
+watch(
+    () => [props.cols, props.xs, props.sm, props.md, props.lg, props.xl] as const,
+    () => {
+        form?.updateField?.({ uid: instance.uid, ...getGridColConfiguration() });
     },
 );
 
@@ -310,15 +379,39 @@ const rootClass = computed(() => [
     shouldFloatLabel.value && fieldStateClasses.labelFloated,
     (props.retainColor || configuration.retainColor) && fieldStateClasses.retainColor,
     focused.value && fieldStateClasses.focused,
+    ...tableClasses.value,
     ...gridColClass.value,
 ].filter(Boolean));
 
+onMounted(() => {
+    form?.bindField?.({
+        uid: instance.uid,
+        focus,
+        validate,
+        reset,
+        resetValidation,
+        setConfiguration,
+        setTableClasses,
+        ...getGridColConfiguration(),
+    });
+
+    form?.updateField?.({ uid: instance.uid, hasError: hasError.value });
+});
+
+onUnmounted(() => {
+    form?.unbindField?.(instance.uid);
+});
+
 defineExpose({
+    uid: instance.uid,
+    dirty,
+    hasError,
     blur,
     focus,
     handleBlur,
     handleFocus,
     setConfiguration,
+    setTableClasses,
     reset,
     resetValidation,
     validate,
