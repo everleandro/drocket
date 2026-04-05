@@ -14,7 +14,7 @@
     width: 100%;
     max-width: var(--e-field-max-width, 100%);
     --field-layout-active-height: var(--e-field-height);
-    --field-field-control-padding-inline-start: calc(var(--e-field-slot-padding-base) * 2);
+    --field-layout-field-control-padding-inline-start: calc(var(--e-field-slot-padding-base) * 2);
     --field-layout-control-padding-inline: calc(var(--e-field-slot-padding-base) * 3);
     --field-layout-label-rest-y: calc((var(--field-layout-active-height) - var(--e-field-label-line-height)) / 2);
     --field-layout-content-padding-top: var(--e-field-slot-padding-base);
@@ -35,8 +35,8 @@
 
     &--dense {
         --field-layout-active-height: var(--e-field-height-dense);
-        --e-field-label-float-y: 0.3rem;
-        --e-field-label-float-scale: 0.74;
+        --e-field-label-float-y: var(--e-field-label-float-y-dense);
+        --e-field-label-float-scale: var(--e-field-label-float-scale-dense);
     }
 
     &__content {
@@ -224,7 +224,7 @@
         line-height: var(--e-field-input-line-height);
         min-width: 0;
         width: 100%;
-        padding-inline-start: var(--field-field-control-padding-inline-start);
+        padding-inline-start: var(--field-layout-field-control-padding-inline-start);
     }
 
     &__control {
@@ -297,7 +297,6 @@
         --field-layout-content-padding-top: calc(var(--e-field-label-float-scale) * var(--e-field-label-line-height) + var(--e-field-label-float-y) + var(--e-field-slot-padding-base));
         --field-label-state-translate-y: 0;
         --field-label-state-scale: 1;
-        --field-field-control-inline-padding: 0;
 
         .e-field__control {
             min-height: var(--field-layout-active-height);
