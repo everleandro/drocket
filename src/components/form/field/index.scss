@@ -2,17 +2,6 @@
 
 
 .e-field {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    flex-grow: 1;
-    position: relative;
-    color: var(--e-field-rest-color);
-    font-size: 1rem;
-    letter-spacing: normal;
-    text-align: left;
-    width: 100%;
-    max-width: var(--e-field-max-width, 100%);
     --field-layout-active-height: var(--e-field-height);
     --field-layout-field-control-padding-inline-start: calc(var(--e-field-slot-padding-base) * 2);
     --field-layout-control-padding-inline: calc(var(--e-field-slot-padding-base) * 3);
@@ -25,7 +14,17 @@
     --field-state-border-style: solid;
     --field-state-border-width: var(--e-field-border-width);
     --field-state-border-color: var(--e-color-border);
-
+    display: flex;
+    flex-direction: column;
+    min-height: var(--field-layout-active-height);
+    flex-grow: 1;
+    position: relative;
+    color: var(--e-field-rest-color);
+    font-size: 1rem;
+    letter-spacing: normal;
+    text-align: left;
+    width: 100%;
+    max-width: var(--e-field-max-width, 100%);
 
     input {
         line-height: var(--e-field-input-line-height);
