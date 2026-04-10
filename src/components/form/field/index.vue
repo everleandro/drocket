@@ -1,33 +1,38 @@
 <template>
     <div :class="rootClass" :style="fieldStyle">
-        <div class="e-field__content" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
-            <div v-if="hasPrependSlot" class="e-field__prepend" aria-hidden="true">
-                <slot name="prepend"></slot>
+        <div v-if="hasPrependContent" class="e-field__prepend" aria-hidden="true">
+            <div v-if="prependIcon" class="e-field__icon e-field__icon--prepend">
+                <EIcon :icon="prependIcon" />
             </div>
+            <slot v-if="hasPrependSlot" name="prepend"></slot>
+        </div>
 
-            <div v-if="prependIcon" class="e-field__prepend" aria-hidden="true">
-                <div class="e-field__icon e-field__icon--prepend">
-                    <EIcon :icon="prependIcon" />
-                </div>
+        <div ref="frameEl" :class="[
+            'e-field__frame',
+            {
+                'e-field__frame--no-prepend-inner': !hasPrependInnerContent,
+            },
+        ]" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)" @mousedown="handleFrameMousedown"
+            @click="handleFrameClick">
+            <div v-if="hasPrependInnerContent" class="e-field__prepend-inner" aria-hidden="true">
+                <EIcon v-if="prependInnerIcon" :icon="prependInnerIcon" />
+                <slot v-if="hasPrependInnerSlot" name="prepend-inner"></slot>
             </div>
-
-            <div class="e-field__control" @mousedown="handleControlMousedown" @click="handleControlClick">
-                <div class="e-field__overlay" aria-hidden="true"></div>
-                <label :id="labelId" :for="id" :class="labelClass" :style="labelStyle">
-                    <slot name="label">{{ label }}</slot>
-                </label>
-                <slot name="control" v-bind="controlSlotProps"></slot>
-                <div v-if="!isOutlined" class="e-field__line"></div>
+            <div class="e-field__overlay" aria-hidden="true"></div>
+            <label :id="labelId" :for="id" :class="labelClass" :style="labelStyle">
+                <slot name="label">{{ label }}</slot>
+            </label>
+            <slot v-bind="slotProps"></slot>
+            <div v-if="hasAppendInnerContent" class="e-field__append-inner" aria-hidden="true">
+                <slot v-if="hasAppendInnerSlot" name="append-inner" v-bind="appendInnerSlotProps"></slot>
+                <EIcon v-if="appendInnerIcon" :icon="appendInnerIcon" />
             </div>
-
-            <div v-if="appendIcon" class="e-field__append" aria-hidden="true">
-                <div class="e-field__icon e-field__icon--append">
-                    <EIcon :icon="appendIcon" />
-                </div>
-            </div>
-
-            <div v-if="hasAppendSlot" class="e-field__append" aria-hidden="true">
-                <slot name="append"></slot>
+            <div v-if="!isOutlined" class="e-field__line"></div>
+        </div>
+        <div v-if="hasAppendContent" class="e-field__append" aria-hidden="true">
+            <slot v-if="hasAppendSlot" name="append"></slot>
+            <div v-if="appendIcon" class="e-field__icon e-field__icon--append">
+                <EIcon :icon="appendIcon" />
             </div>
         </div>
 
@@ -67,10 +72,20 @@ const instance = getCurrentInstance();
 if (!instance) {
     throw new Error("Field must be used within setup().");
 }
+const frameEl = ref<HTMLElement | null>(null);
 
 const slots = useSlots();
 const hasPrependSlot = computed(() => Boolean(slots.prepend));
 const hasAppendSlot = computed(() => Boolean(slots.append));
+const hasAppendContent = computed(() => hasAppendSlot.value || Boolean(props.appendIcon));
+const hasPrependContent = computed(() => hasPrependSlot.value || Boolean(props.prependIcon));
+
+const hasPrependInnerSlot = computed(() => Boolean(slots["prepend-inner"]));
+const hasPrependInnerContent = computed(() => hasPrependInnerSlot.value || Boolean(props.prependInnerIcon));
+const hasAppendInnerSlot = computed(() => Boolean(slots["append-inner"]));
+const hasAppendInnerContent = computed(() => hasAppendInnerSlot.value || Boolean(props.appendInnerIcon));
+
+
 const form = inject<FormInjection | undefined>(FORM_KEY, undefined);
 
 type FieldConfigurationState = {
@@ -103,7 +118,7 @@ const getFocusableElement = (): FocusableElement | undefined => {
         "select",
         "button",
         '[tabindex]:not([tabindex="-1"])',
-    ].join(", "));
+    ]);
 };
 
 const configuration = reactive<FieldConfigurationState>({
@@ -219,7 +234,7 @@ const handleHover = (value: boolean): void => {
     hovered.value = value;
 };
 
-const isInteractiveControlTarget = (target: EventTarget | null): boolean => {
+const isInteractiveFrameTarget = (target: EventTarget | null): boolean => {
     if (!(target instanceof Element)) return false;
 
     return Boolean(target.closest([
@@ -239,17 +254,17 @@ const isInteractiveControlTarget = (target: EventTarget | null): boolean => {
     ].join(", ")));
 };
 
-const handleControlMousedown = (event: MouseEvent): void => {
+const handleFrameMousedown = (event: MouseEvent): void => {
     if (isDisabled.value) return;
-    if (isInteractiveControlTarget(event.target)) return;
+    if (isInteractiveFrameTarget(event.target)) return;
 
     event.preventDefault();
     focus();
 };
 
-const handleControlClick = (event: MouseEvent): void => {
+const handleFrameClick = (event: MouseEvent): void => {
     if (isDisabled.value) return;
-    if (isInteractiveControlTarget(event.target)) return;
+    if (isInteractiveFrameTarget(event.target)) return;
 
     focus();
 };
@@ -417,18 +432,27 @@ defineExpose({
     validate,
 });
 
-const controlSlotProps = computed(() => ({
-    controlClass: "e-field__field-control",
-    controlId: id,
-    detailsId: detailsId.value,
-    focus,
-    hasError: hasError.value,
+const slotProps = computed(() => ({
+    color: color.value,
+    slotClass: "e-field__slot",
+    frameEl: frameEl.value,
     handleBlur,
     handleFocus,
+    inputId: id,
+    detailsId: detailsId.value,
+    fieldIdBase: idBase,
+    hasError: hasError.value,
     isDisabled: isDisabled.value,
     isLabelFloating: isLabelFloating.value,
     isReadonly: isReadonly.value,
     shouldFloatLabel: shouldFloatLabel.value,
+}));
+
+const appendInnerSlotProps = computed(() => ({
+    color: color.value,
+    hasError: hasError.value,
+    isDisabled: isDisabled.value,
+    isReadonly: isReadonly.value,
 }));
 
 const detailsSlotProps = computed(() => ({

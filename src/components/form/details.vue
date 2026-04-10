@@ -1,6 +1,6 @@
 <template>
   <ETransitionExpand>
-    <div v-if="showSupportingText">
+    <div v-if="showSupportingText" class="e-field__supporting-text">
       <div :id="id" class="e-field__details">
         <div
           v-if="showMessage"

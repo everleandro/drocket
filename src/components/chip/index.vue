@@ -29,6 +29,7 @@
         <span v-if="closable" class="e-chip__close">
             <button v-ripple="{ center: true }" type="button"
                 class="e-btn e-btn--icon"
+                :tabindex="props.closeTabindex"
                 :aria-label="props.closeLabel"
                 @click.stop="handleClickClose">
                 <EIcon :icon="icon.clear" />
@@ -63,6 +64,7 @@ const props = withDefaults(defineProps<ElevationProps & SizeProps & {
     ripple?: boolean
     selected?: boolean
     closable?: boolean
+    closeTabindex?: number | string
     closeLabel?: string
     color?: string
     text?: boolean

@@ -14,9 +14,12 @@
     --field-state-border-style: solid;
     --field-state-border-width: var(--e-field-border-width);
     --field-state-border-color: var(--e-color-border);
-    display: flex;
-    flex-direction: column;
-    min-height: var(--field-layout-active-height);
+    --field-layout-gap: 0.75rem;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: minmax(var(--field-layout-active-height), auto) auto;
+
     flex-grow: 1;
     position: relative;
     color: var(--e-field-rest-color);
@@ -26,23 +29,23 @@
     width: 100%;
     max-width: var(--e-field-max-width, 100%);
 
-    input {
-        line-height: var(--e-field-input-line-height);
-        min-width: 0;
-        font-size: 1rem;
-    }
+    min-height: var(--field-layout-active-height);
 
     &--dense {
         --field-layout-active-height: var(--e-field-height-dense);
         --e-field-label-float-y: var(--e-field-label-float-y-dense);
         --e-field-label-float-scale: var(--e-field-label-float-scale-dense);
+
+        &.e-field--label-floating {
+            --field-layout-active-height: var(--e-field-height-dense-with-label-floating);
+        }
+
     }
 
-    &__content {
-        align-items: flex-start;
-        color: inherit;
-        display: flex;
-        width: 100%;
+    &__supporting-text {
+        grid-column: 2;
+        grid-row: 2;
+        min-width: 0;
     }
 
 
@@ -126,7 +129,8 @@
         cursor: default;
         transition: color var(--e-field-transition-duration) cubic-bezier(0.25, 0.8, 0.5, 1);
         white-space: nowrap;
-        padding-left: 4px;
+        padding-right: calc(var(--field-layout-gap) / 2);
+        padding-top: var(--field-layout-content-padding-top);
     }
 
     &__prepend,
@@ -135,7 +139,43 @@
         color: currentColor;
         display: inline-flex;
         flex: 0 0 auto;
-        padding-top: var(--field-layout-content-padding-top);
+        align-self: stretch;
+        height: auto;
+        min-width: 0;
+    }
+
+    &__prepend {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    &__append {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    &__prepend-inner,
+    &__append-inner {
+        align-items: center;
+        color: currentColor;
+        display: inline-flex;
+        flex: 0 0 auto;
+        line-height: 1;
+        position: relative;
+        z-index: 1;
+        @include prefix(user-select, none);
+    }
+
+    &__prepend-inner {
+        grid-area: prepend-inner;
+        margin-right: auto;
+        padding-right: var(--field-layout-gap);
+
+    }
+
+    &__append-inner {
+        grid-area: append-inner;
+        margin-left: auto;
     }
 
     &__prefix {
@@ -145,23 +185,13 @@
 
     &__suffix {
         grid-area: suffix;
-    }
-
-    &__icon {
-        --field-metric-icon-size: 1.25em;
-        align-items: center;
-        color: currentColor;
-        display: inline-flex;
-        height: var(--field-metric-icon-size);
-        flex: 1 0 auto;
-        justify-content: center;
-        min-width: var(--field-metric-icon-size);
-        width: var(--field-metric-icon-size);
+        padding-right: var(--field-layout-gap);
     }
 
     .e-label {
         line-height: var(--e-field-label-line-height);
         margin-top: var(--field-layout-label-rest-y);
+        padding-right: var(--field-layout-gap);
         margin-bottom: 0;
         align-self: flex-start;
         backface-visibility: hidden;
@@ -177,18 +207,18 @@
         z-index: 1;
     }
 
-    &__prepend-inner {
+    &__prepend {
         margin-right: auto;
-        padding-right: 0.5rem;
+        padding-right: 0.75rem;
     }
 
-    &__append-inner {
+    &__append {
         margin-left: auto;
-        padding-left: 0.5rem;
+        padding-left: 0.75rem;
     }
 
-    &__prepend-inner,
-    &__append-inner {
+    &__prepend,
+    &__append {
         align-self: center;
         display: inline-flex;
         line-height: 1;
@@ -199,6 +229,7 @@
     &__details {
         display: flex;
         flex: 1 0 auto;
+        min-width: 0;
         max-width: 100%;
         min-height: 14px;
         overflow: hidden;
@@ -215,30 +246,39 @@
         margin-left: calc(var(--e-space-base) * 2);
     }
 
-    &__field-control {
+    &__slot {
+        // padding: var(--field-layout-content-padding-top) var(--field-layout-control-padding-inline) var(--e-field-slot-padding-base) 0;
+        padding: var(--field-layout-content-padding-top) 0 var(--e-field-slot-padding-base) 0;
         background: transparent;
         border: 0;
         box-sizing: border-box;
         display: block;
         line-height: var(--e-field-input-line-height);
-        min-width: 0;
         width: 100%;
-        padding-inline-start: var(--field-layout-field-control-padding-inline-start);
     }
 
-    &__control {
+    &__frame {
+        grid-column: 2;
+        grid-row: 1;
+        color: inherit;
         display: flex;
         flex-direction: row;
         flex-grow: 1;
+        height: 100%;
         flex-wrap: nowrap;
         line-height: var(--e-field-input-line-height);
+        min-height: var(--field-layout-active-height);
         min-width: 0;
         cursor: text;
         position: relative;
         width: 100%;
-        padding: var(--field-layout-content-padding-top) var(--field-layout-control-padding-inline) var(--e-field-slot-padding-base);
+
         border-top-left-radius: var(--e-field-border-radius);
         border-top-right-radius: var(--e-field-border-radius);
+
+
+        padding-inline: var(--field-layout-gap);
+
 
         input,
         textarea {
@@ -255,7 +295,7 @@
     &--outlined {
         --field-layout-floating-label-padding-inline: 0.5rem;
 
-        .e-field__control {
+        .e-field__frame {
             border: var(--field-state-border-width) var(--field-state-border-style) var(--field-state-border-color);
             border-radius: var(--e-field-border-radius);
         }
@@ -278,8 +318,8 @@
         flex: 1 1 auto;
         align-items: center;
         max-width: 100%;
-        grid-template-areas: "label prefix field suffix";
-        grid-template-columns: min-content min-content minmax(0, 1fr) min-content;
+        grid-template-areas: "prepend-inner label prefix field suffix append-inner";
+        grid-template-columns: min-content min-content min-content minmax(0, 1fr) min-content min-content;
         contain: layout;
 
         label {
@@ -295,16 +335,16 @@
         --field-layout-active-height: var(--e-field-height-default-with-label-floating);
         --field-layout-content-padding-top: calc(var(--e-field-label-float-scale) * var(--e-field-label-line-height) + var(--e-field-label-float-y) + var(--e-field-slot-padding-base));
         --field-label-state-translate-y: 0;
+        --field-layout-field-control-padding-inline-start: 0;
         --field-label-state-scale: 1;
 
-        .e-field__control {
+        .e-field__frame {
             min-height: var(--field-layout-active-height);
         }
 
         .e-field__suffix,
         .e-field__prefix {
-            align-self: self-start;
-            padding-top: var(--field-layout-content-padding-top);
+            align-self: center;
         }
 
         .e-label--floating {
@@ -344,12 +384,6 @@
 
     }
 
-    &--dense {
-        &.e-field--label-floating {
-            --field-layout-active-height: var(--e-field-height-dense-with-label-floating);
-        }
-    }
-
 
     .e-messages {
         width: auto;
@@ -364,6 +398,10 @@
 
     input,
     textarea {
+        z-index: 1;
+        line-height: var(--e-field-input-line-height);
+        min-width: 0;
+        font-size: 1rem;
 
         &:active,
         &:focus {

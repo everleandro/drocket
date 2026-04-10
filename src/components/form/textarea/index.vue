@@ -1,76 +1,64 @@
 <template>
     <EField ref="field" v-bind="fieldProps" class="e-textarea">
-        <template v-if="$slots.label" #label>
-            <slot name="label"></slot>
+        <template v-for="(_, name) in passThroughSlots" :key="name" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps ?? {}"></slot>
         </template>
 
-        <template v-if="$slots.prepend" #prepend>
-            <slot name="prepend"></slot>
+        <template #append-inner>
+            <ButtonClear :icon="iconClear" :show="canClear" @clear="clear" />
+            <slot name="append-inner"></slot>
         </template>
 
-        <template v-if="$slots.append" #append>
-            <slot name="append"></slot>
-        </template>
-
-        <template #control="{
-            controlClass, controlId, detailsId, handleBlur,
-            handleFocus, hasError, isDisabled,
-            isLabelFloating, shouldFloatLabel,
+        <template #default="{
+            inputId,
+            detailsId,
+            slotClass,
+            handleBlur,
+            handleFocus,
+            hasError,
+            isDisabled,
+            isLabelFloating,
+            shouldFloatLabel,
         }">
-            <div v-if="prefix" class="e-textarea__prefix e-field__prefix" aria-hidden="true" @click="focus">
+            <div v-if="prefix" class="e-textarea__prefix e-field__prefix" aria-hidden="true" @click="handleFocus">
                 {{ prefix }}
             </div>
 
-            <textarea ref="input" :id="controlId" :value="inputValue" :rows="rows" :maxlength="limit" :name="name"
+            <textarea ref="input" :id="inputId" :value="inputValue" :rows="rows" :maxlength="limit" :name="name"
                 :readonly="textInputReadonly" :disabled="isDisabled" :autocomplete="autocomplete"
                 :placeholder="resolvePlaceholder(isLabelFloating, shouldFloatLabel)" :spellcheck="spellcheck"
                 :autocapitalize="autocapitalize" :enterkeyhint="enterkeyhint" :aria-invalid="hasError"
                 :aria-describedby="detailsId" :aria-disabled="isDisabled" :aria-readonly="textInputReadonly"
-                :class="['e-textarea__input', controlClass]" :style="inputStyle" @blur="handleBlur"
-                @change="handleChange" @focus="handleFocus" @input="handleInput" @keydown="handleKeydown"
-                @keyup="handleKeyup" @compositionstart="handleCompositionStart"
-                @compositionend="handleCompositionEnd"></textarea>
+                :class="['e-textarea__input', slotClass]" :style="inputStyle" @blur="handleBlur" @change="handleChange"
+                @focus="handleFocus" @input="handleInput" @keydown="handleKeydown" @keyup="handleKeyup"
+                @compositionstart="handleCompositionStart" @compositionend="handleCompositionEnd"></textarea>
 
-            <div v-if="suffix" class="e-textarea__suffix e-field__suffix" aria-hidden="true" @click="focus">
+            <div v-if="suffix" class="e-textarea__suffix e-field__suffix" aria-hidden="true" @click="handleFocus">
                 {{ suffix }}
             </div>
-
-            <transition name="scale">
-                <div v-show="canClear" class="e-textarea__clear e-field__append-inner">
-                    <div class="e-field__icon e-field__icon--clear">
-                        <EButton :icon="iconClear || icon.clear" size="x-small" text @click.stop.prevent="clear" />
-                    </div>
-                </div>
-            </transition>
-
         </template>
 
         <template #details="slotProps">
-            <slot name="details" v-bind="slotProps">
-                <EDetails :id="slotProps.detailsId" :counter="counter" :details="slotProps.details"
-                    :has-error="slotProps.hasError" :limit="limit" :model-value="modelValue"
-                    :show-details="slotProps.showDetails" />
-            </slot>
+            <EDetails :counter="counter" :details="slotProps.details" :has-error="slotProps.hasError"
+                :model-value="modelValue" :limit="limit" :id="slotProps.detailsId" :show-details="slotProps.showDetails" />
         </template>
     </EField>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useSlots } from "vue";
-
-import EButton from "@/components/button/index.vue";
-import EDetails from "@/components/form/details.vue";
-import EField from "@/components/form/field/index.vue";
 import { useTextInput } from "@/composables/text-input";
+import { useFieldIntegration } from "@/composables/field-integration";
 import type {
-    EFieldProps,
     TextInputEmits,
     TextInputElement,
     TextInputValue,
     UseTextInputProps,
 } from "@/types";
-import type { EField as EFieldContract } from "@/types";
-import icon from "@/utils/icons";
+
+import EDetails from "@/components/form/details.vue";
+import ButtonClear from "@/components/form/button-clear/index.vue";
+import EField from "@/components/form/field/index.vue";
+import { computed, ref, useSlots } from "vue";
 
 export interface Props extends UseTextInputProps<TextInputValue> {
     counter?: boolean;
@@ -78,10 +66,6 @@ export interface Props extends UseTextInputProps<TextInputValue> {
     rows?: number | string;
     suffix?: string;
 }
-
-type FieldInstance = Pick<EFieldContract, "focus" | "reset" | "resetValidation" | "validate"> & {
-    blur?: () => void;
-};
 
 const props = withDefaults(defineProps<Props>(), {
     inputAlign: "start",
@@ -91,36 +75,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<TextInputEmits>();
-
-useSlots();
-
-const field = ref<FieldInstance | null>(null);
+const slots = useSlots();
 const input = ref<TextInputElement | null>(null);
 
-const fieldProps = computed<EFieldProps<unknown>>(() => ({
-    appendIcon: props.appendIcon,
-    color: props.color,
-    cols: props.cols,
-    dense: props.dense,
-    detail: props.detail,
-    detailErrors: props.detailErrors,
-    detailsOnMessageOnly: props.detailsOnMessageOnly,
-    disabled: props.disabled,
-    label: props.label,
-    labelBehavior: props.labelBehavior,
-    labelMinWidth: props.labelMinWidth,
-    lg: props.lg,
-    md: props.md,
-    modelValue: props.modelValue,
-    outlined: props.outlined,
-    prependIcon: props.prependIcon,
-    readonly: props.readonly,
-    retainColor: props.retainColor,
-    rules: props.rules as EFieldProps<unknown>["rules"],
-    sm: props.sm,
-    xl: props.xl,
-    xs: props.xs,
-}));
+const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<TextInputValue>(props, slots, {
+    omitSlots: ["append-inner", "default", "details"],
+});
 
 const inputStyle = computed<Record<string, string>>(() => {
     const result: Record<string, string> = {};
@@ -132,20 +92,14 @@ const inputStyle = computed<Record<string, string>>(() => {
     return result;
 });
 
-const focus = (): void => {
-    field.value?.focus?.();
-};
-
-const blur = (): void => {
-    field.value?.blur?.();
-};
-
 const canClear = computed(() => {
     return Boolean(
-        props.clearable
-        && !props.disabled
-        && !(props.readonly || props.inputReadonly)
-        && (props.modelValue !== undefined && props.modelValue !== null && `${props.modelValue}`.length > 0),
+        props.clearable &&
+        !props.disabled &&
+        !(props.readonly || props.inputReadonly) &&
+        props.modelValue !== undefined &&
+        props.modelValue !== null &&
+        `${props.modelValue}`.length > 0,
     );
 });
 
@@ -169,6 +123,7 @@ const {
     handleKeydown,
     handleKeyup,
     clear,
+    select,
 } = useTextInput({
     props,
     emit,
@@ -176,10 +131,6 @@ const {
     focus,
     canClear,
 });
-
-const select = (): void => {
-    input.value?.select();
-};
 
 defineExpose({
     blur,

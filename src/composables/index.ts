@@ -6,4 +6,5 @@ export { default as useOverlayService } from "./overlay-service";
 export { default as useMenuStack } from "./menu-stack";
 export { useResolvedColor } from "./color";
 export { useField } from "./field";
+export { useFieldIntegration } from "./field-integration";
 export { useTextInput } from "./text-input";

@@ -1,252 +1,144 @@
 <template>
-  <div :class="selectClass" :style="fieldStyle">
-    <div class="e-select-field__control e-field__control">
-      <EMenu
-        v-model="opened"
-        full-width
-        hold-focus
-        check-offset
-        :color="resolvedMenuColor"
-        :close-on-content-click="false"
-        aria-haspopup="listbox"
-        :aria-controls="listboxId"
-        content-role="presentation"
-      >
-        <template #activator="{ ref: activatorRef }">
+  <EField ref="field" v-bind="fieldProps" :class="selectClass">
+    <template v-for="(_, name) in passThroughSlots" :key="name" #[name]="slotProps">
+      <slot :name="name" v-bind="slotProps ?? {}"></slot>
+    </template>
+
+    <template #append-inner>
+      <div v-if="!empty && clearable" class="e-select__clear">
+        <buttonClear :show="true" @clear="clear" />
+      </div>
+      <slot name="append-inner"></slot>
+      <div class="e-select__indicator" aria-hidden="true">
+        <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon" />
+      </div>
+    </template>
+
+    <template #default="{
+      inputId,
+      detailsId,
+      slotClass,
+      fieldIdBase,
+      handleBlur,
+      handleFocus,
+      hasError,
+      isDisabled,
+      color,
+      frameEl,
+    }">
+      <div v-if="prefix" class="e-select__prefix e-field__prefix" aria-hidden="true">
+        {{ prefix }}
+      </div>
+
+      <div :class="['e-select__selections', slotClass]">
+        <div v-if="showPlaceholderSelection" class="e-select__selection" :style="selectionStyle">
+          <span class="e-select__selection-placeholder">
+            {{ props.placeholder }}
+          </span>
+        </div>
+
+        <template v-else-if="multiple && chip">
           <div
-            class="e-select-field__slot e-field__slot"
-            :ref="activatorRef"
-            @click="handleSelectSlotClick"
-          >
-            <div
-              v-if="prependIcon"
-              class="e-select-field__prepend e-field__prepend-inner"
-              aria-hidden="true"
-              @click="handleClickPrependIcon"
-            >
-              <div class="e-field__icon e-field__icon--prepend-inner">
-                <EIcon :icon="prependIcon" />
-              </div>
-            </div>
-            <div class="e-field__overlay" aria-hidden="true"></div>
-            <div
-              class="e-select-field__body e-field__field"
-              @click="focusInput"
-              @mouseenter="handleHover(true)"
-              @mouseleave="handleHover(false)"
-            >
-              <label
-                v-if="mounted"
-                :for="id"
-                :class="[
-                  'e-label',
-                  {
-                    'e-label--floating': isLabelFloating,
-                    'e-label--floated': shouldFloatSelectLabel,
-                  },
-                ]"
-                :style="labelStyle"
-              >
-                <slot name="label"> {{ label }}</slot>
-              </label>
-              <div
-                v-if="prefix"
-                class="e-select-field__prefix e-field__prefix"
-                aria-hidden="true"
-                @click="focus"
-              >
-                {{ prefix }}
-              </div>
-              <div
-                class="e-select-field__selections e-field__field-control"
-              >
-                <div
-                  v-if="showPlaceholderSelection"
-                  class="e-select-field__selection"
-                  :style="selectionStyle"
-                >
-                  <span class="e-select-field__selection-placeholder">
-                    {{ resolvedPlaceholder }}
-                  </span>
-                </div>
-                <template v-else-if="multiple && chip">
-                  <div
-                    v-for="(itemValue, index) in selectedItems"
-                    class="e-select-field__selection"
-                    :key="index"
-                    :style="selectionStyle"
-                  >
-                    <slot
-                      name="selection"
-                      :selection="selectionItem(itemValue)"
-                      :attrs="selectionAttrs(itemValue)"
-                    >
-                      <EChip
-                        v-if="chip"
-                        :closable="true"
-                        :clickable="isSelectedChipIndex(index)"
-                        :selected="isSelectedChipIndex(index)"
-                        @click:close="handleItemClick(selectionItem(itemValue))"
-                        :color="color"
-                      >
-                        {{ selectedText(itemValue) }}
-                      </EChip>
-                    </slot>
-                  </div>
-                </template>
-                <div
-                  v-else-if="multiple"
-                  class="e-select-field__selection e-select-field__selection--text"
-                  :style="selectionStyle"
-                >
-                  <span
-                    class="e-select-field__selection-text"
-                    :title="multipleSelectedText"
-                  >
-                    {{ multipleSelectedText }}
-                  </span>
-                </div>
-                <div
-                  v-else-if="!empty"
-                  class="e-select-field__selection"
-                  :style="selectionStyle"
-                >
-                  <slot
-                    name="selection"
-                    :selection="selectionItem()"
-                    :attrs="selectionAttrs()"
-                  >
-                    <EChip
-                      v-if="chip"
-                      :closable="chipClosable"
-                      :color="color"
-                      @click:close="changeValue(null)"
-                    >
-                      {{ selectedText() }}
-                    </EChip>
-                    <span v-else>{{ selectedText() }}</span>
-                  </slot>
-                </div>
-                <input
-                  ref="input"
-                  :value="search"
-                  :id="id"
-                  :readonly="inputReadonly"
-                  :disabled="isDisabled"
-                  class="e-select-field__input input--text"
-                  type="text"
-                  role="combobox"
-                  :aria-autocomplete="ariaAutocomplete"
-                  :aria-controls="listboxId"
-                  :aria-activedescendant="activeDescendantId"
-                  :aria-expanded="opened"
-                  :aria-invalid="hasError"
-                  :aria-describedby="detailsId"
-                  :aria-disabled="isDisabled"
-                  :aria-readonly="inputReadonly"
-                  :placeholder="resolvedPlaceholder"
-                  autocomplete="off"
-                  @blur="handleSelectBlur"
-                  @focus="handleSelectFocus"
-                  @input="changeSearchValue($event, true)"
-                  @keydown="handleInputKeydown"
-                />
-              </div>
-
-              <div
-                v-if="suffix"
-                class="e-select-field__suffix e-field__suffix"
-                aria-hidden="true"
-                @click="focus"
-              >
-                {{ suffix }}
-              </div>
-              <transition name="scale">
-                <div v-if="!empty && clearable" class="e-select-field__clear e-field__append-inner">
-                  <div
-                    class="e-field__icon e-field__icon--clear e-icon--size-default"
-                  >
-                    <EButton
-                      text
-                      :icon="icon.clear"
-                      size="small"
-                      aria-label="Clear selection"
-                      @click.stop.prevent="clear"
-                    />
-                  </div>
-                </div>
-              </transition>
-              <div class="e-select-field__append e-field__append-inner" aria-hidden="true">
-                <div class="e-field__icon e-field__icon--append">
-                  <EIcon
-                    :icon="arrowDown || icon.arrowDown"
-                    class="flip-icon"
-                    :color="color"
-                  ></EIcon>
-                </div>
-              </div>
-            </div>
-
-            <div
-              v-if="appendIcon"
-              class="e-select-field__append e-field__append-inner"
-              @click="handleClickAppendIcon"
-            >
-              <div class="e-field__icon e-field__icon--append">
-                <EIcon :icon="appendIcon" />
-              </div>
-            </div>
-            <div
-              v-if="!outlined"
-              :style="lineStyle"
-              class="e-field__line"
-            ></div>
-
-            <EProgressLinear
-              v-if="loading"
-              :color="color"
-              :indeterminate="loading"
-              height="3"
-            />
+            v-for="(itemValue, index) in selectedItems"
+            :key="index"
+            class="e-select__selection"
+            :style="selectionStyle">
+            <slot name="selection" :selection="selectionItem(itemValue)" :attrs="selectionAttrs(itemValue)">
+              <EChip
+                v-if="chip"
+                v-bind="selectionAttrs(itemValue)"
+                :color="color"
+                closable>
+                {{ selectedText(itemValue) }}
+              </EChip>
+            </slot>
           </div>
         </template>
 
-        <div class="e-select-field__menu-content">
+        <div v-else-if="multiple" class="e-select__selection e-select__selection--text" :style="selectionStyle">
+          <span class="e-select__selection-text" :title="multipleSelectedText">
+            {{ multipleSelectedText }}
+          </span>
+        </div>
+
+        <div v-else-if="!empty" class="e-select__selection" :style="selectionStyle">
+          <slot name="selection" :selection="selectionItem()" :attrs="selectionAttrs()">
+            <EChip v-if="chip" v-bind="selectionAttrs()" :color="color" :closable="chipClosable">
+              {{ selectedText() }}
+            </EChip>
+            <span v-else>{{ selectedText() }}</span>
+          </slot>
+        </div>
+
+        <input
+          ref="input"
+          :value="searchValue"
+          :id="inputId"
+          :readonly="inputReadonly"
+          :disabled="isDisabled"
+          :data-field-id-base="fieldIdBase"
+          class="e-select__input input--text"
+          type="text"
+          role="combobox"
+          :aria-autocomplete="props.autocomplete ? 'list' : 'none'"
+          :aria-controls="getListboxId(fieldIdBase)"
+          :aria-expanded="isMenuOpen"
+          :aria-invalid="hasError"
+          :aria-describedby="detailsId"
+          :aria-disabled="isDisabled"
+          :aria-readonly="inputReadonly"
+          :placeholder="props.placeholder"
+          autocomplete="off"
+          @blur="(event) => { clearSelectedChip(); handleBlur(event); }"
+          @focus="(event) => handleInputFocus(event, handleFocus)"
+          @input="handleInput"
+          @keydown="handleInputKeydown" />
+      </div>
+
+      <div v-if="suffix" class="e-select__suffix e-field__suffix" aria-hidden="true">
+        {{ suffix }}
+      </div>
+
+      <EProgressLinear v-if="loading" :color="color" :indeterminate="loading" height="3" />
+
+      <EMenu
+        :activator="frameEl"
+        v-model="isMenuOpen"
+        full-width
+        hold-focus
+        check-offset
+        :color="props.menuColor ?? color"
+        :close-on-content-click="false"
+        aria-haspopup="listbox"
+        :aria-controls="getListboxId(fieldIdBase)"
+        content-role="presentation">
+        <div
+          v-focus-outside="{ handler: handleMenuFocusOutside, include: frameEl, enabled: isMenuOpen }"
+          class="e-select__menu">
           <e-list
-            :id="listboxId"
+            :id="getListboxId(fieldIdBase)"
             role="listbox"
-            :model-value="props.multiple ? multipleListModel : undefined"
+            :model-value="listModel"
             :aria-label="listAriaLabel"
-            :style="listStyle"
-          >
+            @update:modelValue="handleListModelValueChange"
+            @keydown="handleMenuKeydown">
             <template v-for="(item, index) in items">
-              <slot
-                name="item"
-                :attrs="slotItemAttrs(item, index)"
-                :item="item"
-              >
+              <slot name="item" :attrs="slotItemAttrs(item, index, fieldIdBase)" :item="item">
                 <e-list-item
-                  v-bind="slotItemAttrs(item, index)"
+                  v-bind="slotItemAttrs(item, index, fieldIdBase)"
                   active-class="e-list-item--active"
                   :isActive="active(item)"
                   :key="index"
-                  :value="getListItemValue(item)"
-                >
-                  {{ displayedText(item) }}
+                  :value="getListItemValue(item)">
+                  {{ getItemText(item) }}
                 </e-list-item>
               </slot>
             </template>
           </e-list>
         </div>
       </EMenu>
-      <EDetails
-        :id="detailsId"
-        :details="details"
-        :hasError="hasError"
-        :showDetails="showDetails"
-      ></EDetails>
-    </div>
-  </div>
+    </template>
+  </EField>
 </template>
 
 <script lang="ts">
@@ -260,72 +152,81 @@ import type {
   SelectModelValue,
   SelectProps,
 } from "@/types";
+import { focusOutside } from "@/directives";
 import icon from "@/utils/icons";
-import { useFieldActions } from "@/composables/field-actions";
-import { useGridCol } from "@/composables/grid-col";
-import { useField } from "@/composables/field";
 import { useUtils } from "@/composables/utils";
+import { useFieldIntegration } from "@/composables/field-integration";
 
-import { computed, nextTick, ref, watch } from "vue";
-
-import EButton from "@/components/button/index.vue";
-import EIcon from "@/components/icon/index.vue";
-import EDetails from "@/components/form/details.vue";
+import { computed, nextTick, ref, useSlots, watch } from "vue";
+import ButtonClear from "@/components/form/button-clear/index.vue";
 import EChip from "@/components/chip/index.vue";
+import EField from "@/components/form/field/index.vue";
 import EList from "@/components/list/index.vue";
 import EListItem from "@/components/list/item.vue";
 import EMenu from "@/components/menu/index.vue";
 import EProgressLinear from "@/components/progress/linear.vue";
+import EIcon from "@/components/icon/index.vue";
 
+// Local directives.
+const vFocusOutside = { ...focusOutside };
+
+// Component contract.
 const emit = defineEmits<SelectEmits>();
-
-const input = ref<HTMLInputElement | null>(null);
 
 const props = withDefaults(defineProps<SelectProps>(), {
   itemText: "text",
   itemValue: "value",
   inputAlign: "start",
-  itemCol: 1,
 });
-const opened = ref<boolean>(false);
-const {
-  fieldClass,
-  fieldStyle,
-  id,
-  focused,
-  focus,
-  blur,
-  showDetails,
-  color,
-  mounted,
-  details,
-  labelStyle,
-  handleHover,
-  handleBlur,
-  handleFocus,
-  validate,
-  reset,
-  resetValidation,
-  hasError,
-  isDisabled,
-  isLabelFloating,
-  shouldFloatLabel,
-} = useField();
-const { handleClickPrependIcon, handleClickAppendIcon } = useFieldActions({
-  emit,
-  focus,
+
+const slots = useSlots();
+
+// Shared field integration.
+const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<SelectModelValue>(props, slots, {
+  omitSlots: ["append-inner", "default", "details"],
 });
-const { gridColClass } = useGridCol(props);
+
+// Local reactive state.
 const { isObject } = useUtils();
+const input = ref<HTMLInputElement | null>(null);
+const isMenuOpen = ref<boolean>(false);
+const selectionCache = ref<Record<string, SelectItemType>>({});
+const selectedChipIndex = ref<number>(-1);
 
-const isItemObject = (value: unknown): value is SelectItemObject =>
-  isObject(value);
+// Two-way bindings.
+const searchValue = computed<string | number>({
+  get: () => props.search ?? "",
+  set: (value) => {
+    clearSelectedChip();
+    emit("update:search", value);
+  },
+});
 
-const getItemValue = (
+const modelValue = computed<SelectModelValue | undefined>({
+  get: () => props.modelValue as SelectModelValue | undefined,
+  set: (value) => {
+    emit("update:modelValue", value as SelectModelValue);
+  },
+});
+
+// Item normalization helpers.
+const isItemObject = (value: unknown): value is SelectItemObject => isObject(value);
+
+const isListItemValue = (value: unknown): value is string | number => {
+  return typeof value === "string" || typeof value === "number";
+};
+
+const getConfiguredItemValue = (
   item: SelectItemType | SelectModelValue | undefined,
 ): SelectItemType | undefined => {
   if (!isItemObject(item)) return item as SelectItemType | undefined;
   return item[props.itemValue] as SelectItemType | undefined;
+};
+
+const resolveItemValue = (
+  item: SelectItemType | SelectModelValue | undefined,
+): SelectItemType | undefined => {
+  return getConfiguredItemValue(item) ?? (item as SelectItemType | undefined);
 };
 
 const getItemText = (item: SelectItemType | undefined): string => {
@@ -337,76 +238,74 @@ const getItemText = (item: SelectItemType | undefined): string => {
   return result == null ? "" : String(result);
 };
 
-const getListItemValue = (
-  item: SelectItemType,
-): string | number | undefined => {
-  const value = getItemValue(item) ?? item;
-  return typeof value === "string" || typeof value === "number"
-    ? value
-    : undefined;
+const getListItemValue = (item: SelectItemType): string | number | undefined => {
+  const value = resolveItemValue(item);
+  return isListItemValue(value) ? value : undefined;
 };
 
-watch(
-  () => props.items,
-  () => {
-    syncHighlightedIndex();
-  },
-  { deep: true },
-);
+const getListboxId = (fieldIdBase: string): string => `${fieldIdBase}-listbox`;
+const getOptionId = (fieldIdBase: string, index: number): string => `${fieldIdBase}-option-${index}`;
 
-watch(
-  () => opened.value,
-  async (value: boolean) => {
-    if (!value) {
-      highlightedIndex.value = -1;
-      if (props.autocomplete && hasSearchValue.value) {
-        setSearchValue("", false);
-      }
-      return;
-    }
+const areSameItems = (left: SelectItemType, right: SelectItemType): boolean => {
+  return JSON.stringify(left) === JSON.stringify(right);
+};
 
-    focus();
-    syncHighlightedIndex();
-    await scrollHighlightedOptionIntoView();
-  },
-);
+function resolveComparableValue(
+  item: SelectItemType | SelectModelValue | undefined,
+): SelectItemType | undefined {
+  return props.returnObject
+    ? getConfiguredItemValue(item)
+    : resolveItemValue(item);
+}
 
-watch(
-  () => props.loading,
-  (val: boolean) => {
-    if (val) closeMenu();
-    else {
-      opened.value = true;
-      focusInput();
-    }
-  },
-);
+function getSelectionCacheKey(
+  item: SelectItemType | SelectModelValue | undefined,
+): string | null {
+  const comparableValue = resolveComparableValue(item);
 
-const lineStyle = computed(() => {
-  return props.lineWidth
-    ? { "--v-field-border-width": `${props.lineWidth}px` }
-    : {};
+  if (comparableValue === undefined) return null;
+  if (comparableValue === null) return "null";
+
+  return isItemObject(comparableValue)
+    ? `object:${JSON.stringify(comparableValue)}`
+    : `${typeof comparableValue}:${String(comparableValue)}`;
+}
+
+// Derived selection state.
+const selectedItems = computed<Array<SelectItemType>>(() => {
+  return props.multiple
+    ? (modelValue.value as Array<SelectItemType>) || []
+    : [];
 });
 
-const resolvedMenuColor = computed(() => {
-  return props.menuColor ?? color.value;
+const multipleListModel = computed<Array<string | number>>(() => {
+  return selectedItems.value
+    .map((item) => getListItemValue(item))
+    .filter(isListItemValue);
 });
 
-const selectClass = computed(() => {
-  const result = [
-    ...fieldClass.value,
-    "e-select",
-    "e-select-field",
-    ...gridColClass.value,
-  ];
-  opened.value && result.push("e-select--is-open");
-  shouldFloatSelectLabel.value && result.push("e-field--label-floated");
-  props.itemCol && result.push("e-select--columns-variant");
-  props.multiple && result.push("e-select--multiple");
-  props.chip && result.push("e-select--chip");
-  props.autocomplete && result.push("e-select--autocomplete");
-  props.loading && result.push("e-select--loading");
-  return result;
+const listModel = computed<Array<string | number> | string | number | undefined>(() => {
+  if (props.multiple) {
+    return multipleListModel.value;
+  }
+
+  if (empty.value) {
+    return undefined;
+  }
+
+  return getListItemValue(selectionItem());
+});
+
+const empty = computed((): boolean => {
+  if (props.multiple) {
+    return (modelValue.value as Array<SelectItemType>)?.length === 0;
+  }
+
+  return (
+    modelValue.value === undefined ||
+    modelValue.value === null ||
+    modelValue.value === ""
+  );
 });
 
 const inputReadonly = computed((): boolean => {
@@ -415,10 +314,8 @@ const inputReadonly = computed((): boolean => {
   return false;
 });
 
-const listboxId = computed((): string => `${id}-listbox`);
-
-const detailsId = computed((): string | undefined => {
-  return showDetails.value ? `${id}-details` : undefined;
+const showPlaceholderSelection = computed((): boolean => {
+  return empty.value && !props.autocomplete && Boolean(props.placeholder);
 });
 
 const listAriaLabel = computed((): string | undefined => {
@@ -426,156 +323,217 @@ const listAriaLabel = computed((): string | undefined => {
   return value == null ? undefined : String(value);
 });
 
-const ariaAutocomplete = computed((): "list" | "none" => {
-  return props.autocomplete ? "list" : "none";
+const selectClass = computed(() => {
+  const result = ["e-select"];
+
+  if (isMenuOpen.value) result.push("e-select--open");
+  if (props.multiple) result.push("e-select--multiple");
+  if (props.chip) result.push("e-select--chip");
+  if (props.autocomplete) result.push("e-select--autocomplete");
+  if (props.loading) result.push("e-select--loading");
+
+  return result;
 });
 
-const hasSearchValue = computed((): boolean => {
-  return `${props.search ?? ""}`.length > 0;
-});
-
-const shouldFloatSelectLabel = computed((): boolean => {
-  return (
-    isLabelFloating.value &&
-    (focused.value || hasSearchValue.value || !empty.value)
-  );
-});
-
-const resolvedPlaceholder = computed(() => {
-  if (!props.placeholder) return undefined;
-  if (!isLabelFloating.value) return props.placeholder;
-
-  return shouldFloatSelectLabel.value ? props.placeholder : undefined;
-});
-
-const hasObjectItems = computed((): boolean => isItemObject(props.items[0]));
-
-const selectedItems = computed<Array<SelectItemType>>(() => {
-  return props.multiple
-    ? (props.modelValue as Array<SelectItemType>) || []
-    : [];
-});
-
-watch(selectedItems, (items) => {
-  if (items.length === 0) {
-    clearSelectedChip();
-    return;
-  }
-
-  if (selectedChipIndex.value >= items.length) {
-    selectedChipIndex.value = items.length - 1;
-  }
-});
-
-const selectedChipIndex = ref<number>(-1);
-
-const highlightedIndex = ref<number>(-1);
-
-const multipleModel = computed<Array<SelectItemType>>(() => {
-  return props.multiple ? [...selectedItems.value] : [];
-});
-
-const multipleListModel = computed<Array<string | number>>(() => {
-  return multipleModel.value
-    .map((item) => getListItemValue(item))
-    .filter(
-      (value): value is string | number =>
-        typeof value === "string" || typeof value === "number",
-    );
+const selectionStyle = computed((): Record<string, string> => {
+  return { textAlign: props.inputAlign };
 });
 
 const isSearchEmpty = computed((): boolean => {
-  return `${props.search ?? ""}`.length === 0;
+  return `${searchValue.value ?? ""}`.length === 0;
 });
+const currentFieldIdBase = computed((): string => input.value?.dataset.fieldIdBase ?? "");
 
-const areSameItems = (left: SelectItemType, right: SelectItemType): boolean => {
-  return JSON.stringify(left) === JSON.stringify(right);
+// Selection lookup and matching.
+const syncSelectionCache = (items: Array<SelectItemType>): void => {
+  const nextCache = { ...selectionCache.value };
+
+  items.forEach((item) => {
+    const cacheKey = getSelectionCacheKey(item);
+
+    if (cacheKey) {
+      nextCache[cacheKey] = item;
+    }
+  });
+
+  selectionCache.value = nextCache;
 };
 
-const getComparableValue = (
-  item: SelectItemType | SelectModelValue | undefined,
-): SelectItemType | undefined => {
-  return props.returnObject
-    ? getItemValue(item)
-    : (getItemValue(item) ?? (item as SelectItemType | undefined));
-};
+syncSelectionCache(props.items);
 
 const getEmittedItemValue = (item: SelectItemType): SelectItemType => {
   if (props.returnObject || !isItemObject(item)) return item;
-  return getItemValue(item) as SelectItemType;
+  return getConfiguredItemValue(item) as SelectItemType;
+};
+
+const isSameSelectionValue = (
+  left: SelectItemType | SelectModelValue | undefined,
+  right: SelectItemType | SelectModelValue | undefined,
+): boolean => {
+  if (isItemObject(left) || isItemObject(right)) {
+    if (props.returnObject && isItemObject(left) && isItemObject(right)) {
+      return areSameItems(left, right);
+    }
+
+    return resolveComparableValue(left) === resolveComparableValue(right);
+  }
+
+  return left === right;
 };
 
 const findSelectedIndex = (
   items: Array<SelectItemType>,
   item: SelectItemType,
 ): number => {
-  if (isItemObject(item)) {
-    if (props.returnObject) {
-      return items.findIndex((candidate) => areSameItems(candidate, item));
-    }
-
-    const comparableValue = getComparableValue(item);
-    return items.findIndex((candidate) => candidate === comparableValue);
-  }
-
-  return items.findIndex((candidate) => candidate === item);
+  return items.findIndex((candidate) => isSameSelectionValue(candidate, item));
 };
 
-const getOptionId = (index: number): string => `${id}-option-${index}`;
+const active = (item: SelectItemType): boolean => {
+  if (props.multiple) {
+    return findSelectedIndex(selectedItems.value, item) !== -1;
+  }
 
-const activeDescendantId = computed((): string | undefined => {
-  if (!opened.value || highlightedIndex.value < 0) return undefined;
-  return getOptionId(highlightedIndex.value);
+  return isSameSelectionValue(item, modelValue.value);
+};
+
+const findSelectedItem = (
+  value: SelectItemType | SelectModelValue | undefined,
+): SelectItemType | undefined => {
+  if (props.returnObject) {
+    const comparableValue = resolveComparableValue(value);
+    return props.items.find(
+      (candidate) => resolveComparableValue(candidate) === comparableValue,
+    );
+  }
+
+  const hasObjectBackedItems = isItemObject(props.items[0]);
+
+  if (hasObjectBackedItems) {
+    return props.items.find(
+      (candidate) => resolveComparableValue(candidate) == value,
+    );
+  }
+
+  return props.items.find((candidate) => candidate === value);
+};
+
+const selectionItem = (value?: SelectItemType): SelectItemType => {
+  const selectionValue = value === undefined ? modelValue.value : value;
+  const matchedItem = findSelectedItem(selectionValue);
+
+  if (matchedItem !== undefined) {
+    return matchedItem;
+  }
+
+  const cacheKey = getSelectionCacheKey(selectionValue);
+  const cachedItem = cacheKey ? selectionCache.value[cacheKey] : undefined;
+
+  if (cachedItem !== undefined) {
+    return cachedItem;
+  }
+
+  if (selectionValue !== undefined && selectionValue !== null) {
+    return selectionValue as SelectItemType;
+  }
+
+  return {};
+};
+
+const selectedText = (itemValue?: SelectItemType): string => {
+  if (empty.value) {
+    return "";
+  }
+
+  return getItemText(selectionItem(itemValue));
+};
+
+const multipleSelectedText = computed((): string => {
+  return selectedItems.value
+    .map((itemValue) => selectedText(itemValue))
+    .filter((value) => value.length > 0)
+    .join(", ");
 });
 
-const findHighlightedIndex = (): number => {
+// Menu state and navigation.
+const getInitialHighlightedOptionIndex = (): number => {
   if (props.items.length === 0) return -1;
 
   const selectedIndex = props.items.findIndex((item) => active(item));
   return selectedIndex >= 0 ? selectedIndex : 0;
 };
 
-const syncHighlightedIndex = (): void => {
-  highlightedIndex.value = findHighlightedIndex();
+const openMenu = (): void => {
+  isMenuOpen.value = true;
 };
 
-const scrollHighlightedOptionIntoView = async (): Promise<void> => {
-  if (highlightedIndex.value < 0) return;
+const closeMenu = (): void => {
+  isMenuOpen.value = false;
+};
+
+const focusInput = (): void => {
+  input.value?.focus();
+};
+
+const canOpenMenu = (): boolean => {
+  if (isMenuOpen.value) return false;
+  if (props.disabled) return false;
+  if (props.readonly) return false;
+  if (props.loading) return true;
+  return props.items.length > 0;
+};
+
+const getOptionElement = (index: number): HTMLElement | null => {
+  if (index < 0 || !currentFieldIdBase.value) return null;
+
+  return document.getElementById(getOptionId(currentFieldIdBase.value, index));
+};
+
+const focusHighlightedOption = async (): Promise<void> => {
+  const optionIndex = getInitialHighlightedOptionIndex();
+
+  if (optionIndex < 0) return;
 
   await nextTick();
-  const option = document.getElementById(getOptionId(highlightedIndex.value));
+  const option = getOptionElement(optionIndex);
+  option?.focus();
   option?.scrollIntoView({ block: "nearest" });
 };
 
-const moveHighlightedIndex = async (step: number): Promise<void> => {
-  if (!props.items.length) return;
-
-  if (!opened.value) {
+const openMenuAndFocusList = async (): Promise<void> => {
+  if (!isMenuOpen.value) {
     openMenu();
   }
 
-  if (highlightedIndex.value < 0) {
-    highlightedIndex.value = findHighlightedIndex();
-  } else {
-    highlightedIndex.value = Math.min(
-      props.items.length - 1,
-      Math.max(0, highlightedIndex.value + step),
-    );
+  await focusHighlightedOption();
+};
+
+const handleInputFocus = (
+  event: FocusEvent,
+  handleFieldFocus: (event?: FocusEvent) => void,
+): void => {
+  clearSelectedChip();
+  handleFieldFocus(event);
+};
+
+const handleInput = (event: Event): void => {
+  const nextValue = (event.target as HTMLInputElement | null)?.value || "";
+
+  searchValue.value = nextValue;
+
+  if (nextValue.length > 0 && canOpenMenu()) {
+    openMenu();
   }
-
-  await scrollHighlightedOptionIntoView();
 };
 
-const setHighlightedBoundary = async (
-  position: "first" | "last",
-): Promise<void> => {
-  if (!props.items.length) return;
-
-  openMenu();
-  highlightedIndex.value = position === "first" ? 0 : props.items.length - 1;
-  await scrollHighlightedOptionIntoView();
+const handleMenuFocusOutside = (): void => {
+  closeMenu();
 };
 
+const handleMenuClosed = (): void => {
+  searchValue.value = "";
+};
+
+// Chip navigation.
 const clearSelectedChip = (): void => {
   selectedChipIndex.value = -1;
 };
@@ -607,237 +565,169 @@ const removeSelectedChip = (): boolean => {
     return false;
   }
 
-  handleItemClick(selectedItems.value[selectedChipIndex.value]);
+  toggleSelectedItem(selectedItems.value[selectedChipIndex.value]);
   clearSelectedChip();
-  focusInput();
   return true;
 };
 
+const handleSelectionChipClose = (itemValue: SelectItemType): void => {
+  toggleSelectedItem(selectionItem(itemValue));
+  focusInput();
+};
+
+const handleSingleSelectionChipClose = (): void => {
+  modelValue.value = null;
+  focusInput();
+};
+
+const resolveItemFromListValue = (value: string | number): SelectItemType => {
+  const matchedItem = props.items.find((item) => getListItemValue(item) === value);
+
+  if (matchedItem !== undefined) {
+    return matchedItem;
+  }
+
+  return value as SelectItemType;
+};
+
+const resolveEmittedValueFromListValue = (value: string | number): SelectItemType => {
+  return getEmittedItemValue(resolveItemFromListValue(value));
+};
+
+const handleListModelValueChange = (value: Array<string | number> | string | number | undefined | null): void => {
+  clearSelectedChip();
+
+  if (props.autocomplete) {
+    searchValue.value = "";
+  }
+
+  if (props.multiple) {
+    const nextValue = Array.isArray(value)
+      ? value.map((itemValue) => resolveEmittedValueFromListValue(itemValue))
+      : [];
+
+    modelValue.value = nextValue;
+    return;
+  }
+
+  if (value === undefined || value === null) {
+    modelValue.value = value as SelectModelValue;
+    closeMenu();
+    focusInput();
+    return;
+  }
+
+  modelValue.value = resolveEmittedValueFromListValue(value as string | number);
+  closeMenu();
+  focusInput();
+};
+
+const handleMenuKeydown = (event: KeyboardEvent): void => {
+  if (event.key !== "Escape") return;
+
+  event.preventDefault();
+  closeMenu();
+  focusInput();
+};
+
+// Render attrs.
 const selectionAttrs = (item?: SelectItemType) => {
   const chipIndex = item ? findSelectedIndex(selectedItems.value, item) : -1;
-  const attrs: Record<string, unknown> = {
+  const isActiveChip = chipIndex >= 0 ? isSelectedChipIndex(chipIndex) : undefined;
+
+  return {
     closable: Boolean(props.chip && (props.chipClosable || props.multiple)),
-    clickable: chipIndex >= 0 ? isSelectedChipIndex(chipIndex) : undefined,
-    selected: chipIndex >= 0 ? isSelectedChipIndex(chipIndex) : undefined,
-  };
-
-  if (item) {
-    attrs["onClick:close"] = () => handleItemClick(selectionItem(item));
-  } else {
-    attrs["onClick:close"] = () => changeValue(null);
-  }
-  return attrs;
+    clickable: isActiveChip,
+    selected: isActiveChip,
+    tabindex: -1,
+    closeTabindex: -1,
+    onMousedown: isActiveChip
+      ? (event: MouseEvent) => {
+        event.preventDefault();
+        focusInput();
+      }
+      : undefined,
+    "onClick:close": item
+      ? () => handleSelectionChipClose(item)
+      : () => handleSingleSelectionChipClose(),
+  } as Record<string, unknown>;
 };
-
-const selectionItem = (value?: SelectItemType): SelectItemType => {
-  let item: SelectItemType | undefined;
-  const localValue = value || props.modelValue;
-
-  if (props.returnObject) {
-    const compareItem = getComparableValue(localValue);
-    item = props.items.find(
-      (candidate) => getComparableValue(candidate) === compareItem,
-    );
-  } else if (hasObjectItems.value) {
-    item = props.items.find(
-      (candidate) => getComparableValue(candidate) == localValue,
-    );
-  } else {
-    item = props.items.find((candidate) => candidate === localValue);
-  }
-
-  return item || (isItemObject(localValue) ? localValue : {});
-};
-
-const handleSelectFocus = (event: FocusEvent): void => {
-  opened.value = true;
-  handleFocus(event);
-};
-
-const handleSelectBlur = (event: Event): void => {
-  clearSelectedChip();
-  handleBlur(event);
-};
-
-const focusInput = (): void => {
-  input.value?.focus();
-};
-
-const empty = computed((): boolean => {
-  if (props.multiple) {
-    return (props.modelValue as Array<SelectItemType>)?.length === 0;
-  }
-  return (
-    props.modelValue === undefined ||
-    props.modelValue === null ||
-    props.modelValue === ""
-  );
-});
-
-const showPlaceholderSelection = computed((): boolean => {
-  return (
-    empty.value && !props.autocomplete && Boolean(resolvedPlaceholder.value)
-  );
-});
 
 const slotItemAttrs = (
   item: SelectItemType,
   index: number,
+  fieldIdBase: string,
 ): Record<string, unknown> => {
-  const attrs: Record<string, unknown> = {};
-  attrs.class = {
-    "e-list-item--active": active(item),
-    "e-select-field__option--highlighted": index === highlightedIndex.value,
+  return {
+    class: "e-select__option",
+    value: getListItemValue(item),
+    id: getOptionId(fieldIdBase, index),
+    key: index,
   };
-  attrs.value = getListItemValue(item);
-  attrs.id = getOptionId(index);
-  attrs.onClick = () => handleItemClick(item);
-  attrs.key = index;
-  return attrs;
 };
 
-const getEventInputValue = (value: Event): string => {
-  return (value.target as HTMLInputElement | null)?.value || "";
-};
-
-const setSearchValue = (value: string | number, openMenu = true): void => {
-  clearSelectedChip();
-
-  if (props.autocomplete && openMenu) {
-    opened.value = true;
-  }
-
-  emit("update:search", value);
-};
-
-const changeSearchValue = (
-  value: Event | string | number,
-  isEvent = false,
-): void => {
-  const valueResult: string | number =
-    isEvent || value instanceof Event
-      ? getEventInputValue(value as Event)
-      : value;
-
-  setSearchValue(valueResult);
-};
-
-const openMenu = (): void => {
-  if (props.disabled || props.readonly || props.loading) return;
-  opened.value = true;
-};
-
-const closeMenu = (): void => {
-  opened.value = false;
-  focused.value = false;
-  clearSelectedChip();
-};
-const displayedText = (item: SelectItemType): string => {
-  return getItemText(item);
-};
-const changeValue = (
-  value: Event | SelectModelValue | undefined,
-  isEvent = false,
-) => {
-  const valueResult: SelectModelValue = isEvent
-    ? getEventInputValue(value as Event)
-    : (value as SelectModelValue);
-  emit("update:modelValue", valueResult);
-};
-
-const handleItemClick = (item: SelectItemType): void => {
-  clearSelectedChip();
-
-  if (props.autocomplete) changeSearchValue("");
-
+// Selection mutations.
+const toggleSelectedItem = (item: SelectItemType): void => {
   if (props.multiple) {
-    const result: Array<SelectItemType> = [...multipleModel.value];
+    const result: Array<SelectItemType> = [...selectedItems.value];
     const index = findSelectedIndex(result, item);
     const value = getEmittedItemValue(item);
     index < 0 ? result.push(value) : result.splice(index, 1);
-    changeValue(result);
-    syncHighlightedIndex();
+    modelValue.value = result;
     return;
   }
 
-  changeValue(getEmittedItemValue(item));
+  modelValue.value = getEmittedItemValue(item);
   closeMenu();
 };
 
-const selectHighlightedItem = (): void => {
-  if (
-    highlightedIndex.value < 0 ||
-    highlightedIndex.value >= props.items.length
-  )
-    return;
-  handleItemClick(props.items[highlightedIndex.value]);
-};
-
-const active = (item: SelectItemType): boolean => {
-  if (props.multiple) {
-    return findSelectedIndex(multipleModel.value, item) !== -1;
-  }
-
-  if (!isItemObject(item)) {
-    return item === props.modelValue;
-  }
-
-  if (props.returnObject) {
-    return JSON.stringify(item) === JSON.stringify(props.modelValue);
-  }
-
-  return getComparableValue(item) === props.modelValue;
-};
-
-const selectedText = (itemValue?: SelectItemType): string => {
-  if (empty.value) {
-    return "";
-  }
-
-  return getItemText(selectionItem(itemValue));
-};
-
-const multipleSelectedText = computed((): string => {
-  return selectedItems.value
-    .map((itemValue) => selectedText(itemValue))
-    .filter((value) => value.length > 0)
-    .join(", ");
-});
-
-const selectionStyle = computed((): Record<string, string> => {
-  return { textAlign: props.inputAlign };
-});
-
-const listStyle = computed((): Record<string, string> => {
-  const col = `${props.itemCol}`;
-  const percent = (1 / parseInt(col, 10)) * 100;
-  return { "--list-item-percent": `${percent}%`, "--list-item-col": col };
-});
-
+// External actions.
 const clear = (): void => {
   clearSelectedChip();
-  changeValue(props.multiple ? [] : undefined);
-  changeSearchValue("");
+  modelValue.value = props.multiple ? [] : undefined;
+  searchValue.value = "";
   emit("click:clear");
-  openMenu();
   focusInput();
 };
 
-const handleSelectSlotClick = (evt: Event): void => {
-  evt.stopPropagation();
-  clearSelectedChip();
-  openMenu();
-  focusInput();
-};
+// Reactive synchronization.
+watch(
+  () => props.items,
+  (items) => {
+    syncSelectionCache(items);
+  },
+  { deep: true },
+);
 
-const handleInputKeydown = async (evt: KeyboardEvent): Promise<void> => {
+watch(
+  () => isMenuOpen.value,
+  (value: boolean) => {
+    if (!value) {
+      handleMenuClosed();
+    }
+  },
+);
+
+watch(selectedItems, (items) => {
+  if (items.length === 0) {
+    clearSelectedChip();
+    return;
+  }
+
+  if (selectedChipIndex.value >= items.length) {
+    selectedChipIndex.value = items.length - 1;
+  }
+});
+
+// Keyboard interaction.
+const handleInputKeydown = async (event: KeyboardEvent): Promise<void> => {
   if (
-    evt.key === "Backspace" &&
+    event.key === "Backspace" &&
     props.multiple &&
     props.chip &&
     isSearchEmpty.value
   ) {
-    evt.preventDefault();
+    event.preventDefault();
 
     if (selectedChipIndex.value >= 0) {
       removeSelectedChip();
@@ -848,71 +738,66 @@ const handleInputKeydown = async (evt: KeyboardEvent): Promise<void> => {
     return;
   }
 
-  if (evt.key === "Escape") {
-    evt.preventDefault();
-    closeMenu();
-    return;
-  }
-
-  if (evt.key === "Tab") {
-    closeMenu();
-    return;
-  }
-
-  if (evt.key === "ArrowDown") {
-    evt.preventDefault();
-    clearSelectedChip();
-    await moveHighlightedIndex(1);
-    return;
-  }
-
-  if (evt.key === "ArrowUp") {
-    evt.preventDefault();
-    clearSelectedChip();
-    await moveHighlightedIndex(-1);
-    return;
-  }
-
-  if (evt.key === "Home") {
-    evt.preventDefault();
-    clearSelectedChip();
-    await setHighlightedBoundary("first");
-    return;
-  }
-
-  if (evt.key === "End") {
-    evt.preventDefault();
-    clearSelectedChip();
-    await setHighlightedBoundary("last");
-    return;
-  }
-
-  if (evt.key === "Enter") {
-    evt.preventDefault();
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
     clearSelectedChip();
 
-    if (!opened.value) {
-      openMenu();
+    if (!isMenuOpen.value) {
+      if (!canOpenMenu()) return;
+
+      await openMenuAndFocusList();
       return;
     }
 
-    selectHighlightedItem();
+    await focusHighlightedOption();
     return;
   }
 
-  if (evt.key === " " && inputReadonly.value) {
-    evt.preventDefault();
+  if (event.key === "ArrowUp") {
+    if (!isMenuOpen.value || props.items.length === 0) return;
+
+    event.preventDefault();
     clearSelectedChip();
-    openMenu();
+    await openMenuAndFocusList();
+    return;
+  }
+
+  if (event.key === "Enter" || event.key === " ") {
+    if (event.key === " " && !inputReadonly.value) return;
+
+    if (!isMenuOpen.value) {
+      if (!canOpenMenu()) return;
+
+      event.preventDefault();
+      clearSelectedChip();
+      openMenu();
+      return;
+    }
+  }
+
+  if (event.key === "Enter") {
+    if (!isMenuOpen.value) return;
+
+    event.preventDefault();
+    await openMenuAndFocusList();
+    return;
+  }
+
+  if (event.key === "Escape") {
+    if (!isMenuOpen.value) return;
+
+    event.preventDefault();
+    closeMenu();
   }
 };
 
+// Public instance API.
 defineExpose({
   focus,
   blur,
-  validate,
-  reset,
-  resetValidation,
+  validate: () => field.value?.validate() ?? true,
+  reset: () => field.value?.reset(),
+  resetValidation: () => field.value?.resetValidation?.(),
   input,
 });
 </script>

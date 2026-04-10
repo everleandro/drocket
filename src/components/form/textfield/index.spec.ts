@@ -90,7 +90,8 @@ describe("ETextField", () => {
     await nextTick();
 
     expect(wrapper.classes()).toContain("e-text-field");
-    expect(wrapper.get(".e-field__control").exists()).toBe(true);
+    expect(wrapper.get(".e-field__frame").exists()).toBe(true);
+    expect(wrapper.get(".e-text-field__input").classes()).toContain("e-field__slot");
     expect(wrapper.get(".e-text-field__input").element.tagName).toBe("INPUT");
   });
 
@@ -117,7 +118,7 @@ describe("ETextField", () => {
     const wrapper = mountTextField({ modelValue: "Alice", clearable: true });
     await nextTick();
 
-    const clear = wrapper.get(".e-text-field__clear button");
+    const clear = wrapper.get(".e-field__clear");
     await clear.trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toEqual([[""]]);
@@ -137,7 +138,7 @@ describe("ETextField", () => {
     wrapper.get(".e-text-field__input");
     expect(wrapper.find(".e-text-field__prefix").exists()).toBe(true);
     expect(wrapper.find(".e-text-field__suffix").exists()).toBe(true);
-    expect(wrapper.findAll(".e-text-field__prepend")).toHaveLength(1);
-    expect(wrapper.findAll(".e-text-field__append")).toHaveLength(1);
+    expect(wrapper.findAll(".e-field__prepend")).toHaveLength(1);
+    expect(wrapper.findAll(".e-field__append")).toHaveLength(1);
   });
 });

@@ -1,65 +1,29 @@
-.e-select,
-.e-select-field {
-  .e-field__icon.e-field__icon--clear {
-    .e-icon {
-      font-size: var(--e-icon-close-font-size, 1.5rem);
-    }
-  }
-
-  &--chip {
-    .e-chip--size-default {
-      --e-chip-height: var(--e-field-chip-height);
-    }
-  }
+.e-select {
+  --local-field-line-z-index: 9;
+  --e-chip-height-default: var(--e-field-chip-height);
 
   .flip-icon {
-    font-size: 1.5rem;
     transition: transform 0.3s ease;
   }
 
-  &--is-open {
-    &.e-field {
-      z-index: 3;
-    }
-
-    .e-field__icon.e-field__icon--append {
-      .e-icon.flip-icon {
-        transform: rotate(180deg);
-      }
-    }
-
-    .e-field__line {
-      z-index: 9;
-    }
-  }
-
-  .e-select-field__body {
-    cursor: pointer;
-    position: relative;
-    align-items: baseline;
+  &__selections {
+    align-self: center;
+    align-items: center;
+    color: var(--e-field-select-selection-color, var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87)));
     display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    grid-area: field;
     max-width: 100%;
+    min-height: 10px;
     min-width: 0;
+    position: relative;
     width: 100%;
   }
 
-  .e-select-field__selections {
-    color: var(--e-field-select-selection-color, var(--e-contrast-surface-1, rgba(0, 0, 0, 0.87)));
-    grid-area: field;
-    min-height: 10px;
-    align-self: center;
-    align-items: center;
-    display: flex;
-    flex: 1 1;
-    flex-wrap: wrap;
+  &__selection {
     max-width: 100%;
-    min-width: 0;
-  }
-
-  .e-select-field__selection {
     padding: 0;
-    max-width: 100%;
-    flex: 1 1 auto;
 
     &--text {
       min-width: 0;
@@ -71,7 +35,7 @@
     }
   }
 
-  .e-select-field__selection-text {
+  &__selection-text {
     display: block;
     max-width: 100%;
     min-width: 0;
@@ -80,72 +44,66 @@
     white-space: nowrap;
   }
 
-  &.e-field {
-    input {
-      //flex: 1 1;
-      width: 0;
-      min-width: 0;
-      max-width: 0;
-      pointer-events: none;
-      position: absolute;
-    }
+  &__input {
+    caret-color: currentColor;
+    flex: 0 0 auto;
+    max-width: 0;
+    min-width: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 0;
   }
 
   &--multiple,
   &--autocomplete {
-    .e-select-field__selection {
-      flex: unset;
-      padding: 0;
+    .e-select__selection {
       display: block;
+      padding: 0;
 
       &--text {
         flex: 1 1 auto;
       }
     }
 
-    .e-field__slot {
-      align-items: unset;
-    }
-
-    .e-select-field__selections {
+    .e-select__selections {
       gap: 0.25rem;
       height: 100%;
     }
   }
 
-
-
-  &--columns-variant {
-    .e-list {
-      display: flex;
-      flex-wrap: wrap;
-
-      &-item {
-        $child: var(--list-item-col);
-        flex: 1 1 var(--list-item-percent);
-      }
-    }
-  }
-
   &--autocomplete {
-    &.e-select--is-open {
-      &.e-field input[aria-readonly="false"] {
-        position: relative;
-        pointer-events: all;
+    .e-select__input[aria-readonly="false"] {
+
+      &:focus,
+      &:focus-visible {
+         flex: 1 1 auto;
         max-width: unset;
         min-width: min(50%, 30rem);
+        pointer-events: all;
+        position: relative;
+        padding: calc(var(--e-field-line));
+      }
+    }
+
+    &.e-select--open {
+      .e-select__input[aria-readonly="false"] {
         flex: 1 1 auto;
+        max-width: unset;
+        min-width: min(50%, 30rem);
+        pointer-events: all;
+        position: relative;
+        padding: calc(var(--e-field-line));
       }
     }
   }
 
   .e-progress-linear {
-    z-index: 9;
     --e-progress-linear-height: 3px;
-    position: absolute;
     left: 0;
+    position: absolute;
     right: 0;
     top: 100%;
+    z-index: 9;
   }
 
   &--loading {
@@ -155,24 +113,28 @@
       opacity: 0.1;
     }
   }
+
+  &--open {
+    z-index: 3;
+
+    .flip-icon {
+      transform: rotate(180deg);
+    }
+
+    .e-field__line {
+      z-index: var(--local-field-line-z-index);
+    }
+  }
+
+  &.e-field--dense {
+    --e-chip-height-default: var(--e-field-chip-height-dense);
+  }
 }
 
-.e-select-field__menu-content {
+.e-select__menu {
   background-color: var(--e-color-surface-1, #ffffff);
   max-height: 304px;
   min-width: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-
-  .e-list {
-    min-width: 100%;
-
-    // .e-select-field__option--highlighted {
-    //   background-color: color-mix(in srgb,
-    //       var(--e-list-color, var(--e-color-primary, #1976d2)) 12%,
-    //       transparent);
-    // }
-  }
-
-
 }

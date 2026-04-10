@@ -25,6 +25,8 @@ export interface EFieldProps<TValue = unknown> extends ColProps {
   readonly?: boolean;
   labelBehavior?: FieldLabelBehavior;
   prependIcon?: Array<IconPath> | IconPath | string;
+  prependInnerIcon?: Array<IconPath> | IconPath | string;
+  appendInnerIcon?: Array<IconPath> | IconPath | string;
   appendIcon?: Array<IconPath> | IconPath | string;
   detail?: string;
   outlined?: boolean;

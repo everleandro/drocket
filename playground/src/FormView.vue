@@ -23,33 +23,41 @@
 
                 <ESelect v-model="selectState.stack" v-model:search="selectState.stackSearch" :cols="12" :md="6"
                     multiple chip clearable label="floating chip multiple" placeholder="Elige una o varias tecnologias"
-                    autocomplete label-behavior="floating"
-                    detail="Seleccion multiple con chips y cierre individual." :items="filteredStackOptions" />
+                    autocomplete label-behavior="floating" detail="Seleccion multiple con chips y cierre individual."
+                    :items="filteredStackOptions" />
 
                 <ESelect v-model="selectState.location" v-model:search="selectState.locationSearch" :cols="12"
                     autocomplete clearable label="default" placeholder="Escribe para filtrar"
                     detail="Autocomplete con filtro local usando update:search." :items="filteredLocationOptions" />
 
                 <ESelect v-model="selectState.stack2" :cols="12" :md="6" clearable label="default floating"
-                    label-behavior="floating" placeholder="Elige una o varias tecnologias"
+                    label-behavior="floating" placeholder="Elige una tecnologias" multiple
                     detail="Seleccion multiple sin chips." :items="stackOptions2" />
 
             </EForm>
         </e-card>
 
-        <e-card>
-            <EForm ref="formRef" v-model="formValid" class="demo-form" field-color="cyan-800" label-min-width="136"
+        <e-card class="p-4 my-4" elevation="md">
+            <EForm ref="formRef" v-model="formValid" class="demo-form" field-color="cyan-800" 
                 @submit="handleSubmit">
-                <ETextfield v-model.trim="form.fullName" :cols="12" :md="6" clearable dense label="dense"
-                    placeholder="Ada Lovelace" :prepend-icon="iconFactory.arrowRight"
-                    detail="Se usa para personalizar la experiencia." :rules="nameRules" />
+                <ETextfield v-model.trim="form.fullName" :cols="12" :md="6" clearable dense label="dense" :prepend-inner-icon="iconFactory.person" :append-inner-icon="iconFactory.person"
+                    placeholder="Ada Lovelace" 
+                    detail="Se usa para personalizar la experiencia." :rules="nameRules">
+                    <template #prepend-inner>
+                         <EIcon :icon="iconFactory.person" />
+                    </template>
+                     <!-- <template #append-inner>
+                         <EIcon :icon="iconFactory.calendar" />
+                    </template> -->
+                </ETextfield>
 
                 <ETextfield v-model.trim="form.email" label-behavior="floating" :cols="12" :md="6" clearable dense
                     label="dense floating" placeholder="ada@analytical.engine" autocomplete="email"
-                    detail="Te enviaremos confirmaciones y alertas importantes." :rules="emailRules" />
+                    :append-icon="iconFactory.person" detail="Te enviaremos confirmaciones y alertas importantes."
+                    :rules="emailRules" />
 
                 <ETextfield v-model="form.company" :cols="12" :md="6" label="default"
-                    placeholder="Analytical Engines Lab" prepend-icon=""
+                    placeholder="Analytical Engines Lab" :prepend-icon="iconFactory.calendar"
                     detail="Prueba label, helper message y comportamiento ." :rules="companyRules" />
 
                 <ETextfield v-model.number="form.hourlyRate" :cols="12" :md="6" label="default floating" prefix="$"
@@ -215,14 +223,13 @@
                         </EForm>
 
                         <EForm class="radio-demo-form" field-color="teal-900" label-behavior="floating" dense>
-                            <ECheckbox v-model="checkboxState.termsAccepted" :cols="12" :md="4"
-                                label="Acepto terminos"
+                            <ECheckbox v-model="checkboxState.termsAccepted" :cols="12" :md="4" label="Acepto terminos"
                                 detail="Caso booleano simple para revisar color, focus y detalles." />
 
                             <ECheckbox v-model="checkboxState.releaseChecklist" :cols="12" :md="4"
                                 label="Checklist de release"
-                                detail="Usa valores custom ready/hold para probar modelValue."
-                                color="secondary" true-value="ready" false-value="hold" />
+                                detail="Usa valores custom ready/hold para probar modelValue." color="secondary"
+                                true-value="ready" false-value="hold" />
 
                             <ECheckbox v-model="checkboxState.readonlyAudit" :cols="12" :md="4" readonly
                                 label="Auditoria readonly"
@@ -467,7 +474,7 @@
                                 <span>Validez</span>
                                 <strong>{{
                                     formValid ? "Valido" : "Con errores o incompleto"
-                                    }}</strong>
+                                }}</strong>
                             </div>
                             <div>
                                 <span>Nombre</span>
@@ -554,6 +561,7 @@ import ETimePicker from "../../src/components/form/time-picker/index.vue";
 import ECol from "../../src/components/grid/col.vue";
 import ERow from "../../src/components/grid/row.vue";
 import iconFactory from "../../src/utils/icons";
+import EIcon from "@/components/icon/index.vue";
 
 type DemoFormModel = {
     fullName: string;

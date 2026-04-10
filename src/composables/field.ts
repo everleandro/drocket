@@ -104,7 +104,7 @@ export function useField<TValue = unknown>(useFormInjection = true) {
       "select",
       "button",
       '[tabindex]:not([tabindex="-1"])',
-    ].join(", ");
+    ];
 
     return getFocusableElementInRoot(rootElement, selector);
   };

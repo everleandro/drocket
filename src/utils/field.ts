@@ -43,12 +43,21 @@ export const resolveFocusableElement = (
 
 export const getFocusableElementInRoot = (
   rootElement: ParentNode | null | undefined,
-  selector: string,
+  selector: string | Array<string>,
 ): FocusableElement | undefined => {
   if (!rootElement) return undefined;
 
-  const element = rootElement.querySelector<HTMLElement>(selector);
-  return element ? resolveFocusableElement(element) : undefined;
+  const selectors = Array.isArray(selector) ? selector : [selector];
+
+  for (const currentSelector of selectors) {
+    const element = rootElement.querySelector<HTMLElement>(currentSelector);
+
+    if (element) {
+      return resolveFocusableElement(element);
+    }
+  }
+
+  return undefined;
 };
 
 export const isDomFocused = (element?: FocusableElement): boolean => {
