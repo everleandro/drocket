@@ -59,6 +59,7 @@ import type { EField as EFieldContract, FieldConfiguration, FieldLabelBehavior, 
 export interface Props extends EFieldProps<unknown> {
     prefix?: string;
     suffix?: string;
+    focusWithin?: boolean;
 }
 
 const props = defineProps<Props>();
@@ -153,7 +154,8 @@ const effectiveLabelBehavior = computed<FieldLabelBehavior | undefined>(() => {
 
 const isLabelInline = computed(() => effectiveLabelBehavior.value === "inline");
 const isLabelFloating = computed(() => effectiveLabelBehavior.value === "floating");
-const shouldFloatLabel = computed(() => isLabelFloating.value && (focused.value || hasValue.value));
+const isFocusWithin = computed(() => focused.value || Boolean(props.focusWithin));
+const shouldFloatLabel = computed(() => isLabelFloating.value && (isFocusWithin.value || hasValue.value));
 const shouldShowValidation = computed(() => dirty.value || touched.value || validated.value);
 
 const labelClass = computed(() => [
@@ -391,6 +393,7 @@ const rootClass = computed(() => [
     hasError.value && fieldStateClasses.hasError,
     hasValue.value && fieldStateClasses.hasValue,
     hovered.value && fieldStateClasses.hovered,
+    isFocusWithin.value && fieldStateClasses.focusWithin,
     shouldFloatLabel.value && fieldStateClasses.labelFloated,
     (props.retainColor || configuration.retainColor) && fieldStateClasses.retainColor,
     focused.value && fieldStateClasses.focused,
@@ -443,6 +446,7 @@ const slotProps = computed(() => ({
     fieldIdBase: idBase,
     hasError: hasError.value,
     isDisabled: isDisabled.value,
+    isFocusWithin: isFocusWithin.value,
     isLabelFloating: isLabelFloating.value,
     isReadonly: isReadonly.value,
     shouldFloatLabel: shouldFloatLabel.value,

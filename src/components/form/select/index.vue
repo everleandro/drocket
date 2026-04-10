@@ -1,5 +1,5 @@
 <template>
-  <EField ref="field" v-bind="fieldProps" :class="selectClass">
+  <EField ref="field" v-bind="resolvedFieldProps" :class="selectClass">
     <template v-for="(_, name) in passThroughSlots" :key="name" #[name]="slotProps">
       <slot :name="name" v-bind="slotProps ?? {}"></slot>
     </template>
@@ -154,6 +154,7 @@ import type {
 } from "@/types";
 import { focusOutside } from "@/directives";
 import icon from "@/utils/icons";
+import { getNextTabbable, getPrevTabbable } from "@/utils/field";
 import { useUtils } from "@/composables/utils";
 import { useFieldIntegration } from "@/composables/field-integration";
 
@@ -208,6 +209,11 @@ const modelValue = computed<SelectModelValue | undefined>({
     emit("update:modelValue", value as SelectModelValue);
   },
 });
+
+const resolvedFieldProps = computed(() => ({
+  ...fieldProps.value,
+  focusWithin: isMenuOpen.value,
+}));
 
 // Item normalization helpers.
 const isItemObject = (value: unknown): value is SelectItemObject => isObject(value);
@@ -474,6 +480,10 @@ const focusInput = (): void => {
   input.value?.focus();
 };
 
+const getTabNavigationAnchor = (): HTMLElement | null => {
+  return input.value?.closest(".e-field") ?? null;
+};
+
 const canOpenMenu = (): boolean => {
   if (isMenuOpen.value) return false;
   if (props.disabled) return false;
@@ -622,7 +632,25 @@ const handleListModelValueChange = (value: Array<string | number> | string | num
   focusInput();
 };
 
-const handleMenuKeydown = (event: KeyboardEvent): void => {
+const handleMenuKeydown = async (event: KeyboardEvent): Promise<void> => {
+  if (event.key === "Tab") {
+    const anchor = getTabNavigationAnchor();
+    const target = anchor
+      ? event.shiftKey
+        ? getPrevTabbable(anchor)
+        : getNextTabbable(anchor)
+      : undefined;
+
+    closeMenu();
+
+    if (!target) return;
+
+    event.preventDefault();
+    await nextTick();
+    target.focus();
+    return;
+  }
+
   if (event.key !== "Escape") return;
 
   event.preventDefault();

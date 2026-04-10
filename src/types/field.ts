@@ -76,6 +76,7 @@ export type FieldStateKey =
   | "hasError"
   | "hasValue"
   | "focused"
+  | "focusWithin"
   | "labelFloated"
   | "retainColor"
   | "hovered";

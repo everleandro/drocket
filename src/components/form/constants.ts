@@ -8,6 +8,7 @@ export const fieldStateClasses = {
   hasError: "e-field--has-error",
   hasValue: "e-field--has-value",
   focused: "e-field--is-focused",
+  focusWithin: "e-field--is-focus-within",
   labelFloated: "e-field--label-floated",
   retainColor: "e-field--retain-color",
   hovered: "e-field--is-hovered",

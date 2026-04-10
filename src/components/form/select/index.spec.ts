@@ -533,6 +533,85 @@ describe("ESelect", () => {
     expect(input.attributes("aria-expanded")).toBe("false");
   });
 
+  it("keeps the floating label and focus visuals while the list owns focus", async () => {
+    const wrapper = mountSelect({
+      items: ["Email", "Slack", "Teams"],
+      labelBehavior: "floating",
+    });
+    await nextTick();
+
+    const input = wrapper.get('input[role="combobox"]');
+
+    await input.trigger("focus");
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("e-field--is-focus-within");
+    expect(wrapper.classes()).toContain("e-field--label-floated");
+    expect(wrapper.get(".e-label").classes()).toContain("e-label--floated");
+  });
+
+  it("closes the menu and moves focus to the next tabbable after the field on tab", async () => {
+    const beforeButton = document.createElement("button");
+    beforeButton.type = "button";
+    beforeButton.dataset.testid = "before";
+    document.body.append(beforeButton);
+
+    const wrapper = mountSelect({ items: ["Email", "Slack", "Teams"] });
+
+    const afterButton = document.createElement("button");
+    afterButton.type = "button";
+    afterButton.dataset.testid = "after";
+    document.body.append(afterButton);
+
+    await nextTick();
+
+    const input = wrapper.get('input[role="combobox"]');
+
+    await input.trigger("focus");
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    const option = wrapper.get('[data-e-list-item="true"]');
+
+    await option.trigger("keydown", { key: "Tab" });
+    await nextTick();
+
+    expect(document.activeElement).toBe(afterButton);
+    expect(input.attributes("aria-expanded")).toBe("false");
+  });
+
+  it("closes the menu and moves focus to the previous tabbable before the field on shift tab", async () => {
+    const beforeButton = document.createElement("button");
+    beforeButton.type = "button";
+    beforeButton.dataset.testid = "before";
+    document.body.append(beforeButton);
+
+    const wrapper = mountSelect({ items: ["Email", "Slack", "Teams"] });
+
+    const afterButton = document.createElement("button");
+    afterButton.type = "button";
+    afterButton.dataset.testid = "after";
+    document.body.append(afterButton);
+
+    await nextTick();
+
+    const input = wrapper.get('input[role="combobox"]');
+
+    await input.trigger("focus");
+    await input.trigger("keydown", { key: "ArrowDown" });
+    await nextTick();
+
+    const option = wrapper.get('[data-e-list-item="true"]');
+
+    await option.trigger("keydown", { key: "Tab", shiftKey: true });
+    await nextTick();
+
+    expect(document.activeElement).toBe(beforeButton);
+    expect(input.attributes("aria-expanded")).toBe("false");
+    expect(document.activeElement).not.toBe(afterButton);
+  });
+
   it("selects and removes the last chip with backspace in multiple chip mode", async () => {
     const wrapper = mountSelect({
       modelValue: ["Email", "Slack"],

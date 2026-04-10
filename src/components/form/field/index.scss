@@ -92,6 +92,7 @@
     &--is-hovered,
     &--retain-color,
     &--is-focused,
+    &--is-focus-within,
     &--has-error {
         color: var(--e-field-color);
         --e-field-label: currentColor;
@@ -100,7 +101,8 @@
     }
 
 
-    &--is-focused {
+    &--is-focused,
+    &--is-focus-within {
         .e-field__line {
             opacity: 1;
 

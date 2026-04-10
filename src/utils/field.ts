@@ -3,6 +3,50 @@ export type FocusableElement = {
   blur?: () => void;
 };
 
+const tabbableSelector = [
+  "a[href]",
+  "area[href]",
+  "button",
+  "input:not([type='hidden'])",
+  "select",
+  "textarea",
+  "iframe",
+  "[tabindex]",
+  "[contenteditable='true']",
+].join(", ");
+
+const isHiddenByAncestors = (element: HTMLElement): boolean => {
+  return Boolean(element.closest("[hidden], [inert], [aria-hidden='true']"));
+};
+
+const isVisibleElement = (element: HTMLElement): boolean => {
+  if (typeof window === "undefined") return true;
+
+  const style = window.getComputedStyle(element);
+
+  return style.display !== "none" && style.visibility !== "hidden";
+};
+
+const isTabbableElement = (element: HTMLElement): boolean => {
+  if (isHiddenByAncestors(element) || !isVisibleElement(element)) {
+    return false;
+  }
+
+  if ("disabled" in element && (element as HTMLButtonElement).disabled) {
+    return false;
+  }
+
+  return element.tabIndex >= 0;
+};
+
+const isElementAfterAnchor = (anchor: Element, candidate: HTMLElement): boolean => {
+  return Boolean(anchor.compareDocumentPosition(candidate) & Node.DOCUMENT_POSITION_FOLLOWING);
+};
+
+const isElementBeforeAnchor = (anchor: Element, candidate: HTMLElement): boolean => {
+  return Boolean(anchor.compareDocumentPosition(candidate) & Node.DOCUMENT_POSITION_PRECEDING);
+};
+
 export const hasFieldValue = (value: unknown): boolean => {
   if (value === undefined || value === null) return false;
   if (typeof value === "string") return value.length > 0;
@@ -63,4 +107,40 @@ export const getFocusableElementInRoot = (
 export const isDomFocused = (element?: FocusableElement): boolean => {
   if (!element || typeof document === "undefined") return false;
   return element instanceof Element && document.activeElement === element;
+};
+
+export const getTabbables = (
+  container: ParentNode = document,
+): Array<HTMLElement> => {
+  if (typeof document === "undefined") return [];
+
+  return Array.from(container.querySelectorAll<HTMLElement>(tabbableSelector)).filter(
+    isTabbableElement,
+  );
+};
+
+export const getNextTabbable = (
+  anchor: Element,
+  container: ParentNode = document,
+): HTMLElement | undefined => {
+  return getTabbables(container).find((candidate) => {
+    if (candidate === anchor || anchor.contains(candidate)) {
+      return false;
+    }
+
+    return isElementAfterAnchor(anchor, candidate);
+  });
+};
+
+export const getPrevTabbable = (
+  anchor: Element,
+  container: ParentNode = document,
+): HTMLElement | undefined => {
+  return [...getTabbables(container)].reverse().find((candidate) => {
+    if (candidate === anchor || anchor.contains(candidate)) {
+      return false;
+    }
+
+    return isElementBeforeAnchor(anchor, candidate);
+  });
 };
