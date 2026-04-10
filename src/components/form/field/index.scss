@@ -197,6 +197,9 @@
         margin-bottom: 0;
         align-self: flex-start;
         backface-visibility: hidden;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         position: relative;
         transition:
             color var(--e-field-transition-duration) cubic-bezier(0.4, 0, 0.2, 1),

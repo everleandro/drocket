@@ -9,6 +9,7 @@ import ProgressView from './ProgressView.vue';
 import RadioView from './RadioView.vue';
 import ScheduleView from './ScheduleView.vue';
 import TextareaView from './TextareaView.vue';
+import TimePickerView from './TimePickerView.vue';
 
 const routes = [
   { path: '/', component: App },
@@ -16,6 +17,7 @@ const routes = [
   { path: '/date-picker', component: DatePickerView },
   { path: '/form', component: FormView },
   { path: '/textarea', component: TextareaView },
+  { path: '/time-picker', component: TimePickerView },
   { path: '/progress', component: ProgressView },
   { path: '/radio', component: RadioView },
   { path: '/schedule', component: ScheduleView },

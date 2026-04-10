@@ -51,7 +51,7 @@ const mountTimePicker = (props: Record<string, unknown> = {}) => {
     props: {
       modelValue: new Date("2026-03-26T10:30:00.000Z"),
       label: "Time",
-      details: "Choose a time",
+      detail: "Choose a time",
       ...props,
     },
     global: {
@@ -66,12 +66,13 @@ const mountTimePicker = (props: Record<string, unknown> = {}) => {
 };
 
 describe("ETimePicker", () => {
-  it("emits semantic time picker anatomy from Vue", async () => {
+  it("renders the time picker within the shared EField structure", async () => {
     const wrapper = mountTimePicker({ appendIcon: "$check", prependIcon: "$check" });
     await nextTick();
 
     expect(wrapper.classes()).toContain("e-time-picker");
-    expect(wrapper.get(".e-time-picker__control").classes()).toContain("e-field__control");
+    expect(wrapper.classes()).toContain("e-field");
+    expect(wrapper.find(".e-field__frame").exists()).toBe(true);
     expect(wrapper.get(".e-time-picker__slot").classes()).toContain("e-field__slot");
     expect(wrapper.find(".e-time-picker__body").exists()).toBe(true);
     expect(wrapper.find(".e-time-picker__group").exists()).toBe(true);
@@ -88,6 +89,18 @@ describe("ETimePicker", () => {
     expect(wrapper.findAll(".e-time-picker__menu-segment")).toHaveLength(2);
     expect(wrapper.findAll(".e-time-picker__menu-value")).toHaveLength(2);
     expect(wrapper.find(".time-info").exists()).toBe(false);
+  });
+
+  it("keeps floating label and focus visuals while the menu is open", async () => {
+    const wrapper = mountTimePicker({ labelBehavior: "floating" });
+    await nextTick();
+
+    await wrapper.get('input[data-hours]').trigger("focus");
+    await nextTick();
+
+    expect(wrapper.classes()).toContain("e-field--is-focus-within");
+    expect(wrapper.classes()).toContain("e-field--label-floated");
+    expect(wrapper.get(".e-label").classes()).toContain("e-label--floated");
   });
 
   it("keeps the menu open when blur is caused by an internal menu mousedown", async () => {

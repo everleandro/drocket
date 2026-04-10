@@ -184,7 +184,7 @@ const slots = useSlots();
 
 // Shared field integration.
 const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<SelectModelValue>(props, slots, {
-  omitSlots: ["append-inner", "default", "details"],
+  omitSlots: ["append-inner", "default"],
 });
 
 // Local reactive state.

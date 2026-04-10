@@ -12,6 +12,7 @@
             <router-link to="/date-picker">Date Picker</router-link>
             <router-link to="/form">Formulario</router-link>
             <router-link to="/textarea">Textarea</router-link>
+            <router-link to="/time-picker">Time Picker</router-link>
             <router-link to="/progress">Progress</router-link>
             <router-link to="/radio">Radios</router-link>
             <router-link to="/schedule">Schedule</router-link>
