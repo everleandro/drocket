@@ -17,13 +17,14 @@
         }
     }
 
-    .flip-icon {
+    &__toggle-icon {
         transition: transform 0.3s ease;
     }
 
     &__separator {
         font-size: 1rem;
         align-self: center;
+        padding-inline: calc(var(--e-space-base, 4px) * 4);
     }
 
     .e-label {
@@ -32,6 +33,7 @@
 
     &__body {
         display: flex;
+        flex: 0;
         justify-content: flex-end;
     }
 
@@ -39,19 +41,71 @@
         max-width: 3.758rem;
         text-align: center;
 
-        &[data-hours] {
-            padding-right: calc(var(--e-space-base, 4px) * 4);
-        }
-            &[data-minutes] {
-            padding-left: calc(var(--e-space-base, 4px) * 4);
-        }
+    }
+
+
+    &__menu-content {
+        padding: var(--e-space-base);
+
+
+
 
     }
 
-    &.e-field--label-floating {
-        .e-time-picker__body {
-            flex: 0;
+    &__row {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--e-space-base);
+
+        .e-btn {
+            flex: 1 1 auto;
+        }
+        &--display {
+            padding-inline: calc(var(--e-space-base, 4px) * 4);
+
+            .e-time-picker__separator {
+                font-size: 2rem;
+                animation: seconds 1s infinite;
+            }
+        }
+    }
+
+    &__segment {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        flex: 1 1 auto;
+        overflow: hidden;
+    }
+
+    &__hour-display,
+    &__minutes-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        flex: 1 1 auto;
+        width: 100%;
+        text-align: center;
+    }
+
+    &__segment {
+        .picker-transition-enter-active,
+        .picker-transition-leave-active,
+        .picker-transition-reverse-enter-active,
+        .picker-transition-reverse-leave-active {
+            position: absolute !important;
+            inset: 0;
+            transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1) !important;
         }
 
+        .picker-transition-enter-from,
+        .picker-transition-reverse-enter-from,
+        .picker-transition-leave-to,
+        .picker-transition-reverse-leave-to {
+            opacity: 0;
+        }
     }
 }

@@ -4,6 +4,7 @@ import type { CSSProperties } from "vue";
 
 export type FieldValidationResult = true | string;
 export type FieldLabelBehavior = "static" | "floating" | "inline";
+export type SelectionFieldLabelBehavior = Exclude<FieldLabelBehavior, "floating">;
 
 export type FieldRule<T = unknown> = (value: T) => FieldValidationResult;
 
@@ -49,6 +50,16 @@ export type FieldWrapperProps<TValue = unknown> = Omit<
 export type FieldLabelProps = Pick<EFieldProps, "label" | "labelMinWidth">;
 
 export interface FieldBaseProps<TValue = unknown> extends EFieldProps<TValue> {}
+
+export interface TextualFieldBaseProps<TValue = unknown>
+  extends FieldBaseProps<TValue> {}
+
+export type SelectionFieldBaseProps<TValue = unknown> = Omit<
+  FieldBaseProps<TValue>,
+  "labelBehavior"
+> & {
+  labelBehavior?: SelectionFieldLabelBehavior;
+};
 
 export interface UseFieldProps<TValue = unknown> extends FieldBaseProps<TValue> {}
 

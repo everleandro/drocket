@@ -7,7 +7,7 @@
         <template #append-inner>
             <slot name="append-inner"></slot>
             <div class="e-time-picker__toggle" aria-hidden="true">
-                <EIcon :icon="arrowDown || icon.arrowDown" class="flip-icon" />
+                <EIcon :icon="arrowDown || icon.arrowDown" class="e-time-picker__toggle-icon" />
             </div>
         </template>
 
@@ -37,40 +37,43 @@
                     @blur="handleBlur"/>
             </div>
 
-
             <EMenu :activator="frameEl" v-model="opened" full-width check-offset :disable-menu="props.disabled"
                 content-role="presentation">
                 <div ref="menuContent" class="e-time-picker__menu-content">
-                    <div class="time-row">
-                        <EButton block text size="small" type="button" tabindex="-1"
+                    <div class="e-time-picker__row">
+                        <EButton text size="small" type="button" tabindex="-1"
                             @click="arrowActions('hours', 'add')">
                             <EIcon :icon="icon.arrowUp" />
                         </EButton>
-                        <EButton block text size="small" type="button" tabindex="-1"
+                        <EButton text size="small" type="button" tabindex="-1"
                             @click="arrowActions('minutes', 'add')">
                             <EIcon :icon="icon.arrowUp" />
                         </EButton>
                     </div>
-                    <div class="time-row">
-                        <transition :name="globalTransition">
-                            <div :key="hourLabel">
-                                {{ hourLabel }}
-                            </div>
-                        </transition>
-                        <slot name="separator"><span>:</span></slot>
-                        <transition :name="globalTransition">
-                            <div :key="minutesLabel">
-                                {{ minutesLabel }}
-                            </div>
-                        </transition>
+                    <div class="e-time-picker__row e-time-picker__row--display">
+                        <div class="e-time-picker__segment e-time-picker__segment--hours">
+                            <transition :name="globalTransition">
+                                <span :key="hourLabel" class="e-time-picker__hour-display">
+                                    {{ hourLabel }}
+                                </span>
+                            </transition>
+                        </div>
+                        <slot name="separator"><span class="e-time-picker__separator">:</span></slot>
+                        <div class="e-time-picker__segment e-time-picker__segment--minutes">
+                            <transition :name="globalTransition">
+                                <span :key="minutesLabel" class="e-time-picker__minutes-display">
+                                    {{ minutesLabel }}
+                                </span>
+                            </transition>
+                        </div>
 
                     </div>
-                    <div class="time-row">
-                        <EButton block text size="small" type="button" tabindex="-1"
+                    <div class="e-time-picker__row">
+                        <EButton text size="small" type="button" tabindex="-1"
                             @click="arrowActions('hours', 'subtract')">
                             <EIcon :icon="icon.arrowDown" />
                         </EButton>
-                        <EButton block text size="small" type="button" tabindex="-1"
+                        <EButton text size="small" type="button" tabindex="-1"
                             @click="arrowActions('minutes', 'subtract')">
                             <EIcon :icon="icon.arrowDown" />
                         </EButton>
@@ -83,7 +86,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, onUnmounted, ref, useSlots } from "vue";
+import { computed, nextTick, ref, useSlots } from "vue";
 
 import UtilDate from "@/utils/date";
 import icon from "@/utils/icons";
@@ -112,22 +115,15 @@ const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration
 });
 
 const opened = ref(false);
-const controlRoot = ref<HTMLElement | null>(null);
-const menuContent = ref<HTMLElement | null>(null);
 const hours = ref<HTMLInputElement | null>(null);
 const minutes = ref<HTMLInputElement | null>(null);
-const skipBlurClose = ref(false);
-const skipBlurCloseTimer = ref<number>();
 const hourDraft = ref<string | null>(null);
 const minutesDraft = ref<string | null>(null);
 const globalTransition = ref("picker-transition");
-const isCompositeFocused = ref(false);
 
 const resolvedFieldProps = computed(() => ({
     ...fieldProps.value,
-    focusWithin: opened.value,
-    prependIcon: undefined,
-    appendIcon: undefined,
+    focusWithin: opened.value
 }));
 
 const model = computed({
@@ -163,20 +159,6 @@ const hourLabel = computed(() => getFormattedSegmentValue("hours"));
 const minutesLabel = computed(() => getFormattedSegmentValue("minutes"));
 const hourInputReadonly = computed(() => Boolean(props.readonly || props.hourReadonly));
 const minutesInputReadonly = computed(() => Boolean(props.readonly || props.minuteReadonly || props.minReadonly));
-
-const openMenu = (): void => {
-    if (props.disabled) return;
-    opened.value = true;
-};
-
-const closeMenu = (): void => {
-    opened.value = false;
-};
-
-const resolveBlurTarget = (event: FocusEvent): HTMLElement | null => {
-    if (event.relatedTarget instanceof HTMLElement) return event.relatedTarget;
-    return document.activeElement instanceof HTMLElement ? document.activeElement : null;
-};
 
 const getTimeDraft = (timeKey: "hours" | "minutes") => {
     return timeKey === "hours" ? hourDraft : minutesDraft;
@@ -231,19 +213,7 @@ const scheduleInputFocus = (timeKey: "hours" | "minutes"): void => {
     });
 };
 
-const openFromActivator = (): void => {
-    openMenu();
-    scheduleInputFocus("hours");
-};
 
-const clearSkipBlurCloseGuard = (): void => {
-    skipBlurClose.value = false;
-
-    if (skipBlurCloseTimer.value) {
-        clearTimeout(skipBlurCloseTimer.value);
-        skipBlurCloseTimer.value = undefined;
-    }
-};
 
 const arrowActions = (timeKey: "minutes" | "hours", actionKey: "subtract" | "add"): void => {
     const amount = timeKey === "minutes" ? props.minutesStep : props.hoursStep;
@@ -256,28 +226,8 @@ const arrowActions = (timeKey: "minutes" | "hours", actionKey: "subtract" | "add
     syncTimeDraft(timeKey, dateResult);
 };
 
-const openComposite = (
-    timeKey: "hours" | "minutes",
-    event: FocusEvent,
-    handleFieldFocus: (event?: FocusEvent) => void,
-): void => {
-    getTimeDraft(timeKey).value = getNormalizedSegmentValue(timeKey);
-    openMenu();
 
-    if (isCompositeFocused.value) return;
 
-    isCompositeFocused.value = true;
-    handleFieldFocus(event);
-};
-
-const closeComposite = (
-    handleFieldBlur: (event?: Event) => void,
-    event?: FocusEvent,
-): void => {
-    closeMenu();
-    isCompositeFocused.value = false;
-    handleFieldBlur(event);
-};
 
 const clampTimeValue = (value: number, timeKey: "hours" | "minutes"): number => {
     const min = 0;
@@ -292,17 +242,27 @@ const setTimeSegment = (timeKey: "hours" | "minutes", value: string | number): v
 
     const rawValue = `${value ?? ""}`.replace(/\D/g, "").slice(0, 2);
 
-    getTimeDraft(timeKey).value = rawValue;
-
-    if (!rawValue.length) return;
+    if (!rawValue.length) {
+        getTimeDraft(timeKey).value = null;
+        return;
+    }
 
     const parsedValue = Number.parseInt(rawValue, 10);
 
     if (Number.isNaN(parsedValue)) return;
 
-    const dateResult = new UtilDate(resolvedModelDate.value)
-        .set(clampTimeValue(parsedValue, timeKey), timeKey)
+    const clampedValue = clampTimeValue(parsedValue, timeKey);
+    const baseDate = resolvedModelDate.value;
+
+    const dateResult = new UtilDate(baseDate)
+        .set(clampedValue, timeKey)
         .date;
+
+    if (dateResult.getTime() !== baseDate.getTime()) {
+        globalTransition.value = dateResult > baseDate ? "picker-transition" : "picker-transition-reverse";
+    }
+
+    getTimeDraft(timeKey).value = `${clampedValue}`;
 
     model.value = dateResult;
 
@@ -320,44 +280,6 @@ const minutesModel = computed({
     get: (): string => minutesDraft.value ?? minutesLabel.value,
     set: (value: string | number) => setTimeSegment("minutes", value),
 });
-
-const isTimePickerFocusTarget = (target: EventTarget | null): boolean => {
-    if (!(target instanceof HTMLElement)) return false;
-
-    return Boolean(controlRoot.value?.contains(target) || menuContent.value?.contains(target));
-};
-
-
-
-const isInputTarget = (event: Event): boolean => {
-    const target = event.target;
-    return target instanceof HTMLElement && Boolean(target.closest("input"));
-};
-
-const handleSlotClick = (event: Event): void => {
-    if (isInputTarget(event)) return;
-    if (props.disabled) return;
-
-    openFromActivator();
-};
-
-const handleSlotMousedown = (event: MouseEvent): void => {
-    if (isInputTarget(event)) return;
-    event.preventDefault();
-};
-
-const handleMenuContentMousedown = (): void => {
-    skipBlurClose.value = true;
-
-    if (skipBlurCloseTimer.value) {
-        clearTimeout(skipBlurCloseTimer.value);
-    }
-
-    skipBlurCloseTimer.value = window.setTimeout(() => {
-        clearSkipBlurCloseGuard();
-    }, 0);
-};
-
 
 defineExpose({
     focus,

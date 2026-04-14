@@ -90,7 +90,7 @@ describe("ETextField", () => {
     await nextTick();
 
     expect(wrapper.classes()).toContain("e-text-field");
-    expect(wrapper.get(".e-field__frame").exists()).toBe(true);
+    expect(wrapper.find(".e-field__frame").exists()).toBe(true);
     expect(wrapper.get(".e-text-field__input").classes()).toContain("e-field__slot");
     expect(wrapper.get(".e-text-field__input").element.tagName).toBe("INPUT");
   });

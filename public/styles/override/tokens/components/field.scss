@@ -28,6 +28,5 @@ $field-label-float-y-dense: 0.3rem;
 $field-label-float-scale-dense: 0.74;
 $field-label: $field-rest-color;
 $field-label-line-height: $field-input-line-height;
-
-
-
+$field-control-size: $field-height - 2 * $field-slot-padding-base;
+$field-control-ripple-display: block;

@@ -1,79 +1,84 @@
 <template>
-    <div :class="switchClass" :style="fieldStyle" @mouseenter="handleHover(true)" @mouseleave="handleHover(false)">
-        <div class="e-switch-field__control-shell e-field__control">
-            <div class="e-switch-field__slot e-field__slot" @click="handleSlotClick">
-                <div v-if="showOverlay" class="e-field__overlay"></div>
-                <label class="e-switch-field__label e-label" :for="id" :style="labelStyle">
+    <EField ref="field" v-bind="resolvedFieldProps" :class="switchClass">
+        <template v-for="(_, name) in passThroughSlots" :key="name" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps ?? {}"></slot>
+        </template>
+
+        <template
+            #default="{ inputId, detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isFocusWithin, isReadonly }">
+            <div :class="['e-switch-field__slot', slotClass]"
+                @click="(event) => handleSlotClick(event, handleFocus, isDisabled, isReadonly)">
+                <label class="e-switch-field__label e-label" :for="inputId">
                     <slot name="label"> {{ label }} </slot>
                 </label>
-                <div class="e-switch-field__control" :data-focused="focused">
-                    <input class="e-switch-field__input" ref="input" v-model="checkedModel" :value="trueValue" :aria-checked="checkedModel" :id="id" role="switch" type="checkbox"
-                        :disabled="isControlNonInteractive" :aria-invalid="hasError" :aria-describedby="detailsId" :aria-disabled="isControlNonInteractive"
-                        :aria-readonly="isReadonly" :aria-busy="isLoading || undefined" @focus="handleFocus" @blur="handleBlur" />
-                    <div class="e-switch-field__ripple"></div>
-                    <div class="e-switch-field__visual">
+
+                <div class="e-field__control" :data-focused="isFocusWithin">
+                    <input class="e-field__control-input" ref="input" v-model="checkedModel" :value="trueValue"
+                        :aria-checked="checkedModel" :id="inputId" role="switch" type="checkbox"
+                        :disabled="isControlNonInteractive || isDisabled || isReadonly" :aria-invalid="hasError"
+                        :aria-describedby="detailsId"
+                        :aria-disabled="isControlNonInteractive || isDisabled || isReadonly" :aria-readonly="isReadonly"
+                        :aria-busy="isLoading || undefined" @focus="handleFocus" @blur="handleBlur" />
+                    <div class="e-field__control-visual">
                         <div class="e-switch-field__track"></div>
                         <div class="e-switch-field__thumb">
-                        <template v-if="mounted">
-                            <div v-show="isLoading" aria-hidden="true"
-                                class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
-                                style="height: 16px; width: 16px">
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="22.857142857142858 22.857142857142858 45.714285714285715 45.714285714285715"
-                                    style="transform: rotate(0deg)">
-                                    <circle fill="transparent" cx="45.714285714285715" cy="45.714285714285715" r="20"
-                                        stroke-width="5.714285714285714" stroke-dasharray="125.664"
-                                        stroke-dashoffset="125.66370614359172px" class="e-progress-circular__overlay">
-                                    </circle>
-                                </svg>
-                            </div>
-                        </template>
+                            <span v-ripple="{ center: true }" class="e-field__control-ripple"></span>
+                            <EProgressCircular v-show="isLoading" :size="16" :stroke-width="5.714285714285714" />
                         </div>
                     </div>
                 </div>
             </div>
-            <EDetails :id="detailsId" :details="details" :hasError="hasError" :model-value="modelValue" :show-details="showDetails" />
-        </div>
-    </div>
+        </template>
+
+        <template #details="slotProps">
+            <EDetails :id="slotProps.detailsId" :details="slotProps.details" :has-error="slotProps.hasError"
+                :model-value="modelValue" :show-details="slotProps.showDetails" />
+        </template>
+    </EField>
 </template>
-  
+
 <script lang="ts" setup>
-import { useGridCol } from "@/composables/grid-col"
-import { useField } from "@/composables/field"
+import { useFieldIntegration } from "@/composables/field-integration"
 import type { SwitchProps, SwitchValue } from "@/types/switch"
+import { ripple } from "@/directives";
 
 import EDetails from '@/components/form/details.vue'
+import EField from "@/components/form/field/index.vue";
+import EProgressCircular from "@/components/progress/circular.vue";
 
-import { computed, ref } from "vue";
+import { computed, ref, useSlots } from "vue";
 
 const props = withDefaults(defineProps<SwitchProps>(), {
     falseValue: false,
     trueValue: true,
-    showOverlay: false,
 })
 const input = ref<HTMLInputElement | null>(null)
+const slots = useSlots();
+const VRipple = { ...ripple };
 
-const { fieldClass, id, showDetails, details, fieldStyle, labelStyle, focused, mounted,
-    handleHover, handleBlur, handleFocus, isDisabled, isReadonly, hasError,
-    focus, blur, validate, reset, resetValidation } = useField<SwitchValue>()
+const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<SwitchValue>(props, slots, {
+    omitSlots: ["default", "details", "label"],
+});
 
 const emit = defineEmits({
     'update:modelValue': (_value: SwitchValue) => true,
-    focus: (_value: FocusEvent) => true,
-    blur: (_value: Event) => true,
 })
 
-const { gridColClass } = useGridCol(props)
 const isLoading = computed((): boolean => Boolean(props.loading))
+const resolvedFieldProps = computed(() => ({
+    ...fieldProps.value,
+    label: undefined,
+    labelBehavior: "static" as const,
+}));
 
 const switchClass = computed((): Array<string> => {
-    const classes = [...fieldClass.value, 'e-switch-field', ...gridColClass.value]
+    const classes = ['e-switch-field']
     checkedModel.value && classes.push('e-switch-field--active')
     isLoading.value && classes.push('e-switch-field--loading')
     return classes
 })
 const isControlNonInteractive = computed((): boolean => {
-    return isDisabled.value || isReadonly.value || isLoading.value
+    return Boolean(props.disabled || props.readonly || isLoading.value)
 })
 const checkedModel = computed({
     get: (): boolean => props.modelValue === props.trueValue,
@@ -86,18 +91,22 @@ const checkedModel = computed({
         emit('update:modelValue', checked ? props.trueValue : props.falseValue)
     },
 })
-const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined)
 
 const isNativeSlotTarget = (target: EventTarget | null): boolean => {
     return target instanceof Element && Boolean(target.closest('input, label'))
 }
 
-const handleSlotClick = (event: MouseEvent): void => {
+const handleSlotClick = (
+    event: MouseEvent,
+    handleFieldFocus: (event?: FocusEvent) => void,
+    isDisabled: boolean,
+    isReadonly: boolean,
+): void => {
     if (isNativeSlotTarget(event.target)) return
 
-    focus()
+    handleFieldFocus()
 
-    if (isControlNonInteractive.value) return
+    if (isControlNonInteractive.value || isDisabled || isReadonly) return
 
     checkedModel.value = !checkedModel.value
 }
@@ -105,12 +114,11 @@ const handleSlotClick = (event: MouseEvent): void => {
 defineExpose({
     focus,
     blur,
-    validate,
-    reset,
-    resetValidation,
+    validate: () => field.value?.validate() ?? true,
+    reset: () => field.value?.reset(),
+    resetValidation: () => field.value?.resetValidation?.(),
     input,
 })
 
 </script>
 <style lang="scss" src="./style.scss"></style>
-  

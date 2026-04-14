@@ -13,6 +13,7 @@
 @forward "./components/schedule";
 @forward "./components/card";
 @forward "./components/field";
+@forward "./components/switch";
 
 @use "./foundation/layout" as layout;
 @use "./components/button" as button;

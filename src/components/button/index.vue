@@ -5,17 +5,7 @@
     @focusout="handleFocus(false)" @keydown="handleKeydown" @keyup="handleKeyup">
     <span v-show="props.loading" class="e-btn__loader">
       <slot name="loading">
-        <span role="progressbar" aria-valuemin="0" aria-valuemax="100"
-          class="e-progress-circular e-progress-circular--visible e-progress-circular--indeterminate"
-          style="height: 23px; width: 23px">
-          <svg xmlns="http://www.w3.org/2000/svg"
-            viewBox="21.904761904761905 21.904761904761905 43.80952380952381 43.80952380952381"
-            style="transform: rotate(0deg)">
-            <circle fill="transparent" cx="43.80952380952381" cy="43.80952380952381" r="20"
-              stroke-width="3.8095238095238093" stroke-dasharray="125.664" stroke-dashoffset="125.66370614359172px"
-              class="e-progress-circular__overlay"></circle>
-          </svg>
-        </span>
+        <EProgressCircular :aria-hidden="false" :size="23" :stroke-width="3.8095238095238093" />
       </slot>
     </span>
     <span v-if="prependIcon" class="e-btn__prepend">
@@ -43,6 +33,7 @@ import {
 import { useResolvedColor } from "@/composables/color";
 import { ripple } from "@/directives";
 import EIcon from "@/components/icon/index.vue";
+import EProgressCircular from "@/components/progress/circular.vue";
 import { getBooleanClasses, normalizeDimension } from "@/composables/utils";
 
 import { reactive, useAttrs, computed, useSlots } from "vue";

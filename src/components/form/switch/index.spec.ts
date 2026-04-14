@@ -62,7 +62,8 @@ describe("ESwitch", () => {
 
     expect(wrapper.classes()).toContain("e-switch-field");
     expect(wrapper.classes()).toContain("e-switch-field--loading");
-    expect(wrapper.get(".e-switch-field__control-shell").classes()).toContain("e-field__control");
+    expect(wrapper.find(".e-switch-field__control-shell").exists()).toBe(false);
+    expect(wrapper.find(".e-field__frame").exists()).toBe(true);
     expect(wrapper.get(".e-switch-field__slot").classes()).toContain("e-field__slot");
     expect(wrapper.classes()).not.toContain("e-field-switch");
     expect(wrapper.classes()).not.toContain("e-field-switch--loading");
@@ -94,7 +95,7 @@ describe("ESwitch", () => {
 
     const input = wrapper.get('input[role="switch"]');
     const inputElement = input.element as unknown as FocusableInputElement;
-    const selectionControl = wrapper.get(".e-switch-field__control");
+    const selectionControl = wrapper.get(".e-field__control");
 
     expect(selectionControl.attributes("data-focused")).toBe("false");
 
