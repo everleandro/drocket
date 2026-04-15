@@ -1,37 +1,33 @@
 <template>
     <div :class="radioClass" @click="handleRadioClick">
-        <div class="e-radio__control" :data-focused="focused">
-            <span aria-hidden="true" class="e-radio__icon e-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-hidden="true" class="e-icon__svg">
-                    <path
-                        v-if="active"
-                        d="M12,20C7.58,20 4,16.42 4,12C4,7.58 7.58,4 12,4C16.42,4 20,7.58 20,12C20,16.42 16.42,20 12,20M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,7C9.24,7 7,9.24 7,12C7,14.76 9.24,17 12,17C14.76,17 17,14.76 17,12C17,9.24 14.76,7 12,7Z"
-                    ></path>
-                    <path
-                        v-else
-                        d="M12,20C7.58,20 4,16.42 4,12C4,7.58 7.58,4 12,4C16.42,4 20,7.58 20,12C20,16.42 16.42,20 12,20M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2Z"
-                    ></path>
-                </svg>
-            </span>
-            <input
-                ref="input"
-                v-model="selectedModel"
-                class="e-field__control-input"
-                :aria-checked="active"
-                :id="id"
-                role="radio"
-                type="radio"
-                :name="radioGroup.name"
-                :value="modelValue"
-                :disabled="isDisabled"
-                :aria-disabled="isDisabled"
-                :aria-readonly="isReadonly"
-                @focus="handleFocus"
-                @blur="handleBlur"
-            />
+        <div class="e-radio__control e-field__control" :data-focused="focused">
 
-            <span v-ripple="{ center: true }" class="e-field__control-ripple"></span>
+
+            <div class="e-radio__visual e-field__control-visual" aria-hidden="true">
+                <span class="e-radio__icon e-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img"
+                        aria-hidden="true" class="e-icon__svg">
+                        <path v-if="active"
+                            d="M12,20C7.58,20 4,16.42 4,12C4,7.58 7.58,4 12,4C16.42,4 20,7.58 20,12C20,16.42 16.42,20 12,20M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,7C9.24,7 7,9.24 7,12C7,14.76 9.24,17 12,17C14.76,17 17,14.76 17,12C17,9.24 14.76,7 12,7Z">
+                        </path>
+                        <path v-else
+                            d="M12,20C7.58,20 4,16.42 4,12C4,7.58 7.58,4 12,4C16.42,4 20,7.58 20,12C20,16.42 16.42,20 12,20M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2Z">
+                        </path>
+                    </svg>
+                </span>
+                <span v-ripple="{ center: true }" class="e-radio__ripple e-field__control-ripple"></span>
+            </div>
+            <input ref="input" v-model="selectedModel" class="e-radio__input e-field__control-input"
+                :aria-checked="active" :id="id" role="radio" type="radio" :name="radioGroup.name" :value="modelValue"
+                :disabled="isDisabled" :aria-disabled="isDisabled" :aria-readonly="isReadonly" @focus="handleFocus"
+                @blur="handleBlur" />
+
+
         </div>
+
+
+
+
         <label class="e-radio__label e-label" :for="id" :style="labelStyle">
             <slot name="label"> {{ label }} </slot>
         </label>

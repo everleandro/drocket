@@ -63,6 +63,12 @@
             margin: 0;
             opacity: 0;
             position: absolute;
+            top: 0;
+            left: 0;
+            max-height: 0px;
+            max-width: 0px;
+            z-index: -1;
+
             width: 100%;
             @include prefix(user-select, none);
         }
@@ -71,14 +77,11 @@
             height: 100%;
             width: 100%;
             display: flex;
+            justify-content: center;
+            align-items: center;
 
             .v-ripple-element {
                 position: absolute;
-            }
-
-            .e-icon {
-                align-self: center;
-                margin: auto;
             }
 
         }
@@ -262,7 +265,7 @@
         margin-top: var(--field-layout-label-rest-y);
         padding-right: var(--field-layout-gap);
         margin-bottom: 0;
-        align-self: flex-start;
+        align-self: var(--label-align-self, flex-start);
         backface-visibility: hidden;
         white-space: nowrap;
         position: relative;

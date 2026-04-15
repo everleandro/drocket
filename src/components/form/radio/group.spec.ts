@@ -122,8 +122,6 @@ describe("ERadioGroup", () => {
     expect(root.classes()).toContain("e-radio-group-field--column");
     expect(root.classes()).not.toContain("e-field--radio-group");
     expect(root.classes()).not.toContain("e-field--radio-group--column");
-    expect(wrapper.get(".e-radio-group-field__control").classes()).toContain("e-field__control");
-    expect(wrapper.get(".e-radio-group-field__slot").classes()).toContain("e-field__slot");
     expect(group.classes()).toContain("e-radio-group-field__group");
     expect(group.classes()).not.toContain("e-field--radio-group__field");
   });

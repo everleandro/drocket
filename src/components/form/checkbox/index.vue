@@ -27,9 +27,10 @@
                                     d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z">
                                 </path>
                             </svg>
-                            <span v-ripple="{ center: true }" class="e-field__control-ripple"></span>
                         </span>
+                        <span v-ripple="{ center: true }" class="e-field__control-ripple"></span>
                     </div>
+
 
                 </div>
             </div>

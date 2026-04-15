@@ -4,43 +4,29 @@
             <slot :name="name" v-bind="slotProps ?? {}"></slot>
         </template>
 
-        <template #default="{ inputId, detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isReadonly }">
-            <div class="e-radio-group-field__control e-field__control">
-                <div class="e-radio-group-field__slot e-field__slot">
-                    <div v-if="showOverlay" class="e-field__overlay"></div>
-                    <div
-                        role="radiogroup"
-                        :class="resolveGroupClass(slotClass, { handleBlur, handleFocus, isDisabled, isReadonly })"
-                        :aria-invalid="hasError"
-                        :aria-disabled="isDisabled"
-                        :aria-readonly="isReadonly"
-                        :aria-labelledby="`${inputId}-label`"
-                        :aria-describedby="detailsId"
-                    >
-                        <slot></slot>
-                    </div>
-                </div>
-            </div>
-        </template>
+        <template
+            #default="{ inputId, detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isReadonly }">
 
-        <template #details="slotProps">
-            <EDetails
-                :id="slotProps.detailsId"
-                :details="slotProps.details"
-                :has-error="slotProps.hasError"
-                :model-value="modelValue"
-                :show-details="slotProps.showDetails"
-            />
+            <div
+                role="radiogroup"
+                :class="resolveGroupClass(slotClass, { handleBlur, handleFocus, isDisabled, isReadonly })"
+                :aria-invalid="hasError"
+                :aria-disabled="isDisabled"
+                :aria-readonly="isReadonly"
+                :aria-labelledby="`${inputId}-label`"
+                :aria-describedby="detailsId"
+            >
+                <slot></slot>
+            </div>
         </template>
     </EField>
 </template>
-  
+
 <script lang="ts" setup>
 import { computed, getCurrentInstance, nextTick, onMounted, provide, reactive, ref, useSlots } from "vue";
 import type { ERadio, ERadioType, RadioGroupEmits, RadioGroupProps } from "@/types";
 import { normalizeCssSize } from "@/utils/style";
 import { useFieldIntegration } from "@/composables/field-integration";
-import EDetails from "@/components/form/details.vue";
 import EField from "@/components/form/field/index.vue";
 import { RADIO_GROUP_KEY } from "./constants";
 
@@ -50,7 +36,7 @@ const props = withDefaults(defineProps<RadioGroupProps>(), {
 
 const slots = useSlots();
 const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<ERadioType>(props, slots, {
-    omitSlots: ["default", "details"],
+    omitSlots: ["default"],
 });
 const resolvedFieldProps = computed(() => ({
     ...fieldProps.value,
@@ -132,7 +118,7 @@ const resolveGroupClass = (
     focusHandler.value = slotState.handleFocus;
     blurHandler.value = slotState.handleBlur;
 
-    return ["e-radio-group-field__group", slotClass];
+    return ["e-radio-group-field__group", "e-radio-group-field__options", slotClass];
 };
 
 provide(RADIO_GROUP_KEY, {
@@ -172,4 +158,3 @@ defineExpose({
 
 </script>
 <style lang="scss" src="./style.scss"></style>
-  

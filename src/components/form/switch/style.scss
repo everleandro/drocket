@@ -24,10 +24,10 @@
     --switch-thumb-background: var(--switch-color);
   }
 
-.e-label{
+  .e-label {
     flex: 1 1 auto;
     min-width: 0;
-}
+  }
 
   &__thumb {
     transform: var(--switch-thumb-transform, unset) !important;
@@ -63,4 +63,8 @@
     --field-control-ripple-display: none;
   }
 
+  .e-field__control-visual {
+    justify-content: unset;
+    align-items: unset;
+  }
 }
