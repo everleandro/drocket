@@ -7,7 +7,7 @@
   outline: none;
   --e-icon-color: var(--e-field-color);
 
-  &__ripple {
+  .e-field__control-ripple {
     --control-local-height: calc(var(--e-field-control-height) - 2px);
     border-radius: 50%;
     color: var(--e-field-color);
@@ -65,14 +65,14 @@
 
     &:hover,
     &[data-focused="true"] {
-      .e-radio__ripple:before {
+      .e-field__control-ripple:before {
         background: currentColor;
         transform: scale(1.2);
       }
     }
   }
 
-  &__input,
+  .e-field__control-input,
   input[role="radio"] {
     cursor: pointer;
     height: 100%;

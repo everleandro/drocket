@@ -35,8 +35,8 @@
 </template>
   
 <script lang="ts" setup>
-import { computed, getCurrentInstance, nextTick, onMounted, provide, reactive, ref, watch, useSlots } from "vue";
-import type { ERadio, ERadioType, SelectionFieldBaseProps, FieldConfiguration } from "@/types";
+import { computed, getCurrentInstance, nextTick, onMounted, provide, reactive, ref, useSlots } from "vue";
+import type { ERadio, ERadioType, SelectionFieldBaseProps } from "@/types";
 import { normalizeCssSize } from "@/utils/style";
 import { useFieldIntegration } from "@/composables/field-integration";
 import EDetails from "@/components/form/details.vue";
@@ -81,6 +81,16 @@ const effectiveDisabled = ref(false);
 const effectiveReadonly = ref(false);
 const focusHandler = ref<(event?: FocusEvent) => void>();
 const blurHandler = ref<(event?: Event) => void>();
+const resolvedLabelStyle = computed<Record<string, string>>(() => {
+    const result: Record<string, string> = {};
+    const labelMinWidth = normalizeCssSize(props.labelMinWidth);
+
+    if (labelMinWidth) {
+        result.minWidth = labelMinWidth;
+    }
+
+    return result;
+});
 
 const hasSelectedRadio = computed(() => {
     return state.radioChilds.some((radio) => Object.is(radio.modelValue, props.modelValue));
@@ -89,47 +99,8 @@ const canInitializeMandatoryValue = computed(() => {
     return props.mandatory && !effectiveDisabled.value && !effectiveReadonly.value && !hasSelectedRadio.value;
 });
 
-const radioConfiguration = computed((): FieldConfiguration => {
-    const nextConfiguration: FieldConfiguration = {
-        retainColor: Boolean(props.retainColor),
-        disabled: Boolean(effectiveDisabled.value),
-        readonly: Boolean(effectiveReadonly.value),
-    }
-
-    const labelMinWidth = normalizeCssSize(props.labelMinWidth);
-    const inheritedLabelStyle: Record<string, string> = {};
-
-    if (labelMinWidth) {
-        inheritedLabelStyle.minWidth = labelMinWidth;
-    }
-
-    if (Object.keys(inheritedLabelStyle).length > 0) {
-        nextConfiguration.labelStyle = inheritedLabelStyle;
-    }
-
-    const resolvedColor = props.color;
-
-    if (resolvedColor) {
-        nextConfiguration.color = resolvedColor;
-    }
-
-    return nextConfiguration;
-});
-
-const applyRadioConfiguration = (component?: Partial<ERadio>): void => {
-    if (component) {
-        component.setConfiguration?.(radioConfiguration.value);
-        return;
-    }
-
-    state.radioChilds.forEach((vueComponent) => {
-        vueComponent.setConfiguration?.(radioConfiguration.value);
-    });
-};
-
 const bindRadio = (component: Partial<ERadio>) => {
     state.radioChilds.push(component);
-    applyRadioConfiguration(component);
 };
 
 const unbindRadio = (uid: number) => {
@@ -177,12 +148,13 @@ provide(RADIO_GROUP_KEY, {
     handleBlur: handleGroupBlur,
     changeModelValue,
     modelValue: computed(() => props.modelValue),
+    isDisabled: computed(() => effectiveDisabled.value),
+    isReadonly: computed(() => effectiveReadonly.value),
+    labelStyle: resolvedLabelStyle,
     name: `e-radio-group-${instance?.uid ?? "unknown"}`,
 });
 
 onMounted(() => init());
-
-watch(radioConfiguration, () => applyRadioConfiguration(), { deep: true, immediate: true });
 
 const init = async (): Promise<void> => {
     await nextTick();

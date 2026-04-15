@@ -1,6 +1,6 @@
 import type { ComputedRef } from "vue";
 
-import type { EField, FieldConfiguration } from "./field";
+import type { EField } from "./field";
 
 export interface FormInjection {
   bindField: (component: Partial<EField>) => void;
@@ -20,7 +20,6 @@ export interface EForm {
 export interface ERadio {
   uid: number;
   modelValue: ERadioType;
-  setConfiguration: (value: FieldConfiguration) => void;
 }
 
 export interface ERadioGroup {
@@ -30,6 +29,9 @@ export interface ERadioGroup {
   handleFocus: (value?: FocusEvent) => void;
   handleBlur: (value?: Event) => void;
   modelValue: ComputedRef<ERadioType>;
+  isDisabled: ComputedRef<boolean>;
+  isReadonly: ComputedRef<boolean>;
+  labelStyle: ComputedRef<Record<string, string>>;
   name: string;
 }
 

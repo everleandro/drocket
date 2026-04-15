@@ -16,7 +16,7 @@
             <input
                 ref="input"
                 v-model="selectedModel"
-                class="e-radio__input"
+                class="e-field__control-input"
                 :aria-checked="active"
                 :id="id"
                 role="radio"
@@ -30,7 +30,7 @@
                 @blur="handleBlur"
             />
 
-            <div v-ripple="{ center: true }" class="e-radio__ripple"></div>
+            <span v-ripple="{ center: true }" class="e-field__control-ripple"></span>
         </div>
         <label class="e-radio__label e-label" :for="id" :style="labelStyle">
             <slot name="label"> {{ label }} </slot>
@@ -41,7 +41,6 @@
 <script lang="ts" setup>
 import { computed, getCurrentInstance, inject, onMounted, onUnmounted, ref } from "vue";
 import type { ERadioType } from "@/types";
-import { useField } from "@/composables/field";
 import { ripple } from "@/directives";
 import { RADIO_GROUP_KEY } from "./constants";
 
@@ -49,18 +48,10 @@ export interface Props {
     label?: string | number;
     modelValue: ERadioType;
 }
+
+const props = defineProps<Props>();
 const input = ref<HTMLInputElement | null>(null);
-const {
-    fieldStyle,
-    focused,
-    id,
-    isDisabled,
-    isReadonly,
-    labelStyle,
-    setConfiguration,
-    handleFocus: handleFieldFocus,
-    handleBlur: handleFieldBlur,
-} = useField(false);
+const focused = ref(false);
 
 const radioGroup = inject(RADIO_GROUP_KEY, null);
 const vRipple = { ...ripple };
@@ -68,7 +59,18 @@ if (!radioGroup) {
     throw new Error("ERadio must be used within ERadioGroup.");
 }
 
-const props = defineProps<Props>();
+const uid = getCurrentInstance()?.uid;
+const id = `e-radio-${uid ?? "unknown"}`;
+
+const fieldStyle = computed(() => {
+    return {
+        "--e-field-color": "var(--e-field-color)",
+    };
+});
+
+const labelStyle = computed(() => radioGroup.labelStyle.value);
+const isDisabled = computed(() => radioGroup.isDisabled.value);
+const isReadonly = computed(() => radioGroup.isReadonly.value);
 
 const radioClass = computed(() => [
     "e-radio",
@@ -109,19 +111,17 @@ const handleRadioClick = (event: MouseEvent): void => {
 };
 
 const handleFocus = (evt: FocusEvent): void => {
-    handleFieldFocus(evt);
+    focused.value = true;
     radioGroup.handleFocus(evt);
 };
 
 const handleBlur = (evt: FocusEvent): void => {
-    handleFieldBlur(evt);
+    focused.value = false;
     radioGroup.handleBlur(evt);
 };
 
-const uid = getCurrentInstance()?.uid;
-
 onMounted(() => {
-    radioGroup.bindRadio({ uid: uid || -1, setConfiguration, modelValue: props.modelValue });
+    radioGroup.bindRadio({ uid: uid || -1, modelValue: props.modelValue });
 });
 
 onUnmounted(() => {
