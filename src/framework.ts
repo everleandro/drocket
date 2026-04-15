@@ -1,8 +1,8 @@
+import type { Plugin } from "vue";
 import { install } from "./install";
-const Drocket = {
+
+const Drocket: Plugin = {
   install,
 };
-// Drocket.install = install;
-// import { version } from "../package.json";
-// Drocket.version = version;
+
 export default Drocket;
