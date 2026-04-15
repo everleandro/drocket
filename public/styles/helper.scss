@@ -20,6 +20,18 @@
   @return #fff;
 }
 
+@function e-auto-contrast($bg-color) {
+  @if meta.type-of($bg-color) == "color" {
+    @if color.channel($bg-color, "lightness", $space: hsl) > 60% {
+      @return #000;
+    }
+
+    @return #fff;
+  }
+
+  @return #fff;
+}
+
 @each $key, $value in $elevation {
   .e-elevation--#{$key} {
     box-shadow: var(--e-elevation-#{$key}, #{$value});
@@ -40,6 +52,41 @@
       color: var(--e-color-#{$color}) !important;
       caret-color: var(--e-color-#{$color}) !important;
       fill: var(--e-color-#{$color}) !important;
+    }
+  }
+}
+
+@each $palette-name, $palette-scale in $primitive-color-palettes {
+  @if map.has-key($primitive-color-seeds, $palette-name) {
+    $seed-color: map.get($primitive-color-seeds, $palette-name);
+    $seed-contrast: e-auto-contrast($seed-color);
+
+    .#{$palette-name} {
+      background-color: var(--e-palette-#{$palette-name}) !important;
+      border-color: var(--e-palette-#{$palette-name}) !important;
+      color: var(--e-palette-contrast-#{$palette-name}, #{$seed-contrast}) !important;
+
+      &--text {
+        color: var(--e-palette-#{$palette-name}) !important;
+        caret-color: var(--e-palette-#{$palette-name}) !important;
+        fill: var(--e-palette-#{$palette-name}) !important;
+      }
+    }
+  }
+
+  @each $tone-name, $tone-value in $palette-scale {
+    $tone-contrast: e-auto-contrast($tone-value);
+
+    .#{$palette-name}-#{$tone-name} {
+      background-color: var(--e-palette-#{$palette-name}-#{$tone-name}) !important;
+      border-color: var(--e-palette-#{$palette-name}-#{$tone-name}) !important;
+      color: var(--e-palette-contrast-#{$palette-name}-#{$tone-name}, #{$tone-contrast}) !important;
+
+      &--text {
+        color: var(--e-palette-#{$palette-name}-#{$tone-name}) !important;
+        caret-color: var(--e-palette-#{$palette-name}-#{$tone-name}) !important;
+        fill: var(--e-palette-#{$palette-name}-#{$tone-name}) !important;
+      }
     }
   }
 }
