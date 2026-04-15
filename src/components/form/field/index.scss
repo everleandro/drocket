@@ -3,7 +3,6 @@
 
 .e-field {
     --field-layout-active-height: var(--e-field-height);
-    --field-layout-field-control-padding-inline-start: calc(var(--e-field-slot-padding-base) * 2);
     --field-layout-control-padding-inline: calc(var(--e-field-slot-padding-base) * 3);
     --field-layout-label-rest-y: calc((var(--field-layout-active-height) - var(--e-field-label-line-height)) / 2);
     --field-layout-content-padding-top: var(--e-field-slot-padding-base);
@@ -16,6 +15,7 @@
     --field-state-border-color: var(--e-color-border);
     --field-layout-gap: 0.75rem;
     --field-control-ripple-display: var(--e-field-control-ripple-display, block);
+    --control-size: var(--e-field-control-size);
 
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -36,6 +36,7 @@
         --field-layout-active-height: var(--e-field-height-dense);
         --e-field-label-float-y: var(--e-field-label-float-y-dense);
         --e-field-label-float-scale: var(--e-field-label-float-scale-dense);
+        --control-size: var(--e-field-control-size-dense);
 
         &.e-field--label-floating {
             --field-layout-active-height: var(--e-field-height-dense-with-label-floating);
@@ -44,8 +45,8 @@
     }
 
     &__control {
-        height: var(--e-field-control-size);
-        width: var(--e-field-control-size);
+        height: var(--control-size);
+        width: var(--control-size);
         position: relative;
 
         &:hover,
@@ -69,15 +70,25 @@
         &-visual {
             height: 100%;
             width: 100%;
+            display: flex;
+
+            .v-ripple-element {
+                position: absolute;
+            }
+
+            .e-icon {
+                align-self: center;
+                margin: auto;
+            }
 
         }
 
         &-ripple {
             display: var(--field-control-ripple-display, block);
             color: var(--e-field-color);
-            width: var(--e-field-control-size);
-            height: var(--e-field-control-size);
-            min-width: var(--e-field-control-size);
+            width: var(--control-size);
+            height: var(--control-size);
+            min-width: var(--control-size);
             border-radius: 50%;
             position: absolute;
 
@@ -399,7 +410,6 @@
         --field-layout-active-height: var(--e-field-height-default-with-label-floating);
         --field-layout-content-padding-top: calc(var(--e-field-label-float-scale) * var(--e-field-label-line-height) + var(--e-field-label-float-y) + var(--e-field-slot-padding-base));
         --field-label-state-translate-y: 0;
-        --field-layout-field-control-padding-inline-start: 0;
         --field-label-state-scale: 1;
 
         .e-field__frame {

@@ -8,9 +8,6 @@
             #default="{ inputId, detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isFocusWithin, isReadonly }">
             <div :class="['e-switch-field__slot', slotClass]"
                 @click="(event) => handleSlotClick(event, handleFocus, isDisabled, isReadonly)">
-                <label class="e-switch-field__label e-label" :for="inputId">
-                    <slot name="label"> {{ label }} </slot>
-                </label>
 
                 <div class="e-field__control" :data-focused="isFocusWithin">
                     <input class="e-field__control-input" ref="input" v-model="checkedModel" :value="trueValue"
@@ -57,7 +54,7 @@ const slots = useSlots();
 const VRipple = { ...ripple };
 
 const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<SwitchValue>(props, slots, {
-    omitSlots: ["default", "details", "label"],
+    omitSlots: ["default", "details"],
 });
 
 const emit = defineEmits({
@@ -67,7 +64,6 @@ const emit = defineEmits({
 const isLoading = computed((): boolean => Boolean(props.loading))
 const resolvedFieldProps = computed(() => ({
     ...fieldProps.value,
-    label: undefined,
     labelBehavior: "static" as const,
 }));
 

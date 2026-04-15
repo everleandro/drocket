@@ -1,115 +1,84 @@
 <template>
-    <div
-        :class="checkboxClass"
-        :style="fieldStyle"
-        @mouseenter="handleHover(true)"
-        @mouseleave="handleHover(false)"
-    >
-        <div class="e-checkbox-field__control-shell e-field__control">
-            <div class="e-checkbox-field__slot e-field__slot" @click="handleSlotClick">
-                <div v-if="showOverlay" class="e-field__overlay"></div>
-                <div class="e-checkbox-field__control" :data-focused="focused">
-                    <div class="e-checkbox-field__visual" aria-hidden="true">
-                        <span class="e-checkbox-field__icon e-icon"><svg
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img"
-                            aria-hidden="true" class="e-icon__svg">
-                            <path v-if="checkedModel"
-                                            d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3Z">
-                            </path>
-                            <path v-else
-                                            d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z">
-                            </path>
-                        </svg>
+    <EField ref="field" v-bind="resolvedFieldProps" :class="checkboxClass">
+        <template v-for="(_, name) in passThroughSlots" :key="name" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps ?? {}"></slot>
+        </template>
+
+        <template
+            #default="{ inputId, detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isFocusWithin, isReadonly }">
+            <div :class="['e-checkbox-field__slot', slotClass]"
+                @click="(event) => handleSlotClick(event, handleFocus, isDisabled, isReadonly)">
+
+                <div class="e-field__control" :data-focused="isFocusWithin">
+                    <input class="e-field__control-input" ref="input" v-model="checkedModel" :value="trueValue"
+                        :aria-checked="checkedModel" :id="inputId" role="checkbox" type="checkbox"
+                        :disabled="isControlNonInteractive || isDisabled || isReadonly" :aria-invalid="hasError"
+                        :aria-describedby="detailsId"
+                        :aria-disabled="isControlNonInteractive || isDisabled || isReadonly" :aria-readonly="isReadonly"
+                        @focus="handleFocus" @blur="handleBlur" />
+                    <div class="e-field__control-visual" aria-hidden="true">
+                        <span class="e-checkbox-field__icon e-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"
+                                role="img" aria-hidden="true" class="e-icon__svg">
+                                <path v-if="checkedModel"
+                                    d="M10,17L5,12L6.41,10.58L10,14.17L17.59,6.58L19,8M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3Z">
+                                </path>
+                                <path v-else
+                                    d="M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3M19,5V19H5V5H19Z">
+                                </path>
+                            </svg>
+                            <span v-ripple="{ center: true }" class="e-field__control-ripple"></span>
                         </span>
                     </div>
 
-                    <input
-                        class="e-checkbox-field__input"
-                        ref="input"
-                        v-model="checkedModel"
-                        :value="trueValue"
-                        :aria-checked="checkedModel"
-                        :id="id"
-                        role="checkbox"
-                        type="checkbox"
-                        :disabled="isControlNonInteractive"
-                        :aria-invalid="hasError"
-                        :aria-describedby="detailsId"
-                        :aria-disabled="isControlNonInteractive"
-                        :aria-readonly="isReadonly"
-                        @focus="handleFocus"
-                        @blur="handleBlur"
-                    />
-                    <div
-                        v-ripple="{ center: true }"
-                        class="e-checkbox-field__ripple"
-                    ></div>
                 </div>
-                <label class="e-checkbox-field__label e-label ignore-field-color" :for="id" :style="labelStyle">
-                    <slot name="label"> {{ label }} </slot>
-                </label>
             </div>
-            <EDetails
-                :id="detailsId"
-                :details="details"
-                :has-error="hasError"
-                :model-value="modelValue"
-                :show-details="showDetails"
-            />
-        </div>
-    </div>
+        </template>
+
+        <template #details="slotProps">
+            <EDetails :id="slotProps.detailsId" :details="slotProps.details" :has-error="slotProps.hasError"
+                :model-value="modelValue" :show-details="slotProps.showDetails" />
+        </template>
+    </EField>
 </template>
 <script lang="ts" setup>
-import type { CheckboxEmits, CheckboxProps, CheckboxValue } from "@/types";
+import type { CheckboxProps, CheckboxValue } from "@/types";
 import { ripple } from "@/directives";
-import { computed, ref } from "vue";
-import { useGridCol } from "@/composables/grid-col";
-import { useField } from "@/composables/field";
+import { computed, ref, useSlots } from "vue";
+import { useFieldIntegration } from "@/composables/field-integration";
 
 import EDetails from "@/components/form/details.vue";
+import EField from "@/components/form/field/index.vue";
 const vRipple = { ...ripple };
 const props = withDefaults(defineProps<CheckboxProps>(), {
     trueValue: true,
     falseValue: false,
-    showOverlay: false,
 });
 
 const input = ref<HTMLInputElement | null>(null);
+const slots = useSlots();
 
-const emit = defineEmits<CheckboxEmits>();
+const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<CheckboxValue>(props, slots, {
+    omitSlots: ["default", "details"],
+});
 
-const {
-    fieldClass,
-    fieldStyle,
-    id,
-    focused,
-    focus,
-    blur,
-    showDetails,
-    details,
-    hasError,
-    labelStyle,
-    handleHover,
-    handleBlur,
-    handleFocus,
-    isDisabled,
-    isReadonly,
-    validate,
-    reset,
-    resetValidation,
-} = useField<CheckboxValue>();
+const emit = defineEmits({
+    "update:modelValue": (_value: CheckboxValue) => true,
+});
 
-const { gridColClass } = useGridCol(props);
+const resolvedFieldProps = computed(() => ({
+    ...fieldProps.value,
+    labelBehavior: "static" as const,
+}));
 
-const checkboxClass = computed(() => [
-    ...fieldClass.value,
-    "e-checkbox-field",
-    checkedModel.value && "e-checkbox-field--active",
-    ...gridColClass.value,
-].filter(Boolean));
+const checkboxClass = computed((): Array<string> => {
+    const classes = ["e-checkbox-field"];
+    checkedModel.value && classes.push("e-checkbox-field--active");
+    return classes;
+});
 
 const isControlNonInteractive = computed((): boolean => {
-    return isDisabled.value || isReadonly.value;
+    return Boolean(props.disabled || props.readonly);
 });
 
 const checkedModel = computed({
@@ -124,18 +93,21 @@ const checkedModel = computed({
     },
 });
 
-const detailsId = computed((): string | undefined => showDetails.value ? `${id}-details` : undefined);
-
 const isNativeSlotTarget = (target: EventTarget | null): boolean => {
     return target instanceof Element && Boolean(target.closest("input, label"));
 };
 
-const handleSlotClick = (event: MouseEvent): void => {
+const handleSlotClick = (
+    event: MouseEvent,
+    handleFieldFocus: (event?: FocusEvent) => void,
+    isDisabled: boolean,
+    isReadonly: boolean,
+): void => {
     if (isNativeSlotTarget(event.target)) return;
 
-    focus();
+    handleFieldFocus();
 
-    if (isControlNonInteractive.value) return;
+    if (isControlNonInteractive.value || isDisabled || isReadonly) return;
 
     checkedModel.value = !checkedModel.value;
 };
@@ -143,9 +115,9 @@ const handleSlotClick = (event: MouseEvent): void => {
 defineExpose({
     focus,
     blur,
-    validate,
-    reset,
-    resetValidation,
+    validate: () => field.value?.validate() ?? true,
+    reset: () => field.value?.reset(),
+    resetValidation: () => field.value?.resetValidation?.(),
     input,
 });
 </script>

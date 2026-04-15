@@ -65,10 +65,11 @@ describe("ECheckbox", () => {
     await nextTick();
 
     expect(wrapper.classes()).toContain("e-checkbox-field");
-    expect(wrapper.get(".e-checkbox-field__control-shell").classes()).toContain("e-field__control");
+    expect(wrapper.find(".e-checkbox-field__control-shell").exists()).toBe(false);
+    expect(wrapper.find(".e-field__frame").exists()).toBe(true);
     expect(wrapper.get(".e-checkbox-field__slot").classes()).toContain("e-field__slot");
-    expect(wrapper.find(".e-checkbox-field__control").exists()).toBe(true);
-    expect(wrapper.find(".e-checkbox-field__ripple").exists()).toBe(true);
+    expect(wrapper.find(".e-field__control").exists()).toBe(true);
+    expect(wrapper.find(".e-field__control-ripple").exists()).toBe(true);
   });
 
   it("toggles through the native input when the slot is clicked", async () => {
@@ -96,7 +97,7 @@ describe("ECheckbox", () => {
 
     const input = wrapper.get('input[role="checkbox"]');
     const inputElement = input.element as unknown as FocusableInputElement;
-    const selectionControl = wrapper.get(".e-checkbox-field__control");
+    const selectionControl = wrapper.get(".e-field__control");
 
     expect(selectionControl.attributes("data-focused")).toBe("false");
 

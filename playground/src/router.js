@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import CardView from './CardView.vue';
+import CheckboxView from './CheckboxView.vue';
 import DatePickerView from './DatePickerView.vue';
 import FormView from './FormView.vue';
 import MenuView from './MenuView.vue';
@@ -20,6 +21,7 @@ const routes = [
   { path: '/time-picker', component: TimePickerView },
   { path: '/progress', component: ProgressView },
   { path: '/radio', component: RadioView },
+  { path: '/checkbox', component: CheckboxView },
   { path: '/schedule', component: ScheduleView },
   { path: '/menu', component: MenuView },
   { path: '/palette', component: PaletteView },

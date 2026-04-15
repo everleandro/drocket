@@ -98,11 +98,7 @@
 }
 
 .e-radio-group-field {
-  > .e-field__control > .e-field__slot {
-    > label:not(.e-label--floating) {
-      padding-right: 0.5rem;
-    }
-  }
+
 
   &--column {
     &.e-field--label-floating {

@@ -5,8 +5,8 @@
             <h1>Radio Playground</h1>
             <p class="hero-copy">
                 Esta vista concentra pruebas de <strong>ERadioGroup</strong> y
-                <strong>ERadio</strong> dentro de <strong>EForm</strong>. Puede crecer despues
-                para incluir otros selection controls como <strong>ECheckbox</strong>.
+                <strong>ERadio</strong> dentro de <strong>EForm</strong> para validar
+                patrones de seleccion en modo row y column.
             </p>
         </div>
 
@@ -19,7 +19,7 @@
                     </div>
                     <p class="card-copy">
                         Prueba <strong>labelBehavior</strong>, cambio de valor, readonly,
-                        disabled y herencia de color sin mezclar otros campos.
+                        disabled y herencia de color en radios.
                     </p>
                 </div>
                 <e-card elevation="sm" class="p-4">
@@ -107,15 +107,6 @@
                     <pre class="payload-preview">{{ radioPreview }}</pre>
                 </ECard>
 
-                <ECard class="radio-card radio-card--future" elevation="sm">
-                    <p class="section-kicker">Proximo paso</p>
-                    <h2>Selection controls</h2>
-                    <p class="card-copy">
-                        Esta vista queda preparada para crecer con ejemplos de
-                        <strong>ECheckbox</strong> y otros controles relacionados,
-                        manteniendo el playground de formularios principal mas limpio.
-                    </p>
-                </ECard>
             </div>
         </div>
     </section>
@@ -250,10 +241,6 @@ const radioPreview = computed(() => {
     margin: 0;
     overflow: auto;
     padding: 16px;
-}
-
-.radio-card--future {
-    background: linear-gradient(180deg, #ffffff, #f7f9fc);
 }
 
 @media (max-width: 960px) {

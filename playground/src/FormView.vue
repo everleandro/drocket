@@ -185,10 +185,10 @@
                         <div class="radio-lab__header">
                             <div>
                                 <p class="section-kicker">Radio Group</p>
-                                <h2>Casos base para ERadioGroup y ECheckbox</h2>
+                                <h2>Casos base para ERadioGroup</h2>
                             </div>
                             <p class="table-lab__copy">
-                                Esta seccion sirve para probar selection controls,
+                                Esta seccion sirve para probar radio controls,
                                 integracion con <strong>EForm</strong>, herencia de estados
                                 y el comportamiento de <strong>labelBehavior</strong> en modo row.
                             </p>
@@ -222,20 +222,6 @@
                             </ERadioGroup>
                         </EForm>
 
-                        <EForm class="radio-demo-form" field-color="teal-900" label-behavior="floating" dense>
-                            <ECheckbox v-model="checkboxState.termsAccepted" :cols="12" :md="4" label="Acepto terminos"
-                                detail="Caso booleano simple para revisar color, focus y detalles." />
-
-                            <ECheckbox v-model="checkboxState.releaseChecklist" :cols="12" :md="4"
-                                label="Checklist de release"
-                                detail="Usa valores custom ready/hold para probar modelValue." color="secondary"
-                                true-value="ready" false-value="hold" />
-
-                            <ECheckbox v-model="checkboxState.readonlyAudit" :cols="12" :md="4" readonly
-                                label="Auditoria readonly"
-                                detail="Sirve para comprobar que readonly mantiene el valor." />
-                        </EForm>
-
                         <div class="radio-lab__summary">
                             <div>
                                 <span>Canal</span>
@@ -249,6 +235,37 @@
                                 <span>Aprobacion</span>
                                 <strong>{{ radioState.approvalStage }}</strong>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="selection-lab">
+                        <div class="selection-lab__header">
+                            <div>
+                                <p class="section-kicker">Selection controls</p>
+                                <h2>Casos base para ECheckbox</h2>
+                            </div>
+                            <p class="table-lab__copy">
+                                Esta seccion centraliza controles de seleccion.
+                                En esta iteracion solo incluye <strong>ECheckbox</strong>;
+                                radio y switch se migraran despues.
+                            </p>
+                        </div>
+
+                        <EForm class="selection-demo-form" field-color="teal-900" label-behavior="floating" dense>
+                            <ECheckbox v-model="checkboxState.termsAccepted" :cols="12" :md="4" label="Acepto terminos"
+                                detail="Caso booleano simple para revisar color, focus y detalles." />
+
+                            <ECheckbox v-model="checkboxState.releaseChecklist" :cols="12" :md="4"
+                                label="Checklist de release"
+                                detail="Usa valores custom ready/hold para probar modelValue." color="secondary"
+                                true-value="ready" false-value="hold" />
+
+                            <ECheckbox v-model="checkboxState.readonlyAudit" :cols="12" :md="4" readonly
+                                label="Auditoria readonly"
+                                detail="Sirve para comprobar que readonly mantiene el valor." />
+                        </EForm>
+
+                        <div class="selection-lab__summary">
                             <div>
                                 <span>Terminos</span>
                                 <strong>{{ checkboxState.termsAccepted ? "Aceptados" : "Pendientes" }}</strong>
@@ -1105,6 +1122,7 @@ const handleReset = (): void => {
 .time-picker-lab,
 .switch-lab,
 .radio-lab,
+.selection-lab,
 .table-lab,
 .elevation-lab {
     border-top: 1px solid rgba(23, 32, 51, 0.08);
@@ -1118,6 +1136,7 @@ const handleReset = (): void => {
 .time-picker-lab__header,
 .switch-lab__header,
 .radio-lab__header,
+.selection-lab__header,
 .table-lab__header,
 .elevation-lab__header,
 .elevation-lab__meta {
@@ -1149,6 +1168,12 @@ const handleReset = (): void => {
     padding: 16px;
 }
 
+.selection-demo-form {
+    border: 1px solid rgba(23, 32, 51, 0.08);
+    border-radius: 18px;
+    padding: 16px;
+}
+
 .select-lab__summary {
     display: grid;
     gap: 14px;
@@ -1173,10 +1198,17 @@ const handleReset = (): void => {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.selection-lab__summary {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .select-lab__summary div,
 .time-picker-lab__summary div,
 .switch-lab__summary div,
 .radio-lab__summary div,
+.selection-lab__summary div,
 .table-lab__panel {
     border: 1px solid rgba(23, 32, 51, 0.08);
     border-radius: 18px;
@@ -1187,6 +1219,7 @@ const handleReset = (): void => {
 .time-picker-lab__summary span,
 .switch-lab__summary span,
 .radio-lab__summary span,
+.selection-lab__summary span,
 .table-lab__label,
 .summary-grid span {
     color: #51617d;
@@ -1202,6 +1235,7 @@ const handleReset = (): void => {
 .time-picker-lab__summary strong,
 .switch-lab__summary strong,
 .radio-lab__summary strong,
+.selection-lab__summary strong,
 .summary-grid strong {
     color: #172033;
     font-size: 14px;
@@ -1334,7 +1368,8 @@ const handleReset = (): void => {
     .select-lab__summary,
     .time-picker-lab__summary,
     .switch-lab__summary,
-    .radio-lab__summary {
+    .radio-lab__summary,
+    .selection-lab__summary {
         grid-template-columns: 1fr;
     }
 
