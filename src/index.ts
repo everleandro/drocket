@@ -65,6 +65,8 @@ export { ScheduleView, CalendarScale } from "./types";
 export { datePickerViewType } from "./types";
 export * from "./utils/style";
 export { default as DateBuilder } from "./utils/date";
+export { Lng, getLocales, hasLocale, registerLocales } from "./locales";
+export type { Locale, LocaleCode } from "./locales";
 import "@/style/main.scss";
 
 export { default as Drocket } from "./framework";

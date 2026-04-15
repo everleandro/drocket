@@ -2,7 +2,8 @@ import { es } from "@/locales/es.json";
 import { en } from "@/locales/en.json";
 import { fr } from "@/locales/fr.json";
 
-export type suportedLng = "es" | "en" | "fr";
+export type LocaleCode = string;
+export type suportedLng = LocaleCode;
 
 export interface ScheduleToolbarLocale {
   view: string;
@@ -33,18 +34,39 @@ export interface Locale {
   schedule: ScheduleLocale;
 }
 
+const defaultLocaleCode = "en";
+const localeFactory: Record<string, Locale> = { es, en, fr };
+
+export const registerLocales = (locales: Record<string, Locale> = {}): void => {
+  Object.assign(localeFactory, locales);
+};
+
+export const getLocales = (): Readonly<Record<string, Locale>> => {
+  return localeFactory;
+};
+
+export const hasLocale = (code: string): boolean => {
+  return Object.prototype.hasOwnProperty.call(localeFactory, code);
+};
+
+const resolveLocaleCode = (code: string): string => {
+  return hasLocale(code) ? code : defaultLocaleCode;
+};
+
 export class Lng {
-  selectedLng: suportedLng;
+  selectedLng: LocaleCode;
   start!: number;
 
-  lngAvailableObject: Record<suportedLng, Locale> = { es, en, fr };
+  get lngAvailableObject(): Record<string, Locale> {
+    return localeFactory;
+  }
 
-  constructor(lng: suportedLng = "en", start: number | undefined = undefined) {
-    this.selectedLng = lng;
+  constructor(lng: LocaleCode = defaultLocaleCode, start: number | undefined = undefined) {
+    this.selectedLng = resolveLocaleCode(lng);
     this.start =
       start !== undefined
         ? start
-        : this.lngAvailableObject[this.selectedLng].start;
+        : this.currentLng.start;
   }
 
   get weekdaysMin(): Array<string> {
@@ -52,7 +74,7 @@ export class Lng {
   }
 
   get currentLng(): Locale {
-    return this.lngAvailableObject[this.selectedLng];
+    return this.lngAvailableObject[resolveLocaleCode(this.selectedLng)];
   }
 
   get months(): Array<string> {
@@ -72,7 +94,6 @@ export class Lng {
   }
 
   sliceLangList(list: Array<string>, start: number): Array<string> {
-    const end = list.length;
     const firstList = list.slice(0, start);
     const secondList = list.slice(start, list.length);
     return [...secondList, ...firstList];
