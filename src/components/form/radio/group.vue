@@ -1,10 +1,10 @@
 <template>
-    <EField ref="field" v-bind="fieldProps" :class="radioGroupClass">
+    <EField ref="field" v-bind="resolvedFieldProps" :class="radioGroupClass">
         <template v-for="(_, name) in passThroughSlots" :key="name" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps ?? {}"></slot>
         </template>
 
-        <template #default="{ detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isReadonly }">
+        <template #default="{ inputId, detailsId, slotClass, handleBlur, handleFocus, hasError, isDisabled, isReadonly }">
             <div class="e-radio-group-field__control e-field__control">
                 <div class="e-radio-group-field__slot e-field__slot">
                     <div v-if="showOverlay" class="e-field__overlay"></div>
@@ -14,6 +14,7 @@
                         :aria-invalid="hasError"
                         :aria-disabled="isDisabled"
                         :aria-readonly="isReadonly"
+                        :aria-labelledby="`${inputId}-label`"
                         :aria-describedby="detailsId"
                     >
                         <slot></slot>
@@ -36,28 +37,25 @@
   
 <script lang="ts" setup>
 import { computed, getCurrentInstance, nextTick, onMounted, provide, reactive, ref, useSlots } from "vue";
-import type { ERadio, ERadioType, SelectionFieldBaseProps } from "@/types";
+import type { ERadio, ERadioType, RadioGroupEmits, RadioGroupProps } from "@/types";
 import { normalizeCssSize } from "@/utils/style";
 import { useFieldIntegration } from "@/composables/field-integration";
 import EDetails from "@/components/form/details.vue";
 import EField from "@/components/form/field/index.vue";
 import { RADIO_GROUP_KEY } from "./constants";
 
-export interface Props extends SelectionFieldBaseProps<ERadioType> {
-    mandatory?: boolean;
-    modelValue: ERadioType;
-    row?: boolean;
-    showOverlay?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RadioGroupProps>(), {
     showOverlay: false,
 });
 
 const slots = useSlots();
-const { fieldProps, passThroughSlots } = useFieldIntegration<ERadioType>(props, slots, {
+const { blur, field, fieldProps, focus, passThroughSlots } = useFieldIntegration<ERadioType>(props, slots, {
     omitSlots: ["default", "details"],
 });
+const resolvedFieldProps = computed(() => ({
+    ...fieldProps.value,
+    labelBehavior: "static" as const,
+}));
 
 const radioGroupClass = computed(() => {
     const result = ["e-radio-group-field"];
@@ -69,11 +67,7 @@ const radioGroupClass = computed(() => {
     return result;
 });
 
-const emit = defineEmits<{
-    (e: "update:modelValue", value: ERadioType): void
-    (e: "focus", event: FocusEvent): void
-    (e: "blur", event: Event): void
-}>();
+const emit = defineEmits<RadioGroupEmits>();
 const instance = getCurrentInstance();
 
 const state = reactive<{ radioChilds: Array<Partial<ERadio>> }>({ radioChilds: [] });
@@ -167,6 +161,14 @@ const init = async (): Promise<void> => {
 
     changeModelValue(firstRadioValue);
 };
+
+defineExpose({
+    focus,
+    blur,
+    validate: () => field.value?.validate() ?? true,
+    reset: () => field.value?.reset(),
+    resetValidation: () => field.value?.resetValidation?.(),
+});
 
 </script>
 <style lang="scss" src="./style.scss"></style>

@@ -1,6 +1,7 @@
 import type { ComputedRef } from "vue";
 
 import type { EField } from "./field";
+import type { ERadioType } from "./radio";
 
 export interface FormInjection {
   bindField: (component: Partial<EField>) => void;
@@ -34,5 +35,3 @@ export interface ERadioGroup {
   labelStyle: ComputedRef<Record<string, string>>;
   name: string;
 }
-
-export type ERadioType = string | number | undefined | null;

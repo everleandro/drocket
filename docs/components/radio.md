@@ -29,9 +29,7 @@ import { ERadio, ERadioGroup } from 'drocket'
 | `mandatory` | `boolean` | `false` | Cuando esta activo y no existe seleccion valida, intenta inicializar el primer radio disponible al montar. |
 | `row` | `boolean` | `false` | Distribuye los radios en horizontal. Cuando no se usa, el grupo se comporta en columna. |
 | `showOverlay` | `boolean` | `false` | Muestra el overlay visual del field en el contenedor del grupo. |
-| `flat` | `boolean` | `false` | Oculta la linea inferior del field cuando se combina con la variante del grupo. |
-
-Ademas hereda las props base de `FieldBaseProps`, como `label`, `detail`, `detailErrors`, `detailsOnMessageOnly`, `outlined`, `disabled`, `readonly`, `color`, `retainColor`, `labelBehavior`, `labelMinWidth` y props de grid como `cols`, `md` o `xl`.
+Ademas hereda las props base de `SelectionFieldBaseProps`, como `label`, `detail`, `detailErrors`, `detailsOnMessageOnly`, `outlined`, `disabled`, `readonly`, `color`, `retainColor`, `labelBehavior` (sin `floating`), `labelMinWidth` y props de grid como `cols`, `md` o `xl`.
 
 ## Props de ERadio
 
@@ -144,7 +142,7 @@ const releaseTrack = ref<'stable' | 'beta' | 'canary'>('beta')
 - Cada `ERadio` usa un `input type="radio"` nativo con `role="radio"`, `aria-checked`, `aria-disabled` y `aria-readonly`.
 - El foco se coordina a nivel de grupo, de modo que `focus` y `blur` se emiten desde `ERadioGroup` aunque el elemento enfocado real sea un hijo.
 - El area clicable se amplia alrededor de cada opcion sin perder la semantica del input nativo.
-- Cuando el grupo recibe color desde `EForm` o desde su propia prop `color`, lo propaga a los radios hijos mediante configuracion de field en lugar de usar variables CSS especificas del grupo.
+- El color y estados visuales de las opciones se resuelven por herencia del contenedor de field compartido.
 
 ## Errores comunes
 
@@ -152,4 +150,4 @@ const releaseTrack = ref<'stable' | 'beta' | 'canary'>('beta')
 - Esperar que cada `ERadio` tenga `v-model` propio: el estado seleccionado pertenece al grupo.
 - Mezclar tipos incompatibles entre `ERadioGroup.modelValue` y los `model-value` de los hijos: la opcion activa depende de una comparacion exacta.
 - Esperar comportamiento floating identico en `row` y `column`: el layout del label cambia segun la disposicion y el estado del field.
-- Usar color via una variable CSS especifica del grupo: en la arquitectura actual el color debe llegar por propagacion de configuracion, igual que el resto de fields.
+- Usar variables CSS locales para forzar color en cada opcion: en la arquitectura actual el color y estados se resuelven desde el contenedor `ERadioGroup`.

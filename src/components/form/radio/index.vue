@@ -1,5 +1,5 @@
 <template>
-    <div :class="radioClass" :style="fieldStyle" @click="handleRadioClick">
+    <div :class="radioClass" @click="handleRadioClick">
         <div class="e-radio__control" :data-focused="focused">
             <span aria-hidden="true" class="e-radio__icon e-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-hidden="true" class="e-icon__svg">
@@ -40,16 +40,11 @@
 
 <script lang="ts" setup>
 import { computed, getCurrentInstance, inject, onMounted, onUnmounted, ref } from "vue";
-import type { ERadioType } from "@/types";
+import type { ERadioType, RadioProps } from "@/types";
 import { ripple } from "@/directives";
 import { RADIO_GROUP_KEY } from "./constants";
 
-export interface Props {
-    label?: string | number;
-    modelValue: ERadioType;
-}
-
-const props = defineProps<Props>();
+const props = defineProps<RadioProps>();
 const input = ref<HTMLInputElement | null>(null);
 const focused = ref(false);
 
@@ -61,12 +56,6 @@ if (!radioGroup) {
 
 const uid = getCurrentInstance()?.uid;
 const id = `e-radio-${uid ?? "unknown"}`;
-
-const fieldStyle = computed(() => {
-    return {
-        "--e-field-color": "var(--e-field-color)",
-    };
-});
 
 const labelStyle = computed(() => radioGroup.labelStyle.value);
 const isDisabled = computed(() => radioGroup.isDisabled.value);

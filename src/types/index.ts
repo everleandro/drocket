@@ -44,13 +44,13 @@ export type {
 export type { TimePickerEmits, TimePickerProps } from "./time-picker";
 export type { SwitchEmits, SwitchProps, SwitchValue } from "./switch";
 export type { CheckboxEmits, CheckboxProps, CheckboxValue } from "./checkbox";
+export type { ERadioType, RadioProps, RadioGroupProps, RadioGroupEmits } from "./radio";
 
 export type {
   EForm,
   FormInjection,
   ERadio,
   ERadioGroup,
-  ERadioType,
 } from "./form";
 
 export type { BarProps } from "./bar";
