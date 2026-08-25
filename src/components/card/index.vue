@@ -210,7 +210,7 @@ const resolvedAppendHeaderIconProps = computed(() => {
 })
 
 const hasMainPrepend = computed(() => !!prependAvatar.value || !!prependIcon.value || !!slots.prepend)
-const hasMainAppend = computed(() => !!appendAvatar.value || !!appendIcon.value || !!slots.appendHeader)
+const hasMainAppend = computed(() => !!appendAvatar.value || !!appendIcon.value || !!slots.append)
 const hasHeader = computed(() => {
     return !!title.value
         || !!subtitle.value

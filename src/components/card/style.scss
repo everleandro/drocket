@@ -233,7 +233,7 @@
 
   &__footer {
     width: 100%;
-    padding: var(--card-padding);
+    padding: 0 var(--card-padding) var(--card-padding) var(--card-padding);
     position: relative;
     z-index: 1;
   }

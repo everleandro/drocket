@@ -106,3 +106,11 @@ export type {
 export type { Size, SizeProps, SizeValue } from "./size";
 export type { DrawerClassKeys, DrawerProps } from "./drawer";
 export type { TableCellAlign, TableHeader } from "./table";
+export type {
+  SnackbarAction,
+  SnackbarCloseSlot,
+  SnackbarInstance,
+  SnackbarOptions,
+  SnackbarPluginOptions,
+  SnackbarPosition,
+} from "./snackbar";

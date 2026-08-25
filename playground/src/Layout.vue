@@ -37,6 +37,8 @@
                 <router-view />
             </EContainer>
         </EMain>
+
+        <ESnackbarContainer />
     </EApp>
 </template>
 

@@ -39,6 +39,8 @@ export { default as EWindow } from "./window/index.vue";
 export { default as EWindowItem } from "./window/item.vue";
 export { default as ETimePicker } from "./form/time-picker/index.vue";
 export { default as ETable } from "./table/index.vue";
+export { default as ESnackbar } from "./snackbar/item.vue";
+export { default as ESnackbarContainer } from "./snackbar/container.vue";
 
 // Layout components
 export {

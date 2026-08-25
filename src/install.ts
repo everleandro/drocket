@@ -10,7 +10,9 @@ import { registerLocales, setDefaultLocaleCode } from "./locales";
 import type { ThemePluginOptions } from "./theme";
 import { installTheme } from "./theme";
 import type { IconFontOptions, IconPath } from "./types";
+import type { SnackbarPluginOptions } from "./types";
 import { registerIcons } from "./utils/icons";
+import { configureSnackbar } from "./composables/snackbar-service";
 
 export interface NuvexUIInstallOptions {
   icons?: Record<string, IconPath | string | Array<IconPath>>;
@@ -19,6 +21,7 @@ export interface NuvexUIInstallOptions {
   locale?: LocaleCode;
   components?: Record<string, Component>;
   theme?: ThemePluginOptions;
+  snackbar?: SnackbarPluginOptions;
 }
 
 export function install(Vue: App, args: NuvexUIInstallOptions = {}): void {
@@ -26,6 +29,7 @@ export function install(Vue: App, args: NuvexUIInstallOptions = {}): void {
   registerLocales(args.locales);
   Vue.provide(iconFontInjectionKey, normalizeIconFontOptions(args.iconFont));
   installTheme(Vue, args.theme);
+  configureSnackbar(args.snackbar);
 
   if (args.locale) {
     setDefaultLocaleCode(args.locale);

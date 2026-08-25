@@ -40,6 +40,11 @@ export const navigationGroups = [
         to: "/components/table",
       },
       {
+        id: "components-snackbar",
+        title: "Snackbar",
+        to: "/components/snackbar",
+      },
+      {
         id: "components-textfield",
         title: "Text Field",
         to: "/components/text-field",

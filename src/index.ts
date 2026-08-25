@@ -73,6 +73,12 @@ export type {
 	DrawerProps,
 	TableCellAlign,
 	TableHeader,
+	SnackbarAction,
+	SnackbarCloseSlot,
+	SnackbarInstance,
+	SnackbarOptions,
+	SnackbarPluginOptions,
+	SnackbarPosition,
 } from "./types";
 export { ScheduleView, CalendarScale } from "./types";
 export { datePickerViewType } from "./types";

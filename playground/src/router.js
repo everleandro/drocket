@@ -6,6 +6,7 @@ import ButtonView from "./ButtonView.vue";
 import ButtonGroupView from "./ButtonGroupView.vue";
 import DataListView from "./DataListView.vue";
 import TableView from "./TableView.vue";
+import SnackbarView from "./SnackbarView.vue";
 import CardView from "./CardView.vue";
 import BarView from "./BarView.vue";
 import DrawerView from "./DrawerView.vue";
@@ -31,6 +32,7 @@ const routeComponentById = {
   "components-button-group": ButtonGroupView,
   "components-data-list": DataListView,
   "components-table": TableView,
+  "components-snackbar": SnackbarView,
   "components-card": CardView,
   "components-bar": BarView,
   "components-drawer": DrawerView,

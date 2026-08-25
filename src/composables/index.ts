@@ -7,4 +7,5 @@ export { default as useMenuStack } from "./menu-stack";
 export { useResolvedColor } from "./color";
 export { useFieldIntegration } from "./field-integration";
 export { useTextInput } from "./text-input";
+export { useSnackbar } from "./snackbar";
 export { useTheme } from "../theme";
