@@ -109,6 +109,7 @@ export type { TableCellAlign, TableHeader } from "./table";
 export type {
   SnackbarAction,
   SnackbarCloseSlot,
+  SnackbarElevation,
   SnackbarInstance,
   SnackbarOptions,
   SnackbarPluginOptions,

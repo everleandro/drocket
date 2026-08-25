@@ -1,34 +1,27 @@
 <template>
-    <div :class="itemClass" role="status" :aria-live="ariaLive" @mouseenter="handlePause" @mouseleave="handleResume">
-        <ECard class="e-snackbar__card" v-bind="cardProps">
-            <template v-if="isClosable && closeSlot === 'prepend'" #prepend>
-                <EButton v-ripple="{ center: true }" :icon="icon.clear" type="button" size="small" text
-                    :aria-label="closeLabel" @click="handleDismiss" />
-            </template>
+    <div :class="itemClass" :style="colorStyles" role="status" :aria-live="ariaLive" @mouseenter="handlePause"
+        @mouseleave="handleResume">
+        <div class="e-snackbar__row">
+            <EButton v-if="isClosable && closeSlot === 'start'" :icon="icon.clear"
+                size="small" text :aria-label="closeLabel" @click="handleDismiss" />
 
-            <template v-if="isClosable && closeSlot === 'append'" #append>
-                <EButton v-ripple="{ center: true }" type="button" size="small" :aria-label="closeLabel" text
-                    :icon="icon.clear" @click="handleDismiss" />
-            </template>
-            <template v-if="isClosable && closeSlot === 'append-header'" #append-header>
-                <EButton v-ripple="{ center: true }" type="button" size="small" :aria-label="closeLabel" text
-                    :icon="icon.clear" @click="handleDismiss" />
-            </template>
-            <template v-if="isClosable && closeSlot === 'prepend-header'" #prepend-header>
-                <EButton v-ripple="{ center: true }" type="button" size="small" :aria-label="closeLabel" text
-                    :icon="icon.clear" @click="handleDismiss" />
-            </template>
-            <span v-if="entry.message">{{ entry.message }}</span>
+            <EIcon v-if="entry.icon" class="e-snackbar__icon" :icon="entry.icon" />
 
-            <template v-if="entry.action" #footer>
-                <div class="e-snackbar__actions">
-                    <EButton :color="entry.action.color" :text="entry.action.text" :outlined="entry.action.outlined"
-                        :elevation="entry.action.elevation" :tonal="isTonalAction" @click="handleAction">
-                        {{ entry.action.label }}
-                    </EButton>
-                </div>
-            </template>
-        </ECard>
+            <div class="e-snackbar__content">
+                <p v-if="entry.title" class="e-snackbar__title">{{ entry.title }}</p>
+                <p v-if="entry.message" class="e-snackbar__message">{{ entry.message }}</p>
+            </div>
+
+            <EButton v-if="isClosable && closeSlot === 'end'" :icon="icon.clear"
+                size="small" text :aria-label="closeLabel" @click="handleDismiss" />
+        </div>
+
+        <div v-if="entry.action" class="e-snackbar__actions">
+            <EButton :color="actionColor" :text="entry.action.text" :outlined="entry.action.outlined"
+                :elevation="entry.action.elevation" :tonal="entry.action.tonal" @click="handleAction">
+                {{ entry.action.label }}
+            </EButton>
+        </div>
     </div>
 </template>
 <script lang="ts">
@@ -36,15 +29,14 @@ export default { name: "ESnackbarItem" };
 </script>
 <script lang="ts" setup>
 import { computed } from "vue";
-import ECard, { type Props as CardProps } from "@/components/card/index.vue";
 import EButton from "@/components/button/index.vue";
-import { ripple } from "@/directives";
+import EIcon from "@/components/icon/index.vue";
 import icon from "@/utils/icons";
+import { useResolvedColor } from "@/composables/color";
+import { getBooleanClasses } from "@/composables/utils";
 import { useSnackbarService } from "@/composables/snackbar-service";
 import type { SnackbarInstance } from "@/types";
 
-const vRipple = { ...ripple };
-const isTonalAction = computed((): boolean => typeof props.entry.action?.tonal === "boolean" ? props.entry.action.tonal : true);
 const props = withDefaults(defineProps<{
     entry: SnackbarInstance;
     closeLabel?: string;
@@ -52,21 +44,29 @@ const props = withDefaults(defineProps<{
     closeLabel: "Close",
 });
 
+const actionColor = computed(() => props.entry.action?.color);
 const { dismiss, pause, resume } = useSnackbarService();
 
 const isClosable = computed((): boolean => props.entry.closable !== false);
-const closeSlot = computed(() => props.entry.closeSlot ?? "append");
+const closeSlot = computed(() => props.entry.closeSlot ?? "end");
 const ariaLive = computed((): "assertive" | "polite" => (props.entry.color === "error" ? "assertive" : "polite"));
 
-// Only Card's own props are forwarded; snackbar-specific fields stay out of v-bind.
-const cardProps = computed((): CardProps => {
-    const { message, timeout, closable, closeSlot: _closeSlot, position, action, id, createdAt, ...rest } = props.entry;
-    return rest;
+const { colorStyles } = useResolvedColor({
+    color: computed(() => props.entry.color),
+    colorVar: "--e-snackbar-color",
+    contrastVar: "--e-snackbar-contrast-color",
 });
 
+const booleanClassKeys = ["tonal", "outlined"] as const;
+
 const itemClass = computed((): string[] => {
-    const classes = ["e-snackbar"];
-    if (props.entry.color) classes.push(`e-snackbar--${props.entry.color}`);
+    const surfaceFlags = { tonal: props.entry.tonal, outlined: props.entry.outlined };
+    const classes = ["e-snackbar", ...getBooleanClasses(surfaceFlags, booleanClassKeys, "e-snackbar")];
+
+    if (props.entry.elevation && props.entry.elevation !== "none") {
+        classes.push(`e-elevation--${props.entry.elevation}`);
+    }
+
     return classes;
 });
 

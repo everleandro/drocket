@@ -1,5 +1,6 @@
-import { ButtonProps } from "@/components/button/index.vue";
-import type { Props as CardProps } from "@/components/card/index.vue";
+import type { ButtonProps } from "@/components/button/index.vue";
+import type { ElevationLevel } from "./elevation";
+import type { IconPath } from "./icon";
 
 export type SnackbarPosition =
   | "top"
@@ -9,12 +10,11 @@ export type SnackbarPosition =
   | "bottom-start"
   | "bottom-end";
 
-/** Which Card slot (prepend or append) hosts the close button. */
-export type SnackbarCloseSlot =
-  | "prepend"
-  | "append"
-  | "append-header"
-  | "prepend-header";
+/** `none` opts a single snackbar out of the configured default elevation. */
+export type SnackbarElevation = ElevationLevel | "none";
+
+/** Which side of the snackbar hosts the close button. */
+export type SnackbarCloseSlot = "start" | "end";
 
 export interface SnackbarAction extends Pick<
   ButtonProps,
@@ -24,9 +24,14 @@ export interface SnackbarAction extends Pick<
   onClick?: (id: string) => void;
 }
 
-export interface SnackbarOptions extends CardProps {
-  /** Rendered in Card's default slot; use `description` instead for the header-bound text. */
+export interface SnackbarOptions {
+  title?: string;
   message?: string;
+  color?: string;
+  tonal?: boolean;
+  outlined?: boolean;
+  elevation?: SnackbarElevation;
+  icon?: Array<IconPath> | IconPath | string;
   /** `false` disables the auto-dismiss timer. */
   timeout?: number | false;
   closable?: boolean;
@@ -46,6 +51,8 @@ export interface SnackbarPluginOptions {
   maxVisible?: number;
   closable?: boolean;
   closeSlot?: SnackbarCloseSlot;
-  /** Default Card props applied to every snackbar (e.g. elevation, tonal). */
-  cardProps?: Partial<CardProps>;
+  /** Default surface props applied to every snackbar (elevation/tonal/outlined). */
+  surfaceProps?: Partial<Pick<SnackbarOptions, "elevation" | "tonal" | "outlined">>;
+  /** Default action button props applied to every snackbar action (e.g. tonal). */
+  actionProps?: Partial<SnackbarAction>;
 }

@@ -1,8 +1,8 @@
 import { computed, reactive } from "vue";
-import type { Props as CardProps } from "@/components/card/index.vue";
 import type {
   SnackbarAction,
   SnackbarCloseSlot,
+  SnackbarElevation,
   SnackbarInstance,
   SnackbarOptions,
   SnackbarPluginOptions,
@@ -15,9 +15,11 @@ const DEFAULT_MAX_VISIBLE = 3;
 const DEFAULT_ACTION_PROPS: Partial<SnackbarAction> = {
   tonal: true,
 };
-const DEFAULT_CLOSE_SLOT: SnackbarCloseSlot = "append";
-const DEFAULT_CARD_PROPS: Partial<CardProps> = {
+const DEFAULT_CLOSE_SLOT: SnackbarCloseSlot = "end";
+const DEFAULT_SURFACE_PROPS: { elevation: SnackbarElevation; tonal: boolean; outlined: boolean } = {
   elevation: "md",
+  tonal: false,
+  outlined: false,
 };
 
 interface SnackbarConfig {
@@ -36,8 +38,11 @@ const config: SnackbarConfig = reactive({
   closeSlot: DEFAULT_CLOSE_SLOT,
 });
 
-// Kept outside `reactive()`: Partial<CardProps> nests icon/avatar unions deep enough to blow up vue-tsc's type instantiation.
-let cardPropsDefaults: Partial<CardProps> = { ...DEFAULT_CARD_PROPS };
+// Kept outside `reactive()`: nested action/button prop unions are deep enough to blow up vue-tsc's type instantiation.
+let surfacePropsDefaults: Partial<Pick<SnackbarOptions, "elevation" | "tonal" | "outlined">> = {
+  ...DEFAULT_SURFACE_PROPS,
+};
+let actionPropsDefaults: Partial<SnackbarAction> = { ...DEFAULT_ACTION_PROPS };
 
 export const configureSnackbar = (
   options: SnackbarPluginOptions = {},
@@ -47,8 +52,10 @@ export const configureSnackbar = (
   if (options.maxVisible !== undefined) config.maxVisible = options.maxVisible;
   if (options.closable !== undefined) config.closable = options.closable;
   if (options.closeSlot) config.closeSlot = options.closeSlot;
-  if (options.cardProps)
-    cardPropsDefaults = { ...cardPropsDefaults, ...options.cardProps };
+  if (options.actionProps)
+    actionPropsDefaults = { ...actionPropsDefaults, ...options.actionProps };
+  if (options.surfaceProps)
+    surfacePropsDefaults = { ...surfacePropsDefaults, ...options.surfaceProps };
 };
 
 const state: { queue: SnackbarInstance[] } = reactive({
@@ -94,10 +101,11 @@ const resume = (id: string): void => {
 const push = (options: SnackbarOptions): string => {
   const id = nextId();
   const entry: SnackbarInstance = {
-    ...cardPropsDefaults,
+    ...surfacePropsDefaults,
     ...options,
     closable: options.closable ?? config.closable,
     closeSlot: options.closeSlot ?? config.closeSlot,
+    action: options.action ? { ...actionPropsDefaults, ...options.action } : undefined,
     id,
     createdAt: Date.now(),
   };

@@ -75,6 +75,7 @@ export type {
 	TableHeader,
 	SnackbarAction,
 	SnackbarCloseSlot,
+	SnackbarElevation,
 	SnackbarInstance,
 	SnackbarOptions,
 	SnackbarPluginOptions,

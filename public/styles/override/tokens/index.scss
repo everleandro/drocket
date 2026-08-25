@@ -17,6 +17,7 @@
 @forward "./components/card";
 @forward "./components/field";
 @forward "./components/switch";
+@forward "./components/snackbar";
 
 @use "./foundation/layout" as layout;
 @use "./foundation/typography" as typography;

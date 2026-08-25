@@ -4,9 +4,9 @@
             <p class="snackbar-page__eyebrow">Components</p>
             <h2 class="snackbar-page__title">Snackbar Examples</h2>
             <p class="snackbar-page__lead">
-                <code>useSnackbar()</code> encola mensajes sobre el <code>ESnackbarContainer</code> montado una vez
-                en <code>Layout.vue</code>. Cada variante resuelve <code>color</code> igual que <code>ECard</code>/
-                <code>EChip</code>.
+                <code>useSnackbar()</code> encola mensajes sobre el <code>ESnackbarContainer</code> que
+                <code>EApp</code> monta automaticamente. <code>ESnackbarItem</code> tiene su propia arquitectura
+                (no usa <code>ECard</code>) para no heredar su tipografia/espaciado.
             </p>
         </header>
 
@@ -26,9 +26,8 @@
         <article class="snackbar-demo">
             <h3>Titulo, icono y accion</h3>
             <p class="snackbar-demo__caption">
-                <code>show()</code> extiende las props de <code>ECard</code>, asi que acepta <code>title</code>,
-                <code>prependIcon</code> y una <code>action</code> con boton propio; al hacer click en la accion el
-                mensaje se descarta automaticamente.
+                <code>show()</code> acepta <code>title</code>, <code>icon</code> y una <code>action</code> con boton
+                propio; al hacer click en la accion el mensaje se descarta automaticamente.
             </p>
 
             <EButton color="primary" @click="showWithAction">Eliminar factura</EButton>
@@ -36,13 +35,13 @@
         </article>
 
         <article class="snackbar-demo">
-            <h3>Message en el slot default y cierre en prepend</h3>
+            <h3>Message y cierre al inicio</h3>
             <p class="snackbar-demo__caption">
-                <code>message</code> se renderiza dentro del slot default de <code>ECard</code> (en vez del prop
-                <code>description</code>), y <code>closeSlot: 'prepend'</code> mueve el boton de cierre al inicio.
+                <code>message</code> es el texto principal del snackbar, y <code>closeSlot: 'start'</code> mueve el
+                boton de cierre al inicio de la fila (por defecto es <code>'end'</code>).
             </p>
 
-            <EButton @click="showWithMessageSlot">Mensaje en slot default</EButton>
+            <EButton @click="showWithMessageSlot">Mensaje con cierre al inicio</EButton>
         </article>
 
         <article class="snackbar-demo">
@@ -88,13 +87,12 @@ const lastAction = ref("ninguna");
 const showWithAction = () => {
     snackbar.show({
         title: "Factura eliminada",
-        description: "INV-3021 se movio a la papelera.",
-        color: "success",
-        prependHeaderIcon: iconFactory.trash,
+        message: "INV-3021 se movio a la papelera.",
+        color: "green-200",
+        icon: iconFactory.trash,
         timeout: false,
         action: {
             label: "Deshacer",
-            tonal:false,
             onClick: () => {
                 lastAction.value = "deshacer INV-3021";
             },
@@ -105,14 +103,14 @@ const showWithAction = () => {
 const showPersistent = () => {
     snackbar.show({
         title: "Sincronizando",
-        description: "Esto puede tardar unos minutos.",
+        message: "Esto puede tardar unos minutos.",
         timeout: false,
     });
 };
 
 const showTopStart = () => {
     snackbar.show({
-        description: "Mensaje anclado en top-start",
+        message: "Mensaje anclado en top-start",
         position: "top-start",
     });
 };
@@ -121,7 +119,7 @@ const showWithMessageSlot = () => {
     snackbar.show({
         title: "Nuevo comentario",
         message: "Ana Gomez comento en la factura INV-3021.",
-        closeSlot: "prepend",
+        closeSlot: "start",
     });
 };
 
