@@ -24,7 +24,6 @@ import type {
   EFieldProps,
   FieldConfiguration,
   FieldLabelBehavior,
-  FormTableChild,
   FormInjection,
 } from "@/types";
 
@@ -116,7 +115,6 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
   const validated = ref(false);
   const hovered = ref(false);
   const focused = ref(false);
-  const tableClasses = ref<Array<string>>([]);
 
   const helperMessage = computed(() => props.detail || "");
   const externalErrorMessage = computed(() => props.detailErrors?.[0] || "");
@@ -319,10 +317,6 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
     configuration.labelBehavior = value.labelBehavior;
   };
 
-  const setTableClasses = (value: Array<string>): void => {
-    tableClasses.value = [...value];
-  };
-
   const validate = (): boolean => {
     validated.value = true;
     touched.value = true;
@@ -340,15 +334,6 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
     resetValidation();
   };
 
-  const getGridColConfiguration = (): Pick<FormTableChild, "cols" | "xs" | "sm" | "md" | "lg" | "xl"> => ({
-    cols: props.cols,
-    xs: props.xs,
-    sm: props.sm,
-    md: props.md,
-    lg: props.lg,
-    xl: props.xl,
-  });
-
   watch(
     () => props.modelValue,
     (value) => {
@@ -359,13 +344,6 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
   watch(hasError, (value) => {
     form?.updateField?.({ hasError: value, uid: instance.uid });
   });
-
-  watch(
-    () => [props.cols, props.xs, props.sm, props.md, props.lg, props.xl] as const,
-    () => {
-      form?.updateTableChild?.({ uid: instance.uid, ...getGridColConfiguration() });
-    },
-  );
 
   const { gridColClass } = useGridCol(props);
 
@@ -380,6 +358,7 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
   const rootClass = computed(() => [
     "e-field",
     "e-field--next",
+    "e-form__child",
     isDense.value && fieldVariantClasses.dense,
     isOutlined.value && fieldVariantClasses.outlined,
     isLabelInline.value && fieldVariantClasses.labelInline,
@@ -393,7 +372,6 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
     shouldFloatLabel.value && fieldStateClasses.labelFloated,
     (props.retainColor || configuration.retainColor) && fieldStateClasses.retainColor,
     focused.value && fieldStateClasses.focused,
-    ...tableClasses.value,
     ...gridColClass.value,
   ].filter(Boolean));
 
@@ -407,18 +385,11 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
       setConfiguration,
     });
 
-    form?.bindTableChild?.({
-      uid: instance.uid,
-      setTableClasses,
-      ...getGridColConfiguration(),
-    });
-
     form?.updateField?.({ uid: instance.uid, hasError: hasError.value });
   });
 
   onUnmounted(() => {
     form?.unbindField?.(instance.uid);
-    form?.unbindTableChild?.(instance.uid);
   });
 
   const slotProps = computed(() => ({
@@ -486,7 +457,6 @@ export const useFieldCore = (props: FieldCoreProps, emit: FieldEmit) => {
     handleBlur,
     handleFocus,
     setConfiguration,
-    setTableClasses,
     reset,
     resetValidation,
     validate,

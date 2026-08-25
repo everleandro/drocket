@@ -48,7 +48,6 @@ export type { ERadioType, RadioProps, RadioGroupProps, RadioGroupEmits } from ".
 
 export type {
   EForm,
-  FormTableChild,
   FormInjection,
   ERadio,
   ERadioGroup,
@@ -106,3 +105,4 @@ export type {
 } from "./data-list";
 export type { Size, SizeProps, SizeValue } from "./size";
 export type { DrawerClassKeys, DrawerProps } from "./drawer";
+export type { TableCellAlign, TableHeader } from "./table";

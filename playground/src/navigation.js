@@ -35,6 +35,11 @@ export const navigationGroups = [
         to: "/components/data-list",
       },
       {
+        id: "components-table",
+        title: "Table",
+        to: "/components/table",
+      },
+      {
         id: "components-textfield",
         title: "Text Field",
         to: "/components/text-field",

@@ -5,7 +5,6 @@
   --e-form-table-line-opacity: 0.46;
   --e-form-table-field-bg: transparent;
   --e-form-table-border-radius: var(--e-border-radius-root);
-  --e-form-table-line-width: max(1px, var(--e-grid-gap, 1px));
   border-radius: var(--e-form-table-border-radius);
 
   flex: 1 1 auto;
@@ -52,16 +51,18 @@
     }
   }
 
-  &--table {
+  // Table view: lines are drawn via container background showing through the grid gap,
+  // not via per-cell borders — no JS row/col tracking involved.
+  // Corner radius isn't matched to individual cells here; use custom CSS if rounded corners are needed.
+  &.e-form--table {
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    gap: 0;
+    --e-grid-gap: 0px;
     padding: 0;
     --e-field-hover-overlay-opacity: 0;
     border-radius: var(--e-form-table-border-radius);
     --e-form-table-border-color: var(--e-form-table-line-color);
-    border: var(--e-form-table-line-width) solid var(--e-form-table-border-color);
 
     .e-row {
       align-items: stretch;
@@ -83,7 +84,6 @@
       .e-field__frame {
         height: auto;
         position: unset;
-
       }
     }
 
@@ -95,31 +95,14 @@
       }
     }
 
-
-
     >.e-form__child {
       position: relative;
       background-color: var(--e-form-table-field-bg);
-      border-right: var(--e-form-table-line-width) solid var(--e-form-table-border-color);
-      border-bottom: var(--e-form-table-line-width) solid var(--e-form-table-border-color);
       box-sizing: border-box;
     }
 
     &.e-form--disabled {
       border-style: dashed;
-
-      >.e-form__child {
-        border-right-style: dashed;
-        border-bottom-style: dashed;
-      }
-    }
-
-    >.e-form__child.e-form__child--last-col {
-      border-right: none;
-    }
-
-    >.e-form__child.e-form__child--last-row {
-      border-bottom: none;
     }
 
     .e-field {

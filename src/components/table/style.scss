@@ -1,0 +1,90 @@
+.e-table {
+    --table-local-radius: var(--e-table-border-radius, var(--e-border-radius-root, 4px));
+    --table-local-border-color: var(--e-table-border-color, var(--e-color-border));
+    font-size: var(--e-table-font-size, .875rem);
+
+
+    display: grid;
+    gap: var(--e-table-gap, calc(var(--e-space-base, 4px) * 4));
+    min-width: 0;
+    border-radius: var(--table-local-radius);
+    overflow: hidden;
+
+    &[class*="e-elevation--"] {
+        background-color: var(--e-table-background, var(--e-color-surface-base, #ffffff));
+        color: var(--e-table-color, var(--e-contrast-surface-base, #000000));
+    }
+
+    &__table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+            padding: var(--e-table-cell-padding-block, calc(var(--e-space-base, 4px) * 3)) var(--e-table-cell-padding-inline, calc(var(--e-space-base, 4px) * 4));
+            border-bottom: var(--e-border-width, thin) solid var(--table-local-border-color);
+        }
+
+        th {
+            font-weight: var(--e-table-header-font-weight, 500);
+            text-transform: var(--e-table-header-transform, uppercase);
+            letter-spacing: var(--e-table-header-letter-spacing, 0.04em);
+            color: var(--e-table-header-color, var(--e-text-muted, currentColor));
+        }
+
+        td {
+            font-weight: var(--e-table-body-font-weight, 100);
+        }
+    }
+
+    &__cell {
+        &--align-start {
+            text-align: start;
+        }
+
+        &--align-center {
+            text-align: center;
+        }
+
+        &--align-end {
+            text-align: end;
+        }
+    }
+
+    &__empty {
+        text-align: center;
+        color: var(--e-text-muted, currentColor);
+        padding: calc(var(--e-space-base, 4px) * 8) calc(var(--e-space-base, 4px) * 4);
+    }
+
+    &__pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: calc(var(--e-space-base, 4px) * 3);
+        padding: 0 calc(var(--e-space-base, 4px) * 4) calc(var(--e-space-base, 4px) * 3);
+
+        &-controls {
+            display: flex;
+            align-items: center;
+            gap: calc(var(--e-space-base, 4px) * 2);
+        }
+
+        &-info {
+            font-size: 0.8125rem;
+            color: var(--e-text-muted, currentColor);
+        }
+
+        &-page {
+            font-size: 0.8125rem;
+            min-width: 48px;
+            text-align: center;
+        }
+    }
+
+    &--no-pagination {
+        tr:last-child td {
+            border-bottom: none;
+        }
+    }
+}

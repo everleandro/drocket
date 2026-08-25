@@ -71,6 +71,8 @@ export type {
 	SizeValue,
 	DrawerClassKeys,
 	DrawerProps,
+	TableCellAlign,
+	TableHeader,
 } from "./types";
 export { ScheduleView, CalendarScale } from "./types";
 export { datePickerViewType } from "./types";
