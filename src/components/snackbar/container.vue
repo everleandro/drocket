@@ -8,7 +8,7 @@
     </Teleport>
 </template>
 <script lang="ts">
-export default { name: "ESnackbarContainer" };
+export default { name: "ESnackbarContainer", inheritAttrs: false };
 </script>
 <script lang="ts" setup>
 import ESnackbarItem from "./item.vue";

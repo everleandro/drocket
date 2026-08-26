@@ -16,7 +16,8 @@
 
 <script lang="ts">
 export default {
-    name: 'EMenu'
+    name: 'EMenu',
+    inheritAttrs: false
 }
 </script>
 <script lang="ts" setup>

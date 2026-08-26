@@ -13,7 +13,7 @@
     </Teleport>
 </template>
 <script lang="ts">
-export default { name: 'EDialog' }
+export default { name: 'EDialog', inheritAttrs: false }
 </script>
 <script lang="ts" setup>
 import { computed, onMounted, onUnmounted, provide, reactive, watch, ref, useAttrs } from 'vue'
