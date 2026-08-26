@@ -92,6 +92,14 @@ export type {
   ListModelProp,
 } from "./list";
 export type { DialogInterface } from "./dialog";
+export type {
+  DialogInstance,
+  DialogButton,
+  DialogKind,
+  DialogOptions,
+  DialogPluginOptions,
+  PromptOptions,
+} from "./dialog-service";
 export type { Menu, ContainerMenuInterface, MenuTypeTarget } from "./menu";
 export type { ElevationLevel, ElevationProps } from "./elevation";
 export type {

@@ -3,20 +3,25 @@
         <slot />
 
         <ESnackbarContainer v-if="!hideSnackbar" />
+        <EDialogContainer v-if="!hideDialog" />
     </div>
 </template>
 
 <script setup lang="ts">
 import { provideLayout } from '@/composables'
 import ESnackbarContainer from '@/components/snackbar/container.vue'
+import EDialogContainer from '@/components/dialog-service/container.vue'
 import { useId } from 'vue'
 const appId = useId()
 
 withDefaults(defineProps<{
     /** Opt out when the app renders more than one EApp instance to avoid duplicate snackbar containers. */
     hideSnackbar?: boolean
+    /** Opt out when the app renders more than one EApp instance to avoid duplicate dialog containers. */
+    hideDialog?: boolean
 }>(), {
     hideSnackbar: false,
+    hideDialog: false,
 })
 
 provideLayout()

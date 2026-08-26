@@ -80,6 +80,12 @@ export type {
 	SnackbarOptions,
 	SnackbarPluginOptions,
 	SnackbarPosition,
+	DialogInstance,
+	DialogButton,
+	DialogKind,
+	DialogOptions,
+	DialogPluginOptions,
+	PromptOptions,
 } from "./types";
 export { ScheduleView, CalendarScale } from "./types";
 export { datePickerViewType } from "./types";

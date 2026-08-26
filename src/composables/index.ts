@@ -8,4 +8,5 @@ export { useResolvedColor } from "./color";
 export { useFieldIntegration } from "./field-integration";
 export { useTextInput } from "./text-input";
 export { useSnackbar } from "./snackbar";
+export { useDialog } from "./dialog";
 export { useTheme } from "../theme";

@@ -45,6 +45,11 @@ export const navigationGroups = [
         to: "/components/snackbar",
       },
       {
+        id: "components-dialog-service",
+        title: "Dialog Service",
+        to: "/components/dialog-service",
+      },
+      {
         id: "components-textfield",
         title: "Text Field",
         to: "/components/text-field",

@@ -1,0 +1,20 @@
+.e-dialog-service__message {
+    margin: 0;
+}
+
+.e-dialog-service__field {
+    margin-block-end: calc(var(--e-space-base, 4px) * 3);
+}
+
+.e-dialog-service__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: calc(var(--e-space-base, 4px) * 2);
+    width: 100%;
+}
+
+.e-dialog-service__container {
+    .e-card{
+        width: 400px;
+    }
+}

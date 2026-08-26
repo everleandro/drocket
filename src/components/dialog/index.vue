@@ -1,8 +1,8 @@
-
 <template>
     <Teleport to="body">
         <transition v-if="mounted" name="fade">
-            <div ref="dialogContent" v-show="store.active" role="dialog" aria-modal="true" :class="contentClass" :style="contentStyle" tabindex="0" @keydown="handleContentKeydown">
+            <div ref="dialogContent" v-show="store.active" role="dialog" aria-modal="true" :class="contentClass"
+                :style="contentStyle" tabindex="0" @keydown="handleContentKeydown">
                 <transition name="scale">
                     <div ref="dialogPanel" v-show="store.active" :class="dialogClass" :style="dialogStyle">
                         <slot></slot>
@@ -16,10 +16,21 @@
 export default { name: 'EDialog' }
 </script>
 <script lang="ts" setup>
-import { computed, onMounted, onUnmounted, provide, reactive, watch, ref } from 'vue'
+import { computed, onMounted, onUnmounted, provide, reactive, watch, ref, useAttrs } from 'vue'
 import { ElevationProps } from '@/types'
 import { useOverlayService } from '@/composables'
 import { getBooleanClasses, normalizeDimension } from '@/composables/utils'
+
+export interface DialogProps extends ElevationProps {
+    fullscreen?: boolean
+    fluid?: boolean
+    modelValue?: boolean
+    absolute?: boolean
+    autoFocus?: boolean
+    restoreFocus?: boolean
+    persistent?: boolean
+    maxWidth?: string | number
+}
 
 const FOCUSABLE_SELECTOR = [
     'a[href]',
@@ -37,7 +48,7 @@ const FOCUSABLE_SELECTOR = [
 const mounted = ref(false);
 const overlayId = `dialog-overlay-${Math.random().toString(36).slice(2)}`;
 const { openOverlay, closeOverlay, getStackZIndex, updateOverlayContentElement } = useOverlayService();
-
+const attrs = useAttrs();
 const dialogPropsBooleanClassKeys = [
     'fullscreen',
     'fluid',
@@ -46,16 +57,7 @@ const dialogPropsBooleanClassKeys = [
 
 const contentBooleanClassKeys = ['absolute'] as const
 
-const props = withDefaults(defineProps<ElevationProps & {
-    fullscreen?: boolean
-    fluid?: boolean
-    modelValue?: boolean
-    absolute?: boolean
-    autoFocus?: boolean
-    restoreFocus?: boolean
-    persistent?: boolean
-    maxWidth?: string | number
-}>(), {
+const props = withDefaults(defineProps<DialogProps>(), {
     autoFocus: true,
     restoreFocus: true,
 })
@@ -115,7 +117,7 @@ const dialogClass = computed(() => {
 
     props.elevation && classes.push(`e-elevation--${props.elevation}`)
 
-    return classes
+    return [...classes, attrs.class as string].filter(Boolean).join(' ')
 })
 
 
@@ -200,7 +202,7 @@ const handleContentKeydown = (evt: KeyboardEvent): void => {
 
     if (!focusInsideDialog) {
         evt.preventDefault()
-        ;(evt.shiftKey ? lastFocusable : firstFocusable).focus()
+            ; (evt.shiftKey ? lastFocusable : firstFocusable).focus()
         return
     }
 

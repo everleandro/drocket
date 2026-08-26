@@ -21,8 +21,8 @@
                 </slot>
 
                 <div class="e-card__headline">
-                    <p v-if="title" class="title e-card__title">{{ title }}</p>
-                    <p v-if="subtitle" class="subtitle e-card__subtitle">{{ subtitle }}</p>
+                    <p v-if="title" class="e-card__title">{{ title }}</p>
+                    <p v-if="subtitle" class="e-card__subtitle">{{ subtitle }}</p>
                 </div>
 
                 <slot name="append-header">
@@ -36,9 +36,9 @@
                 </slot>
             </div>
 
-            <p v-if="description" class="type-body e-card__description">{{ description }}</p>
+            <p v-if="description" class="e-card__description">{{ description }}</p>
 
-            <div v-if="hasBody" class="e-card__body type-body">
+            <div v-if="hasBody" class="e-card__body">
                 <slot> </slot>
             </div>
 

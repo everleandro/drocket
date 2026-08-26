@@ -7,6 +7,7 @@ import ButtonGroupView from "./ButtonGroupView.vue";
 import DataListView from "./DataListView.vue";
 import TableView from "./TableView.vue";
 import SnackbarView from "./SnackbarView.vue";
+import DialogServiceView from "./DialogServiceView.vue";
 import CardView from "./CardView.vue";
 import BarView from "./BarView.vue";
 import DrawerView from "./DrawerView.vue";
@@ -33,6 +34,7 @@ const routeComponentById = {
   "components-data-list": DataListView,
   "components-table": TableView,
   "components-snackbar": SnackbarView,
+  "components-dialog-service": DialogServiceView,
   "components-card": CardView,
   "components-bar": BarView,
   "components-drawer": DrawerView,
